@@ -32,17 +32,11 @@
 <meta property="og:site_name" content="2021.cyou">
 <meta property="og:description" content="创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：  每个进程至少有一个线程，作为程序的入口，这个线程就是主线程。 每个进程至少有一个主线程，其他线程成为工作线程。 父线程：如果线程A启动了一个线程B，A就是B的父线程。 子线程：B就是A的子线程。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ftp.fly97.cn/images/fly97.cn/20210426/threading01.png">
-<meta property="og:image" content="https://ftp.fly97.cn/images/fly97.cn/20210426/threading02.png">
-<meta property="og:image" content="https://ftp.fly97.cn/images/fly97.cn/20210426/threading03.png">
-<meta property="og:image" content="https://ftp.fly97.cn/images/fly97.cn/20210426/threading04.png">
-<meta property="og:image" content="https://ftp.fly97.cn/images/fly97.cn/20210426/threading05.png">
 <meta property="article:published_time" content="2021-04-02T10:45:00.000Z">
 <meta property="article:modified_time" content="2021-04-02T10:45:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ftp.fly97.cn/images/fly97.cn/20210426/threading01.png">
 
 
 <link rel="canonical" href="https://2021.cyou/p/how-to-use-python-multithreading/">
@@ -247,14 +241,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">84</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-count">71</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -363,7 +357,6 @@
 <h5 id="简单使用">简单使用</h5>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s, time_loop</span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line">        print(<span class="string">f&quot;The delay is <span class="subst">&#123;delay_s&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">2</span>, <span class="number">2</span>]).start()</span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">1</span>, <span class="number">1</span>]).start()</span><br></pre></td></tr></table></figure>
 <p>执行结果：</p>
-<p><img src="https://ftp.fly97.cn/images/fly97.cn/20210426/threading01.png" /></p>
 <p>程序运行到12行时，启动子线程1执行say_hello(2, 2)，此时主线程继续向下执行；</p>
 <p>程序运行到13行时，启动子线程2执行say_hello(1, 1)，此次主线程执行完毕，等待子线程执行完毕。</p>
 <p>1秒后子线程2先执行完毕，切换到另一个子线程1继续执行。</p>
@@ -376,7 +369,6 @@
 <p>当<code>daemon</code>属性为<code>False</code>时，父线程在运行完毕时，会等待所有子线程退出才结束程序。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>结果：</p>
-<p><img src="https://ftp.fly97.cn/images/fly97.cn/20210426/threading02.png" /></p>
 <p>通过<code>isDaemon()</code>方法可以返回当前线程的<code>daemon</code>值，主线程默认是<code>False</code>，子线程也是<code>False</code>的原因是创建线程对象时指定了<code>daemon=False</code>.</p>
 <p>主程序在构造线程对象时就立即启动了，然后子线程返回了结果中的第一行内容，然后sleep(1)模拟IO，此时CPU发现子线程阻塞了，马上切换到主线程继续执行，主线程先后打印第二行和第三行，此时主线程的代码已经执行到结尾。</p>
 <p>因为主线程为子线程的<code>daemon</code>值设置为<code>False</code>，这时就又发生了线程切换到子线程，子线程先后执行完第四行和第五行，然后子线程就全部执行完毕，主线程看到子线程退出后，也立即退出，整个程序结束。</p>
@@ -384,16 +376,13 @@
 <p>当<code>daemon</code>为<code>True</code>时，父线程在执行完毕后，无论子线程是否正在运行，都会伴随父进程一起退出。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>结果：</p>
-<p><img src="https://ftp.fly97.cn/images/fly97.cn/20210426/threading03.png" /></p>
 <p>当daemon设置为True时，即主线程不关心子线程状态，主线程退出，子线程也必须跟着退出。</p>
 <p>运行结果中子线程就执行了一行语句，此时CPU发现子线程阻塞，线程切换到主线程，主线程执行完最后两句，就立即退出，整个程序结束。</p>
 <h6 id="daemonnone">daemon=None</h6>
 <p>daemon属性可以不设置，默认值是None。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_grandson_thread</span>():</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        print(<span class="string">f&quot;say_grandson_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_son_thread</span>(<span class="params">time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_son_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        threading.Thread(target=say_grandson_thread, daemon=<span class="literal">None</span>).start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_son_thread, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>运行结果：</p>
-<p><img src="https://ftp.fly97.cn/images/fly97.cn/20210426/threading04.png" /></p>
 <p>这里在主线程中使用了延迟1秒，来让子线程启动的子线程有机会输出其daemon属性值，如果不设置延迟，还没等到子线程的子线程启动，子线程就结束了，最终导致子线程的子线程无法启动。</p>
-<p><img src="https://ftp.fly97.cn/images/fly97.cn/20210426/threading05.png" /></p>
 
     </div>
 

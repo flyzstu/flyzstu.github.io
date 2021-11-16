@@ -32,16 +32,16 @@
 <meta property="og:site_name" content="2021.cyou">
 <meta property="og:description" content="利用Jetson Xavier和传感器模块进行串口通信">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ftp.fly97.cn/blog/images/20210508/jetson_data_sheet.png">
-<meta property="og:image" content="https://ftp.fly97.cn/blog/images/20210508/jetson_xavier_nx.jpg">
-<meta property="og:image" content="https://ftp.fly97.cn/blog/images/20210508/uart_demo.png">
+<meta property="og:image" content="https://2021.cyou/p/serial-communication-on-jetson-xavier-nx/Jetson%20xavier%20nx实现串口通信/jetson_data_sheet.png">
+<meta property="og:image" content="https://2021.cyou/p/serial-communication-on-jetson-xavier-nx/Jetson%20xavier%20nx实现串口通信/jetson_xavier_nx.jpg">
+<meta property="og:image" content="https://2021.cyou/p/serial-communication-on-jetson-xavier-nx/Jetson%20xavier%20nx实现串口通信/uart_demo.png">
 <meta property="article:published_time" content="2021-05-07T06:09:00.000Z">
 <meta property="article:modified_time" content="2021-05-07T06:09:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="Jetson">
 <meta property="article:tag" content="CUDA">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ftp.fly97.cn/blog/images/20210508/jetson_data_sheet.png">
+<meta name="twitter:image" content="https://2021.cyou/p/serial-communication-on-jetson-xavier-nx/Jetson%20xavier%20nx实现串口通信/jetson_data_sheet.png">
 
 
 <link rel="canonical" href="https://2021.cyou/p/serial-communication-on-jetson-xavier-nx/">
@@ -246,14 +246,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">84</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-count">71</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -354,16 +354,16 @@
 <h3 id="硬件连接">硬件连接</h3>
 <p>默认情况下，Jetson Xavier NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分配为GPIO，建议使用下面标有其他功能的引脚。</p>
 <p>这里我们用的是UART1，设备地址<code>/dev/ttyTHS0</code>.</p>
-<p><img src="https://ftp.fly97.cn/blog/images/20210508/jetson_data_sheet.png" /></p>
+<p><img src="Jetson%20xavier%20nx实现串口通信/jetson_data_sheet.png" /></p>
 <p>其中，第8和10引脚就是我们需要的TXD和RXD引脚。</p>
-<p><img src="https://ftp.fly97.cn/blog/images/20210508/jetson_xavier_nx.jpg" /></p>
+<p><img src="Jetson%20xavier%20nx实现串口通信/jetson_xavier_nx.jpg" /></p>
 <p><strong>注意：和电脑连接调试时需要注意，USB转TTL的RXD引脚需和板子的TXD引脚连接，USB转TTL的TXD引脚需和板子的RXD引脚相连。两者的GND引脚也要连起来。</strong></p>
 <h3 id="相关代码">相关代码</h3>
 <h4 id="安装相关依赖">安装相关依赖</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install pyserial</span><br></pre></td></tr></table></figure>
 <h4 id="测试代码">测试代码</h4>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;UART Demonstration Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">serial_port = serial.Serial(</span><br><span class="line">    port=<span class="string">&quot;/dev/ttyTHS1&quot;</span>,                                      <span class="comment">#串口设备地址</span></span><br><span class="line">    baudrate=<span class="number">115200</span>,                                          <span class="comment">#信号波特率</span></span><br><span class="line">    bytesize=serial.EIGHTBITS,                                <span class="comment">#数据位</span></span><br><span class="line">    parity=serial.PARITY_NONE,  						    <span class="comment">#是否启用奇偶校验</span></span><br><span class="line">    stopbits=serial.STOPBITS_ONE,                             <span class="comment">#停止位</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Wait a second to let the port initialize</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># Send a simple header</span></span><br><span class="line">    serial_port.write(<span class="string">&quot;UART Demonstration Program\r\n&quot;</span>.encode())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> serial_port.inWaiting() &gt; <span class="number">0</span>:</span><br><span class="line">            data = serial_port.read()</span><br><span class="line">            print(data)</span><br><span class="line">            serial_port.write(data)</span><br><span class="line">            <span class="comment"># if we get a carriage return, add a line feed too</span></span><br><span class="line">            <span class="comment"># \r is a carriage return; \n is a line feed</span></span><br><span class="line">            <span class="comment"># This is to help the tty program on the other end </span></span><br><span class="line">            <span class="comment"># Windows is \r\n for carriage return, line feed</span></span><br><span class="line">            <span class="comment"># Macintosh and Linux use \n</span></span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">&quot;\r&quot;</span>.encode():</span><br><span class="line">                <span class="comment"># For Windows boxen on the other end</span></span><br><span class="line">                serial_port.write(<span class="string">&quot;\n&quot;</span>.encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    print(<span class="string">&quot;Exiting Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> exception_error:</span><br><span class="line">    print(<span class="string">&quot;Error occurred. Exiting Program&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;Error: &quot;</span> + str(exception_error))</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    serial_port.close()</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://ftp.fly97.cn/blog/images/20210508/uart_demo.png" /></p>
+<p><img src="Jetson%20xavier%20nx实现串口通信/uart_demo.png" /></p>
 <p>参考资料：</p>
 <p>https://www.jetsonhacks.com/2019/10/10/jetson-nano-uart/</p>
 <p>https://github.com/JetsonHacksNano/UARTDemo</p>

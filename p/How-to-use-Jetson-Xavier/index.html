@@ -32,16 +32,12 @@
 <meta property="og:site_name" content="2021.cyou">
 <meta property="og:description" content="摘要：最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。 关键词：Jetson，NVIDIA，CUDA">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fly97.coding.net/p/images/d/fly97.cn/git/raw/master/20210318/success.png">
-<meta property="og:image" content="https://fly97.coding.net/p/images/d/fly97.cn/git/raw/master/20210318/bug.png">
-<meta property="og:image" content="https://fly97.coding.net/p/images/d/fly97.cn/git/raw/master/20210318/issue.png">
 <meta property="article:published_time" content="2020-12-07T10:51:00.000Z">
 <meta property="article:modified_time" content="2020-12-07T10:51:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="Jetson">
 <meta property="article:tag" content="NVIDIA">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fly97.coding.net/p/images/d/fly97.cn/git/raw/master/20210318/success.png">
 
 
 <link rel="canonical" href="https://2021.cyou/p/How-to-use-Jetson-Xavier/">
@@ -246,14 +242,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-count">84</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-count">71</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -408,7 +404,6 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查询当前状态</span></span><br><span class="line">sudo nvpmodel --query</span><br><span class="line"><span class="comment">#切换状态</span></span><br><span class="line">sudo nvpmodel -m <span class="comment">#Mode_ID</span></span><br><span class="line"><span class="comment">#查看处理器状态</span></span><br><span class="line">sudo jetson_clocks --show</span><br><span class="line"><span class="comment">#如果jetson_clocks 后没有参数，则直接开启static MAX 模式</span></span><br><span class="line">sudo jetson=_clocks</span><br></pre></td></tr></table></figure>
 <h4 id="安装pytorch">安装Pytorch</h4>
 <p><a target="_blank" rel="noopener" href="https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048">下载地址</a></p>
-<p><a target="_blank" rel="noopener" href="https://wf09.coding.net/p/jetson/d/Pytorch/git/raw/master/torch-1.7.0-cp36-cp36m-linux_aarch64.whl">备用地址</a></p>
 <p>根据自己的Python环境下载whl文件.这里是Python 3.6.9，安装的版本是PyTorch v1.7。</p>
 <p>安装命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install python3-pip libopenblas-base libopenmpi-dev </span><br><span class="line">python3 -m pip install Cython</span><br><span class="line">python3 -m pip install numpy torch-1.7.0-cp36-cp36m-linux_aarch64.whl</span><br></pre></td></tr></table></figure>
@@ -473,12 +468,10 @@
 <p>执行以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
 <h6 id="成功啦">成功啦</h6>
-<p><img src="https://fly97.coding.net/p/images/d/fly97.cn/git/raw/master/20210318/success.png" /></p>
 <h6 id="解决各种出错问题">解决各种出错问题</h6>
 <ol type="1">
 <li><strong>src/grfmt_jpeg2000.cpp.o failed</strong></li>
 </ol>
-<p><img src="https://fly97.coding.net/p/images/d/fly97.cn/git/raw/master/20210318/bug.png" /></p>
 <p>编译时关闭如下tag：<strong>-DBUILD_JASPER=OFF</strong> 即可.</p>
 <ol start="2" type="1">
 <li><p><strong>fatal error: boostdesc_bgm.i: No such file or directory</strong></p>
@@ -486,7 +479,6 @@
 <p>https://github.com/opencv/opencv_contrib/issues/1301#issuecomment-618262386</p></li>
 </ol>
 <p>将下载好的文件解压到以下文件夹：</p>
-<p><img src="https://fly97.coding.net/p/images/d/fly97.cn/git/raw/master/20210318/issue.png" /></p>
 <h4 id="cudnn">cuDNN</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src/cudnn_samples_v8/mnistCUDNN</span><br><span class="line">sudo make</span><br><span class="line">sudo chmod a+x mnistCUDNN</span><br><span class="line">./mnistCUDNN</span><br></pre></td></tr></table></figure>
 <h4 id="更改桌面">更改桌面</h4>
