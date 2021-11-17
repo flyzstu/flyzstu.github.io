@@ -3332,6 +3332,63 @@
       </tags>
   </entry>
   <entry>
+    <title>使用密钥登陆linux服务器</title>
+    <url>/p/login-linux-with-ssh-key/</url>
+    <content><![CDATA[<p>为什么使用ssh-key登录服务器？因为这种方法更安全，可以确保我们的服务器不被hack。</p>
+<p><strong>关键词</strong>：服务器安全</p>
+<a id="more"></a>
+<h3 id="安全问题">安全问题</h3>
+<p>在登录服务器时，发现了一行提示：</p>
+<p><img src="image-20211117223431763.png" /></p>
+<p>心中一惊，赶紧查看<strong>失败登录记录</strong>，果然发现了有很多<strong>被爆破</strong>的记录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lastb </span><br></pre></td></tr></table></figure>
+<p><img src="image-20211117223543481.png" /></p>
+<p>这让我意识到<strong>使用密码登陆服务器</strong>非常危险，于是乎便有了<strong>此文</strong>。</p>
+<h3 id="使用密钥登录ssh服务器">使用密钥登录ssh服务器</h3>
+<h4 id="生成公钥和私钥">生成公钥和私钥</h4>
+<p>任意路径下打开git bash，输入以下命令，邮箱请根据自己的需要填写：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@youremail.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20211117224126494.png" /></p>
+<p>默认情况下会在自己的用户名下的<code>.ssh</code>文件夹生成<strong>公钥</strong>和<strong>私钥</strong>，其中<code>.pub</code>结尾的是公钥</p>
+<p><img src="image-20211117224251406.png" /></p>
+<h4 id="将公钥拷贝到服务器">将公钥拷贝到服务器</h4>
+<p>一般情况下，当前目录都会有.ssh文件夹，并且文件夹下有<code>authorized_keys</code>文件，此时只需要将<strong>公钥</strong>文件的内容复制到该文件即可：</p>
+<p><img src="image-20211117225910505.png" /></p>
+<p>若没有则需要新建</p>
+<h5 id="新建.ssh文件夹">新建.ssh文件夹</h5>
+<p>使用当前用户并在当前用户名下新建<code>.ssh</code>文件夹</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
+<h5 id="使用xftp等软件拷贝">使用xftp等软件拷贝</h5>
+<p>将<strong>id_rsa.pub</strong>文件拷贝到当前用户的<strong>.ssh文件夹</strong>下：</p>
+<p><img src="image-20211117230405573.png" /></p>
+<h5 id="使用scp命令">使用scp命令</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">scp id_rsa.pub &lt;用户名&gt;@&lt;ip&gt;:&lt;用户名&gt;.ssh/</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211117231239950.png" /></p>
+<h5 id="设置公钥权限">设置公钥权限</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 600 id_rsa.pub</span><br></pre></td></tr></table></figure>
+<h4 id="修改ssh配置">修改ssh配置</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<p>找到对应的片段，修改后面的内容即可。</p>
+<h5 id="修改公钥文件地址">修改公钥文件地址</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">AuthorizedKeysFile .ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<h5 id="允许公钥登录">允许公钥登录</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PubkeyAuthentication yes</span><br></pre></td></tr></table></figure>
+<h5 id="禁止密码登录">禁止密码登录</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PasswordAuthentication no</span><br></pre></td></tr></table></figure>
+<h4 id="重启ssh服务">重启SSH服务</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<h3 id="注意">注意</h3>
+<p>到此以后就可以用密钥登陆了，不过现在还不能<strong>关闭当前的终端窗口</strong>，万一你刚才修改的有问题或者修改错了，那么就无法登陆服务器了！！！</p>
+<p>这时候可以打开一个新的ssh窗口，检验以下刚才的设置有没有问题。</p>
+<p>登陆时私钥选择之前生成的<strong>id_rsa</strong>即可。</p>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>ssh</tag>
+        <tag>key</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>修改Pip镜像源</title>
     <url>/p/Modify-pip-mirror-source/</url>
     <content><![CDATA[<p>修改pip镜像源</p>

@@ -6,7 +6,7 @@
   <link href="https://2021.cyou/atom.xml" rel="self"/>
   
   <link href="https://2021.cyou/"/>
-  <updated>2021-08-30T12:31:00.000Z</updated>
+  <updated>2021-11-17T14:32:00.000Z</updated>
   <id>https://2021.cyou/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用密钥登陆linux服务器</title>
+    <link href="https://2021.cyou/p/login-linux-with-ssh-key/"/>
+    <id>https://2021.cyou/p/login-linux-with-ssh-key/</id>
+    <published>2021-11-17T14:32:00.000Z</published>
+    <updated>2021-11-17T14:32:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>为什么使用ssh-key登录服务器？因为这种方法更安全，可以确保我们的服务器不被hack。</p><p><strong>关键词</strong>：服务器安全</p><a id="more"></a><h3 id="安全问题">安全问题</h3><p>在登录服务器时，发现了一行提示：</p><p><img src="image-20211117223431763.png" /></p><p>心中一惊，赶紧查看<strong>失败登录记录</strong>，果然发现了有很多<strong>被爆破</strong>的记录：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lastb </span><br></pre></td></tr></table></figure><p><img src="image-20211117223543481.png" /></p><p>这让我意识到<strong>使用密码登陆服务器</strong>非常危险，于是乎便有了<strong>此文</strong>。</p><h3 id="使用密钥登录ssh服务器">使用密钥登录ssh服务器</h3><h4 id="生成公钥和私钥">生成公钥和私钥</h4><p>任意路径下打开git bash，输入以下命令，邮箱请根据自己的需要填写：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@youremail.com&quot;</span></span><br></pre></td></tr></table></figure><p><img src="image-20211117224126494.png" /></p><p>默认情况下会在自己的用户名下的<code>.ssh</code>文件夹生成<strong>公钥</strong>和<strong>私钥</strong>，其中<code>.pub</code>结尾的是公钥</p><p><img src="image-20211117224251406.png" /></p><h4 id="将公钥拷贝到服务器">将公钥拷贝到服务器</h4><p>一般情况下，当前目录都会有.ssh文件夹，并且文件夹下有<code>authorized_keys</code>文件，此时只需要将<strong>公钥</strong>文件的内容复制到该文件即可：</p><p><img src="image-20211117225910505.png" /></p><p>若没有则需要新建</p><h5 id="新建.ssh文件夹">新建.ssh文件夹</h5><p>使用当前用户并在当前用户名下新建<code>.ssh</code>文件夹</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure><h5 id="使用xftp等软件拷贝">使用xftp等软件拷贝</h5><p>将<strong>id_rsa.pub</strong>文件拷贝到当前用户的<strong>.ssh文件夹</strong>下：</p><p><img src="image-20211117230405573.png" /></p><h5 id="使用scp命令">使用scp命令</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp id_rsa.pub &lt;用户名&gt;@&lt;ip&gt;:&lt;用户名&gt;.ssh/</span><br></pre></td></tr></table></figure><p><img src="image-20211117231239950.png" /></p><h5 id="设置公钥权限">设置公钥权限</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 600 id_rsa.pub</span><br></pre></td></tr></table></figure><h4 id="修改ssh配置">修改ssh配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure><p>找到对应的片段，修改后面的内容即可。</p><h5 id="修改公钥文件地址">修改公钥文件地址</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AuthorizedKeysFile .ssh/id_rsa.pub</span><br></pre></td></tr></table></figure><h5 id="允许公钥登录">允许公钥登录</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PubkeyAuthentication yes</span><br></pre></td></tr></table></figure><h5 id="禁止密码登录">禁止密码登录</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PasswordAuthentication no</span><br></pre></td></tr></table></figure><h4 id="重启ssh服务">重启SSH服务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure><h3 id="注意">注意</h3><p>到此以后就可以用密钥登陆了，不过现在还不能<strong>关闭当前的终端窗口</strong>，万一你刚才修改的有问题或者修改错了，那么就无法登陆服务器了！！！</p><p>这时候可以打开一个新的ssh窗口，检验以下刚才的设置有没有问题。</p><p>登陆时私钥选择之前生成的<strong>id_rsa</strong>即可。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;为什么使用ssh-key登录服务器？因为这种方法更安全，可以确保我们的服务器不被hack。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词&lt;/strong&gt;：服务器安全&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="linux" scheme="https://2021.cyou/tags/linux/"/>
+    
+    <category term="ssh" scheme="https://2021.cyou/tags/ssh/"/>
+    
+    <category term="key" scheme="https://2021.cyou/tags/key/"/>
+    
+  </entry>
   
   <entry>
     <title>Python列表生成式</title>
@@ -422,28 +446,6 @@
     
     
     <category term="Chromium" scheme="https://2021.cyou/tags/Chromium/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>selenium常用方法</title>
-    <link href="https://2021.cyou/p/Selenium-positioning-method/"/>
-    <id>https://2021.cyou/p/Selenium-positioning-method/</id>
-    <published>2021-02-08T12:53:00.000Z</published>
-    <updated>2021-02-08T12:53:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>Selenium 是一个综合性的项目，为web浏览器的自动化提供了各种工具和依赖包。本文主要介绍的是 selenium的常用方法。</p><p><strong>关键词：Selenium常用方法</strong></p><a id="more"></a><h3 id="模拟手机访问">模拟手机访问</h3><p>一般情况下，手机端页面更简单，容易提取元素</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> selenium</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">options = webdriver.ChromeOptions()</span><br><span class="line">options.add_experimental_option(<span class="string">&#x27;mobileEmulation&#x27;</span>, mobile_emulation)</span><br></pre></td></tr></table></figure><h3 id="设置chrome为无头模式">设置chrome为无头模式</h3><p>在 Chrome 59　中开始搭载 <a href="https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md">Headless Chrome</a>。这是一种在无需显示<em>headless</em>的环境下运行 Chrome 浏览器的方式。从本质上来说，就是不用打卡Chrome窗口来运行 Chrome 的功能。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">options.add_argument(<span class="string">&#x27;--headless&#x27;</span>)</span><br></pre></td></tr></table></figure><h3 id="加载网址">加载网址</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.get(&quot;http:&#x2F;&#x2F;stu.zstu.edu.cn&quot;)</span><br></pre></td></tr></table></figure><h3 id="定位元素">定位元素</h3><h4 id="id定位">id定位</h4><p>HTML 规定id 属性在HTML 文档中必须是唯一的。这类似于公民的身份证号，具有很强的唯一性</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.find_element_by_id(&quot;app&quot;)</span><br></pre></td></tr></table></figure><h4 id="name定位">name定位</h4><p>HTML 规定name 来指定元素的名称，因此它的作用更像是人的姓名</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.find_element_by_name(&quot;name&quot;)</span><br></pre></td></tr></table></figure><h4 id="class定位">class定位</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.find_element_by_class(&quot;classname&quot;)</span><br></pre></td></tr></table></figure><h4 id="tag定位">tag定位</h4><p>HTML 的本质就是通过tag来定义实现不同的功能，每一个元素本质上也是一个tag.</p><p>因为一个tag 往往用来定义一类功能，所以通过tag识别某个元素的概率很低.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.find_element_by_tag_name(&quot;tagname&quot;)</span><br></pre></td></tr></table></figure><h4 id="link-text-定位"><strong>link text 定位</strong></h4><p>find_element_by_link_text()方法通过元素标签对之间的文本信息来定位元素</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.find_element_by_link_text(&quot;text&quot;)</span><br></pre></td></tr></table></figure><h4 id="partial-link-定位"><strong>partial link 定位</strong></h4><p>partial link 定位是对link 定位的一种补充，有些文本链接会比较长，这个时候可以取文本链接的一部分定位，只要这一部分信息可以唯一地标识这个链接</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.find_element_by_partial_link_text(&quot;partial text&quot;)</span><br></pre></td></tr></table></figure><h4 id="xpath定位">XPATH定位</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.find_element_by_xpath(&quot;&quot;)</span><br></pre></td></tr></table></figure><p>XPath是XML的路径语言，通俗一点讲就是通过元素的路径来查找到这个标签元素</p><h5 id="定位页面下所有元素">定位页面下所有元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;*[@id&#x3D;&quot;app&quot;]&#x2F;div</span><br></pre></td></tr></table></figure><h5 id="绝对路径定位">绝对路径定位</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;html&#x2F;body&#x2F;div&#x2F;div</span><br></pre></td></tr></table></figure><h5 id="利用元素属性定位">利用元素属性定位</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&#x2F;&#x2F;input[@placeholder&#x3D;&#39;请通过XPATH定位元素&#39;]&quot;</span><br></pre></td></tr></table></figure><h5 id="利用标签所含文字进行定位">利用标签所含文字进行定位</h5><p>严格匹配</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;div[text()&#x3D;&quot;健康申报&quot;]</span><br></pre></td></tr></table></figure><p>部分匹配</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;div[contains(text(), &quot;健康申报&quot;)]</span><br></pre></td></tr></table></figure><h5 id="层级与属性相结合">层级与属性相结合</h5><p>当标签页重复时，Xpath提供了层级过滤。</p><p>例如，找不到儿子，那么就先找他的爸爸，或者找他的爷爷。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;&#x2F;&#x2F;label[contains(text(), &quot;文本内容&quot;)]&#x2F;..&#x2F;following-sibling::div[1]&#x2F;&#x2F;input&#39;</span><br></pre></td></tr></table></figure><p><code>..</code> 表示当前节点的父节点</p><p><code>following-sibling::div[1]</code> 表示当前节点的<strong>兄弟节点</strong>中的 <strong>第 1 个</strong> <strong>div</strong>标签</p><h5 id="使用逻辑运算符">使用逻辑运算符</h5><p>如果一个属性不能唯一的区分一个元素，可以使用逻辑运算符连接多个属性来查找元素</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;select[@name&#x3D;&#39;city&#39; and @size&#x3D;&#39;4&#39; and @multiple&#x3D;&quot;multiple&quot;]</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Selenium 是一个综合性的项目，为web浏览器的自动化提供了各种工具和依赖包。本文主要介绍的是 selenium的常用方法。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键词：Selenium常用方法&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="Python" scheme="https://2021.cyou/tags/Python/"/>
-    
-    <category term="Selenium" scheme="https://2021.cyou/tags/Selenium/"/>
     
   </entry>
   
