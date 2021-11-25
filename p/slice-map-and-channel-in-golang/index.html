@@ -25,21 +25,21 @@
     var CONFIG = {"hostname":"2021.cyou","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="机器学习中的归纳偏好。">
+  <meta name="description" content="虽然go语言中函数传参方式都是值传递，但以下几种类型可以认为是&quot;引用传递&quot;。 关键词：golang">
 <meta property="og:type" content="article">
-<meta property="og:title" content="机器学习基本概念03">
-<meta property="og:url" content="https://2021.cyou/p/Basic-Concepts-of-Machine-Learning-03/index.html">
+<meta property="og:title" content="Go语言中的切片、Map和Channel">
+<meta property="og:url" content="https://2021.cyou/p/slice-map-and-channel-in-golang/index.html">
 <meta property="og:site_name" content="2021.cyou">
-<meta property="og:description" content="机器学习中的归纳偏好。">
+<meta property="og:description" content="虽然go语言中函数传参方式都是值传递，但以下几种类型可以认为是&quot;引用传递&quot;。 关键词：golang">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-08-07T13:50:00.000Z">
-<meta property="article:modified_time" content="2020-08-07T13:50:00.000Z">
+<meta property="article:published_time" content="2021-11-25T12:44:00.000Z">
+<meta property="article:modified_time" content="2021-11-25T12:44:00.000Z">
 <meta property="article:author" content="fly97">
-<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="golang">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://2021.cyou/p/Basic-Concepts-of-Machine-Learning-03/">
+<link rel="canonical" href="https://2021.cyou/p/slice-map-and-channel-in-golang/">
 
 
 <script class="page-configurations">
@@ -52,7 +52,7 @@
   };
 </script>
 
-  <title>机器学习基本概念03 | 2021.cyou</title>
+  <title>Go语言中的切片、Map和Channel | 2021.cyou</title>
   
 
 
@@ -227,7 +227,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%92%E7%BA%B3%E5%81%8F%E5%A5%BD"><span class="nav-number">1.</span> <span class="nav-text">归纳偏好</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%89%87"><span class="nav-number">1.</span> <span class="nav-text">切片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map"><span class="nav-number">2.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E9%81%93"><span class="nav-number">3.</span> <span class="nav-text">通道</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -304,7 +304,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://2021.cyou/p/Basic-Concepts-of-Machine-Learning-03/">
+    <link itemprop="mainEntityOfPage" href="https://2021.cyou/p/slice-map-and-channel-in-golang/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -320,7 +320,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          机器学习基本概念03
+          Go语言中的切片、Map和Channel
         </h1>
 
         <div class="post-meta-container">
@@ -331,7 +331,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-08-07 21:50:00" itemprop="dateCreated datePublished" datetime="2020-08-07T21:50:00+08:00">2020-08-07</time>
+      <time title="创建时间：2021-11-25 20:44:00" itemprop="dateCreated datePublished" datetime="2021-11-25T20:44:00+08:00">2021-11-25</time>
     </span>
 
   
@@ -344,22 +344,27 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>机器学习中的归纳偏好。</p>
+        <p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
+<p><strong>关键词</strong>：golang</p>
 <a id="more"></a>
-<h4 id="归纳偏好">归纳偏好</h4>
-<p>通过学习得到的模型对应了假设空间的一个假设，于是，上文中的西瓜版本空间给我们带来了一个麻烦：现在有三个与训练集一致的假设，但与他们对应的模型在面临新样本的时候，却会产生不同的输出。例如，对色泽=青绿；根蒂=蜷缩；敲声=沉闷这个新收来的瓜，如果我们采用的是“好瓜《=》（色泽=*）^（敲声=*)”。那么会把新瓜判断为好瓜，而如果采用了另外两个假设，则判断的结果将不是好瓜，那么，应该采用哪一个模型（或假设）呢？</p>
-<p>​ 若仅有上表中训练样本，则无法断定上述三个假设哪一个“更好”。然而，对于一个具体的学习算法而言，他必须要产生一个模型。这时，学习算法本身的“偏好”就会起到关键的作用。例如，若我们的算法喜欢尽可能特殊的模型，则他会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=浊响)”；但若我们的算法喜欢“尽可能一般”的模型，并且由于某种原因它更相信“根蒂”，则它会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=*)”，机器学习算法在学习过程中对某种类型假设的偏好，称为“归纳偏好”(inductive bias)，或称为“偏好”。</p>
-<blockquote>
-<p>尽可能特殊即“适用情况尽可能少”；尽可能一般即“使用情况尽可能多”。</p>
-<p>对“根蒂”还是对“敲声”更重视，看起来和属性选择，亦称为“特征选择”(feature selection)有关，但需注意的是，机器学习中的特征选择仍是基于对训练样本的模型的分析进行的，而在此处我们并非基于特征选择做出对根蒂的重视；这里对“根蒂”的信赖可视为基于某种领域的知识而产生的归纳偏好关于特征选择方面的内容可以参加后续的更新。</p>
-</blockquote>
-<p>任何一个有效的机器学习算法未必有其归纳偏好，否则它将被假设空间中看似在训练集上“等效”的假设所迷惑，而无法产生确定的学习结果。可以想象，如果没有偏好，我们的西瓜学习算法产生的模型每次在进行预测时随机抽选训练集上的等效假设，那么对这个新瓜--------------学得模型时而告诉我们他是好的，时而告诉我们他是不好的，这样的学习结果显然没有意义。</p>
-<p>归纳偏好的作用在图1.3这个回归学习图示中可能更直观，这里的每个训练样本是图中的一个点(x,y)，要学得一个与训练集一致的模型，相当于找到一条穿过所有训练样本点的曲线。显然，对有限个样本点组成的训练集，存在着很多条曲线与其一致，我们的学习算法必须有某种偏好，才能产出它认为"正确"的模型。例如，若认为相似的样本应有相似的输出(例如，在各种属性上都很像的西瓜，成熟程度应该比较接近)，则对应的学习算法可能偏好图1.3中比较“平滑”的曲线<span class="math inline">\(A\)</span>而不是比较“崎岖”的曲线<span class="math inline">\(B\)</span>.</p>
-<p>归纳偏好可看作学习算法自身在一个可能很庞大的假设空间中对假设进行选择的启发式或"价值观".那么，有没有一般性的原则来引导算法确立“正确的”偏好呢？<strong>“奥卡姆剃刀”（Occam's razor)</strong>是一种常用的、自然科学研究中最基本的原则，即<strong>“若有若干个假设与观察一致，则选最简单的那个”</strong>.如果采用这个原则，并且假设我们认为“更平滑”意味着“更简单”(例如曲线A更容易描述，其方程式是<span class="math inline">\(y = -x_2+6x+1\)</span>，而曲线<span class="math inline">\(B\)</span>则要复杂得多)，则在图1.3中我们会自然地偏好“平滑”的曲线<span class="math inline">\(A\)</span>.</p>
-<p>然而，奥卡姆剃刀并非唯一可行的原则，退一步说，即便假定我们是奥卡姆剃刀的铁杆拥簇，也需注意到，奥卡姆剃刀本身存在不同的诠释，使用奥卡姆剃刀原则并不平凡。例如对我们已经很熟悉的西瓜问题来说，“假设1：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)”和“假设2：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=*)”这两个假设，哪一个更“简单”呢？这个问题并不简单，需要借助其他机制才能解决.</p>
-<p>事实上，归纳偏好对应了学习算法本身所作出的关于"什么样的模型更好"的假设.在具体的实现问题中，这个假设是否成立，即算法的归纳偏好是否与问题匹配，大多数时候直接决定了算法能否取得好的性能.</p>
-<p>继续回头看图1.3，假设学习算法<span class="math inline">\(\mathcal{L}\)</span></p>
-<p><strong>未完待续.....</strong></p>
+<h2 id="切片">切片</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(testArray []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(testArray); i++ &#123;</span><br><span class="line">		testArray[i] += <span class="number">1</span> <span class="comment">// 函数内部修改切片</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nums := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line">	test(nums)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在函数内部修改了切片，函数外部访问修改也会生效。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run <span class="string">&quot;testSlice.go&quot;</span></span><br><span class="line">nums: [1 2 3]</span><br><span class="line">nums: [2 3 4]</span><br></pre></td></tr></table></figure>
+<h2 id="map">Map</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(testMap <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> k, _ := <span class="keyword">range</span> testMap &#123;</span><br><span class="line">		testMap[k] = <span class="string">&quot;change it&quot;</span> <span class="comment">//函数内部修改map</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nums := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">		<span class="number">1</span>: <span class="string">&quot;one&quot;</span>,</span><br><span class="line">		<span class="number">2</span>: <span class="string">&quot;two&quot;</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line">	test(nums)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数内部修改了map，外部访问修改也生效。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run <span class="string">&quot;testMap.go&quot;</span></span><br><span class="line">nums: map[1:one 2:two]</span><br><span class="line">nums: map[1:change it 2:change it]</span><br></pre></td></tr></table></figure>
+<h2 id="通道">通道</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testChannel</span><span class="params">(cint <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		cint &lt;- i</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">close</span>(cint)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> cint = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> testChannel(cint)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> cint &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;i: %v\n&quot;</span>, i)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数<code>testChannel</code>修改<code>channel</code>，主函数访问修改也生效。</p>
+<p>其中wg是一个计数器（同步等待组）：</p>
+<ol type="1">
+<li>主函数在执行协程之前，向计数器传入协程的数量：<code>wg.Add(1)</code>；</li>
+<li>子函数（协程）在执行完毕以后，执行<code>wg.Done()</code>来给计数器<code>-1</code>；</li>
+<li>主函数最后要执行<code>wg.Wait()</code>，阻塞直到子协程</li>
+</ol>
+<p>退出。</p>
 
     </div>
 
@@ -369,20 +374,20 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/golang/" rel="tag"># golang</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/Occam's-razor-and-no-free-lunch-theorem/" rel="prev" title="奥卡姆剃刀和没有免费的午餐定理">
-                  <i class="fa fa-chevron-left"></i> 奥卡姆剃刀和没有免费的午餐定理
+                <a href="/p/login-linux-with-ssh-key/" rel="prev" title="使用密钥登陆linux服务器">
+                  <i class="fa fa-chevron-left"></i> 使用密钥登陆linux服务器
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/common-loss-functions-for-deep-learning/" rel="next" title="深度学习常见损失函数">
-                  深度学习常见损失函数 <i class="fa fa-chevron-right"></i>
+                <a href="/p/read-json-file-in-golang/" rel="next" title="Go语言读取json文件">
+                  Go语言读取json文件 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -477,67 +482,23 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
     element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
   }
 });
-</script>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-  
-
-  
-      <script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              const target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    const script = document.createElement('script');
-    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
-    script.defer = true;
-    document.head.appendChild(script);
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.typesetClear();
-    MathJax.texReset();
-    MathJax.typeset();
-  }
 </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
-    
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
 
   
 
