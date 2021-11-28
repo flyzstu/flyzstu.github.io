@@ -485,6 +485,21 @@
       </tags>
   </entry>
   <entry>
+    <title>golang中的生产者消费者模型</title>
+    <url>/p/producer-consumer-model-in-golang/</url>
+    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
+<p><strong>关键词</strong>：生产者消费者模型，golang</p>
+<a id="more"></a>
+<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
+<h2 id="简易生产者模型">简易生产者模型</h2>
+<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">	<span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">		fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">		results &lt;- j * <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">	<span class="comment">// 开启3个goroutine</span></span><br><span class="line">	<span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">		<span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 分配5个任务</span></span><br><span class="line">	<span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">		jobs &lt;- j</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">	<span class="comment">// 输出结果</span></span><br><span class="line">	<span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">		&lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go语言中的切片、Map和Channel</title>
     <url>/p/slice-map-and-channel-in-golang/</url>
     <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>

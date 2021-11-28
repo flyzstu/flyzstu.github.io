@@ -17,6 +17,26 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>golang中的生产者消费者模型</title>
+    <link href="https://fly97.cn/p/producer-consumer-model-in-golang/"/>
+    <id>https://fly97.cn/p/producer-consumer-model-in-golang/</id>
+    <published>2021-11-27T14:55:00.000Z</published>
+    <updated>2021-11-27T14:55:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p><p><strong>关键词</strong>：生产者消费者模型，golang</p><a id="more"></a><p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p><h2 id="简易生产者模型">简易生产者模型</h2><p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line"><span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">time.Sleep(time.Second)</span><br><span class="line">fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">results &lt;- j * <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line"><span class="comment">// 开启3个goroutine</span></span><br><span class="line"><span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line"><span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 分配5个任务</span></span><br><span class="line"><span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">jobs &lt;- j</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">&lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词&lt;/strong&gt;：生产者消费者模型，golang&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="golang" scheme="https://fly97.cn/tags/golang/"/>
+    
+  </entry>
+  
+  <entry>
     <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
     <link href="https://fly97.cn/p/install-and-configure-coturn-in-debian/"/>
     <id>https://fly97.cn/p/install-and-configure-coturn-in-debian/</id>
@@ -425,25 +445,6 @@
     <category term="ROS" scheme="https://fly97.cn/tags/ROS/"/>
     
     <category term="camera calibration" scheme="https://fly97.cn/tags/camera-calibration/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>零基础入门ROS(二)</title>
-    <link href="https://fly97.cn/p/ros-tutorial-02/"/>
-    <id>https://fly97.cn/p/ros-tutorial-02/</id>
-    <published>2021-04-26T11:48:00.000Z</published>
-    <updated>2021-04-26T11:48:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p><a id="more"></a><h3 id="ros中的工作空间">ROS中的工作空间</h3><h4 id="工作空间是什么">工作空间是什么</h4><p>工作空间是一个存放工程相关开发文件的文件夹，ROS默认使用的是catkin编译系统。</p><p>典型的工作空间包含以下四个目录空间：</p><ol type="1"><li><code>src</code>：代码空间，开发过程中最常用的文件夹。用来存放所有ROS功能包的源码文件。</li><li><code>build</code>：编译空间，用来存储工作空间编译过程中产生缓存信息和中间文件。</li><li><code>devel</code>：开发空间，用来放置编译生成的可执行文件。</li><li><code>install</code>：安装空间，编译成功后，可以使用<code>make install</code>命令将可执行文件安装到该空间中，运行该空间中的环境变量脚本，即可以在终端中运行这些可执行文件。注意：安装空间在工作空间中不是必须的，很多工作空间中没有该文件夹。</li></ol><h4 id="创建工作空间">创建工作空间</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p ~/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> ~/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure><h4 id="编译工作空间">编译工作空间</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure><h4 id="设置环境变量">设置环境变量</h4><p>编译完成后<code>devel</code>文件夹下会生成<code>setup.bash</code>形式的环境变量设置脚本，使用<code>source</code>命令运行这些脚本文件，则工作空间的环境变量可以生效。</p><p>注意：每一次编译完成后都要运行一次。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure><p>运行以下命令查看环境变量是否生效：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure><p>若生效则会显示出当前工作空间的路径。</p><h4 id="创建功能包">创建功能包</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/catkin_ws/src</span><br><span class="line">catkin_create_pkg subsciber rospy std_msgs geometry_msgs</span><br></pre></td></tr></table></figure><p>其中<code>subsciber</code>是包名，剩下的是功能包所需要的依赖。</p><p>创建完成后，需要<strong>编译工作空间</strong>，并且<strong>设置环境变量</strong>。</p><h4 id="查看功能包所在的工作空间">查看功能包所在的工作空间</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rospack find subsciber</span><br></pre></td></tr></table></figure><h3 id="话题和服务">话题和服务</h3><h4 id="话题">话题</h4><p>消息以一种发布/订阅的方式传递。一个节点可以订阅多个话题，一个话题也可以被多个节点订阅。两个节点通信时，启动顺序没有强制要求，且<strong>实时性</strong>较弱，不适用于双向的同步传输。</p><h4 id="服务">服务</h4><p>服务是一种带有应答的通信机制。ROS只允许有一个节点提供指定命名的服务。实时性较强，适用于两个节点之间的同步传输。</p><table><thead><tr class="header"><th></th><th>话题</th><th>服务</th></tr></thead><tbody><tr class="odd"><td>同步性</td><td>异步</td><td>同步</td></tr><tr class="even"><td>通信模型</td><td>发布/订阅</td><td>客户端/服务端</td></tr><tr class="odd"><td>底层协议</td><td>ROSTCP/ROSUDP</td><td>ROSTCP/ROSUDP</td></tr><tr class="even"><td>反馈机制</td><td>无</td><td>有</td></tr><tr class="odd"><td>缓冲区</td><td>有</td><td>无</td></tr><tr class="even"><td>实时性</td><td>弱</td><td>强</td></tr><tr class="odd"><td>节点关系</td><td>多对多</td><td>一对多（一个server）</td></tr><tr class="even"><td>适用场景</td><td>数据传输</td><td>逻辑处理</td></tr></tbody></table>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;最近的小车需要用到ROS，学习的过程做个记录。&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="ROS" scheme="https://fly97.cn/tags/ROS/"/>
     
   </entry>
   
