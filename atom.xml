@@ -37,6 +37,51 @@
   </entry>
   
   <entry>
+    <title>Ubuntu安装kafka和zookeeper并设置开机自动启动</title>
+    <link href="https://fly97.cn/p/install-kafka-on-ubuntu2004/"/>
+    <id>https://fly97.cn/p/install-kafka-on-ubuntu2004/</id>
+    <published>2021-11-28T14:54:48.000Z</published>
+    <updated>2021-11-28T14:54:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>kafka是一个分布式消息队列。具有高性能、持久化、多副本备份、横向扩展能力。生产者往队列里写消息，消费者从队列里取消息进行业务逻辑。一般在架构设计中起到解耦、削峰、异步处理的作用。kafka对外使用topic的概念，生产者往topic里写消息，消费者从读消息。为了做到水平扩展，一个topic实际是由多个partition组成的，遇到瓶颈时，可以通过增加partition的数量来进行横向扩容。单个parition内是保证消息有序。每新写一条消息，kafka就是在对应的文件append写，所以性能非常高。</p><p>本文介绍如何在ubuntu上安装kafka并设置开机自动启动。</p><p><strong>关键词：kafka，ubuntu，linux</strong></p><a id="more"></a><h3 id="安装kafka">安装kafka</h3><h4 id="下载">下载</h4><p>下载地址：https://kafka.apache.org/downloads</p><p>这里以 <strong><a href="https://www.apache.org/dyn/closer.cgi?path=/kafka/3.0.0/kafka_2.12-3.0.0.tgz">kafka_2.12-3.0.0.tgz</a> </strong>为例。</p><h4 id="解压">解压</h4><p>下载完毕以后上传到服务器并将其解压：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvzf kafka_2.12-3.0.0.tgz</span><br></pre></td></tr></table></figure><h4 id="修改配置">修改配置</h4><p>默认配置 <code>advertised.listeners=PLAINTEXT://your.host.name:9092</code>修改为</p><p><code>advertised.listeners=PLAINTEXT://&lt;ip&gt;:9092</code></p><p>其中ip是服务器ip，hostname和端口是用来建议给生产者和消费者使用的，如果没有设置，将会使用<strong>listener</strong>的设置；</p><p>如果<strong>listener</strong>也没有设置，将使用<code>java.net.InetAddress.getCanonicalHostName()</code>来获取hostname和port，通常这个获取的值就是<code>localhost</code>.</p><p>"PLAINTEXT"表示协议，可选的值有PLAINTEXT和SSL，hostname可以指定IP地址，<strong>不可以用"0.0.0.0"</strong>，一般用<strong>公网ip</strong>或者<strong>局域网内的ip</strong>。</p><p>如果hostname为空表示只对默认的网络接口(localhost)有效；如果没有配置advertised.listeners，就使用listeners的配置通告给消息的生产者和消费者，这个过程是在生产者和消费者获取源数据(metadata)。</p><h4 id="其他配置">其他配置</h4><p>见文末。</p><h3 id="运行kafka">运行kafka</h3><p>运行kafka之前还需要安装JDK，具体可参考笔者的这篇文章：</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;kafka是一个分布式消息队列。具有高性能、持久化、多副本备份、横向扩展能力。生产者往队列里写消息，消费者从队列里取消息进行业务逻辑。一般在架构设计中起到解耦、削峰、异步处理的作用。kafka对外使用topic的概念，生产者往topic里写消息，消费者从读消息。为了做到水平扩展，一个topic实际是由多个partition组成的，遇到瓶颈时，可以通过增加partition的数量来进行横向扩容。单个parition内是保证消息有序。每新写一条消息，kafka就是在对应的文件append写，所以性能非常高。&lt;/p&gt;
+&lt;p&gt;本文介绍如何在ubuntu上安装kafka并设置开机自动启动。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词：kafka，ubuntu，linux&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="linux" scheme="https://fly97.cn/tags/linux/"/>
+    
+    <category term="kafka" scheme="https://fly97.cn/tags/kafka/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Ubuntu配置jdk-12环境</title>
+    <link href="https://fly97.cn/p/install-jdk12-on-ubuntu2004/"/>
+    <id>https://fly97.cn/p/install-jdk12-on-ubuntu2004/</id>
+    <published>2021-11-28T14:54:48.000Z</published>
+    <updated>2021-11-28T14:54:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p><p><strong>关键词：jdk，ubuntu，linux</strong></p><a id="more"></a><h3 id="下载jdk">下载jdk</h3><p>下载相应版本的jdk，这里以jdk-12为例：</p><p>https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html</p><p><img src="image-20211130153041694.png" /></p><p>此处需要登录Oracle账号。</p><p>根据自己的系统类型选择即可，这里选择打包好的<strong>二进制文件.tar.gz</strong>。</p><p>下载完上传到服务器即可。</p><h3 id="安装jdk">安装jdk</h3><h4 id="解压文件">解压文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xvfz jdk-12.0.2_linux-x64_bin.tar.gz</span><br></pre></td></tr></table></figure><p>移动到目录</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv jdk-12.0.2 /usr/<span class="built_in">local</span>/</span><br></pre></td></tr></table></figure><h4 id="设置环境变量">设置环境变量</h4><p>设置环境变量一般有三种：</p><ul><li><code>/etc/profile</code>：对全部用户生效，对所有shell解释器生效；</li><li><code>/etc/bash.bashrc</code>：对全部用户生效，对bash解释器生效；</li><li><code>/home/&lt;user_name&gt;/.bashrc</code>：仅对当前用户名生效，对bash解释器生效。</li></ul><p>这里选择第二种。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk-12.0.2</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="comment"># export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span></span><br></pre></td></tr></table></figure><h3 id="检查jdk是否安装成功">检查jdk是否安装成功</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure><p><img src="image-20211130155722694.png" /></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac -version</span><br></pre></td></tr></table></figure><p><img src="image-20211130155802514.png" /></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词：jdk，ubuntu，linux&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="linux" scheme="https://fly97.cn/tags/linux/"/>
+    
+    <category term="jdk" scheme="https://fly97.cn/tags/jdk/"/>
+    
+  </entry>
+  
+  <entry>
     <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
     <link href="https://fly97.cn/p/install-and-configure-coturn-in-debian/"/>
     <id>https://fly97.cn/p/install-and-configure-coturn-in-debian/</id>
@@ -402,49 +447,6 @@
     <category term="Debian" scheme="https://fly97.cn/tags/Debian/"/>
     
     <category term="qbittorrent-nox" scheme="https://fly97.cn/tags/qbittorrent-nox/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Dedian 10 使用qbittorrent-nox web</title>
-    <link href="https://fly97.cn/p/qbittorrent-nox-on-debian/"/>
-    <id>https://fly97.cn/p/qbittorrent-nox-on-debian/</id>
-    <published>2021-05-05T05:48:00.000Z</published>
-    <updated>2021-05-05T05:48:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p><a id="more"></a><h3 id="下载安装包">下载安装包</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure><h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure><p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p><h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;qBittorrent Command Line Client</span><br><span class="line">After&#x3D;network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;forking</span><br><span class="line">User&#x3D;qbittorrent-nox</span><br><span class="line">Group&#x3D;qbittorrent-nox</span><br><span class="line">UMask&#x3D;007</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;qbittorrent-nox -d --webui-port&#x3D;8090</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure><p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure><h3 id="修改web访问用户及密码">修改web访问用户及密码</h3><p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p><p>在tools-options-Web UI中找到Authentication，修改username及password。</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Dedian 10 使用qbittorrent-nox web&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="Debian" scheme="https://fly97.cn/tags/Debian/"/>
-    
-    <category term="qbittorrent-nox" scheme="https://fly97.cn/tags/qbittorrent-nox/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>零基础入门ROS(三)</title>
-    <link href="https://fly97.cn/p/ros-tutorial-03/"/>
-    <id>https://fly97.cn/p/ros-tutorial-03/</id>
-    <published>2021-04-26T11:48:00.000Z</published>
-    <updated>2021-04-26T11:48:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p><p>今天写的主要是使用opencv进行相机标定（Camera Calibration）的步骤。</p><a id="more"></a><h3 id="下载opencv源码">下载opencv源码</h3><p>这里用到的源码版本是opencv3.2.0，操作环境是Ubuntu 18.04 LTS。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/opencv/opencv/archive/refs/tags/3.2.0.tar.gz</span><br><span class="line">tar -xvf 3.2.0.tar.gz</span><br></pre></td></tr></table></figure><h3 id="使用已有的图片进行标定">使用已有的图片进行标定</h3><h4 id="编译camera_calibration.cpp">编译camera_calibration.cpp</h4><h5 id="进入指定目录">进入指定目录</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd opencv-3.2.0</span><br><span class="line">cd samples&#x2F;cpp&#x2F;tutorial_code&#x2F;calib3d&#x2F;camera_calibration</span><br></pre></td></tr></table></figure><h5 id="创建cmakelist.txt文件">创建CMakeList.txt文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim CMakeLists.txt</span><br></pre></td></tr></table></figure><p>复制下列代码到文件.</p><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( camera_calibration camera_calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( camera_calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure><h5 id="编译">编译</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir build </span><br><span class="line">cd build </span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure><p><img src="calibration01.png" /></p><h5 id="修改参数">修改参数</h5><p>编辑同级目录下的<code>in_VID5.xml</code>文件，根据标定靶的行数和列数来修改参数。这里的使用的标定靶一共有<strong>6</strong>行，每一行有8个内部角点。</p><p><img src="calibration02.png" /></p><p><img src="calibration03.png" /></p><p>其中<code>VID5.xml</code>存放的是标定图片路径，一般图片应不少于3张，图片越多标定效果越好。</p><p><img src="calibration04.png" /></p><h5 id="标定">标定</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mv build&#x2F;camera_calibration .</span><br><span class="line">.&#x2F;camera_calibration .&#x2F;in_VID5.xml</span><br></pre></td></tr></table></figure><p><img src="calibration05.png" /></p><p>生成的out_camera_data.xml就是标定后得到的参数文件。</p><h3 id="使用视频对摄像头进行标定">使用视频对摄像头进行标定</h3><h4 id="编译calibration.cpp">编译calibration.cpp</h4><h5 id="进入指定目录-1">进入指定目录</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd opencv-3.4.3</span><br><span class="line">mkdir -p ..&#x2F;calibration_ws</span><br><span class="line">cp samples&#x2F;cpp&#x2F;calibration.cpp ..&#x2F;calibration_ws</span><br><span class="line">cd ..&#x2F;calibration_ws</span><br></pre></td></tr></table></figure><h5 id="创建cmakelists.txt文件">创建CMakeLists.txt文件</h5><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( calibration calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure><h5 id="编译-1">编译</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure><p><img src="calibration06.png" /></p><h5 id="标定-1">标定</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x calibration</span><br><span class="line">./calibration -w=8 -h=6</span><br></pre></td></tr></table></figure><p>这里的h指的是标定靶一共有<strong>6</strong>行，w指的是每一行有<strong>8</strong>个内部角点。</p><p>按g键开始标定。</p><p><img src="calibration07.png" /></p><p>标定完毕。</p><p><img src="calibration08.png" /></p><p><img src="calibration09.png" /></p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;最近的小车需要用到ROS，学习的过程做个记录。&lt;/p&gt;
-&lt;p&gt;今天写的主要是使用opencv进行相机标定（Camera Calibration）的步骤。&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="ROS" scheme="https://fly97.cn/tags/ROS/"/>
-    
-    <category term="camera calibration" scheme="https://fly97.cn/tags/camera-calibration/"/>
     
   </entry>
   
