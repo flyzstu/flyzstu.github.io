@@ -1268,6 +1268,28 @@
       </tags>
   </entry>
   <entry>
+    <title>golang LogAgent 项目实战（三）</title>
+    <url>/p/LogAgent-project-action-in-golang-3/</url>
+    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
+<p><strong>关键词：日志收集项目</strong></p>
+<a id="more"></a>
+<h2 id="架构图">架构图</h2>
+<p><img src="image-20211130214306450.png" /></p>
+<h3 id="logagent工作流程">LogAgent工作流程</h3>
+<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="往kafka里写日志">往Kafka里写日志</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="第一版程序">第一版程序</h4>
+<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
+<p><img src="image-20211201205643407.png" /></p>
+<p>设计包的入口函数时，要考虑上面的设计模式。</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang LogAgent 项目实战（二）</title>
     <url>/p/LogAgent-project-action-in-golang-2/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1281,6 +1303,105 @@
 <p>和点对点方式不同，发布到topic的消息被所有订阅者消费（类似于关注了微信公众号的人都能收到推送的文章）。</p>
 <p>补充：发布订阅模式下，放发布者消息量很大时，显然单个订阅者的处理能力是不足的，实际上现实场景中是<strong>多个订阅者节点组成一个订阅组</strong>负载均衡消费topic消息即<strong>分组订阅</strong>，这样订阅者很容易实现消费能力线性扩展。</p>
 <p>对于不同的消息订阅者，可以看作是一个topic下有多个Queue，每个Queue是点对点的方式，Queue之间是发布订阅方式。</p>
+<h2 id="kafka">kafka</h2>
+<p>Apache Kafka由著名社交公司LinkdIn开发， 最初是被设计用来解决Linkedin公司内部海量日志传输等问题。</p>
+<p>kafka实验Scala语言编写，于2011年开源并进入Apache孵化器，于2012年10月正式毕业，现为Apach顶级项目。</p>
+<h3 id="介绍">介绍</h3>
+<p>Kafka是一个分布式数据流平台，可以运行在单个服务器上，也可以在多台服务器上部署行程集群。它提供了发布和订阅功能，使用者可以发送数据到Kafka，也可以从Kafka中读取数据（以便进行后续的处理）。</p>
+<p>Kafka 具有高吞吐、低延迟、高容错等特点。</p>
+<p><img src="LogAgent%20项目实战（二）/image-20211201141121142.png" /></p>
+<ul>
+<li><strong>Producer</strong>：Producer即生产者，消息的生产者，是消息的入口。</li>
+<li><strong>kafka cluster</strong>：kafka集群，一台或者多台服务器组成
+<ul>
+<li><strong>Broker</strong>：Broker是指部署了Kafka实例的服务器节点。每个服务器上由一个或者多个Kafka的实例。姑且将每个broker对应一台服务器，每个Kafka集群里的broker都有一个不重复的编号，如图中的broker-0、broker-1等。</li>
+<li><strong>Topic</strong>：消息的主题，可以理解为消息的分类，kafka的数据就保存在topic。每个broker上都可以创建多个topic。实际应用中通常是一个业务线创建一个topic。</li>
+<li><strong>Partition</strong>：Topic的分区，每个topic可以由多个分区，分区的作用是做负载，提高kafka的吞吐量。同一个topic在不同的分区的数据是不重复的，partition的表现形式就是一个个的文件夹。</li>
+<li><strong>Replication</strong>：每一个分区在不同的Broker上都有副本，副本的作用是做备胎。当主分区（Leader）宕机时会重新选择一个备胎（Follower）上位，成为Leader。在Kafka中绝对副本的最大数量是10个，且副本的数量不能大于Broker的数量，follower和leader<strong>绝对是在不同的机器</strong>，<strong>同一机器对同一个分区也只能存放一个副本</strong>（包括自己）。</li>
+</ul></li>
+</ul>
+<h3 id="工作流程">工作流程</h3>
+<p>Producer是生产者，是数据的入口，Producer在写入数据的时候会把数据写入到<strong>leader</strong>中，不会将数据直接写入follower！</p>
+<p><img src="LogAgent%20项目实战（二）/image-20211201144116325.png" /></p>
+<ol type="1">
+<li>生产者从Kafka集群中获取分区leader信息</li>
+<li>生产者将消息发送给leader</li>
+<li>leader将消息写入本地磁盘</li>
+<li>follower从leader拉取数据 ：<strong>生产者把数据写入Leader之后，Leader其他的副本主动从Leader中拉取数据</strong></li>
+<li>follower将消息写入本地磁盘以后向leader发送ACK（回复确认）</li>
+<li>leader收到所有的follower的ACK后向生产者发送ACK（回复确认）</li>
+</ol>
+<h3 id="选择partition的原则">选择Partition的原则</h3>
+<p>如果某个topic有多个partition，producer怎么知道应该将数据发给那个partition呢？</p>
+<p>Kafka中有以下几个原则：</p>
+<ul>
+<li>partition在写入的时候可以指定写入的partition，如果有指定，则写入对应的partition；</li>
+<li>如果在写入的时候没有指定partition，但是又设置了数据的key，则会根据key的值hash出一个partition；</li>
+<li>如果既没有指定partition，有没有设置key，则会采用轮询方式，即每次取一小段时间的数据写入某个partition，下一小段的时间写入下一个partition。</li>
+</ul>
+<h3 id="ack应答机制">ACK应答机制</h3>
+<p>producer在Kafka写入消息的时候，可以设置参数来确定是否确认kafka接收到数据，这个参数可设置为<strong>0、1、all</strong>。</p>
+<ul>
+<li>0代表producer往集群发送数据不需要等到集群返回，不确保消息发送成功，安全性最低但是效率最高；</li>
+<li>1代表producer往集群发送数据只要leader应答就可以发送下一条，只确保leader发送成功。</li>
+<li>all代表producer往集群发送数据需要所有的follower都完成从leader的同步才会发送下一条，确保leader发送成功和所有的副本都完成备份。安全性最高，但是效率最低。</li>
+</ul>
+<p><strong>注意：若往不存在的topic写数据，kafka会自动创建topic，partition和replication的数量的默认配置都是1。</strong></p>
+<h3 id="topic和数据日志">Topic和数据日志</h3>
+<p><code>topic</code>是统一类别的消息记录（record）的集合。 在Kafka中，一个主题通常有多个订阅者，对于每个主题，kafka集群维护了一个分区数据日志文件结构如下：</p>
+<p><img src="LogAgent 项目实战（二）/image-20211201152943721.png" style="zoom: 33%;" /></p>
+<p>每个partition都是一个有序而且不可变的消息记录集合，当新的数据写入时，就被追加到partition的末尾。在每个partition中，每条消息都会被分配一个顺序的唯一标识，这个表示被称为offset，<strong>即偏移量</strong> 。</p>
+<ul>
+<li><strong>Kafka只保证在同一个partition内部消息是有序的，在不同partition之间，不能保证消息有序。</strong></li>
+</ul>
+<p>顺序读取，所以读取更快。</p>
+<p>Kafka可以配置一个保留期限，用来标识日志会在Kafka集群中保留多长时间，Kafka集群回保留在保留期限内所以被发布的消息，不管这些消息是否被消费过。比如保留期限设置为两天，那么数据被发布到Kafka两天以内，所有的数据都可以被消费。当超过两天，这些数据都会被清空，一边为后续的数据腾出空间。由于kafka会将数据进行持久化存储（即写入到硬盘上），所以保留的数据大小可以设置为一个比较大的值。</p>
+<h3 id="partition结构">Partition结构</h3>
+<p>Partition在服务器上的表现形式就是一个一个的文件夹，每个partition的文件夹下会有多组segment文件，每组segment文件又包含<code>.index</code>文件，<code>.log</code>文件和<code>.timeindex</code>文件三个文件，其中<code>.log</code>文件是实际存储message的地方，而<code>.index</code>和<code>.timeindex</code>文件为索引文件，用于检索消息。</p>
+<h3 id="消费数据">消费数据</h3>
+<p>多个消费者实例可以组成一个消费者组，并用一个便签来标识这个消费者组。一个消费者组的不同消费者实例可以运行在不同的进程甚至不同的个服务器上。</p>
+<ul>
+<li>如果所有的消费者实例都在同一个消费者组中，那么消息记录会被很好的均衡发送到每个消费者实例。</li>
+<li>如果所有的消费者实例都在不同的消费者组，那么每一条纤细记录会被广播到每一个消费者实例。</li>
+</ul>
+<p><img src="LogAgent%20项目实战（二）/image-20211201154851552.png" /></p>
+<ul>
+<li>同一消费者组中，每个消费者实例可以消费多个分区；</li>
+<li>每个分区最多只能被消费者组中的一个实例消费；</li>
+</ul>
+<h3 id="总结关键点">总结关键点</h3>
+<ol type="1">
+<li>Kafka集群的架构
+<ol type="1">
+<li>broker</li>
+<li>topic</li>
+<li>partition：分区，把同一个topic分成不同的分区，提高负载
+<ol type="1">
+<li>leader：分区的主节点</li>
+<li>follower：分区的从节点</li>
+</ol></li>
+<li>Consumer Group：消费组</li>
+</ol></li>
+<li>生产者往Kafka发送数据的流程（6步）</li>
+<li>选择分区的模式（三种）
+<ol type="1">
+<li>指定分区写</li>
+<li>指定key，kafka根据key做hash决定写分区</li>
+<li>轮询方式</li>
+</ol></li>
+<li>生产者往kafka发送数据的模式
+<ol type="1">
+<li>0：把数据发哦是那个给leader就成功，效率最高，安全性最低</li>
+<li>1：把数据发送给leader，等待leader回ack</li>
+<li>all：把数据发送给leader，follow从leader拉取数据成功后b回复ack给leader，leader收到所有的follower都回复ack给leader以后，生产者才会发送下一条数据</li>
+</ol></li>
+<li>分区存储文件的原理</li>
+<li>为什么Kafka快</li>
+<li>消费者组消费数据的原理<strong>（参考官方文档）</strong></li>
+</ol>
+<h2 id="zookeeper">Zookeeper</h2>
+<p>zookeeper是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby的一个开源实现，是集群的管理者，监视着集群中各个系欸但的状态，并根据节点提交的反馈进行下一步合理操作。最终将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
+<p><img src="LogAgent%20项目实战（二）/image-20211201190723113.png" /></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
