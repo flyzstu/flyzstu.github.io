@@ -1263,6 +1263,9 @@
 <h3 id="下载并安装">下载并安装</h3>
 <p>这里选择的官网下载的版本。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://download.redis.io/releases/redis-6.2.6.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="直接安装编译好的版本">直接安装编译好的版本</h3>
+<p><a href="https://fly97.coding.net/s/ab90cc76-374d-49d4-a79f-edf6ec5e7d79">jemalloc_5.2.1-1_amd64.deb</a></p>
+<p><a href="https://fly97.coding.net/s/b45f9603-dc1d-4c13-9e32-b94a7e236fa4">redis_6.2.6-1_amd64.deb</a></p>
 <h4 id="解压">解压</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf redis-6.2.6.tar.gz</span><br></pre></td></tr></table></figure>
 <h4 id="编译安装">编译安装</h4>
@@ -1275,8 +1278,14 @@
 <h6 id="有可能出现的问题">有可能出现的问题</h6>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">zmalloc.h:50:10: fatal error: jemalloc/jemalloc.h:</span><br></pre></td></tr></table></figure>
 <h6 id="解决方法">解决方法</h6>
-<p>使用以下命令进行编译</p>
+<ol type="1">
+<li>使用以下命令进行编译</li>
+</ol>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make MALLOC=libc</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li><p>安装jemalloc</p>
+<p><a href="https://blog.csdn.net/SweeNeil/article/details/94648313">jemalloc安装与使用</a></p></li>
+</ol>
 <h4 id="打包成deb包">打包成deb包</h4>
 <p>为什么要打包成deb包呢？可以方便后续卸载等其他操作。</p>
 <h5 id="首先安装checkinstall">首先安装checkinstall</h5>
@@ -1297,6 +1306,12 @@
 <p>将配置文件移动到系统目录下</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir /etc/redis </span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv redis.conf /etc/redis/</span><br></pre></td></tr></table></figure>
+<h5 id="修改监听ip">修改监听IP</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211203163721863.png" /></p>
+<h5 id="修改端口">修改端口</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211203163751891.png" /></p>
 <h4 id="设置开机自启动">设置开机自启动</h4>
 <p>将redis使用service进行管理</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">touch redis.service</span><br></pre></td></tr></table></figure>
