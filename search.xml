@@ -1590,12 +1590,16 @@
 <li>快速：每秒10000次写入的基准速度</li>
 <li>可靠：使用Raft算法实现了强一致、高可用的服务存储目录
 <ul>
-<li>Raft协议
+<li><strong>Raft协议</strong>
 <ol type="1">
 <li>选举</li>
 <li>日志复制机制</li>
 <li>异常处理（脑裂）</li>
 <li>zookeeper的zad协议的区别</li>
+</ol></li>
+<li><strong>etcd的watch是怎么实现的？</strong>
+<ol type="1">
+<li>etcd底层如何实现watch给客户端发通知的</li>
 </ol></li>
 </ul></li>
 </ul>
@@ -3294,12 +3298,13 @@
 <a id="more"></a>
 <h2 id="安装coturn">安装coturn</h2>
 <p><a href="https://github.com/coturn/coturn">GitHub - coturn/coturn: coturn TURN server project</a></p>
-<p>备份仓库：https://e.coding.net/fly97/github-projects/coturn.git</p>
-<p>预编译好的deb文件：</p>
-<p><a href="https://fly97.coding.net/s/01f90991-71c5-435d-b22a-896eb991dba3">coturn_4.5.2-1_amd64.deb</a></p>
-<p><a href="https://fly97.coding.net/s/4328d84c-23db-41db-a52a-a1b7707caf99">libevent-2.1.12_2.1.12-1_amd64.deb</a></p>
+<p>备份仓库：https://codechina.csdn.net/mirrors/coturn/coturn</p>
 <h3 id="libevent">libevent</h3>
-<p>相关项目：https://github.com/libevent/libevent</p>
+<p>相关项目：</p>
+<ul>
+<li>https://github.com/libevent/libevent</li>
+<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
+</ul>
 <h4 id="注意">注意</h4>
 <p>libevent与openssl的版本对应关系如下：</p>
 <table>
@@ -3322,7 +3327,9 @@
 </table>
 <p>这里使用<code>openssl-1.1</code>和<code>libevent-2.1.12</code>. <strong>安装时注意自己的版本匹配</strong>。</p>
 <h4 id="编译安装">编译安装</h4>
-<p>打包好的源码：<a href="https://fly97.coding.net/s/e14f5a28-954f-4d02-82b4-ee477dbb55fb">libevent-2.1.12-stable.tar.gz</a></p>
+<p>安装openssl依赖：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install libssl-dev</span><br></pre></td></tr></table></figure>
+<p>编译</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvfz libevent-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-2.0.21-stable</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
 <h4 id="直接安装">直接安装</h4>
 <p>编译好的deb文件：<a href="https://fly97.coding.net/s/4328d84c-23db-41db-a52a-a1b7707caf99">libevent-2.1.12_2.1.12-1_amd64.deb</a></p>
@@ -3333,7 +3340,8 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvfz coturn-4.5.2.tar.gz</span><br><span class="line"><span class="built_in">cd</span> coturn-4.5.2</span><br><span class="line">./configure</span><br><span class="line">make </span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
 <h4 id="直接安装-1">直接安装</h4>
 <p>编译好的deb文件：<a href="https://fly97.coding.net/s/01f90991-71c5-435d-b22a-896eb991dba3">coturn_4.5.2-1_amd64.deb</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i coturn_4.5.2-1_amd64.deb</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install coturn -y</span><br></pre></td></tr></table></figure>
+<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
 <h2 id="turn数据库配置">TURN数据库配置</h2>
 <p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
