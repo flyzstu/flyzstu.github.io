@@ -4551,6 +4551,67 @@
       </tags>
   </entry>
   <entry>
+    <title>力扣每日一题之在线选举</title>
+    <url>/p/online-election-in-golang/</url>
+    <content><![CDATA[<p>给你两个证书数组<code>persons</code>和<code>times</code>。在选举中，第<code>i</code>张选票是在时刻为<code>times[i]</code>时投给选举人<code>persons[i]</code>的。</p>
+<p>对于发生在时刻<code>t</code>的每个查询，需要找出在<code>t</code>时刻中领先的候选人的编号。</p>
+<p>在<code>t</code>时刻投出的选票也被我们计入在我们的查询之中。在平局的情况下，最近获得选票的候选人将会获胜。</p>
+<p>你的任务：实现<code>ToVotedCandidate</code>类：</p>
+<ul>
+<li><code>TopVotedCandidate(int[] persons, int[] times)</code>使用<code>persons</code>和<code>times</code>数组初始化对象。</li>
+<li><code>int q(int t)</code>根据前面描述的规则，返回在时刻<code>t</code>在选举中领先的候选人的编号。</li>
+</ul>
+<a id="more"></a>
+<p>输入： <code>["TopVotedCandidate", "q", "q", "q", "q", "q", "q"]</code> <code>[[[0, 1, 1, 0, 0, 1, 0], [0, 5, 10, 15, 20, 25, 30]], [3], [12], [25], [15], [24], [8]]</code> 输出： <code>[null, 0, 1, 1, 0, 0, 1]</code></p>
+<p>解释：</p>
+<ul>
+<li>时刻为0时第0张票投给了0号；
+<ul>
+<li>时刻为3时此时都没有票，所以返回0；</li>
+</ul></li>
+<li>时刻为5时第1张票投给了1号；
+<ul>
+<li>时刻为8时此时票数分布是[0, 1]，因为1是最近获得选票的候选人，因此返回1；</li>
+</ul></li>
+<li>时刻为10时第2张票投给了1号；
+<ul>
+<li>时刻为12时此时票数分布是[0, 1, 1]，此时返回1；</li>
+</ul></li>
+<li>时刻为15时第3张票投给了0号；</li>
+<li>时刻为20时第4张票投给了0号；</li>
+<li>时刻为25时第4张票投给了1号；
+<ul>
+<li>时刻为25时此时票数分布为[0, 1, 1, 0, 0, 1]，又因为1是最近获得票的候选人，因此返回1；</li>
+</ul></li>
+<li>时刻为30时第5张票投给了0号。</li>
+</ul>
+<h2 id="方法一预计算二分查找">方法一：预计算+二分查找</h2>
+<p>记<code>persons</code>的长度为<em>N</em>。我们对输入进行预计算，用一个长度为<em>N</em>的数组<code>tops</code>记录各时间段得票数领先的候选人。具体来说，<code>tops[i]</code>表示 <span class="math display">\[
+\begin{cases}
+times[i]≤t&lt;times[i+1],&amp; 0≤i&lt;N−1 \\
+t≥times[i],&amp; i=N-1
+\end{cases}
+\]</span> 的时间段的领先的候选人，这样的预计算可以通过对<em>persons</em>在<em>time</em>上的计数完成。</p>
+<p>具体实现方法是：</p>
+<ul>
+<li>用一个哈希表<code>voteCounts</code>记录不同的候选人的得票数，用一个变量<code>top</code>表示当前领先的候选人。按时间从小到大遍历<code>persons</code>和<code>times</code>，并更新<code>voteCounts</code>和<code>top</code>，把<code>top</code>放入<code>tops</code>。遍历结束后，我们可以得到一个长度为N的tops，表示各个时间段的票领先的候选人。</li>
+<li>每次查询时，我们在times中找出不大于t且离t最近的元素的下标，这部操作可以通过二分查找完成。到tops索引相同的下标即可返回结果。</li>
+</ul>
+<h3 id="顺序查找">顺序查找</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> TopVotedCandidate <span class="keyword">struct</span> &#123;</span><br><span class="line">	tops        []<span class="keyword">int</span></span><br><span class="line">	times       []<span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Constructor</span><span class="params">(persons, times []<span class="keyword">int</span>)</span> <span class="title">TopVotedCandidate</span></span> &#123;</span><br><span class="line">	tops := []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	top := <span class="number">-1</span></span><br><span class="line">	voteCounts := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">int</span>&#123;<span class="number">-1</span>: <span class="number">-1</span>&#125;</span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> persons &#123;</span><br><span class="line">		voteCounts[p]++</span><br><span class="line">		<span class="keyword">if</span> voteCounts[p] &gt;= voteCounts[top] &#123;</span><br><span class="line">			top = p <span class="comment">// 记录上一个p</span></span><br><span class="line">		&#125;</span><br><span class="line">		tops = <span class="built_in">append</span>(tops, top)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> TopVotedCandidate&#123;tops, times&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *TopVotedCandidate)</span> <span class="title">Q</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">// 顺序查找</span></span><br><span class="line">	gap := <span class="number">10000000</span></span><br><span class="line">	ret := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> index, value := <span class="keyword">range</span> t.times &#123;</span><br><span class="line">		<span class="keyword">if</span> i-value &lt; gap &amp;&amp; i &gt;= value &#123;</span><br><span class="line">			gap = i - value</span><br><span class="line">			ret = index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(t.tops[ret])</span><br><span class="line">	<span class="keyword">return</span> t.tops[ret]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="手写二分查找">手写二分查找</h3>
+<ul>
+<li>区间<code>[left,right]</code>, <strong>left &lt;= right</strong>，i &gt; mid(left=mid+1)，i&lt;mid(right=mid-1)</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *TopVotedCandidate)</span> <span class="title">Q</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">// 二分查找</span></span><br><span class="line">	mid := <span class="number">0</span></span><br><span class="line">	left := <span class="number">0</span></span><br><span class="line">	right := <span class="built_in">len</span>(t.times) - <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">		mid = left + (right-left)/<span class="number">2</span></span><br><span class="line">		<span class="keyword">if</span> i &gt; t.times[mid] &#123;</span><br><span class="line">			left = mid + <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> i &lt; t.times[mid] &#123;</span><br><span class="line">			right = mid - <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> t.tops[mid]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> t.tops[right]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="库函数二分查找">库函数二分查找</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *TopVotedCandidate)</span> <span class="title">Q</span><span class="params">(t <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> c.tops[sort.SearchInts(c.times, t+<span class="number">1</span>)<span class="number">-1</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之最短补全词</title>
     <url>/p/shortest-completing-word-in-golang/</url>
     <content><![CDATA[<p>给你一个字符串<code>licensePlate</code>和一个字符串数组<code>words</code>，请你找出并返回<code>words</code>中最短补全词。</p>
