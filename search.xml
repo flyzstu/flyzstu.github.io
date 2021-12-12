@@ -3305,7 +3305,7 @@
 <li>https://github.com/libevent/libevent</li>
 <li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
 </ul>
-<h4 id="注意">注意</h4>
+<p><strong>注意</strong></p>
 <p>libevent与openssl的版本对应关系如下：</p>
 <table>
 <thead>
@@ -3347,7 +3347,7 @@
 <h2 id="安装coturn">安装Coturn</h2>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
 <p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
-<h2 id="turn数据库配置">TURN数据库配置</h2>
+<h3 id="turn数据库配置">TURN数据库配置</h3>
 <p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
 <p>注意：</p>
@@ -3365,7 +3365,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
 <p><strong>删除普通用户</strong></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="修改turn服务配置文件">修改TURN服务配置文件</h2>
+<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
 <p>配置文件路径为<code>/etc/turnserver.conf</code></p>
 <p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
@@ -3376,7 +3376,7 @@
 <p>tls加密通信需要密钥，可以用openssl工具生成：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
-<h2 id="重启服务">重启服务</h2>
+<h3 id="重启服务">重启服务</h3>
 <p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
 <h2 id="测试是否成功搭建">测试是否成功搭建</h2>
