@@ -6,7 +6,7 @@
   <link href="https://fly97.cn/atom.xml" rel="self"/>
   
   <link href="https://fly97.cn/"/>
-  <updated>2021-12-12T09:20:00.000Z</updated>
+  <updated>2021-12-13T10:51:00.000Z</updated>
   <id>https://fly97.cn/</id>
   
   <author>
@@ -17,9 +17,31 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>力扣每日一题之保持城市天际线</title>
+    <link href="https://fly97.cn/p/max-increase-to-keep-city-skyline/"/>
+    <id>https://fly97.cn/p/max-increase-to-keep-city-skyline/</id>
+    <published>2021-12-13T10:51:00.000Z</published>
+    <updated>2021-12-13T10:51:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>ssss给你一座<code>nxn</code>个街区组成的城市，每个截取都包含一座立方体建筑。给你一个坐标从0开始的<code>nxn</code>整数矩阵<code>grid</code>，其中<code>grid[r][c]</code>表示坐落于<code>r</code>行c列的建筑物的高度。</p><p>城市的天际线是从远处观察城市时，所有建筑物形成的外部轮廓。从东、南、西、北四个方向观测到的天际线可能不同。</p><p>我们被允许为任意数量的建筑物的高度增加任意增量（不同的建筑物的增量可能不同）。高度为0的建筑物的高度也可以增加。然而，增加的建筑物高度不能影响从任何主要方向观察城市的得到的天际线。</p><p>在 <strong>不改变</strong> 从任何主要方向观测到的城市的天际线的前提下，返回建筑物可以增加的最大高度增量总和。</p><a id="more"></a><p><strong>示例1</strong></p><figure><img src="力扣每日一题之保持城市天际线/807-ex1.png" alt="img" /><figcaption aria-hidden="true">img</figcaption></figure><p><strong>输入</strong>：<code>grid = [[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]</code> <strong>输出</strong>：<code>35</code> <strong>解释</strong>：建筑物的高度如上图中心所示。 用红色绘制从不同方向观看得到的天际线。 在不影响天际线的情况下，增加建筑物的高度： <code>gridNew = [ [8, 4, 8, 7],             [7, 4, 7, 7],             [9, 4, 8, 7],             [3, 3, 3, 3] ]</code></p><p><strong>示例2</strong></p><p><strong>输入</strong>：<code>grid=[[0,0,0],[0,0,0],[0,0,0]]</code> <strong>输出</strong>：0 <strong>解释</strong>：增加任何建筑物的高度都会导致天际线的变化。</p><h3 id="方法一贪心算法">方法一：贪心算法</h3><p>从左侧和右侧看，城市天际线等于<strong>矩阵grid每一行的建筑物的最大值</strong>；从顶部和底部看，城市天际线等于<strong>矩阵grid的每一列的建筑物的最大值</strong>。只要<strong>不改变每一行和每一列的建筑物的高度的最大值</strong>，就能保持城市天际线，因此可以使用贪心的思想计算高度建筑可以增加的最大高度。</p><p>由于矩阵grid的行数和列数都是n，因此创建一个两个长度为n的数组rowMax和colMax分别记录建筑物grid的每一行的最大值和每一列的最大值。遍历矩阵grid填入两个数组之后，再次遍历矩阵，计算每个建筑物可以增加的最大值。</p><p>对于<code>0&lt;=i, j&lt;n</code>时，对于第i行和第j列的建筑物，其所在行的建筑物高度的最大值是<code>rowMax[i]</code>，其所在列的建筑物的高度的最大值是<code>colMax[j]</code>。为了保持城市天际线，该建筑物增加后的高度不能超过其所在行和所在列的建筑物高度最大值，即该建筑物增加后的最大高度是<code>min(rowMax[i], colMax[j])</code>。由于该建筑物的原始高度是<code>grid[j][j]</code>，因此该建筑物增加后的最大高度是<code>min(rowMax[i], colMax[j]) - grid[i, j]</code>.</p><p>对于矩阵grid中每个元素可以增加的最大值，即可得到建筑物高度可以增加的最大总和。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line"><span class="keyword">if</span> a &lt; b &#123;</span><br><span class="line"><span class="keyword">return</span> a</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxIncreaseKeepingSkyline</span><span class="params">(grid [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line"><span class="comment">//计算每一行的最大值和每一列的最大值</span></span><br><span class="line">m, n := <span class="built_in">len</span>(grid), <span class="built_in">len</span>(grid[<span class="number">0</span>])</span><br><span class="line">rowMax := <span class="built_in">make</span>([]<span class="keyword">int</span>, m)</span><br><span class="line">colMax := <span class="built_in">make</span>([]<span class="keyword">int</span>, n)</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; m; i++ &#123;</span><br><span class="line"><span class="keyword">for</span> j := <span class="number">0</span>; j &lt; n; j++ &#123;</span><br><span class="line"><span class="keyword">if</span> rowMax[i] &lt; grid[i][j] &#123;</span><br><span class="line">rowMax[i] = grid[i][j]</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> colMax[j] &lt; grid[i][j] &#123;</span><br><span class="line">colMax[j] = grid[i][j]</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 每一个栅格上的建筑物不能超过所在行最大值、所在列最大值两者的最小值</span></span><br><span class="line">    <span class="comment">// 能增加的最大值是这两者的差</span></span><br><span class="line"><span class="keyword">var</span> ret <span class="keyword">int</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; m; i++ &#123;</span><br><span class="line"><span class="keyword">for</span> j := <span class="number">0</span>; j &lt; n; j++ &#123;</span><br><span class="line">ret += min(rowMax[i], colMax[j]) - grid[i][j]</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;ssss给你一座&lt;code&gt;nxn&lt;/code&gt;个街区组成的城市，每个截取都包含一座立方体建筑。给你一个坐标从0开始的&lt;code&gt;nxn&lt;/code&gt;整数矩阵&lt;code&gt;grid&lt;/code&gt;，其中&lt;code&gt;grid[r][c]&lt;/code&gt;表示坐落于&lt;code&gt;r&lt;/code&gt;行c列的建筑物的高度。&lt;/p&gt;
+&lt;p&gt;城市的天际线是从远处观察城市时，所有建筑物形成的外部轮廓。从东、南、西、北四个方向观测到的天际线可能不同。&lt;/p&gt;
+&lt;p&gt;我们被允许为任意数量的建筑物的高度增加任意增量（不同的建筑物的增量可能不同）。高度为0的建筑物的高度也可以增加。然而，增加的建筑物高度不能影响从任何主要方向观察城市的得到的天际线。&lt;/p&gt;
+&lt;p&gt;在 &lt;strong&gt;不改变&lt;/strong&gt; 从任何主要方向观测到的城市的天际线的前提下，返回建筑物可以增加的最大高度增量总和。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="leetcode" scheme="https://fly97.cn/tags/leetcode/"/>
+    
+  </entry>
+  
+  <entry>
     <title>力扣每日一题之位运算的应用</title>
-    <link href="https://fly97.cn/p/to-lower-case-in-golang/"/>
-    <id>https://fly97.cn/p/to-lower-case-in-golang/</id>
+    <link href="https://fly97.cn/p/to-lower-case/"/>
+    <id>https://fly97.cn/p/to-lower-case/</id>
     <published>2021-12-12T09:20:00.000Z</published>
     <updated>2021-12-12T09:20:00.000Z</updated>
     
@@ -39,8 +61,8 @@
   
   <entry>
     <title>力扣每日一题之在线选举</title>
-    <link href="https://fly97.cn/p/online-election-in-golang/"/>
-    <id>https://fly97.cn/p/online-election-in-golang/</id>
+    <link href="https://fly97.cn/p/online-election/"/>
+    <id>https://fly97.cn/p/online-election/</id>
     <published>2021-12-11T09:20:00.000Z</published>
     <updated>2021-12-11T09:20:00.000Z</updated>
     
@@ -65,8 +87,8 @@
   
   <entry>
     <title>力扣每日一题之最短补全词</title>
-    <link href="https://fly97.cn/p/shortest-completing-word-in-golang/"/>
-    <id>https://fly97.cn/p/shortest-completing-word-in-golang/</id>
+    <link href="https://fly97.cn/p/shortest-completing-word/"/>
+    <id>https://fly97.cn/p/shortest-completing-word/</id>
     <published>2021-12-10T11:40:00.000Z</published>
     <updated>2021-12-10T11:40:00.000Z</updated>
     
@@ -428,29 +450,6 @@
     <category term="time" scheme="https://fly97.cn/tags/time/"/>
     
     <category term="golang" scheme="https://fly97.cn/tags/golang/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Python时间处理</title>
-    <link href="https://fly97.cn/p/time-processing-in-python/"/>
-    <id>https://fly97.cn/p/time-processing-in-python/</id>
-    <published>2021-08-25T12:31:00.000Z</published>
-    <updated>2021-08-25T12:31:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p><p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p><p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p><a id="more"></a><h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) <span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure><p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p><p>datetime 是Python处理日期和时间的标准库。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure><h4 id="打印当地时间">打印当地时间</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure><h4 id="unix时间戳转换">unix时间戳转换</h4><h5 id="将时间转换为时间戳">将时间转换为时间戳</h5><ul><li>利用<code>strptime()</code>函数将时间转换为时间数组</li><li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li></ul><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure><h5 id="将时间戳转换为时间">将时间戳转换为时间</h5><p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p><ul><li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li><li>利用<code>strftime()</code>函数重新格式化为时间</li></ul><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure><p>参考链接</p><p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;本文主要介绍了Python时间处理的函数。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;摘要&lt;/strong&gt;：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了&lt;code&gt;pytz&lt;/code&gt;这个处理时区的包。&lt;code&gt;pytz&lt;/code&gt;允许使用Python 2.4或更高版本进行准确的跨平台时区计算。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键词&lt;/strong&gt;：时区计算，pytz，unix时间戳转换&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="time" scheme="https://fly97.cn/tags/time/"/>
-    
-    <category term="Python" scheme="https://fly97.cn/tags/Python/"/>
     
   </entry>
   
