@@ -209,6 +209,18 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang时间处理</title>
+    <url>/p/time-processing-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
+<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git常见操作</title>
     <url>/p/Git-common-operations/</url>
     <content><![CDATA[<p>不说废话，上教程。</p>
@@ -470,18 +482,6 @@
 ]]></content>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang时间处理</title>
-    <url>/p/time-processing-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
-<a id="more"></a>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -4615,15 +4615,13 @@
   <entry>
     <title>力扣每日一题之保持城市天际线</title>
     <url>/p/max-increase-to-keep-city-skyline/</url>
-    <content><![CDATA[<p>ssss给你一座<code>nxn</code>个街区组成的城市，每个截取都包含一座立方体建筑。给你一个坐标从0开始的<code>nxn</code>整数矩阵<code>grid</code>，其中<code>grid[r][c]</code>表示坐落于<code>r</code>行c列的建筑物的高度。</p>
+    <content><![CDATA[<p>给你一座<code>nxn</code>个街区组成的城市，每个截取都包含一座立方体建筑。给你一个坐标从0开始的<code>nxn</code>整数矩阵<code>grid</code>，其中<code>grid[r][c]</code>表示坐落于<code>r</code>行c列的建筑物的高度。</p>
 <p>城市的天际线是从远处观察城市时，所有建筑物形成的外部轮廓。从东、南、西、北四个方向观测到的天际线可能不同。</p>
 <p>我们被允许为任意数量的建筑物的高度增加任意增量（不同的建筑物的增量可能不同）。高度为0的建筑物的高度也可以增加。然而，增加的建筑物高度不能影响从任何主要方向观察城市的得到的天际线。</p>
 <p>在 <strong>不改变</strong> 从任何主要方向观测到的城市的天际线的前提下，返回建筑物可以增加的最大高度增量总和。</p>
 <a id="more"></a>
 <p><strong>示例1</strong></p>
-<figure>
-<img src="力扣每日一题之保持城市天际线/807-ex1.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="807-ex1.png" /></p>
 <p><strong>输入</strong>：<code>grid = [[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]</code> <strong>输出</strong>：<code>35</code> <strong>解释</strong>：建筑物的高度如上图中心所示。 用红色绘制从不同方向观看得到的天际线。 在不影响天际线的情况下，增加建筑物的高度： <code>gridNew = [ [8, 4, 8, 7],             [7, 4, 7, 7],             [9, 4, 8, 7],             [3, 3, 3, 3] ]</code></p>
 <p><strong>示例2</strong></p>
 <p><strong>输入</strong>：<code>grid=[[0,0,0],[0,0,0],[0,0,0]]</code> <strong>输出</strong>：0 <strong>解释</strong>：增加任何建筑物的高度都会导致天际线的变化。</p>
@@ -4715,6 +4713,87 @@ t≥times[i],&amp; i=N-1
 <h2 id="方法一统计字符出现次数">方法一：统计字符出现次数</h2>
 <p>根据题意，先统计<code>licesePlate</code>中每个字母的出现次数（忽略大小写），然后遍历<code>words</code>中的每个单词，若26个英文字母在该单词中初选次数均小于<code>licesePlate</code>中才出现的次数，则该单词是一个补全词。返回最短且最靠前的补全词。</p>
 <figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;unicode&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">shortestCompletingWord</span><span class="params">(licensePlate <span class="keyword">string</span>, words []<span class="keyword">string</span>)</span> <span class="params">(ans <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	cnt := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> _, ch := <span class="keyword">range</span> licensePlate &#123;</span><br><span class="line">		<span class="keyword">if</span> unicode.IsLetter(ch) &#123; <span class="comment">// 如果是字母</span></span><br><span class="line">			cnt[unicode.ToLower(ch)-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span> <span class="comment">// 就让他变成小写</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">next:</span><br><span class="line">	<span class="keyword">for</span> _, word := <span class="keyword">range</span> words &#123;</span><br><span class="line">		c := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">		<span class="keyword">for</span> _, ch := <span class="keyword">range</span> word &#123;</span><br><span class="line">			c[ch-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">26</span>; i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> c[i] &lt; cnt[i] &#123;</span><br><span class="line">				<span class="keyword">continue</span> next</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> ans == <span class="string">&quot;&quot;</span> || <span class="built_in">len</span>(word) &lt; <span class="built_in">len</span>(ans) &#123;</span><br><span class="line">			ans = word</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣每日一题之课程表Ⅲ</title>
+    <url>/p/course-schedule-iii/</url>
+    <content><![CDATA[<p>这里有<code>n</code>门不同的在线课程，按<code>1</code>到<code>n</code>编号。给你一个数组<code>courses</code>，其中<code>courses[i] = [durationi, lastDayi]</code>表示第<code>i</code>门课将会持续上<code>durationi</code>天课，并且必须不晚于<code>lastDayi</code>的时候完成。</p>
+<p>你的学期从第一天开始，且不能同时修读两门及两门以上的课程。</p>
+<p>返回你最多可以修读的课程数目。</p>
+<p><strong>示例1：</strong></p>
+<p>输入：<code>courses = [[100, 200], [200, 1300], [1000, 1250], [2000, 3200]]</code> 输出：<code>3</code> 解释： 这里一共有 4 门课程，但是你最多可以修 3 门： 首先，修第 1 门课，耗费 100 天，在第 100 天完成，在第 101 天开始下门课。 第二，修第 3 门课，耗费 1000 天，在第 1100 天完成，在第 1101 天开始下门课程。 第三，修第 2 门课，耗时 200 天，在第 1300 天完成。 第 4 门课现在不能修，因为将会在第 3300 天完成它，这已经超出了关闭日期。</p>
+<p><strong>示例2：</strong></p>
+<p>输入：<code>courses = [[1, 2]]</code> 输出：<code>1</code></p>
+<p><strong>示例3：</strong></p>
+<p>输入：<code>courses = [[3, 2],[4,3]]</code> 输出：<code>0</code></p>
+<a id="more"></a>
+<h2 id="方法一优先队列贪心">方法一：优先队列+贪心</h2>
+<p><strong>思路</strong></p>
+<p>对于两门课<span class="math inline">\((t1, d1)\)</span>和<span class="math inline">\((t2, d2)\)</span>，如果后者关闭的时间较晚，即<span class="math inline">\(d1 \le d2\)</span>，那先学习前者，再学习后者，总是最优的。这是因为：</p>
+<ul>
+<li><p>假设最开始学习的时间点为<span class="math inline">\(x\)</span>，如果先学习前者，再学习后者，那么需要满足： <span class="math display">\[
+\begin{cases}
+x+t_1 \le d_1 \\
+x+t_1+t_2\le d_2 \\
+\end{cases}
+\]</span></p></li>
+<li><p>如果先学习后者，再学习前者，那么需要满足：</p></li>
+</ul>
+<p><span class="math display">\[
+\begin{cases}
+x+t_2 \le d_2 \\
+x+t_1+t_2\le d_1 \\
+\end{cases}
+\]</span></p>
+<p>如果 <span class="math inline">\(x+t_1+t_2 \le d_1\)</span>成立，由于<span class="math inline">\(d_1 \le d_2\)</span>，那么<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>同时成立。这说明，如果能【先学习后者，再学习前者】那么一定能【先学习前者，再学习后者】。如果<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>成立，则不能推出<span class="math inline">\(x+t_2+t_1 \le d_1\)</span>成立。<strong>虽然能【先学习前者，再学习后者】，但不能【先学习后者，再学习前者】。</strong></p>
+<p>因此，我们可以将所有的课程按照关闭时间<span class="math inline">\(d\)</span>进行升序排序，再依次挑选课程并按照顺序进行学习。</p>
+<p>在遍历的过程中，假设我们当前遍历到了第<span class="math inline">\(i\)</span>门课<span class="math inline">\((t_i, d_i)\)</span>，而在前<span class="math inline">\(i-1\)</span>门课程中我们选择了<span class="math inline">\(k\)</span>门课<span class="math inline">\((t_{x1}, d_{x1}),(t_{x2}, d_{x2}), ... ,(t_{xk}, d_{xk})\)</span>，满足<span class="math inline">\(x_1&lt;x_2&lt; \cdots x_k\)</span>，那么有： <span class="math display">\[
+\begin{cases}
+t_{x1} \le d_{x1} \\
+t_{x1}+t_{x2} \le d_{x2} \\
+\cdots \\
+t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
+\end{cases}
+\]</span> 如果上述选择方案是前<span class="math inline">\(i-1\)</span>门课程的【最优方案】：即不存在能选择<span class="math inline">\(k+1\)</span>门课程的方法，也不存在能选择<span class="math inline">\(k\)</span>门课程，且总时长更短的方案，那么我们可以基于该方案与第<span class="math inline">\(i\)</span>门课程<span class="math inline">\((t_i, d_i)\)</span>，构造出前<span class="math inline">\(i\)</span>门课程的最优方案：</p>
+<p><img src="力扣每日一题之课程表Ⅲ/image-20211214221952979.png" /></p>
+<p>这样一来，当我们遍历完所有的<span class="math inline">\(n\)</span>门课程后，就可以得到最终答案。</p>
+<p><strong>算法</strong></p>
+<p>我们需要一个数据结构支持【取出<span class="math inline">\(t\)</span>值最大的那门课程】，因此我们可以使用优先队列。</p>
+<p>依次遍历每一门课程，当遍历到<span class="math inline">\((t_i, d_i)\)</span>时：</p>
+<ul>
+<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和小于等于<span class="math inline">\(d_i\)</span>，那么我们就把<span class="math inline">\(t_i\)</span>加入优先队列中；</li>
+<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和大于<span class="math inline">\(d_i\)</span>，那么我们找到优先队列的最大元素<span class="math inline">\(t_{xj}\)</span>。如果<span class="math inline">\(t_{xj} &gt; t_{i}\)</span>，则将它移出优先队列，并把<span class="math inline">\(t_i\)</span>加入优先队列中。</li>
+</ul>
+<p>在遍历完成之后，优先队列中包含的元素个数即为答案。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">scheduleCourse</span><span class="params">(courses [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    sort.Slice(courses, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> courses[i][<span class="number">1</span>] &lt; courses[j][<span class="number">1</span>]</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    h := &amp;Heap&#123;&#125;</span><br><span class="line">    total := <span class="number">0</span> <span class="comment">// 优先队列中所有课程的总时间</span></span><br><span class="line">    <span class="keyword">for</span> _, course := <span class="keyword">range</span> courses &#123;</span><br><span class="line">        <span class="keyword">if</span> t := course[<span class="number">0</span>]; total+t &lt;= course[<span class="number">1</span>] &#123;</span><br><span class="line">            total += t</span><br><span class="line">            heap.Push(h, t)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> h.Len() &gt; <span class="number">0</span> &amp;&amp; t &lt; h.IntSlice[<span class="number">0</span>] &#123;</span><br><span class="line">            total += t - h.IntSlice[<span class="number">0</span>]</span><br><span class="line">            h.IntSlice[<span class="number">0</span>] = t</span><br><span class="line">            heap.Fix(h, <span class="number">0</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h.Len()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Heap <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h Heap)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> h.IntSlice[i] &gt; h.IntSlice[j]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    h.IntSlice = <span class="built_in">append</span>(h.IntSlice, x.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := h.IntSlice</span><br><span class="line">    x := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    h.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣题目类型之回溯法（一）</title>
+    <url>/p/max-increase-to-keep-city-skyline/</url>
+    <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
+<p>回溯是递归的副产品，只要有递归就会有回溯。</p>
+<a id="more"></a>
+<h2 id="回溯法的效率">回溯法的效率</h2>
+<p>回溯的本质是穷举，穷举所有可能。如果还想让回溯法高效一些，可以加一些剪枝的操作，但其本质仍是穷举。</p>
+<h2 id="回溯法可以解决的问题">回溯法可以解决的问题</h2>
+<p>回溯法，一般用于解决以下问题：</p>
+<ul>
+<li>组合问题：N个数里面按一定规则找出k个数的集合；</li>
+<li>切割问题：一个字符串按一定规则有几种切割方式；</li>
+<li>子集问题：一个N个数的集合里有多少符合条件的子集；</li>
+<li>排列问题：N个数按一定规则全排列，有几种排列方式；</li>
+<li>棋盘问题：N皇后，解数独等。</li>
+</ul>
+<hr />
+<h1 id="未完待续">未完待续。。。</h1>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
