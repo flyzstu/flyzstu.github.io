@@ -4787,7 +4787,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>适龄的朋友</title>
+    <title>力扣每日一题之适龄的朋友</title>
     <url>/p/friends-of-appropriate-ages/</url>
     <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
 <p>如果下述任意一个条件为真，那么用户 x 将不会向用户 y（x != y）发送好友请求：</p>
@@ -4807,20 +4807,17 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p>输入：ages = [20,30,100,110,120] 输出：3 解释：产生的好友请求为 110 -&gt; 100 ，120 -&gt; 110 ，120 -&gt; 100</p>
 <h2 id="方法一排序双指针">方法一：排序+双指针</h2>
 <p>观察题目中给出的三个条件：</p>
-<figure>
-<img src="力扣每日一题之适龄的朋友/image-20211228131642378.png" alt="image-20211228131642378" /><figcaption aria-hidden="true">image-20211228131642378</figcaption>
-</figure>
+<p><img src="image-20211228131642378.png" /></p>
 <p>可知条件3是蕴含条件2中的，即如果满足条件3那么也就满足条件2。因此当条件12均不满足时，用户x就会向用户y发送好友请求。</p>
 <p>用户y需要满足： <span class="math display">\[
 0.5 \times ages[x]+7 &lt; ages[y] \leq age[x]
-\]</span> 当<span class="math inline">\(age[x] \leq 14\)</span>时，不存在满足要求的ages[y]，因此我们只需要考虑<span class="math inline">\(ages[y] \ geq 15\)</span>的情况，此时满足要求的<span class="math inline">\(ages[y]\)</span>的范围：</p>
-<p><span class="math inline">\((0.5 \times ages[x]+7, age[x]]\)</span>。</p>
+\]</span> 当<span class="math inline">\(age[x] \leq 14\)</span>时，不存在满足要求的ages[y]，因此我们只需要考虑<span class="math inline">\(ages[y] \geq 15\)</span>的情况，此时满足要求的<span class="math inline">\(ages[y]\)</span>的范围：<span class="math inline">\((0.5 \times ages[x]+7, age[x]]\)</span>。</p>
 <p>当<span class="math inline">\(age[x]\)</span>增加时，上述区间的左右边界均<strong>单调递增</strong>，因此如果我们将数组的<span class="math inline">\(ages\)</span>进行升序排序，那么就可以在遍历<span class="math inline">\(ages[x]\)</span>的同时，使用两个指针left和right维护满足要求的左右边界。当x向后移动一个位置时：</p>
 <ul>
 <li>如果左边界指针left指向的元素<strong>不满足</strong><span class="math inline">\(ages[left] &gt; 0.5 \ times ages[x] + 7\)</span>，那么就将左边界向右移动一个位置；</li>
-<li>如果右边界指针right指向的下一个元素<strong>满足</strong><span class="math inline">\(ages[right+1] \geq ages[x]\)</span>，那么就将左边界向右移动一个位置；</li>
+<li>如果右边界指针right指向的下一个元素<strong>满足</strong><span class="math inline">\(ages[right+1] \geq ages[x]\)</span>，那么就将右边界向右移动一个位置；</li>
 </ul>
-<p>这样一来，<span class="math inline">\([left, right]\)</span>就是满足要求的y的下标。需要注意的是，x本身一定在<span class="math inline">\([left, right]\)</span>区间内，因此x发送的好友请求数，即为<span class="math inline">\([left, right]\)</span>区间的长度-1.</p>
+<p>这样一来，<span class="math inline">\([left, right]\)</span>就是满足要求的y的下标。需要注意的是，<span class="math inline">\(x\)</span>本身一定在<span class="math inline">\([left, right]\)</span>区间内，因此<span class="math inline">\(x\)</span>发送的好友请求数，即为<span class="math inline">\([left, right]\)</span>区间的长度-1.</p>
 <p>我们将每一个x对应的<span class="math inline">\([left, right]\)</span>区间的长度减去1进行累加，就可以得到最后的答案。</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">numFriendRequests</span><span class="params">(ages []<span class="keyword">int</span>)</span> <span class="params">(ans <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        sort.Ints(ages)</span><br><span class="line">        left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> _, age := <span class="keyword">range</span> ages &#123;</span><br><span class="line">            <span class="keyword">if</span> age &lt; <span class="number">15</span> &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> ages[left]*<span class="number">2</span> &lt;= age+<span class="number">14</span> &#123;</span><br><span class="line">                left ++</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> right+<span class="number">1</span> &lt; <span class="built_in">len</span>(ages) &amp;&amp; ages[right+<span class="number">1</span>] &lt;= age &#123;</span><br><span class="line">                right ++</span><br><span class="line">            &#125;</span><br><span class="line">            ans += right - left</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
