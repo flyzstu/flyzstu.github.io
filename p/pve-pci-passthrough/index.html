@@ -27,7 +27,7 @@
 
   <meta name="description" content="什么是PVE？ Proxmox VE是一个既可以运行虚拟机也可以运行容器的虚拟化平台。Proxmox VE基于Debian Linux 开发，而且完全开源。处于灵活性的考虑，Proxmox VE同时支持两种虚拟化技术：KVM虚拟机和LXC容器。以下操作基于KVM虚拟机。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Proxmox VE显卡直通">
+<meta property="og:title" content="Proxmox VE折腾记录">
 <meta property="og:url" content="https://fly97.cn/p/pve-pci-passthrough/index.html">
 <meta property="og:site_name" content="个人随想">
 <meta property="og:description" content="什么是PVE？ Proxmox VE是一个既可以运行虚拟机也可以运行容器的虚拟化平台。Proxmox VE基于Debian Linux 开发，而且完全开源。处于灵活性的考虑，Proxmox VE同时支持两种虚拟化技术：KVM虚拟机和LXC容器。以下操作基于KVM虚拟机。">
@@ -50,6 +50,11 @@
 <meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/image-20210112154651328.png">
 <meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/image-20210112155127152.png">
 <meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/image-20210112155315385.png">
+<meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/default-network-setup-bridge-16407688858982.svg">
+<meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/default-network-setup-routed.svg">
+<meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/image-20211229172815237.png">
+<meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/image-20211229173154573.png">
+<meta property="og:image" content="https://fly97.cn/p/pve-pci-passthrough/image-20211229173637309.png">
 <meta property="article:published_time" content="2021-01-12T05:21:00.000Z">
 <meta property="article:modified_time" content="2021-01-12T05:21:00.000Z">
 <meta property="article:author" content="fly97">
@@ -72,7 +77,7 @@
   };
 </script>
 
-  <title>Proxmox VE显卡直通 | 个人随想</title>
+  <title>Proxmox VE折腾记录 | 个人随想</title>
   
 
 
@@ -229,7 +234,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">创建虚拟机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%98%BE%E5%8D%A1%E7%9B%B4%E9%80%9A"><span class="nav-number">3.</span> <span class="nav-text">配置显卡直通</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%BB%E6%9C%BA%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">更改虚拟机主机类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%98%BE%E5%8D%A1"><span class="nav-number">5.</span> <span class="nav-text">添加显卡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">6.</span> <span class="nav-text">安装操作系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%AA%E8%A3%85cpu"><span class="nav-number">7.</span> <span class="nav-text">伪装CPU</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8"><span class="nav-number">8.</span> <span class="nav-text">安装显卡驱动</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E6%BA%90"><span class="nav-number">2.</span> <span class="nav-text">设置源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">3.</span> <span class="nav-text">创建虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%98%BE%E5%8D%A1%E7%9B%B4%E9%80%9A"><span class="nav-number">3.1.</span> <span class="nav-text">配置显卡直通</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%BB%E6%9C%BA%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">更改虚拟机主机类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%98%BE%E5%8D%A1"><span class="nav-number">3.3.</span> <span class="nav-text">添加显卡</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.4.</span> <span class="nav-text">安装操作系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%AA%E8%A3%85cpu"><span class="nav-number">3.5.</span> <span class="nav-text">伪装CPU</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8"><span class="nav-number">3.6.</span> <span class="nav-text">安装显卡驱动</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pve%E9%85%8D%E7%BD%AEwifi"><span class="nav-number">4.</span> <span class="nav-text">PVE配置WiFi</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%BF%85%E8%A6%81%E7%9A%84%E8%BD%AF%E4%BB%B6"><span class="nav-number">4.1.</span> <span class="nav-text">安装必要的软件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3"><span class="nav-number">4.2.</span> <span class="nav-text">设置网络接口</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pve%E7%9A%84%E5%9B%9B%E7%A7%8D%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">PVE的四种网络模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BD%91%E6%A1%A5%E7%9A%84%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.</span> <span class="nav-text">基于网桥的默认配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE"><span class="nav-number">5.2.</span> <span class="nav-text">路由配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Eiptables%E7%9A%84%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E9%85%8D%E7%BD%AEnat"><span class="nav-number">5.3.</span> <span class="nav-text">基于iptables的网络地址转换配置（NAT）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lvc%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="nav-number">6.</span> <span class="nav-text">LVC容器网络配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%BF%85%E8%A6%81%E8%BD%AF%E4%BB%B6"><span class="nav-number">6.1.</span> <span class="nav-text">安装必要软件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF"><span class="nav-number">6.2.</span> <span class="nav-text">下载、导入模板</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAlvc%E5%AE%B9%E5%99%A8"><span class="nav-number">6.3.</span> <span class="nav-text">创建LVC容器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%BD%91%E7%BB%9C"><span class="nav-number">6.4.</span> <span class="nav-text">配置网络</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%B5%8C%E5%A5%97%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="nav-number">6.5.</span> <span class="nav-text">设置嵌套虚拟化</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -325,7 +330,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Proxmox VE显卡直通
+          Proxmox VE折腾记录
         </h1>
 
         <div class="post-meta-container">
@@ -358,6 +363,16 @@
 <h4 id="准备工作">准备工作</h4>
 <p>检查CPU是否支持VT-d ： https://ark.intel.com/content/www/cn/zh/ark.html</p>
 <p><img src="image-20210112135114468.png" /></p>
+<h4 id="设置源">设置源</h4>
+<p>PVE企业源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#删除企业源</span></span><br><span class="line">rm -rf /etc/apt/sources.list.d/pve-enterprise.list</span><br><span class="line"><span class="comment">##下载秘钥</span></span><br><span class="line">wget http://download.proxmox.com/debian/proxmox-ve-release-5.x.gpg -O /etc/apt/trusted.gpg.d/proxmox-ve-release-5.x.gpg</span><br><span class="line"><span class="comment">#添加社区源(proxmox5)</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://download.proxmox.wiki/debian/pve stretch pve-no-subscription&quot;</span> &gt;/etc/apt/sources.list.d/pve-install-repo.list</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://download.proxmox.wiki/debian/ceph-octopus stretch main&quot;</span> &gt; /etc/apt/sources.list.d/ceph.list</span><br><span class="line"><span class="comment">#添加社区源(proxmox6)</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://download.proxmox.wiki/debian/pve buster pve-no-subscription&quot;</span> &gt;/etc/apt/sources.list.d/pve-install-repo.list</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://download.proxmox.wiki/debian/ceph-octopus buster main&quot;</span> &gt; /etc/apt/sources.list.d/ceph.list</span><br><span class="line"><span class="comment">#添加社区源(proxmox7)</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://download.proxmox.wiki/debian/pve bullseye pve-no-subscription&quot;</span> &gt;/etc/apt/sources.list.d/pve-install-repo.list</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://download.proxmox.wiki/debian/ceph-octopus bullseye main&quot;</span> &gt; /etc/apt/sources.list.d/ceph.list</span><br></pre></td></tr></table></figure>
+<p>PVEdebian源</p>
+<p>PVE 7</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;/etc/apt/sources.list&lt;&lt;<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian/ bullseye main contrib non-free</span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian/ bullseye-updates main contrib non-free</span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian/ bullseye-backports main contrib non-free</span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian-security bullseye-security main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian/ bullseye main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian/ bullseye-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian/ bullseye-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian-security bullseye-security main contrib non-free</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>PVE 6</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;/etc/apt/sources.list&lt;&lt;<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian/ buster main contrib non-free</span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian/ buster-updates main contrib non-free</span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian/ buster-backports main contrib non-free</span><br><span class="line">deb https://mirrors.cloud.tencent.com/debian-security buster/updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian/ buster main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian/ buster-updates main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian/ buster-backports main contrib non-free</span><br><span class="line">deb-src https://mirrors.cloud.tencent.com/debian-security buster/updates main contrib non-free</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>PVE 5</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;/etc/apt/sources.list&lt;&lt;<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch main non-free contrib</span><br><span class="line">deb http://mirrors.aliyun.com/debian-security stretch/updates main</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian-security stretch/updates main</span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib</span><br><span class="line">deb http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">deb-src http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <h4 id="创建虚拟机">创建虚拟机</h4>
 <p>千万注意不要设置自启动！！</p>
 <p><img src="image-20210112135351055.png" /></p>
@@ -371,7 +386,7 @@
 <p><img src="image-20210112141534116.png" /></p>
 <p>确认设置，<strong>先不要开启虚拟机</strong>。</p>
 <p><img src="image-20210112141614131.png" /></p>
-<h4 id="配置显卡直通">配置显卡直通</h4>
+<h5 id="配置显卡直通">配置显卡直通</h5>
 <p>首先编辑GRUB配置文件：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano /etc/default/grub</span><br></pre></td></tr></table></figure>
 <p>开启开启IOMMU支持：</p>
@@ -411,29 +426,73 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;options vfio-pci ids=10de:1e07&quot;</span> &gt;&gt; /etc/modprobe.d/vfio.conf</span><br></pre></td></tr></table></figure>
 <p>然后应用更改：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">update-grub</span><br><span class="line">update-initramfs</span><br></pre></td></tr></table></figure>
-<h4 id="更改虚拟机主机类型">更改虚拟机主机类型</h4>
+<h5 id="更改虚拟机主机类型">更改虚拟机主机类型</h5>
 <p>其中100 是VM ID</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qm <span class="built_in">set</span> 100 -machine pc-q35-3.1</span><br></pre></td></tr></table></figure>
-<h4 id="添加显卡">添加显卡</h4>
+<h5 id="添加显卡">添加显卡</h5>
 <p>添加PCI设备，注意ID要选择你的电脑对应的显卡ID。注意不要添加成其他设备，如Audio device等。</p>
 <p><img src="image-20210112153802857.png" /></p>
 <p><img src="image-20210112154050976.png" /></p>
-<h4 id="安装操作系统">安装操作系统</h4>
+<h5 id="安装操作系统">安装操作系统</h5>
 <p>此过程略</p>
-<h4 id="伪装cpu">伪装CPU</h4>
+<h5 id="伪装cpu">伪装CPU</h5>
 <p>由于NVIDIA官方限制在虚拟机中使用显卡，通过修改CPU类型，可以达到欺骗NVIDIA显卡驱动的目的。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano /etc/pve/qemu-server/&lt;你的虚拟机的ID&gt;.conf</span><br></pre></td></tr></table></figure>
 <p>找到CPU那一行，删掉，然后改为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cpu: host,hidden&#x3D;1,flags&#x3D;+pcid</span><br><span class="line">args: -cpu &#39;host,+kvm_pv_unhalt,+kvm_pv_eoi,hv_vendor_id&#x3D;NV43FIX,kvm&#x3D;off&#39;</span><br></pre></td></tr></table></figure>
 <p>如下图：</p>
 <p><img src="image-20210112154651328.png" /></p>
-<h4 id="安装显卡驱动">安装显卡驱动</h4>
+<h5 id="安装显卡驱动">安装显卡驱动</h5>
 <p>以下操作是在<font color="red">客户机</font>上完成的，根据显卡选择合适的驱动安装。</p>
 <p><img src="image-20210112155127152.png" /></p>
 <p>安装完毕，重启客户机。执行一下命令查看驱动是否安装成功：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
 <p>有下图所示回显说明安装成功：</p>
 <p><img src="image-20210112155315385.png" /></p>
+<h4 id="pve配置wifi">PVE配置WiFi</h4>
+<p>如果你的pve宿主机有无线网卡，可以按照如下步骤配置无线连接。</p>
+<h5 id="安装必要的软件">安装必要的软件</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install connman -y</span><br></pre></td></tr></table></figure>
+<h5 id="设置网络接口">设置网络接口</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano /etc/network/interfaces</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto wlp3s0</span><br><span class="line">iface wlp3s0 inet dhcp</span><br><span class="line">        wpa-ssid <span class="string">&quot;SSID&quot;</span></span><br><span class="line">        wpa-psk <span class="string">&quot;PASSWORD&quot;</span></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address 192.168.0.1</span><br><span class="line">        netmask 255.255.255.0</span><br><span class="line">        bridge_ports none</span><br><span class="line">        bridge_stp off</span><br><span class="line">        bridge_fd 0</span><br></pre></td></tr></table></figure>
+<h4 id="pve的四种网络模式">PVE的四种网络模式</h4>
+<h5 id="基于网桥的默认配置">基于网桥的默认配置</h5>
+<p>网桥相当于一个软件实现的物理交换机。所有虚拟机共享一个网桥，在多个域的网络环境中， 也可以创建多个网桥以分别对应不同网络域。理论上，每个Proxmox VE 最多可以支持4094个网桥。</p>
+<p>Proxmox VE 安装程序会创建一个名为vmbr0 的网桥，并和检测到的服务器第一块网卡桥接。</p>
+<p><img src="default-network-setup-bridge-16407688858982.svg" /></p>
+<p>配置文件<code>/etc/network/interfaces</code> 中的对应配置信息如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">iface eno1 inet manual</span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address 192.168.10.2/24</span><br><span class="line">        gateway 192.168.10.1</span><br><span class="line">        bridge-ports eno1</span><br><span class="line">        bridge-stp off</span><br><span class="line">        bridge-fd 0</span><br></pre></td></tr></table></figure>
+<p>在基于网桥的默认配置下，虚拟机看起来就和直接接入物理网络一样。尽管所有虚拟机共享 一根网线接入网络，但每台虚拟机都使用自己独立的MAC 地址访问网络。</p>
+<p><strong>注意：这种模式在当前是通过无线网卡连接外网的状态下可能无法正常工作！</strong></p>
+<h5 id="路由配置">路由配置</h5>
+<p>处于网络安全的考虑，大部分网络服务托管商一旦发现网络接口上有多个mac地址出现，托管商有可能立刻禁用相关网络接口。</p>
+<blockquote>
+<p>也许有些网络服务托管商也允许你注册多个mac地址，这样就可以避免上面提到的问题，但这样就需要注册每一个虚拟机的mac地址，实际操作会很麻烦。</p>
+</blockquote>
+<p>可以采用路由的方式让多个虚拟机共享一个网络端口，这样就可以避免上面提到的问题。这种方式可以确保所有的对外网络通信都使用同一个MAC地址。</p>
+<p><img src="default-network-setup-routed.svg" /></p>
+<p>常见的应用场景是吗，你有一个可以和外部网络通信的IP地址，假定为（192.51.100.5），还有一个供虚拟机使用的IP地址段（203.0.113.16/29）。针对该场景，推荐使用以下配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto eno0</span><br><span class="line">iface eno0 inet static</span><br><span class="line">        address  198.51.100.5/29</span><br><span class="line">        gateway  198.51.100.1</span><br><span class="line">        post-up <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line">        post-up <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/conf/eno1/proxy_arp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address  203.0.113.17/28</span><br><span class="line">        bridge-ports none</span><br><span class="line">        bridge-stp off</span><br><span class="line">        bridge-fd 0</span><br></pre></td></tr></table></figure>
+<p>路由模式下，需要在PVE内部搭建DHCP服务器，以便在启动虚拟机时，动态获取网络配置（IP，网关等），该模式下无法直接访问PVE内部虚拟机。如果像直接访问，可以通过代理或者端口转发方式。</p>
+<h5 id="基于iptables的网络地址转换配置nat">基于iptables的网络地址转换配置（NAT）</h5>
+<p>利用地址转换技术，所有虚拟机可以使用内部私有IP 地址，并通过Proxmox VE 服务器的IP来访问外部网络。Iptables 将改写虚拟机和外部网络通信数据包，对于虚拟机向外部网络发出的数据包，将源IP 地址替换成服务器IP 地址，对于外部网络返回数据包，将目的地址替换为对应虚拟机IP 地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto eno1</span><br><span class="line"><span class="comment">#real IP address</span></span><br><span class="line">iface eno1 inet static</span><br><span class="line">        address  198.51.100.5/24</span><br><span class="line">        gateway  198.51.100.1</span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line"><span class="comment">#private sub network</span></span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address  10.10.10.1/24</span><br><span class="line">        bridge-ports none</span><br><span class="line">        bridge-stp off</span><br><span class="line">        bridge-fd 0</span><br><span class="line"></span><br><span class="line">        post-up   <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line">        post-up   iptables -t nat -A POSTROUTING -s <span class="string">&#x27;10.10.10.0/24&#x27;</span> -o eno1 -j MASQUERADE</span><br><span class="line">        post-down iptables -t nat -D POSTROUTING -s <span class="string">&#x27;10.10.10.0/24&#x27;</span> -o eno1 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+<h4 id="lvc容器网络配置">LVC容器网络配置</h4>
+<p>在宿主机的网络配置是通过iptables进行NAT的基础下，设置容器的网络地址为静态配置，从而容器可以正常上网。</p>
+<h5 id="安装必要软件">安装必要软件</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install proxmox-ve postfix open-iscsi -y</span><br></pre></td></tr></table></figure>
+<h5 id="下载导入模板">下载、导入模板</h5>
+<p><a target="_blank" rel="noopener" href="https://www.cxthhhhh.com/2020/11/08/system-image-the-latest-template-v1-2-of-ubuntu-20-04-lxc-ovz-ssh-enabled-time-zone-optimized.html">点此下载</a></p>
+<h5 id="创建lvc容器">创建LVC容器</h5>
+<p>注意勾选<strong>无特权的容器</strong></p>
+<p><img src="image-20211229172815237.png" /></p>
+<h5 id="配置网络">配置网络</h5>
+<p>桥接vmbr0，设置网关和服务器的IP</p>
+<p><img src="image-20211229173154573.png" /></p>
+<h5 id="设置嵌套虚拟化">设置嵌套虚拟化</h5>
+<p>如果需要在LVC容器中安装docker需要设置此项</p>
+<p><img src="image-20211229173637309.png" /></p>
 
     </div>
 
