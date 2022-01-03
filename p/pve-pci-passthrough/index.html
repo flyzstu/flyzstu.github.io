@@ -462,7 +462,7 @@
 <p>Proxmox VE 安装程序会创建一个名为vmbr0 的网桥，并和检测到的服务器第一块网卡桥接。</p>
 <p><img src="default-network-setup-bridge-16407688858982.svg" /></p>
 <p>配置文件<code>/etc/network/interfaces</code> 中的对应配置信息如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">iface eno1 inet manual</span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address 192.168.10.2/24</span><br><span class="line">        gateway 192.168.10.1</span><br><span class="line">        bridge-ports eno1</span><br><span class="line">        bridge-stp off</span><br><span class="line">        bridge-fd 0</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">iface enp2s0 inet manual</span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address 192.168.10.2/24</span><br><span class="line">        gateway 192.168.10.1</span><br><span class="line">        bridge_ports enp2s0</span><br><span class="line">        bridge_stp off</span><br><span class="line">        bridge_fd 0</span><br><span class="line"></span><br><span class="line">iface enp4s0 inet manual</span><br><span class="line"></span><br><span class="line">iface wlp3s0 inet manual</span><br></pre></td></tr></table></figure>
 <p>在基于网桥的默认配置下，虚拟机看起来就和直接接入物理网络一样。尽管所有虚拟机共享 一根网线接入网络，但每台虚拟机都使用自己独立的MAC 地址访问网络。</p>
 <p><strong>注意：这种模式在当前是通过无线网卡连接外网的状态下可能无法正常工作！</strong></p>
 <h5 id="路由配置">路由配置</h5>
@@ -566,7 +566,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
