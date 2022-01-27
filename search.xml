@@ -183,6 +183,56 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker安装MySQL5.7</title>
+    <url>/p/install-mysql5.7-in-docker/</url>
+    <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
+<a id="more"></a>
+<p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
+<h3 id="安装docker">安装docker</h3>
+<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
+<h3 id="安装mysql容器">安装MySQL容器</h3>
+<p>以官方的MySQL5.7为例：<a href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
+<p>首先确保docker服务已经正常启动：</p>
+<p>linux执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
+<p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
+<h4 id="拉取镜像">拉取镜像</h4>
+<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
+<h4 id="运行容器">运行容器</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
+<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
+<li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
+<ul>
+<li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
+</ul></li>
+</ul>
+<h3 id="设置mysql容器">设置MySQL容器</h3>
+<h4 id="配置文件">配置文件</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysql]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4</span><br></pre></td></tr></table></figure>
+<h4 id="允许外网访问">允许外网访问</h4>
+<p>先进入容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql-5.7 /bin/bash</span><br></pre></td></tr></table></figure>
+<p>输入密码，连接mysql</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<p>修改表项</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#39;%&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<p>查看修改后的结果</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT USER,HOST FROM mysql.user;</span><br></pre></td></tr></table></figure>
+<p>结果如下所示，说明修改成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT USER,HOST FROM mysql.user;</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| USER          | HOST      |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| root          | %         |</span><br><span class="line">| mysql.session | localhost |</span><br><span class="line">| mysql.sys     | localhost |</span><br><span class="line">| root          | localhost |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">4 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="设置日志路径">设置日志路径</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 错误日志</span></span><br><span class="line"><span class="attr">log_error</span> = /var/log/mysql/error.log</span><br><span class="line"><span class="comment"># 查询日志</span></span><br><span class="line"><span class="attr">general_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span> = /var/log/mysql/general.log</span><br><span class="line"><span class="comment"># 慢查询日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">slow_query_log_file</span> = /var/log/mysql/slow.log</span><br><span class="line"><span class="comment"># 同步写binlog</span></span><br><span class="line"><span class="attr">log_bin_index</span> = /var/log/mysql/bin</span><br><span class="line"><span class="attr">max_binlog_size</span> = <span class="number">4</span>M</span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker的网络模式</title>
     <url>/p/Docker-network-mode/</url>
     <content><![CDATA[<p><code>docker</code>目前支持以下5种网络模式：</p>
