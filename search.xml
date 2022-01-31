@@ -4697,6 +4697,28 @@
       </tags>
   </entry>
   <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: nums &#x3D; [-1, 0, 3, 5, 9, 12], target &#x3D; 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img src="力扣每日一题之二分法/新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)</span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之位运算的应用</title>
     <url>/p/to-lower-case/</url>
     <content><![CDATA[<p>给你一个字符串 <code>s</code> ，将该字符串中的大写字母转换成相同的小写字母，返回新的字符串。</p>
@@ -4764,7 +4786,6 @@
 <p>在 <strong>不改变</strong> 从任何主要方向观测到的城市的天际线的前提下，返回建筑物可以增加的最大高度增量总和。</p>
 <a id="more"></a>
 <p><strong>示例1</strong></p>
-<p><img src="807-ex1.png" /></p>
 <p><strong>输入</strong>：<code>grid = [[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]</code> <strong>输出</strong>：<code>35</code> <strong>解释</strong>：建筑物的高度如上图中心所示。 用红色绘制从不同方向观看得到的天际线。 在不影响天际线的情况下，增加建筑物的高度： <code>gridNew = [ [8, 4, 8, 7],             [7, 4, 7, 7],             [9, 4, 8, 7],             [3, 3, 3, 3] ]</code></p>
 <p><strong>示例2</strong></p>
 <p><strong>输入</strong>：<code>grid=[[0,0,0],[0,0,0],[0,0,0]]</code> <strong>输出</strong>：0 <strong>解释</strong>：增加任何建筑物的高度都会导致天际线的变化。</p>
