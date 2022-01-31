@@ -4719,6 +4719,29 @@
       </tags>
   </entry>
   <entry>
+    <title>力扣数组基础之双指针</title>
+    <url>/p/remove-element/</url>
+    <content><![CDATA[<p>题目：给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。</p>
+<p>不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并 原地 修改输入数组。</p>
+<p>元素的顺序可以改变。你不需要考虑数组中超出新长度后面的元素。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [3,2,2,3], val &#x3D; 3</span><br><span class="line">输出：2, nums &#x3D; [2,2]</span><br><span class="line">解释：函数应该返回新的长度 2, 并且 nums 中的前两个元素均为 2。你不需要考虑数组中超出新长度后面的元素。例如，函数返回的新长度为 2 ，而 nums &#x3D; [2,2,3,3] 或 nums &#x3D; [2,2,0,0]，也会被视作正确答案。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>双指针法：通过一个快指针和慢指针完成两个for循环</p>
+<p>定义两个Index，fastIndex在循环内更新，slowIndex在循环外更新。</p>
+<p>当循环内的fastIndex迭代不到val，就更新slowIndex，把nums[fastIndex]赋值给nums[fastIndex]，而后slowIndex++；反之则什么也不做，此时fastIndex+1，slowIndex不动。</p>
+<p><strong>示意图</strong></p>
+<figure>
+<img src="力扣数组基础之双指针/双指针.png" alt="双指针" /><figcaption aria-hidden="true">双指针</figcaption>
+</figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElement</span><span class="params">(nums []<span class="keyword">int</span>, val <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> slowIndex <span class="keyword">int</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> fastIndex := <span class="number">0</span>; fastIndex &lt; <span class="built_in">len</span>(nums);fastIndex++&#123;</span><br><span class="line">        <span class="keyword">if</span> nums[fastIndex] != val &#123;</span><br><span class="line">            nums[slowIndex] = nums[fastIndex]</span><br><span class="line">            slowIndex += <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> slowIndex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之位运算的应用</title>
     <url>/p/to-lower-case/</url>
     <content><![CDATA[<p>给你一个字符串 <code>s</code> ，将该字符串中的大写字母转换成相同的小写字母，返回新的字符串。</p>
