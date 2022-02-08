@@ -1509,7 +1509,7 @@
 <h3 id="介绍">介绍</h3>
 <p>Kafka是一个分布式数据流平台，可以运行在单个服务器上，也可以在多台服务器上部署行程集群。它提供了发布和订阅功能，使用者可以发送数据到Kafka，也可以从Kafka中读取数据（以便进行后续的处理）。</p>
 <p>Kafka 具有高吞吐、低延迟、高容错等特点。</p>
-<p><img src="LogAgent%20项目实战（二）/image-20211201141121142.png" /></p>
+<p><img src="image-20211201141121142.png" /></p>
 <ul>
 <li><strong>Producer</strong>：Producer即生产者，消息的生产者，是消息的入口。</li>
 <li><strong>kafka cluster</strong>：kafka集群，一台或者多台服务器组成
@@ -1522,7 +1522,7 @@
 </ul>
 <h3 id="工作流程">工作流程</h3>
 <p>Producer是生产者，是数据的入口，Producer在写入数据的时候会把数据写入到<strong>leader</strong>中，不会将数据直接写入follower！</p>
-<p><img src="LogAgent%20项目实战（二）/image-20211201144116325.png" /></p>
+<p><img src="image-20211201144116325.png" /></p>
 <ol type="1">
 <li>生产者从Kafka集群中获取分区leader信息</li>
 <li>生产者将消息发送给leader</li>
@@ -1549,7 +1549,7 @@
 <p><strong>注意：若往不存在的topic写数据，kafka会自动创建topic，partition和replication的数量的默认配置都是1。</strong></p>
 <h3 id="topic和数据日志">Topic和数据日志</h3>
 <p><code>topic</code>是统一类别的消息记录（record）的集合。 在Kafka中，一个主题通常有多个订阅者，对于每个主题，kafka集群维护了一个分区数据日志文件结构如下：</p>
-<p><img src="LogAgent 项目实战（二）/image-20211201152943721.png" style="zoom: 33%;" /></p>
+<p><img src="image-20211201152943721.png" style="zoom: 33%;" /></p>
 <p>每个partition都是一个有序而且不可变的消息记录集合，当新的数据写入时，就被追加到partition的末尾。在每个partition中，每条消息都会被分配一个顺序的唯一标识，这个表示被称为offset，<strong>即偏移量</strong> 。</p>
 <ul>
 <li><strong>Kafka只保证在同一个partition内部消息是有序的，在不同partition之间，不能保证消息有序。</strong></li>
@@ -1564,7 +1564,7 @@
 <li>如果所有的消费者实例都在同一个消费者组中，那么消息记录会被很好的均衡发送到每个消费者实例。</li>
 <li>如果所有的消费者实例都在不同的消费者组，那么每一条纤细记录会被广播到每一个消费者实例。</li>
 </ul>
-<p><img src="LogAgent%20项目实战（二）/image-20211201154851552.png" /></p>
+<p><img src="image-20211201154851552.png" /></p>
 <ul>
 <li>同一消费者组中，每个消费者实例可以消费多个分区；</li>
 <li>每个分区最多只能被消费者组中的一个实例消费；</li>
@@ -1601,7 +1601,7 @@
 </ol>
 <h2 id="zookeeper">Zookeeper</h2>
 <p>zookeeper是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby的一个开源实现，是集群的管理者，监视着集群中各个系欸但的状态，并根据节点提交的反馈进行下一步合理操作。最终将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
-<p><img src="LogAgent%20项目实战（二）/image-20211201190723113.png" /></p>
+<p><img src="image-20211201190723113.png" /></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -1626,9 +1626,7 @@
 <ul>
 <li>每次logagent都会主动从etcd中拉取配置，免去了手动写配置项的麻烦；</li>
 </ul>
-<figure>
-<img src="LogAgent%20项目实战（四）/image-20211130214306450.png" alt="image-20211130214306450" /><figcaption aria-hidden="true">image-20211130214306450</figcaption>
-</figure>
+<p><img src="image-20211130214306450.png" /></p>
 <h2 id="etcd">etcd</h2>
 <h3 id="etcd介绍">etcd介绍</h3>
 <p>etcd是使用Go语言开发的一个开源的、高可用的分布式key-value存储系统，可以用于<strong>配置共享</strong>和<strong>服务注册发现</strong>。</p>
@@ -1660,7 +1658,7 @@
 <h4 id="服务注册发现">服务注册发现</h4>
 <p>服务发现要解决的也是分布式系统常见的问题，即在同一个分布式集群中的进程或服务，要如何才能找到对方建立连接。</p>
 <p>本质上说，服务发现就是想要了解集群中<strong>是否有进程在监听tcp或者udp端口，并且通过名字就可以查找和连接</strong>。</p>
-<p><img src="LogAgent%20项目实战（四）/image-20211203193827699.png" /></p>
+<p><img src="image-20211203193827699.png" /></p>
 <h4 id="配置中心">配置中心</h4>
 <p>将一些配置信息放到etcd上进行集中管理。</p>
 <p>通常的应用场景：应用在启动的时候主动从etcd获取一次配置消息，同时，在etcd节点上注册一个Watcher并等待，以后每次配置有更新的时候，etcd都会实时通知订阅者，以此达到获取最新配置信息的目的。</p>
@@ -1670,7 +1668,7 @@
 <li><strong>保持独占即所有获取锁的用户最终只有一个可以得到</strong>。etcd提供了一套实现分布式锁原子操作CAS( CompareAndSwap)的API。通过设置<code>prevExist</code>值，可以保证在多个节点同时创建某个目录时，只有一个成功。创建成功的用户就可以认为是获得了锁。</li>
 <li>控制时序，即所有获得锁的用户都会被安排执行。但是<strong>获得锁的顺序全局唯一，同时决定了执行顺序</strong>。etcd提供了一套API（自动创建有序键），对一个目录建值时指定为POST动作，这样etcd会自动在目录下生成一个当前最大的值为键，存储这个新的值（客户端编号）。同时还可以使用API按顺序列出当前目录下的键值。此时这些键的值就是客户的时序，而这些键存储的值可以是代表客户端的编号。</li>
 </ul>
-<p><img src="LogAgent%20项目实战（四）/image-20211203195339151.png" /></p>
+<p><img src="image-20211203195339151.png" /></p>
 <h3 id="为什么用etcd而不用zookeeper">为什么用etcd而不用zookeeper？</h3>
 <p>etcd实现的这些功能，zookeeper都能实现，那为什么要用etcd而不是直接使用zookeeper呢？</p>
 <p>相较之下，zookeeper有以下缺点：</p>
@@ -1688,17 +1686,15 @@
 <p>etcd作为一个年轻的项目，既是一个优点也是一个缺点。优点是未来无限可能，缺点是无法的发哦大项目长时间使用的检验。</p>
 <p>目前CoreOS、Kubernetes和CloudFoundry等知名项目均在生产环境使用了etcd，etcd值得去尝试。</p>
 <h3 id="etcd架构">etcd架构</h3>
-<p><img src="LogAgent%20项目实战（四）/image-20211203201212153.png" /></p>
-<figure>
-<img src="LogAgent%20项目实战（四）/image-20211203201343566.png" alt="image-20211203201343566" /><figcaption aria-hidden="true">image-20211203201343566</figcaption>
-</figure>
+<p><img src="image-20211203201212153.png" /></p>
+<p><img src="image-20211203201343566.png" /></p>
 <h3 id="etcd集群">etcd集群</h3>
 <p>etcd作为一个高可以键值存储系统，天生就是为集群化而设计的。由于Raft算法在做决策时需要多数节点的投票，所有etcd一般部署集群推荐奇数节点，推荐3，5，7个节点构成一个集群。</p>
 <h4 id="搭建一个3节点集群实例">搭建一个3节点集群实例</h4>
-<p><img src="LogAgent%20项目实战（四）/image-20211203201817418.png" /></p>
-<p><img src="LogAgent%20项目实战（四）/image-20211203201903787.png" /></p>
-<p><img src="LogAgent%20项目实战（四）/image-20211203202157587.png" /></p>
-<p><img src="LogAgent%20项目实战（四）/image-20211203202209008.png" /></p>
+<p><img src="image-20211203201817418.png" /></p>
+<p><img src="image-20211203201903787.png" /></p>
+<p><img src="image-20211203202157587.png" /></p>
+<p><img src="image-20211203202209008.png" /></p>
 <h3 id="etcd服务端">etcd服务端</h3>
 <h4 id="文档">文档</h4>
 <p>https://doczhcn.gitbook.io/etcd/index/index-1/configuration</p>
@@ -1711,18 +1707,10 @@
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	clientv3 <span class="string">&quot;go.etcd.io/etcd/client/v3&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		config clientv3.Config</span><br><span class="line">		client *clientv3.Client</span><br><span class="line">		err    error</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 客户端配置</span></span><br><span class="line">	config = clientv3.Config&#123;</span><br><span class="line">		Endpoints:   []<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:2379&quot;</span>&#125;,</span><br><span class="line">		DialTimeout: <span class="number">5</span> * time.Second,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 建立连接</span></span><br><span class="line">	client, err = clientv3.New(config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;connent to etcd succeed&quot;</span>)</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 存</span></span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), time.Second)</span><br><span class="line">	_, err = client.Put(ctx, <span class="string">&quot;q1mi&quot;</span>, <span class="string">&quot;dsb&quot;</span>)</span><br><span class="line">	cancel() <span class="comment">// 立即释放资源</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 取</span></span><br><span class="line">	ctx, cancel = context.WithTimeout(context.Background(), time.Second)</span><br><span class="line">	resp, err := client.Get(ctx, <span class="string">&quot;q1mi&quot;</span>)</span><br><span class="line">	cancel() <span class="comment">// 立即释放资源</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, kv := <span class="keyword">range</span> resp.Kvs &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;key:%s value:%s\n&quot;</span>, <span class="keyword">string</span>(kv.Key), <span class="keyword">string</span>(kv.Value)) <span class="comment">// 索引键值对</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 哨兵：监视键的变化</span></span><br><span class="line">	rch := client.Watch(context.Background(), <span class="string">&quot;q1mi&quot;</span>) <span class="comment">// &lt;-chan watchResponse</span></span><br><span class="line">	<span class="keyword">for</span> wresp := <span class="keyword">range</span> rch &#123;</span><br><span class="line">		<span class="keyword">for</span> _, kv := <span class="keyword">range</span> wresp.Events &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;Type:%s Key:%s Value:%s\n&quot;</span>, kv.Type, kv.Kv.Key, kv.Kv.Value)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./etcd.exe</span><br><span class="line">connent to etcd succeed</span><br><span class="line">key:q1mi value:dsb</span><br><span class="line">Type:PUT Key:q1mi Value:111 <span class="comment"># 得到了键的变化</span></span><br></pre></td></tr></table></figure>
 <h2 id="使用etcd优化项目代码">使用etcd优化项目代码</h2>
-<figure>
-<img src="LogAgent%20项目实战（四）/image-20211205131214769.png" alt="image-20211205131214769" /><figcaption aria-hidden="true">image-20211205131214769</figcaption>
-</figure>
-<figure>
-<img src="LogAgent%20项目实战（四）/image-20211205131939536.png" alt="image-20211205131939536" /><figcaption aria-hidden="true">image-20211205131939536</figcaption>
-</figure>
-<figure>
-<img src="LogAgent%20项目实战（四）/image-20211205134219893.png" alt="image-20211205134219893" /><figcaption aria-hidden="true">image-20211205134219893</figcaption>
-</figure>
-<figure>
-<img src="LogAgent%20项目实战（四）/image-20211205153501064.png" alt="image-20211205153501064" /><figcaption aria-hidden="true">image-20211205153501064</figcaption>
-</figure>
+<p><img src="image-20211205131214769.png" /></p>
+<p><img src="image-20211205131939536.png" /></p>
+<p><img src="image-20211205134219893.png" /></p>
+<p><img src="image-20211205153501064.png" /></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -4777,10 +4765,9 @@
       </tags>
   </entry>
   <entry>
-    <title></title>
-    <url>/p/index/</url>
-    <content><![CDATA[<p>title: 力扣数组基础之模拟螺旋矩阵Ⅱ date: 2022/2/4 14:01:00 urlname: spiral-matrix-ii tags: - leetcode - 数组</p>
-<p>题目：给你一个正整数 <code>n</code> ，生成一个包含 <code>1</code> 到 <code>n2</code> 所有元素，且元素按顺时针顺序螺旋排列的 <code>n x n</code> 正方形矩阵 <code>matrix</code> 。</p>
+    <title>力扣数组基础之模拟螺旋矩阵Ⅱ</title>
+    <url>/p/spiral-matrix-ii/</url>
+    <content><![CDATA[<p>题目：给你一个正整数 <code>n</code> ，生成一个包含 <code>1</code> 到 <code>n2</code> 所有元素，且元素按顺时针顺序螺旋排列的 <code>n x n</code> 正方形矩阵 <code>matrix</code> 。</p>
 <a id="more"></a>
 <p><strong>示例</strong></p>
 <figure>
@@ -4804,6 +4791,10 @@
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 螺旋矩阵 II</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generateMatrix</span><span class="params">(n <span class="keyword">int</span>)</span> [][]<span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">// 新建矩阵</span></span><br><span class="line">	<span class="keyword">var</span> ret = <span class="built_in">make</span>([][]<span class="keyword">int</span>, n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ret); i++ &#123;</span><br><span class="line">		ret[i] = <span class="built_in">make</span>([]<span class="keyword">int</span>, n)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 定义左右上下边界</span></span><br><span class="line">	<span class="keyword">var</span> left, right, top, bottom <span class="keyword">int</span> = <span class="number">0</span>, n - <span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span></span><br><span class="line">	<span class="keyword">var</span> begin <span class="keyword">int</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> begin &lt; n*n &#123;</span><br><span class="line">		<span class="comment">// 从左到右</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; right; i++ &#123;</span><br><span class="line">			ret[top][i] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		top++</span><br><span class="line">		<span class="comment">// 从上到下</span></span><br><span class="line">		<span class="keyword">for</span> i := top; i &lt; bottom; i++ &#123;</span><br><span class="line">			ret[i][right] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 从右到左</span></span><br><span class="line">		right--</span><br><span class="line">		<span class="keyword">for</span> i := right; i &gt;= <span class="number">1</span>; i-- &#123;</span><br><span class="line">			ret[bottom][i] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 从下到上</span></span><br><span class="line">		bottom--</span><br><span class="line">		<span class="keyword">for</span> i := bottom; i &gt;= <span class="number">1</span>; i-- &#123;</span><br><span class="line">			ret[i][left] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		left++</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
   </entry>
   <entry>
     <title>力扣数组基础之双指针长度最小的子数组</title>
