@@ -6,7 +6,7 @@
   <link href="https://fly97.cn/atom.xml" rel="self"/>
   
   <link href="https://fly97.cn/"/>
-  <updated>2022-02-13T10:54:00.000Z</updated>
+  <updated>2022-02-16T10:54:00.000Z</updated>
   <id>https://fly97.cn/</id>
   
   <author>
@@ -17,16 +17,16 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <link href="https://fly97.cn/p/swap-nodes-in-pairs/"/>
-    <id>https://fly97.cn/p/swap-nodes-in-pairs/</id>
-    <published>2022-02-13T10:54:00.000Z</published>
-    <updated>2022-02-13T10:54:00.000Z</updated>
+    <title>力扣链表基础之链表相交</title>
+    <link href="https://fly97.cn/p/intersection-of-two-linked-lists-lcci/"/>
+    <id>https://fly97.cn/p/intersection-of-two-linked-lists-lcci/</id>
+    <published>2022-02-16T10:54:00.000Z</published>
+    <updated>2022-02-16T10:54:00.000Z</updated>
     
-    <content type="html"><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p><a id="more"></a><p><strong>示例</strong></p><p><img src="swap_ex1.jpg" /></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure><p><strong>思路</strong></p><p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p><p><img src="image-20220214194056147.png" /></p><p><strong>代码</strong></p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p><a id="more"></a><p><strong>示例</strong></p><p><img src="力扣链表基础之链表相交/160_example_1.png" /></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Intersected at &#39;8&#39;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure><p><strong>思路</strong></p><p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p><ul><li>a + c + b = b + c + a</li><li>若无交集，则a + b = b + a</li></ul><p><img src="力扣链表基础之链表相交/image-20220216162953801.png" /></p><p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p><p><strong>代码</strong></p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">curA, curB := headA, headB</span><br><span class="line"><span class="keyword">for</span> curA != curB &#123;</span><br><span class="line"><span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">curA = curA.Next</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">curA = headB</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">curB = curB.Next</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">curB = headA</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
     
     
-    <summary type="html">&lt;p&gt;给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;给你两个单链表的头节点 &lt;code&gt;headA&lt;/code&gt; 和 &lt;code&gt;headB&lt;/code&gt; ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 &lt;code&gt;null&lt;/code&gt; 。&lt;/p&gt;</summary>
     
     
     
@@ -41,13 +41,34 @@
     <title>力扣链表基础之删除链表的倒数第N个节点</title>
     <link href="https://fly97.cn/p/remove-nth-node-from-end-of-list/"/>
     <id>https://fly97.cn/p/remove-nth-node-from-end-of-list/</id>
-    <published>2022-02-13T10:54:00.000Z</published>
-    <updated>2022-02-13T10:54:00.000Z</updated>
+    <published>2022-02-15T10:54:00.000Z</published>
+    <updated>2022-02-15T10:54:00.000Z</updated>
     
     <content type="html"><![CDATA[<p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p><a id="more"></a><p><strong>示例</strong></p><p><img src="remove_ex1.jpg" /></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5], n &#x3D; 2</span><br><span class="line">输出：[1,2,3,5]</span><br></pre></td></tr></table></figure><p><strong>思路</strong></p><p>使用<strong>虚拟头节点</strong>。</p><p>如果要删除倒数第n个节点，让fast移动n步，然后让fast和slow同时移动，直到fast指向链表末尾。删掉slow所指向的节点就可以了。</p><p>实际操作中可以让fast先移动n+1步，然后让fast和slow同时移动，直到fast指向NULL，此时slow恰好指向待删除结点的上一个，此时执行删除结点的操作即可。</p><p><img src="image-20220215193937378.png" /></p><p><strong>代码</strong></p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// fast先移动n+1步，然后让fast和slow同时移动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeNthFromEnd</span><span class="params">(head *ListNode, n <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">dummy.Next = head</span><br><span class="line">fast := dummy</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n+<span class="number">1</span>; i++ &#123;</span><br><span class="line">fast = fast.Next</span><br><span class="line">&#125;</span><br><span class="line">slow := dummy</span><br><span class="line"><span class="keyword">for</span> fast != <span class="literal">nil</span> &#123;</span><br><span class="line">fast = fast.Next</span><br><span class="line">slow = slow.Next</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> slow != <span class="literal">nil</span> &amp;&amp; slow.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">slow.Next = slow.Next.Next</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
     
     
     <summary type="html">&lt;p&gt;给你一个链表，删除链表的倒数第 &lt;code&gt;n&lt;/code&gt; 个结点，并且返回链表的头结点。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="leetcode" scheme="https://fly97.cn/tags/leetcode/"/>
+    
+    <category term="链表" scheme="https://fly97.cn/tags/%E9%93%BE%E8%A1%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <link href="https://fly97.cn/p/swap-nodes-in-pairs/"/>
+    <id>https://fly97.cn/p/swap-nodes-in-pairs/</id>
+    <published>2022-02-14T10:54:00.000Z</published>
+    <updated>2022-02-14T10:54:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p><a id="more"></a><p><strong>示例</strong></p><p><img src="swap_ex1.jpg" /></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure><p><strong>思路</strong></p><p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p><p><img src="image-20220214194056147.png" /></p><p><strong>代码</strong></p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。&lt;/p&gt;</summary>
     
     
     
@@ -423,33 +444,6 @@
 &lt;li&gt;&lt;code&gt;TopVotedCandidate(int[] persons, int[] times)&lt;/code&gt;使用&lt;code&gt;persons&lt;/code&gt;和&lt;code&gt;times&lt;/code&gt;数组初始化对象。&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;int q(int t)&lt;/code&gt;根据前面描述的规则，返回在时刻&lt;code&gt;t&lt;/code&gt;在选举中领先的候选人的编号。&lt;/li&gt;
 &lt;/ul&gt;</summary>
-    
-    
-    
-    
-    <category term="leetcode" scheme="https://fly97.cn/tags/leetcode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>力扣每日一题之最短补全词</title>
-    <link href="https://fly97.cn/p/shortest-completing-word/"/>
-    <id>https://fly97.cn/p/shortest-completing-word/</id>
-    <published>2021-12-10T11:40:00.000Z</published>
-    <updated>2021-12-10T11:40:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>给你一个字符串<code>licensePlate</code>和一个字符串数组<code>words</code>，请你找出并返回<code>words</code>中最短补全词。</p><p>补全词是一个包含<code>licensePlate</code>中所有字母的单词，在所有补全词中，最短的那个就是最短补全词。</p><ul><li>在匹配<code>licensePlate</code>中的数字或空格。</li><li>不区分大小写</li><li>如果某个字母在<code>licensePlace</code>中出现不止一次，那么该字母在补全词中的出现的次数也应当一致或者更多。</li></ul><p>例如：<code>licensePlate</code>=<code>aBc 12c</code>, 那么他的补全词应当包含字母<code>a</code>、<code>b</code>忽略大小写和两个<code>c</code>，可能的补全词有<code>abccdef</code>、<code>caaacab</code>以及<code>cbca</code>。</p><p>请你找出并返回<code>words</code>中的最短补全词。题目数据中保证一定存在一个最短补全词。当有多个单词都符合最短补全词的匹配条件时区<code>words</code>中<strong>最靠前</strong>的那个。</p><a id="more"></a><h2 id="方法一统计字符出现次数">方法一：统计字符出现次数</h2><p>根据题意，先统计<code>licesePlate</code>中每个字母的出现次数（忽略大小写），然后遍历<code>words</code>中的每个单词，若26个英文字母在该单词中初选次数均小于<code>licesePlate</code>中才出现的次数，则该单词是一个补全词。返回最短且最靠前的补全词。</p><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;unicode&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">shortestCompletingWord</span><span class="params">(licensePlate <span class="keyword">string</span>, words []<span class="keyword">string</span>)</span> <span class="params">(ans <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">cnt := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> _, ch := <span class="keyword">range</span> licensePlate &#123;</span><br><span class="line"><span class="keyword">if</span> unicode.IsLetter(ch) &#123; <span class="comment">// 如果是字母</span></span><br><span class="line">cnt[unicode.ToLower(ch)-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span> <span class="comment">// 就让他变成小写</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">next:</span><br><span class="line"><span class="keyword">for</span> _, word := <span class="keyword">range</span> words &#123;</span><br><span class="line">c := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> _, ch := <span class="keyword">range</span> word &#123;</span><br><span class="line">c[ch-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">26</span>; i++ &#123;</span><br><span class="line"><span class="keyword">if</span> c[i] &lt; cnt[i] &#123;</span><br><span class="line"><span class="keyword">continue</span> next</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ans == <span class="string">&quot;&quot;</span> || <span class="built_in">len</span>(word) &lt; <span class="built_in">len</span>(ans) &#123;</span><br><span class="line">ans = word</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;给你一个字符串&lt;code&gt;licensePlate&lt;/code&gt;和一个字符串数组&lt;code&gt;words&lt;/code&gt;，请你找出并返回&lt;code&gt;words&lt;/code&gt;中最短补全词。&lt;/p&gt;
-&lt;p&gt;补全词是一个包含&lt;code&gt;licensePlate&lt;/code&gt;中所有字母的单词，在所有补全词中，最短的那个就是最短补全词。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;在匹配&lt;code&gt;licensePlate&lt;/code&gt;中的数字或空格。&lt;/li&gt;
-&lt;li&gt;不区分大小写&lt;/li&gt;
-&lt;li&gt;如果某个字母在&lt;code&gt;licensePlace&lt;/code&gt;中出现不止一次，那么该字母在补全词中的出现的次数也应当一致或者更多。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;例如：&lt;code&gt;licensePlate&lt;/code&gt;=&lt;code&gt;aBc 12c&lt;/code&gt;, 那么他的补全词应当包含字母&lt;code&gt;a&lt;/code&gt;、&lt;code&gt;b&lt;/code&gt;忽略大小写和两个&lt;code&gt;c&lt;/code&gt;，可能的补全词有&lt;code&gt;abccdef&lt;/code&gt;、&lt;code&gt;caaacab&lt;/code&gt;以及&lt;code&gt;cbca&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;请你找出并返回&lt;code&gt;words&lt;/code&gt;中的最短补全词。题目数据中保证一定存在一个最短补全词。当有多个单词都符合最短补全词的匹配条件时区&lt;code&gt;words&lt;/code&gt;中&lt;strong&gt;最靠前&lt;/strong&gt;的那个。&lt;/p&gt;</summary>
     
     
     
