@@ -5169,6 +5169,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之环形链表 II</title>
+    <url>/p/linked-list-cycle-ii/</url>
+    <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="circularlinkedlist.png" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Intersected at &#39;8&#39;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用快慢指针法，分别定义fast和slow指针，从头节点出发，fast指针每次移动两个节点，slow重镇每次移动一个节点，如果fast指针和slow指针在途中相遇，说明这个链表有环。</p>
+<p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣链表基础之移除链表元素</title>
     <url>/p/remove-linked-list-elements/</url>
     <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
@@ -5194,7 +5213,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
     <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
 <a id="more"></a>
 <p><strong>示例</strong></p>
-<p><img src="力扣链表基础之链表相交/160_example_1.png" /></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Intersected at &#39;8&#39;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
 <p><strong>思路</strong></p>
 <p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
@@ -5202,7 +5220,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <li>a + c + b = b + c + a</li>
 <li>若无交集，则a + b = b + a</li>
 </ul>
-<p><img src="力扣链表基础之链表相交/image-20220216162953801.png" /></p>
+<p><img src="image-20220216162953801.png" /></p>
 <p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
