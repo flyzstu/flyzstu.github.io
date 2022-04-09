@@ -183,6 +183,78 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker安装MySQL5.7</title>
+    <url>/p/install-mysql5.7-in-docker/</url>
+    <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
+<a id="more"></a>
+<p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
+<h3 id="安装docker">安装docker</h3>
+<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
+<h3 id="安装mysql容器">安装MySQL容器</h3>
+<p>以官方的MySQL5.7为例：<a href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
+<p>首先确保docker服务已经正常启动：</p>
+<p>linux执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
+<p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
+<h4 id="拉取镜像">拉取镜像</h4>
+<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
+<h4 id="运行容器">运行容器</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
+<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
+<li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
+<ul>
+<li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
+</ul></li>
+</ul>
+<h3 id="设置mysql容器">设置MySQL容器</h3>
+<h4 id="配置文件">配置文件</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysql]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4</span><br></pre></td></tr></table></figure>
+<h4 id="允许外网访问">允许外网访问</h4>
+<p>先进入容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql-5.7 /bin/bash</span><br></pre></td></tr></table></figure>
+<p>输入密码，连接mysql</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<p>修改表项</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#39;%&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<p>查看修改后的结果</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT USER,HOST FROM mysql.user;</span><br></pre></td></tr></table></figure>
+<p>结果如下所示，说明修改成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT USER,HOST FROM mysql.user;</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| USER          | HOST      |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| root          | %         |</span><br><span class="line">| mysql.session | localhost |</span><br><span class="line">| mysql.sys     | localhost |</span><br><span class="line">| root          | localhost |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">4 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="设置日志路径">设置日志路径</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 错误日志</span></span><br><span class="line"><span class="attr">log_error</span> = /var/log/mysql/error.log</span><br><span class="line"><span class="comment"># 查询日志</span></span><br><span class="line"><span class="attr">general_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span> = /var/log/mysql/general.log</span><br><span class="line"><span class="comment"># 慢查询日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">slow_query_log_file</span> = /var/log/mysql/slow.log</span><br><span class="line"><span class="comment"># 同步写binlog</span></span><br><span class="line"><span class="attr">log_bin_index</span> = /var/log/mysql/bin</span><br><span class="line"><span class="attr">max_binlog_size</span> = <span class="number">4</span>M</span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用docker-compose.yml">使用docker-compose.yml</h3>
+<p>废话不多说直接上干货</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=ff143253-f1dd-266f-2a4b-cdb747c31150</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/conf:/etc/mysql/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/sql:/root/sqls</span></span><br></pre></td></tr></table></figure>
+<h3 id="后记">后记</h3>
+<h4 id="权限问题">权限问题</h4>
+<p>由于一些原因需要把mysql容器中的日志映射出来，但是在操作的时候遇到了以下问题：</p>
+<p><img src="Docker安装MySQL5.7/image-20220315193804894.png" /></p>
+<p>根据一些“高人博客”的指点，在Dockerfile做了以下修改：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> mysql:<span class="number">5</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown -R mysql:mysql /var/<span class="built_in">log</span>/mysql</span></span><br></pre></td></tr></table></figure>
+<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code> 目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
+<p>仍旧失败，经过一翻查找，发现了原因，这里就不贴原文了，大致意思是：</p>
+<p><strong>容器中的<code>/var/log/mysql</code>这个目录一旦被映射到宿主机，Dockerfile中的命令就对它失去了作用</strong></p>
+<p>问题的根本原因在于，容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，所有才会出现<strong><code>Permission denied</code></strong>.</p>
+<p>换一个思路，既然容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，那么找一个有权限的文件写不就好了吗？</p>
+<p>于是将日志文件夹设置为<code>/tmp/mysqlog</code>不就可以正常读写了吗？<code>/tmp</code>目录下应该所有用户都有相关权限吧。</p>
+<p>一顿操作以后，又发现了问题：</p>
+<p><strong>映射出来的文件，我本地用户竟然无法读写！！竟然需要root用户才可以读写！</strong></p>
+<p>经过查找，发现了问题所在：</p>
+<p><strong>mysql容器运行的用户是mysql，uid是999，而本地创建的默认用户uid是1000。换句话说，映射出来的文件的所有者不是你，是容器中的uid为999的用户！！</strong></p>
+<h4 id="解决方案">解决方案</h4>
+<p>将映射文件夹的所有者修改为999（uid），所在用户组修改为1000（uid）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R 999:1000 *</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker打包镜像文件</title>
     <url>/p/export-docker-images-to-file/</url>
     <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个私有的docker registry，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
@@ -682,174 +754,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Jetson Xavier 开发实录</title>
-    <url>/p/How-to-use-Jetson-Xavier/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
-<p><strong>关键词：</strong>Jetson，NVIDIA，CUDA</p>
-<a id="more"></a>
-<h3 id="介绍">介绍</h3>
-<p>略</p>
-<h3 id="制作启动盘">制作启动盘</h3>
-<p>NVIDIA Jetson Xavie NX镜像下载地址：https://developer.nvidia.com/zh-cn/embedded/downloads</p>
-<p>板子使用的是SD卡作为引导盘和存储盘的，首先要格式化内存卡。使用<strong>SD Card Formatter</strong>格式化内存卡。<a href="https://www.sdcard.org/downloads/formatter/eula_windows/">SD Card Formatter下载地址</a></p>
-<p>格式化时注意<strong>盘符</strong>，随后点击<strong>Format</strong>.</p>
-<h4 id="烧录镜像到内存卡">烧录镜像到内存卡</h4>
-<p>使用<strong>balenaEtcher</strong>软件烧录镜像。下载地址：https://www.balena.io/etcher/</p>
-<p>选择下载好的<strong>jetson-nx-jp441-sd-card-image</strong>文件，点击Flash.</p>
-<p>刷写完以后会有一个验证数据的操作，不建议跳过。</p>
-<p>稍后片刻，等待完成。</p>
-<h3 id="点亮主机">点亮主机</h3>
-<p>把SD卡插入卡槽，将HDMI线连接到屏幕上，插入鼠标和键盘，启动电源。</p>
-<h3 id="初始配置">初始配置</h3>
-<h4 id="采用m.2-key-m-ssd作为启动盘">采用M.2 Key M SSD作为启动盘</h4>
-<ol type="1">
-<li><p>打开Ubuntu18.04自带 Disks 工具，'Ctrl+F' 或点击右上角选择‘Format Disk' 并将其格式化为GPT 格式</p></li>
-<li><p>格式化时必须选择“Ext4”， 等待完成后，点击下方 '三角按钮'，mount 到固定目录如<code>/media/nvidia/xxxx</code></p></li>
-<li><p>执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/jetsonhacks/rootOnNVMe.git</span><br><span class="line"><span class="built_in">cd</span> rootOnNVMe</span><br><span class="line">./copy-rootfs-ssd.sh</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./setup-service.sh</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h4 id="更改apt源">更改apt源</h4>
-<p>感谢<a href="https://mirrors.tuna.tsinghua.edu.cn/">清华大学开源软件镜像</a>对开源软件的大力支持。</p>
-<p>备份原有源文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv /etc/apt/sources.list /etc/apt/sources.list.bak</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;apt&#x2F;sources.list</span><br></pre></td></tr></table></figure>
-<p>将以下内容粘贴到终端</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic main restricted universe multiverse</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-updates main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-updates main restricted universe multiverse</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-backports main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-backports main restricted universe multiverse</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-security main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-security main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"># 预发布软件源，不建议启用</span><br><span class="line"># deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-proposed main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-proposed main restricted universe multiverse</span><br></pre></td></tr></table></figure>
-<p>更新系统</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt upgrade -y</span><br></pre></td></tr></table></figure>
-<h4 id="更改pypi源">更改pypi源</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo install python3-pip</span><br><span class="line">python3 -m pip install -i https://mirrors.cloud.tencent.com/pypi/simple --upgrade pip</span><br><span class="line">python3 -m pip install config set <span class="keyword">global</span>.index-url https://mirrors.cloud.tencent.com/pypi/simple</span><br></pre></td></tr></table></figure>
-<h4 id="风扇控制">风扇控制</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 255 &gt; /sys/devices/pwm-fan/target_pwm</span><br><span class="line"><span class="comment">#范围0-255,风扇默认是不开的</span></span><br></pre></td></tr></table></figure>
-<p>重启以后风扇是不转的，所以需要设置开机运行： 创建<code>/etc/rc.local</code>，并添加如下内容： （注：系统启动的时候会执行<code>/etc/rc.local</code>，如果已存在rc.local，则在<code>exit 0</code>之前加入那3句命令即可）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">sleep 10</span><br><span class="line">sudo /usr/bin/jetson_clocks</span><br><span class="line">sudo sh -c <span class="string">&#x27;echo 255 &gt; /sys/devices/pwm-fan/target_pwm&#x27;</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
-<p>添加执行权限： <code>sudo chmod 755 /etc/rc.local</code></p>
-<p>以后重启就会自动开启最大性能并启动风扇了。</p>
-<h4 id="远程桌面">远程桌面</h4>
-<p>开机以后SSH默认是开启的。这里使用Nomachine作为远程桌面软件。Nomachine的专有NX协议在高延迟低带宽的链路上提供了近乎本地速度的响应能力。</p>
-<p><a href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_5_arm64.deb">ARM64客户端下载链接</a></p>
-<p><a href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_7.exe">Windows客户端下载链接</a></p>
-<h4 id="设置分辨率">设置分辨率</h4>
-<p>如果没有显示器连接，默认VNC 连接后的分辨率为640x480 ，将以下内容添加到<code>/etc/X11/xorg.conf</code>文件，将其设置为默认VNC分辨率设置。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Section <span class="string">&quot;Screen&quot;</span></span><br><span class="line">   Identifier    <span class="string">&quot;Default Screen&quot;</span></span><br><span class="line">   Monitor       <span class="string">&quot;Configured Monitor&quot;</span></span><br><span class="line">   Device        <span class="string">&quot;Tegra0&quot;</span></span><br><span class="line">   SubSection <span class="string">&quot;Display&quot;</span></span><br><span class="line">       Depth    24</span><br><span class="line">       Virtual 1024 768 <span class="comment"># Modify the resolution by editing these values</span></span><br><span class="line">   EndSubSection</span><br><span class="line">EndSection</span><br></pre></td></tr></table></figure>
-<h4 id="快捷设置代理">快捷设置代理</h4>
-<p>在<code>/home</code>目录下，把一下内容加入到<code>.bashrc</code>.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">alias</span> proxy=<span class="string">&#x27;export all_proxy=http://127.0.0.1:10809</span></span><br><span class="line"><span class="string">export https_proxy=http://127.0.0.1:10809</span></span><br><span class="line"><span class="string">export socks_proxy=socks5://127.0.0.1:10808&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> unproxy=<span class="string">&#x27;unset all_proxy https_proxy socks_proxy&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="安装jtop">安装Jtop</h4>
-<p>Jtop（一个系统监视实用程序，可在终端上运行，并实时查看和控制 NVIDIA Jetson的状态 ）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python3-pip</span><br><span class="line">sudo pip3 install jetson-stats </span><br><span class="line">sudo jtop</span><br></pre></td></tr></table></figure>
-<h4 id="查看当前运行功率">查看当前运行功率</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#查询当前状态</span></span><br><span class="line">sudo nvpmodel --query</span><br><span class="line"><span class="comment">#切换状态</span></span><br><span class="line">sudo nvpmodel -m <span class="comment">#Mode_ID</span></span><br><span class="line"><span class="comment">#查看处理器状态</span></span><br><span class="line">sudo jetson_clocks --show</span><br><span class="line"><span class="comment">#如果jetson_clocks 后没有参数，则直接开启static MAX 模式</span></span><br><span class="line">sudo jetson=_clocks</span><br></pre></td></tr></table></figure>
-<h4 id="安装pytorch">安装Pytorch</h4>
-<p><a href="https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048">下载地址</a></p>
-<p>根据自己的Python环境下载whl文件.这里是Python 3.6.9，安装的版本是PyTorch v1.7。</p>
-<p>安装命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python3-pip libopenblas-base libopenmpi-dev </span><br><span class="line">python3 -m pip install Cython</span><br><span class="line">python3 -m pip install numpy torch-1.7.0-cp36-cp36m-linux_aarch64.whl</span><br></pre></td></tr></table></figure>
-<h5 id="安装torchvision">安装torchvision</h5>
-<p>以<strong>v0.8.1</strong>为例.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libjpeg-dev zlib1g-dev libpython3-dev libavcodec-dev libavformat-dev libswscale-dev</span><br><span class="line">git <span class="built_in">clone</span> --branch v0.8.1 https://e.coding.net/fly97/mechine-learning/torchvision.git   <span class="comment"># see below for version of torchvision to download</span></span><br><span class="line"><span class="built_in">cd</span> torchvision</span><br><span class="line"><span class="built_in">export</span> BUILD_VERSION=v0.8.1  <span class="comment"># where 0.x.0 is the torchvision version</span></span><br><span class="line">python3 -m pip  <span class="string">&#x27;pillow&lt;7&#x27;</span> <span class="comment"># always needed for Python 2.7, not needed torchvision v0.5.0+ with Python 3.6</span></span><br><span class="line">sudo python setup.py install     <span class="comment"># use python3 if installing for Python 3.6</span></span><br><span class="line"><span class="built_in">cd</span> ../  <span class="comment"># attempting to load torchvision from build dir will result in import error</span></span><br></pre></td></tr></table></figure>
-<p>对应版本：</p>
-<ul>
-<li>PyTorch v1.0 - torchvision v0.2.2</li>
-<li>PyTorch v1.1 - torchvision v0.3.0</li>
-<li>PyTorch v1.2 - torchvision v0.4.0</li>
-<li>PyTorch v1.3 - torchvision v0.4.2</li>
-<li>PyTorch v1.4 - torchvision v0.5.0</li>
-<li>PyTorch v1.5 - torchvision v0.6.0</li>
-<li>PyTorch v1.6 - torchvision v0.7.0</li>
-<li>PyTorch v1.7 - torchvision v0.8.1</li>
-</ul>
-<h4 id="cuda">CUDA</h4>
-<p>官网最新镜像文件自带cuda 版本为10.2，OpenCV4</p>
-<p>将以下命令写入<code>~/.bashrc</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> CUDA_HOME=/usr/<span class="built_in">local</span>/cuda-10.2</span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda-10.2/lib64:<span class="variable">$LD_LIBRARY_PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/cuda-10.2/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
-<p>退出后保存</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
-<p>检查</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nvcc -V</span><br></pre></td></tr></table></figure>
-<p>返回的文字如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nvcc: NVIDIA (R) Cuda compiler driver</span><br><span class="line">Copyright (c) 2005-2019 NVIDIA Corporation</span><br><span class="line">Built on Wed_Oct_23_21:14:42_PDT_2019</span><br><span class="line">Cuda compilation tools, release 10.2, V10.2.89</span><br></pre></td></tr></table></figure>
-<h5 id="安装ros仓库">安装ROS仓库</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;. /etc/lsb-release &amp;&amp; echo &quot;deb http://mirrors.bfsu.edu.cn/ros/ubuntu/ `lsb_release -cs` main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h5 id="添加ros密钥">添加ROS密钥</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver &#39;hkp:&#x2F;&#x2F;keyserver.ubuntu.com:80&#39; --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
-<h5 id="启用额外的软件库">启用额外的软件库</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-add-repository universe</span><br><span class="line">sudo apt-add-repository multiverse</span><br><span class="line">sudo apt-add-repository restricted</span><br></pre></td></tr></table></figure>
-<h5 id="添加ros">添加ROS</h5>
-<h4 id="opencv">OpenCV</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pkg-config opencv4 --modversion</span><br></pre></td></tr></table></figure>
-<p>返回的文字如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">4.1.1</span><br></pre></td></tr></table></figure>
-<h5 id="安装cuda-opencv">安装CUDA OpenCV</h5>
-<h6 id="移除原有opencv">移除原有OpenCV</h6>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">sudo apt-<span class="keyword">get</span> purge libopencv*</span><br><span class="line">sudo apt autoremove                  <span class="meta">#此步不建议运行, 有可能产生奇怪的依赖问题</span></span><br><span class="line">sudo apt-<span class="keyword">get</span> update</span><br></pre></td></tr></table></figure>
-<h6 id="安装依赖">安装依赖</h6>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 安装必备库，cmake,git,g++</span><br><span class="line">sudo apt-get install -y build-essential checkinstall cmake pkg-config yasm git gfortran</span><br><span class="line">sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev</span><br><span class="line">sudo apt-get install -y libjpeg8-dev libjasper-dev libpng12-dev libtiff5-dev libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev libxine2-dev libv4l-dev</span><br><span class="line">sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgtk2.0-dev libtbb-dev libatlas-base-dev libfaac-dev libmp3lame-dev libtheora-dev libvorbis-dev libxvidcore-dev libopencore-amrnb-dev libopencore-amrwb-dev x264 v4l-utils</span><br><span class="line"># 处理图像所需的包</span><br><span class="line">sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev </span><br><span class="line"># 处理视频所需的包</span><br><span class="line">sudo apt-get install libxvidcore-dev libx264-dev ffmpeg</span><br><span class="line"># opencv功能优化</span><br><span class="line">sudo apt-get install libatlas-base-dev gfortran </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h6 id="下载opencv源代码">下载OpenCV源代码</h6>
-<p>下载地址：https://opencv.org/releases/</p>
-<p>此次编译使用的是<code>opencv-4.4.0.zip</code>版本。</p>
-<p>额外的库：https://github.com/opencv/opencv_contrib</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip opencv-4.4.0.zip</span><br><span class="line"><span class="built_in">cd</span> opencv-4.4.0</span><br><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br></pre></td></tr></table></figure>
-<p>执行CMAKE</p>
-<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">cmake \</span><br><span class="line">-DCMAKE_BUILD_TYPE=Release \</span><br><span class="line">-DCMAKE_INSTALL_PREFIX=/usr/local \</span><br><span class="line">-DOPENCV_ENABLE_NONFREE=1 \</span><br><span class="line">-DBUILD_opencv_python2=1 \</span><br><span class="line">-DBUILD_opencv_python3=1 \</span><br><span class="line">-DWITH_FFMPEG=1 \</span><br><span class="line">-DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 \</span><br><span class="line">-DCUDA_ARCH_BIN=7.2 \</span><br><span class="line">-DCUDA_ARCH_PTX=7.2 \</span><br><span class="line">-DWITH_CUDA=1 \</span><br><span class="line">-DENABLE_FAST_MATH=1 \</span><br><span class="line">-DCUDA_FAST_MATH=1 \</span><br><span class="line">-DWITH_CUBLAS=1 \</span><br><span class="line">-DOPENCV_GENERATE_PKGCONFIG=1 \</span><br><span class="line">-DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-4.4.0/modules \</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
-<p>注意<strong>：opencv_contrib-4.4.0是放在opencv-4.4.0中，注意文件的路径！！！</strong></p>
-<p><strong>使用cuda，-DWITH_CUDA=1.</strong></p>
-<p>官方文档的cmake的配置情况：</p>
-<figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">cmake \</span><br><span class="line">-DCMAKE_BUILD_TYPE=Release \</span><br><span class="line">-DCMAKE_INSTALL_PREFIX=<span class="regexp">/usr \</span></span><br><span class="line"><span class="regexp">-DBUILD_PNG=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_TIFF=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_TBB=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_JPEG=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_JASPER=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_ZLIB=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_EXAMPLES=ON \</span></span><br><span class="line"><span class="regexp">-DBUILD_JAVA=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_opencv_python2=ON \</span></span><br><span class="line"><span class="regexp">-DBUILD_opencv_python3=OFF \</span></span><br><span class="line"><span class="regexp">-DENABLE_NEON=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENCL=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENMP=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_FFMPEG=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_GSTREAMER=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_GSTREAMER_0_10=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_CUDA=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_GTK=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_VTK=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_TBB=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_1394=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENEXR=OFF \</span></span><br><span class="line"><span class="regexp">-DCUDA_TOOLKIT_ROOT_DIR=/usr</span><span class="regexp">/local/cuda</span>-<span class="number">8.0</span> \</span><br><span class="line">-DCUDA_ARCH_BIN=<span class="number">6.2</span> \</span><br><span class="line">-DCUDA_ARCH_PTX=<span class="string">&quot;&quot;</span> \</span><br><span class="line">-DINSTALL_C_EXAMPLES=ON \</span><br><span class="line">-DINSTALL_TESTS=OFF \</span><br><span class="line">-DOPENCV_TEST_DATA_PATH=../opencv_extra/testdata \</span><br><span class="line">../opencv</span><br></pre></td></tr></table></figure>
-<p>注意：<strong>请根据自己的的CUDA版本和实际路径修改参数！</strong></p>
-<p>参考链接：<a href="https://docs.opencv.org/4.4.0/d6/d15/tutorial_building_tegra_cuda.html#tutorial_building_tegra_cuda_installing">OpenCV: Building OpenCV for Tegra with CUDA</a></p>
-<h6 id="编译">编译</h6>
-<p>执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make -j1</span><br></pre></td></tr></table></figure>
-<p>其中1指的线程，初次编译建议使用单线程,，解决一些奇怪问题。</p>
-<h6 id="安装">安装</h6>
-<p>执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
-<h6 id="成功啦">成功啦</h6>
-<h6 id="解决各种出错问题">解决各种出错问题</h6>
-<ol type="1">
-<li><strong>src/grfmt_jpeg2000.cpp.o failed</strong></li>
-</ol>
-<p>编译时关闭如下tag：<strong>-DBUILD_JASPER=OFF</strong> 即可.</p>
-<ol start="2" type="1">
-<li><p><strong>fatal error: boostdesc_bgm.i: No such file or directory</strong></p>
-<p>可参考：https://github.com/AastaNV/JEP/issues/20</p>
-<p>https://github.com/opencv/opencv_contrib/issues/1301#issuecomment-618262386</p></li>
-</ol>
-<p>将下载好的文件解压到以下文件夹：</p>
-<h4 id="cudnn">cuDNN</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src/cudnn_samples_v8/mnistCUDNN</span><br><span class="line">sudo make</span><br><span class="line">sudo chmod a+x mnistCUDNN</span><br><span class="line">./mnistCUDNN</span><br></pre></td></tr></table></figure>
-<h4 id="更改桌面">更改桌面</h4>
-<p>默认的桌面环境是Unity，此次更改成更轻量的<code>ubuntu-mate</code>.</p>
-<p>注意：安装过程中请勿卸载现有的桌面登录管理器，以免出现无法登录进系统的尴尬。</p>
-<p>安装更轻量的桌面登录管理器<strong>LightDM</strong>：LightDM是2010年开始的新项目，且被设计为轻量、小巧、快速。相较于GDM-GTK、KDM-Qt、LightDM实际上与界面无关，它仅支持本地图形界面获得最好兼容性。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install lightdm</span><br></pre></td></tr></table></figure>
-<p>安装<code>ubuntu-mate-destop</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-mate-core ubuntu-mate-desktop</span><br></pre></td></tr></table></figure>
-<h5 id="lightdm设置自动登录">lightdm设置自动登录</h5>
-<p>设置<strong>autologin-user</strong>来设置系统启动时自动登录某个帐户。设置<strong>autologin-user-timeout</strong>限制用户在设定秒内如果没有自动登录则不能自动登录。</p>
-<p>编辑以下文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;lightdm&#x2F;lightdm.conf </span><br></pre></td></tr></table></figure>
-<p>设置<strong>autologin-user</strong>来设置系统启动时自动登录某个帐户。设置<strong>autologin-user-timeout</strong>限制用户在设定秒内如果没有自动登录则不能自动登录。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[SeatDefaults]</span><br><span class="line">autologin-user&#x3D;username</span><br><span class="line">autologin-user-timeout&#x3D;delay</span><br></pre></td></tr></table></figure>
-<h5 id="lightdm修改默认会话"><strong>lightdm修改默认会话</strong></h5>
-<p>默认会话设置保存在<strong>/usr/share/lightdm/lightdm.conf.d</strong>会话包中。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[SeatDefaults]</span><br><span class="line">user-session&#x3D;name</span><br></pre></td></tr></table></figure>
-<p>其中name代表<strong>/usr/share/xsessions/*.desktop</strong>中<name>.desktop。</p>
-<p>转载自：https://www.cnblogs.com/EasonJim/p/7128317.html</p>
-<h4 id="sudo无需输入密码">sudo无需输入密码</h4>
-<p>切换到<code>root</code>用户，输入以下命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">visudo</span><br></pre></td></tr></table></figure>
-<p>在最后一行输入</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;用户名&gt; ALL&#x3D;(ALL) NOPASSWD: ALL </span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Jetson</tag>
-        <tag>NVIDIA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Jetson Xavier nx实现串口通信</title>
     <url>/p/serial-communication-on-jetson-xavier-nx/</url>
     <content><![CDATA[<p>利用Jetson Xavier和传感器模块进行串口通信</p>
@@ -876,78 +780,6 @@
       <tags>
         <tag>Jetson</tag>
         <tag>CUDA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker安装MySQL5.7</title>
-    <url>/p/install-mysql5.7-in-docker/</url>
-    <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
-<a id="more"></a>
-<p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
-<h3 id="安装docker">安装docker</h3>
-<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
-<h3 id="安装mysql容器">安装MySQL容器</h3>
-<p>以官方的MySQL5.7为例：<a href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
-<p>首先确保docker服务已经正常启动：</p>
-<p>linux执行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
-<p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
-<h4 id="拉取镜像">拉取镜像</h4>
-<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
-<h4 id="运行容器">运行容器</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
-<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
-<li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
-<ul>
-<li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
-</ul></li>
-</ul>
-<h3 id="设置mysql容器">设置MySQL容器</h3>
-<h4 id="配置文件">配置文件</h4>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysql]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4</span><br></pre></td></tr></table></figure>
-<h4 id="允许外网访问">允许外网访问</h4>
-<p>先进入容器</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql-5.7 /bin/bash</span><br></pre></td></tr></table></figure>
-<p>输入密码，连接mysql</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>修改表项</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#39;%&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-<p>查看修改后的结果</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT USER,HOST FROM mysql.user;</span><br></pre></td></tr></table></figure>
-<p>结果如下所示，说明修改成功</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT USER,HOST FROM mysql.user;</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| USER          | HOST      |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| root          | %         |</span><br><span class="line">| mysql.session | localhost |</span><br><span class="line">| mysql.sys     | localhost |</span><br><span class="line">| root          | localhost |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">4 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
-<h4 id="设置日志路径">设置日志路径</h4>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 错误日志</span></span><br><span class="line"><span class="attr">log_error</span> = /var/log/mysql/error.log</span><br><span class="line"><span class="comment"># 查询日志</span></span><br><span class="line"><span class="attr">general_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span> = /var/log/mysql/general.log</span><br><span class="line"><span class="comment"># 慢查询日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">slow_query_log_file</span> = /var/log/mysql/slow.log</span><br><span class="line"><span class="comment"># 同步写binlog</span></span><br><span class="line"><span class="attr">log_bin_index</span> = /var/log/mysql/bin</span><br><span class="line"><span class="attr">max_binlog_size</span> = <span class="number">4</span>M</span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用docker-compose.yml">使用docker-compose.yml</h3>
-<p>废话不多说直接上干货</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=ff143253-f1dd-266f-2a4b-cdb747c31150</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/conf:/etc/mysql/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/sql:/root/sqls</span></span><br></pre></td></tr></table></figure>
-<h3 id="后记">后记</h3>
-<h4 id="权限问题">权限问题</h4>
-<p>由于一些原因需要把mysql容器中的日志映射出来，但是在操作的时候遇到了以下问题：</p>
-<p><img src="Docker安装MySQL5.7/image-20220315193804894.png" /></p>
-<p>根据一些“高人博客”的指点，在Dockerfile做了以下修改：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> mysql:<span class="number">5</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown -R mysql:mysql /var/<span class="built_in">log</span>/mysql</span></span><br></pre></td></tr></table></figure>
-<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code> 目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
-<p>仍旧失败，经过一翻查找，发现了原因，这里就不贴原文了，大致意思是：</p>
-<p><strong>容器中的<code>/var/log/mysql</code>这个目录一旦被映射到宿主机，Dockerfile中的命令就对它失去了作用</strong></p>
-<p>问题的根本原因在于，容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，所有才会出现<strong><code>Permission denied</code></strong>.</p>
-<p>换一个思路，既然容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，那么找一个有权限的文件写不就好了吗？</p>
-<p>于是将日志文件夹设置为<code>/tmp/mysqlog</code>不就可以正常读写了吗？<code>/tmp</code>目录下应该所有用户都有相关权限吧。</p>
-<p>一顿操作以后，又发现了问题：</p>
-<p><strong>映射出来的文件，我本地用户竟然无法读写！！竟然需要root用户才可以读写！</strong></p>
-<p>经过查找，发现了问题所在：</p>
-<p><strong>mysql容器运行的用户是mysql，uid是999，而本地创建的默认用户uid是1000。换句话说，映射出来的文件的所有者不是你，是容器中的uid为999的用户！！</strong></p>
-<h4 id="解决方案">解决方案</h4>
-<p>将映射文件夹的所有者修改为999（uid），所在用户组修改为1000（uid）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R 999:1000 *</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -1340,57 +1172,171 @@
       </tags>
   </entry>
   <entry>
-    <title>ubuntu2004安装最新版本MySQL并设置外网访问</title>
-    <url>/p/install-newest-mysql-in-ubuntu2004/</url>
-    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的MySQL以及如何设置MySQL外网访问。</strong></p>
-<p><strong>关键词：MySQL，Linux</strong></p>
+    <title>Jetson Xavier 开发实录</title>
+    <url>/p/How-to-use-Jetson-Xavier/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
+<p><strong>关键词：</strong>Jetson，NVIDIA，CUDA</p>
 <a id="more"></a>
-<h3 id="更新仓库">更新仓库</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<h3 id="用官方仓库安装-mysql">用官方仓库安装 MySQL</h3>
-<h4 id="下载mysql仓库工具包">下载mysql仓库工具包</h4>
-<p><a href="https%3A//dev.mysql.com/downloads/repo/apt/">下载页面</a></p>
-<p><img src="image-20211203152648123.png" /></p>
-<p>点击Download，选择<strong>No thanks, just start my download.</strong></p>
-<p><img src="image-20211203152704181.png" /></p>
-<h4 id="安装">安装</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i mysql-apt-config*</span><br></pre></td></tr></table></figure>
-<h4 id="更新仓库-1">更新仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<h4 id="安装mysql-server">安装mysql-server</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
-<p>这样做会在你的终端中打开包配置的提示。使用向下箭头选择“Ok”选项。</p>
-<p><img src="v2-b09d5038434b3b540638c382677300bb_1440w.jpg" /></p>
-<p>点击回车。这应该会提示你输入密码：这是在为 MySQL 设置 root 密码。</p>
-<p><img src="v2-b22e27255b02ea03066a398e2b90acb8_1440w.jpg" /></p>
-<p>输入密码然后点击 Tab 键去选择“Ok“。点击回车键，你将重新输入密码。</p>
-<p><img src="v2-191abdf08ed88a03f4842b715f229649_1440w.jpg" /></p>
-<p>将会展示一些关于 MySQL Server 的配置信息。再次按下 Tab 去选择 “Ok” 和按下回车键：</p>
-<p><img src="/v2-c950f3613406d1b62dfa22904be045bb_1440w.jpg" /></p>
-<p>第一种是最新的密码加密方法，第二种是sql5版本之前的密码加密方法，这里选择第二个。</p>
-<h3 id="验证安装">验证安装</h3>
-<p>要验证 MySQL 已经正确安装，使用下列命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status mysql.service</span><br></pre></td></tr></table></figure>
-<p><img src="v2-f506966fb17a1b8a145c84a8f5add612_1440w.jpg" /></p>
-<p>检查到显示running即安装成功</p>
-<h3 id="设置自动启动">设置自动启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> mysql.service</span><br></pre></td></tr></table></figure>
-<h3 id="设置外网访问">设置外网访问</h3>
-<p>链接mysql以后，在mysql命令行输入以下命令就可以允许外网访问：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#96;%&#96; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-<h4 id="原理">原理</h4>
-<p>mysql默认是不允许外网访问的，只允许<code>localhost</code>或者<code>127.0.0.1</code>访问。</p>
-<p>查询默认的mysql.user表，如下表示不允许外网访问，只允许本机访问：</p>
-<p><img src="image-20211203153346215.png" /></p>
-<p>更新访问权限</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=`%` <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211203153437479.png" /></p>
-<p>更新权限</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h3 id="介绍">介绍</h3>
+<p>略</p>
+<h3 id="制作启动盘">制作启动盘</h3>
+<p>NVIDIA Jetson Xavie NX镜像下载地址：https://developer.nvidia.com/zh-cn/embedded/downloads</p>
+<p>板子使用的是SD卡作为引导盘和存储盘的，首先要格式化内存卡。使用<strong>SD Card Formatter</strong>格式化内存卡。<a href="https://www.sdcard.org/downloads/formatter/eula_windows/">SD Card Formatter下载地址</a></p>
+<p>格式化时注意<strong>盘符</strong>，随后点击<strong>Format</strong>.</p>
+<h4 id="烧录镜像到内存卡">烧录镜像到内存卡</h4>
+<p>使用<strong>balenaEtcher</strong>软件烧录镜像。下载地址：https://www.balena.io/etcher/</p>
+<p>选择下载好的<strong>jetson-nx-jp441-sd-card-image</strong>文件，点击Flash.</p>
+<p>刷写完以后会有一个验证数据的操作，不建议跳过。</p>
+<p>稍后片刻，等待完成。</p>
+<h3 id="点亮主机">点亮主机</h3>
+<p>把SD卡插入卡槽，将HDMI线连接到屏幕上，插入鼠标和键盘，启动电源。</p>
+<h3 id="初始配置">初始配置</h3>
+<h4 id="采用m.2-key-m-ssd作为启动盘">采用M.2 Key M SSD作为启动盘</h4>
+<ol type="1">
+<li><p>打开Ubuntu18.04自带 Disks 工具，'Ctrl+F' 或点击右上角选择‘Format Disk' 并将其格式化为GPT 格式</p></li>
+<li><p>格式化时必须选择“Ext4”， 等待完成后，点击下方 '三角按钮'，mount 到固定目录如<code>/media/nvidia/xxxx</code></p></li>
+<li><p>执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/jetsonhacks/rootOnNVMe.git</span><br><span class="line"><span class="built_in">cd</span> rootOnNVMe</span><br><span class="line">./copy-rootfs-ssd.sh</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./setup-service.sh</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="更改apt源">更改apt源</h4>
+<p>感谢<a href="https://mirrors.tuna.tsinghua.edu.cn/">清华大学开源软件镜像</a>对开源软件的大力支持。</p>
+<p>备份原有源文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv /etc/apt/sources.list /etc/apt/sources.list.bak</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;apt&#x2F;sources.list</span><br></pre></td></tr></table></figure>
+<p>将以下内容粘贴到终端</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic main restricted universe multiverse</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-updates main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-updates main restricted universe multiverse</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-backports main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-backports main restricted universe multiverse</span><br><span class="line">deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-security main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-security main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"># 预发布软件源，不建议启用</span><br><span class="line"># deb https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-proposed main restricted universe multiverse</span><br><span class="line"># deb-src https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;ubuntu-ports&#x2F; bionic-proposed main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+<p>更新系统</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt upgrade -y</span><br></pre></td></tr></table></figure>
+<h4 id="更改pypi源">更改pypi源</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo install python3-pip</span><br><span class="line">python3 -m pip install -i https://mirrors.cloud.tencent.com/pypi/simple --upgrade pip</span><br><span class="line">python3 -m pip install config set <span class="keyword">global</span>.index-url https://mirrors.cloud.tencent.com/pypi/simple</span><br></pre></td></tr></table></figure>
+<h4 id="风扇控制">风扇控制</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 255 &gt; /sys/devices/pwm-fan/target_pwm</span><br><span class="line"><span class="comment">#范围0-255,风扇默认是不开的</span></span><br></pre></td></tr></table></figure>
+<p>重启以后风扇是不转的，所以需要设置开机运行： 创建<code>/etc/rc.local</code>，并添加如下内容： （注：系统启动的时候会执行<code>/etc/rc.local</code>，如果已存在rc.local，则在<code>exit 0</code>之前加入那3句命令即可）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">sleep 10</span><br><span class="line">sudo /usr/bin/jetson_clocks</span><br><span class="line">sudo sh -c <span class="string">&#x27;echo 255 &gt; /sys/devices/pwm-fan/target_pwm&#x27;</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+<p>添加执行权限： <code>sudo chmod 755 /etc/rc.local</code></p>
+<p>以后重启就会自动开启最大性能并启动风扇了。</p>
+<h4 id="远程桌面">远程桌面</h4>
+<p>开机以后SSH默认是开启的。这里使用Nomachine作为远程桌面软件。Nomachine的专有NX协议在高延迟低带宽的链路上提供了近乎本地速度的响应能力。</p>
+<p><a href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_5_arm64.deb">ARM64客户端下载链接</a></p>
+<p><a href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_7.exe">Windows客户端下载链接</a></p>
+<h4 id="设置分辨率">设置分辨率</h4>
+<p>如果没有显示器连接，默认VNC 连接后的分辨率为640x480 ，将以下内容添加到<code>/etc/X11/xorg.conf</code>文件，将其设置为默认VNC分辨率设置。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Section <span class="string">&quot;Screen&quot;</span></span><br><span class="line">   Identifier    <span class="string">&quot;Default Screen&quot;</span></span><br><span class="line">   Monitor       <span class="string">&quot;Configured Monitor&quot;</span></span><br><span class="line">   Device        <span class="string">&quot;Tegra0&quot;</span></span><br><span class="line">   SubSection <span class="string">&quot;Display&quot;</span></span><br><span class="line">       Depth    24</span><br><span class="line">       Virtual 1024 768 <span class="comment"># Modify the resolution by editing these values</span></span><br><span class="line">   EndSubSection</span><br><span class="line">EndSection</span><br></pre></td></tr></table></figure>
+<h4 id="快捷设置代理">快捷设置代理</h4>
+<p>在<code>/home</code>目录下，把一下内容加入到<code>.bashrc</code>.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">alias</span> proxy=<span class="string">&#x27;export all_proxy=http://127.0.0.1:10809</span></span><br><span class="line"><span class="string">export https_proxy=http://127.0.0.1:10809</span></span><br><span class="line"><span class="string">export socks_proxy=socks5://127.0.0.1:10808&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> unproxy=<span class="string">&#x27;unset all_proxy https_proxy socks_proxy&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="安装jtop">安装Jtop</h4>
+<p>Jtop（一个系统监视实用程序，可在终端上运行，并实时查看和控制 NVIDIA Jetson的状态 ）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python3-pip</span><br><span class="line">sudo pip3 install jetson-stats </span><br><span class="line">sudo jtop</span><br></pre></td></tr></table></figure>
+<h4 id="查看当前运行功率">查看当前运行功率</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#查询当前状态</span></span><br><span class="line">sudo nvpmodel --query</span><br><span class="line"><span class="comment">#切换状态</span></span><br><span class="line">sudo nvpmodel -m <span class="comment">#Mode_ID</span></span><br><span class="line"><span class="comment">#查看处理器状态</span></span><br><span class="line">sudo jetson_clocks --show</span><br><span class="line"><span class="comment">#如果jetson_clocks 后没有参数，则直接开启static MAX 模式</span></span><br><span class="line">sudo jetson=_clocks</span><br></pre></td></tr></table></figure>
+<h4 id="安装pytorch">安装Pytorch</h4>
+<p><a href="https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048">下载地址</a></p>
+<p>根据自己的Python环境下载whl文件.这里是Python 3.6.9，安装的版本是PyTorch v1.7。</p>
+<p>安装命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python3-pip libopenblas-base libopenmpi-dev </span><br><span class="line">python3 -m pip install Cython</span><br><span class="line">python3 -m pip install numpy torch-1.7.0-cp36-cp36m-linux_aarch64.whl</span><br></pre></td></tr></table></figure>
+<h5 id="安装torchvision">安装torchvision</h5>
+<p>以<strong>v0.8.1</strong>为例.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libjpeg-dev zlib1g-dev libpython3-dev libavcodec-dev libavformat-dev libswscale-dev</span><br><span class="line">git <span class="built_in">clone</span> --branch v0.8.1 https://e.coding.net/fly97/mechine-learning/torchvision.git   <span class="comment"># see below for version of torchvision to download</span></span><br><span class="line"><span class="built_in">cd</span> torchvision</span><br><span class="line"><span class="built_in">export</span> BUILD_VERSION=v0.8.1  <span class="comment"># where 0.x.0 is the torchvision version</span></span><br><span class="line">python3 -m pip  <span class="string">&#x27;pillow&lt;7&#x27;</span> <span class="comment"># always needed for Python 2.7, not needed torchvision v0.5.0+ with Python 3.6</span></span><br><span class="line">sudo python setup.py install     <span class="comment"># use python3 if installing for Python 3.6</span></span><br><span class="line"><span class="built_in">cd</span> ../  <span class="comment"># attempting to load torchvision from build dir will result in import error</span></span><br></pre></td></tr></table></figure>
+<p>对应版本：</p>
+<ul>
+<li>PyTorch v1.0 - torchvision v0.2.2</li>
+<li>PyTorch v1.1 - torchvision v0.3.0</li>
+<li>PyTorch v1.2 - torchvision v0.4.0</li>
+<li>PyTorch v1.3 - torchvision v0.4.2</li>
+<li>PyTorch v1.4 - torchvision v0.5.0</li>
+<li>PyTorch v1.5 - torchvision v0.6.0</li>
+<li>PyTorch v1.6 - torchvision v0.7.0</li>
+<li>PyTorch v1.7 - torchvision v0.8.1</li>
+</ul>
+<h4 id="cuda">CUDA</h4>
+<p>官网最新镜像文件自带cuda 版本为10.2，OpenCV4</p>
+<p>将以下命令写入<code>~/.bashrc</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> CUDA_HOME=/usr/<span class="built_in">local</span>/cuda-10.2</span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda-10.2/lib64:<span class="variable">$LD_LIBRARY_PATH</span></span><br><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/cuda-10.2/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p>退出后保存</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>检查</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nvcc -V</span><br></pre></td></tr></table></figure>
+<p>返回的文字如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nvcc: NVIDIA (R) Cuda compiler driver</span><br><span class="line">Copyright (c) 2005-2019 NVIDIA Corporation</span><br><span class="line">Built on Wed_Oct_23_21:14:42_PDT_2019</span><br><span class="line">Cuda compilation tools, release 10.2, V10.2.89</span><br></pre></td></tr></table></figure>
+<h5 id="安装ros仓库">安装ROS仓库</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;. /etc/lsb-release &amp;&amp; echo &quot;deb http://mirrors.bfsu.edu.cn/ros/ubuntu/ `lsb_release -cs` main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h5 id="添加ros密钥">添加ROS密钥</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver &#39;hkp:&#x2F;&#x2F;keyserver.ubuntu.com:80&#39; --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
+<h5 id="启用额外的软件库">启用额外的软件库</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-add-repository universe</span><br><span class="line">sudo apt-add-repository multiverse</span><br><span class="line">sudo apt-add-repository restricted</span><br></pre></td></tr></table></figure>
+<h5 id="添加ros">添加ROS</h5>
+<h4 id="opencv">OpenCV</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pkg-config opencv4 --modversion</span><br></pre></td></tr></table></figure>
+<p>返回的文字如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">4.1.1</span><br></pre></td></tr></table></figure>
+<h5 id="安装cuda-opencv">安装CUDA OpenCV</h5>
+<h6 id="移除原有opencv">移除原有OpenCV</h6>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">sudo apt-<span class="keyword">get</span> purge libopencv*</span><br><span class="line">sudo apt autoremove                  <span class="meta">#此步不建议运行, 有可能产生奇怪的依赖问题</span></span><br><span class="line">sudo apt-<span class="keyword">get</span> update</span><br></pre></td></tr></table></figure>
+<h6 id="安装依赖">安装依赖</h6>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 安装必备库，cmake,git,g++</span><br><span class="line">sudo apt-get install -y build-essential checkinstall cmake pkg-config yasm git gfortran</span><br><span class="line">sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev</span><br><span class="line">sudo apt-get install -y libjpeg8-dev libjasper-dev libpng12-dev libtiff5-dev libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev libxine2-dev libv4l-dev</span><br><span class="line">sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgtk2.0-dev libtbb-dev libatlas-base-dev libfaac-dev libmp3lame-dev libtheora-dev libvorbis-dev libxvidcore-dev libopencore-amrnb-dev libopencore-amrwb-dev x264 v4l-utils</span><br><span class="line"># 处理图像所需的包</span><br><span class="line">sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev </span><br><span class="line"># 处理视频所需的包</span><br><span class="line">sudo apt-get install libxvidcore-dev libx264-dev ffmpeg</span><br><span class="line"># opencv功能优化</span><br><span class="line">sudo apt-get install libatlas-base-dev gfortran </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h6 id="下载opencv源代码">下载OpenCV源代码</h6>
+<p>下载地址：https://opencv.org/releases/</p>
+<p>此次编译使用的是<code>opencv-4.4.0.zip</code>版本。</p>
+<p>额外的库：https://github.com/opencv/opencv_contrib</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip opencv-4.4.0.zip</span><br><span class="line"><span class="built_in">cd</span> opencv-4.4.0</span><br><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br></pre></td></tr></table></figure>
+<p>执行CMAKE</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">cmake \</span><br><span class="line">-DCMAKE_BUILD_TYPE=Release \</span><br><span class="line">-DCMAKE_INSTALL_PREFIX=/usr/local \</span><br><span class="line">-DOPENCV_ENABLE_NONFREE=1 \</span><br><span class="line">-DBUILD_opencv_python2=1 \</span><br><span class="line">-DBUILD_opencv_python3=1 \</span><br><span class="line">-DWITH_FFMPEG=1 \</span><br><span class="line">-DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 \</span><br><span class="line">-DCUDA_ARCH_BIN=7.2 \</span><br><span class="line">-DCUDA_ARCH_PTX=7.2 \</span><br><span class="line">-DWITH_CUDA=1 \</span><br><span class="line">-DENABLE_FAST_MATH=1 \</span><br><span class="line">-DCUDA_FAST_MATH=1 \</span><br><span class="line">-DWITH_CUBLAS=1 \</span><br><span class="line">-DOPENCV_GENERATE_PKGCONFIG=1 \</span><br><span class="line">-DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-4.4.0/modules \</span><br><span class="line">..</span><br></pre></td></tr></table></figure>
+<p>注意<strong>：opencv_contrib-4.4.0是放在opencv-4.4.0中，注意文件的路径！！！</strong></p>
+<p><strong>使用cuda，-DWITH_CUDA=1.</strong></p>
+<p>官方文档的cmake的配置情况：</p>
+<figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">cmake \</span><br><span class="line">-DCMAKE_BUILD_TYPE=Release \</span><br><span class="line">-DCMAKE_INSTALL_PREFIX=<span class="regexp">/usr \</span></span><br><span class="line"><span class="regexp">-DBUILD_PNG=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_TIFF=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_TBB=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_JPEG=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_JASPER=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_ZLIB=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_EXAMPLES=ON \</span></span><br><span class="line"><span class="regexp">-DBUILD_JAVA=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_opencv_python2=ON \</span></span><br><span class="line"><span class="regexp">-DBUILD_opencv_python3=OFF \</span></span><br><span class="line"><span class="regexp">-DENABLE_NEON=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENCL=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENMP=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_FFMPEG=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_GSTREAMER=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_GSTREAMER_0_10=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_CUDA=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_GTK=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_VTK=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_TBB=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_1394=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENEXR=OFF \</span></span><br><span class="line"><span class="regexp">-DCUDA_TOOLKIT_ROOT_DIR=/usr</span><span class="regexp">/local/cuda</span>-<span class="number">8.0</span> \</span><br><span class="line">-DCUDA_ARCH_BIN=<span class="number">6.2</span> \</span><br><span class="line">-DCUDA_ARCH_PTX=<span class="string">&quot;&quot;</span> \</span><br><span class="line">-DINSTALL_C_EXAMPLES=ON \</span><br><span class="line">-DINSTALL_TESTS=OFF \</span><br><span class="line">-DOPENCV_TEST_DATA_PATH=../opencv_extra/testdata \</span><br><span class="line">../opencv</span><br></pre></td></tr></table></figure>
+<p>注意：<strong>请根据自己的的CUDA版本和实际路径修改参数！</strong></p>
+<p>参考链接：<a href="https://docs.opencv.org/4.4.0/d6/d15/tutorial_building_tegra_cuda.html#tutorial_building_tegra_cuda_installing">OpenCV: Building OpenCV for Tegra with CUDA</a></p>
+<h6 id="编译">编译</h6>
+<p>执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make -j1</span><br></pre></td></tr></table></figure>
+<p>其中1指的线程，初次编译建议使用单线程,，解决一些奇怪问题。</p>
+<h6 id="安装">安装</h6>
+<p>执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<h6 id="成功啦">成功啦</h6>
+<h6 id="解决各种出错问题">解决各种出错问题</h6>
+<ol type="1">
+<li><strong>src/grfmt_jpeg2000.cpp.o failed</strong></li>
+</ol>
+<p>编译时关闭如下tag：<strong>-DBUILD_JASPER=OFF</strong> 即可.</p>
+<ol start="2" type="1">
+<li><p><strong>fatal error: boostdesc_bgm.i: No such file or directory</strong></p>
+<p>可参考：https://github.com/AastaNV/JEP/issues/20</p>
+<p>https://github.com/opencv/opencv_contrib/issues/1301#issuecomment-618262386</p></li>
+</ol>
+<p>将下载好的文件解压到以下文件夹：</p>
+<h4 id="cudnn">cuDNN</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src/cudnn_samples_v8/mnistCUDNN</span><br><span class="line">sudo make</span><br><span class="line">sudo chmod a+x mnistCUDNN</span><br><span class="line">./mnistCUDNN</span><br></pre></td></tr></table></figure>
+<h4 id="更改桌面">更改桌面</h4>
+<p>默认的桌面环境是Unity，此次更改成更轻量的<code>ubuntu-mate</code>.</p>
+<p>注意：安装过程中请勿卸载现有的桌面登录管理器，以免出现无法登录进系统的尴尬。</p>
+<p>安装更轻量的桌面登录管理器<strong>LightDM</strong>：LightDM是2010年开始的新项目，且被设计为轻量、小巧、快速。相较于GDM-GTK、KDM-Qt、LightDM实际上与界面无关，它仅支持本地图形界面获得最好兼容性。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install lightdm</span><br></pre></td></tr></table></figure>
+<p>安装<code>ubuntu-mate-destop</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ubuntu-mate-core ubuntu-mate-desktop</span><br></pre></td></tr></table></figure>
+<h5 id="lightdm设置自动登录">lightdm设置自动登录</h5>
+<p>设置<strong>autologin-user</strong>来设置系统启动时自动登录某个帐户。设置<strong>autologin-user-timeout</strong>限制用户在设定秒内如果没有自动登录则不能自动登录。</p>
+<p>编辑以下文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;lightdm&#x2F;lightdm.conf </span><br></pre></td></tr></table></figure>
+<p>设置<strong>autologin-user</strong>来设置系统启动时自动登录某个帐户。设置<strong>autologin-user-timeout</strong>限制用户在设定秒内如果没有自动登录则不能自动登录。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[SeatDefaults]</span><br><span class="line">autologin-user&#x3D;username</span><br><span class="line">autologin-user-timeout&#x3D;delay</span><br></pre></td></tr></table></figure>
+<h5 id="lightdm修改默认会话"><strong>lightdm修改默认会话</strong></h5>
+<p>默认会话设置保存在<strong>/usr/share/lightdm/lightdm.conf.d</strong>会话包中。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[SeatDefaults]</span><br><span class="line">user-session&#x3D;name</span><br></pre></td></tr></table></figure>
+<p>其中name代表<strong>/usr/share/xsessions/*.desktop</strong>中<name>.desktop。</p>
+<p>转载自：https://www.cnblogs.com/EasonJim/p/7128317.html</p>
+<h4 id="sudo无需输入密码">sudo无需输入密码</h4>
+<p>切换到<code>root</code>用户，输入以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">visudo</span><br></pre></td></tr></table></figure>
+<p>在最后一行输入</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;用户名&gt; ALL&#x3D;(ALL) NOPASSWD: ALL </span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>mysql</tag>
-        <tag>linux</tag>
+        <tag>Jetson</tag>
+        <tag>NVIDIA</tag>
       </tags>
   </entry>
   <entry>
@@ -1475,8 +1421,62 @@
 <p>完。</p>
 ]]></content>
       <tags>
-        <tag>linux</tag>
         <tag>redis</tag>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ubuntu2004安装最新版本MySQL并设置外网访问</title>
+    <url>/p/install-newest-mysql-in-ubuntu2004/</url>
+    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的MySQL以及如何设置MySQL外网访问。</strong></p>
+<p><strong>关键词：MySQL，Linux</strong></p>
+<a id="more"></a>
+<h3 id="更新仓库">更新仓库</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<h3 id="用官方仓库安装-mysql">用官方仓库安装 MySQL</h3>
+<h4 id="下载mysql仓库工具包">下载mysql仓库工具包</h4>
+<p><a href="https%3A//dev.mysql.com/downloads/repo/apt/">下载页面</a></p>
+<p><img src="image-20211203152648123.png" /></p>
+<p>点击Download，选择<strong>No thanks, just start my download.</strong></p>
+<p><img src="image-20211203152704181.png" /></p>
+<h4 id="安装">安装</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i mysql-apt-config*</span><br></pre></td></tr></table></figure>
+<h4 id="更新仓库-1">更新仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<h4 id="安装mysql-server">安装mysql-server</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
+<p>这样做会在你的终端中打开包配置的提示。使用向下箭头选择“Ok”选项。</p>
+<p><img src="v2-b09d5038434b3b540638c382677300bb_1440w.jpg" /></p>
+<p>点击回车。这应该会提示你输入密码：这是在为 MySQL 设置 root 密码。</p>
+<p><img src="v2-b22e27255b02ea03066a398e2b90acb8_1440w.jpg" /></p>
+<p>输入密码然后点击 Tab 键去选择“Ok“。点击回车键，你将重新输入密码。</p>
+<p><img src="v2-191abdf08ed88a03f4842b715f229649_1440w.jpg" /></p>
+<p>将会展示一些关于 MySQL Server 的配置信息。再次按下 Tab 去选择 “Ok” 和按下回车键：</p>
+<p><img src="/v2-c950f3613406d1b62dfa22904be045bb_1440w.jpg" /></p>
+<p>第一种是最新的密码加密方法，第二种是sql5版本之前的密码加密方法，这里选择第二个。</p>
+<h3 id="验证安装">验证安装</h3>
+<p>要验证 MySQL 已经正确安装，使用下列命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status mysql.service</span><br></pre></td></tr></table></figure>
+<p><img src="v2-f506966fb17a1b8a145c84a8f5add612_1440w.jpg" /></p>
+<p>检查到显示running即安装成功</p>
+<h3 id="设置自动启动">设置自动启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> mysql.service</span><br></pre></td></tr></table></figure>
+<h3 id="设置外网访问">设置外网访问</h3>
+<p>链接mysql以后，在mysql命令行输入以下命令就可以允许外网访问：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#96;%&#96; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h4 id="原理">原理</h4>
+<p>mysql默认是不允许外网访问的，只允许<code>localhost</code>或者<code>127.0.0.1</code>访问。</p>
+<p>查询默认的mysql.user表，如下表示不允许外网访问，只允许本机访问：</p>
+<p><img src="image-20211203153346215.png" /></p>
+<p>更新访问权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=`%` <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211203153437479.png" /></p>
+<p>更新权限</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
