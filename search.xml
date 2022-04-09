@@ -639,6 +639,65 @@
       </tags>
   </entry>
   <entry>
+    <title>Intel Realsense T265使用教程</title>
+    <url>/p/Intel-Realsense-T265-in-ubuntu/</url>
+    <content><![CDATA[<p><strong>摘要</strong>：英特尔® 实感™ 追踪摄像头 T265 是一款全新的独立同步定位与建图设备，可用于机器人、无人机等领域。本文主要介绍了如何在ubuntu系统上安装Intel Realsense T265追踪摄像头。</p>
+<p><strong>关键词</strong>：T265，ROS</p>
+<a id="more"></a>
+<h3 id="t265参数">T265参数</h3>
+<ol type="1">
+<li>T265采用了2视觉处理单元（VPU），V-SLAM算法可以直接在VPU上运行，可直接输出相机位姿；</li>
+<li>T265使用了双目鱼眼相机，分辨率848*800，刷新频率30Hz，可以生成单色图像，视场角163(±5°)；</li>
+<li>惯性测量单元（IMU）型号为BM1055；</li>
+<li>相机与IMU的参数都保存了传感器中，可以通过示例直接读取相机的内参和相机与IMU之间的外参；</li>
+<li>相机外形尺寸108x24.5x12.5mm</li>
+</ol>
+<p><img src="t265.png" /></p>
+<h3 id="t265开发环境搭建">T265开发环境搭建</h3>
+<h4 id="注册公钥">注册公钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE</span><br></pre></td></tr></table></figure>
+<h4 id="添加库">添加库</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo add-apt-repository &quot;deb https:&#x2F;&#x2F;librealsense.intel.com&#x2F;Debian&#x2F;apt-repo $(lsb_release -sc) main&quot; -u</span><br></pre></td></tr></table></figure>
+<h4 id="安装库">安装库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install librealsense2-dkms</span><br><span class="line">sudo apt-get install librealsense2-utils</span><br></pre></td></tr></table></figure>
+<p>以上两行将部署 librealsense2 udev 规则，构建并激活内核模块，运行时库以及可执行的演示和工具。</p>
+<h4 id="安装开发库可选">安装开发库（可选）</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install librealsense2-dev</span><br><span class="line">sudo apt-get install librealsense2-dbg</span><br></pre></td></tr></table></figure>
+<p>安装了dev软件包后，可以使用<code>g++ -std=c++11 filename.cpp -lrealsense2</code>或者在IDE中使用<code>librealsense2</code>编译应用程序。</p>
+<h4 id="检查安装是否成功">检查安装是否成功</h4>
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">realsense-viewer</span><br></pre></td></tr></table></figure>
+<p>系统会自动打开一个窗口</p>
+<p><img src="realsense-viewer.png" /></p>
+<p>一旦速度过快，T265输出的位姿就会飞掉。</p>
+<h3 id="读取t265内外参数信息">读取T265内外参数信息</h3>
+<p>T265在出厂前就对相机进行了标定，每个相机内部都带有相机的内参和外参，终端输入以下命令，即可读取T265的配置信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rs-enumerate-devices</span><br></pre></td></tr></table></figure>
+<p><img src="rs-enumerate-devices.png" /></p>
+<p>如果需要读取相机内参和外参，以及IMU的参数可以使用如下命令（添加 -c 参数）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rs-enumerate-devices -c</span><br></pre></td></tr></table></figure>
+<p><img src="rs-enumerate-devices-c.png" /></p>
+<h3 id="使用ros包读取t265数据">使用ROS包读取T265数据</h3>
+<p>使用环境ROS melodic 版本</p>
+<h4 id="安装依赖">安装依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ros-<span class="variable">$ROS_DISTRO</span>-ddynamic-reconfigure</span><br></pre></td></tr></table></figure>
+<h4 id="下载安装ros包-realsense-ros">下载安装ROS包 realsense-ros</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/catkin_ws/src</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/IntelRealSense/realsense-ros.git</span><br><span class="line"><span class="built_in">cd</span> realsense-ros/</span><br><span class="line">git checkout `git tag | sort -V | grep -P <span class="string">&quot;^2.\d+\.\d+&quot;</span> | tail -1`</span><br><span class="line"><span class="built_in">cd</span>  ~/catkin_ws/</span><br><span class="line">catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release</span><br></pre></td></tr></table></figure>
+<h4 id="启动测试demo即可看到t265的位姿数据">启动测试demo，即可看到T265的位姿数据</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br><span class="line">roslaunch realsense2_camera demo_t265.launch</span><br></pre></td></tr></table></figure>
+<p><img src="demo_t265.jpg" /></p>
+<p>如果需要查看鱼眼相机图像数据，则需要对<code>rs_t265.launch</code>文件进行修改，使能图像输出</p>
+<p><img src="rs_t265.png" /></p>
+<p>运行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roslaunch realsense2_camera demo_t265.launch</span><br></pre></td></tr></table></figure>
+<p><img src="demo_t265_2.png" /></p>
+]]></content>
+      <tags>
+        <tag>T265</tag>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Jenkins和持续集成</title>
     <url>/p/jenkins-and-CI/</url>
     <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
@@ -2463,6 +2522,51 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python中__getattr__等的用法</title>
+    <url>/p/usage-of-getattr-and-else-in-Python/</url>
+    <content><![CDATA[<p>在使用Python的过程中可能遇到以下几个函数：</p>
+<ul>
+<li><code>getattr</code></li>
+<li><code>__getattr__</code></li>
+<li><code>__getattribute__</code></li>
+<li><code>__get__</code></li>
+</ul>
+<p>如何区别他们，如何在编程中正确使用他们呢？</p>
+<a id="more"></a>
+<h3 id="getattr">getattr</h3>
+<p><code>getattr (object, name[, default])</code>是Python的内置函数之一，它的作用是获取对象的属性。</p>
+<ul>
+<li>object 对象</li>
+<li>name 属性名</li>
+<li>default 当属性不存在时，返回的默认值</li>
+</ul>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, x</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.x = x</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Foo(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.x</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;bar&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;bar&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="getattr-_">_ <strong>getattr _ </strong></h3>
+<p><code>object. __getattr__(self, name)</code>是一个对象方法，如果找不到对象的属性时会调用这个方法。</p>
+<p>这个方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
+<p>注意，如果通过正常机制能找到对象属性的话，不会调用<code>__getattr__</code>方法。</p>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, bamf</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.bamf = bamf</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> <span class="string">&#x27;Frob does not have `&#123;&#125;` attribute.&#x27;</span>.format(str(name))</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob(<span class="string">&quot;bamf&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bar</span><br><span class="line"><span class="string">&#x27;Frob does not have `bar` attribute.&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line"><span class="string">&#x27;bamf&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="getattribute-__-__">____ getattribute __ __</h3>
+<p>当访问 某个对象的属性时，会无条件的调用这个方法。这个方法只适用于新式类。 新式类就是集成自object或者type的类。</p>
+<p>如果类还同时定义了<code>__getattr__()</code>方法，则不会调用<code>__getattr__()</code>方法，除非在<code>__getattribute__()</code>方法中显示调用<code>__getattr__()</code>或者抛出了<code>AttributeError</code>。</p>
+<p>该方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
+<p>为了避免在方法中出现无限递归的情况，应该总是使用基类的方法来获取属性：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>object.__getattribute__(self, name).</span><br></pre></td></tr></table></figure>
+<p>语法：<code>object. __getattribute__(self, name)</code></p>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>(<span class="params">object</span>):</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattribute__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">print</span> <span class="string">&quot;getting `&#123;&#125;`&quot;</span>.format(str(name))</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> object.__getattribute__(self, name)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf = <span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line">getting `bamf`</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="get-__">____ __ get __</h3>
+<p><code>__get__()</code>方法是描述符方法之一。描述符用于将访问对象属性转变成调用描述符方法。</p>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span>(<span class="params">self, obj, objtype</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;get value=%s&quot;</span> % self.val </span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span>(<span class="params">self, obj, val</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;set value=%s&quot;</span> % val</span><br><span class="line">        self.val = val</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stu</span>(<span class="params">object</span>):</span></span><br><span class="line">    age = Descriptor()</span><br><span class="line"></span><br><span class="line">stu = Stu()</span><br><span class="line">stu.age = <span class="number">12</span>    <span class="comment"># set value=12</span></span><br><span class="line"><span class="keyword">print</span> stu.age   <span class="comment"># get value=12</span></span><br><span class="line">                <span class="comment"># 12</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python中pickle模块的使用</title>
     <url>/p/use-of-pickle-module-in-python/</url>
     <content><![CDATA[<p>废话不多说，直接上代码。</p>
@@ -3785,48 +3889,170 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python中__getattr__等的用法</title>
-    <url>/p/usage-of-getattr-and-else-in-Python/</url>
-    <content><![CDATA[<p>在使用Python的过程中可能遇到以下几个函数：</p>
-<ul>
-<li><code>getattr</code></li>
-<li><code>__getattr__</code></li>
-<li><code>__getattribute__</code></li>
-<li><code>__get__</code></li>
-</ul>
-<p>如何区别他们，如何在编程中正确使用他们呢？</p>
+    <title>ROS系统学习小记(一)</title>
+    <url>/p/ROS-system-learning-notes-01/</url>
+    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
+<p><strong>关键词：</strong>ROS</p>
 <a id="more"></a>
-<h3 id="getattr">getattr</h3>
-<p><code>getattr (object, name[, default])</code>是Python的内置函数之一，它的作用是获取对象的属性。</p>
+<h3 id="ros架构及概念">ROS架构及概念</h3>
+<p>ROS的架构经过设计并划分为三部分，每一部分都代表一个层级的概念：</p>
 <ul>
-<li>object 对象</li>
-<li>name 属性名</li>
-<li>default 当属性不存在时，返回的默认值</li>
+<li>文件系统级（Filesystem level)</li>
+<li>计算图级(Computation Graph level)</li>
+<li>社区级(Community level)</li>
 </ul>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, x</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.x = x</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Foo(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.x</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;bar&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;bar&#x27;</span></span><br></pre></td></tr></table></figure>
-<h3 id="getattr-_">_ <strong>getattr _ </strong></h3>
-<p><code>object. __getattr__(self, name)</code>是一个对象方法，如果找不到对象的属性时会调用这个方法。</p>
-<p>这个方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
-<p>注意，如果通过正常机制能找到对象属性的话，不会调用<code>__getattr__</code>方法。</p>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, bamf</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.bamf = bamf</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> <span class="string">&#x27;Frob does not have `&#123;&#125;` attribute.&#x27;</span>.format(str(name))</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob(<span class="string">&quot;bamf&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bar</span><br><span class="line"><span class="string">&#x27;Frob does not have `bar` attribute.&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line"><span class="string">&#x27;bamf&#x27;</span></span><br></pre></td></tr></table></figure>
-<h3 id="getattribute-__-__">____ getattribute __ __</h3>
-<p>当访问 某个对象的属性时，会无条件的调用这个方法。这个方法只适用于新式类。 新式类就是集成自object或者type的类。</p>
-<p>如果类还同时定义了<code>__getattr__()</code>方法，则不会调用<code>__getattr__()</code>方法，除非在<code>__getattribute__()</code>方法中显示调用<code>__getattr__()</code>或者抛出了<code>AttributeError</code>。</p>
-<p>该方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
-<p>为了避免在方法中出现无限递归的情况，应该总是使用基类的方法来获取属性：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>object.__getattribute__(self, name).</span><br></pre></td></tr></table></figure>
-<p>语法：<code>object. __getattribute__(self, name)</code></p>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>(<span class="params">object</span>):</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattribute__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">print</span> <span class="string">&quot;getting `&#123;&#125;`&quot;</span>.format(str(name))</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> object.__getattribute__(self, name)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf = <span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line">getting `bamf`</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
-<h3 id="get-__">____ __ get __</h3>
-<p><code>__get__()</code>方法是描述符方法之一。描述符用于将访问对象属性转变成调用描述符方法。</p>
-<p>示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span>(<span class="params">self, obj, objtype</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;get value=%s&quot;</span> % self.val </span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span>(<span class="params">self, obj, val</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;set value=%s&quot;</span> % val</span><br><span class="line">        self.val = val</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stu</span>(<span class="params">object</span>):</span></span><br><span class="line">    age = Descriptor()</span><br><span class="line"></span><br><span class="line">stu = Stu()</span><br><span class="line">stu.age = <span class="number">12</span>    <span class="comment"># set value=12</span></span><br><span class="line"><span class="keyword">print</span> stu.age   <span class="comment"># get value=12</span></span><br><span class="line">                <span class="comment"># 12</span></span><br></pre></td></tr></table></figure>
+<p>第一级是文件系统级。在这一级，我们会使用一组概念来解释ROS的内部构成、文件夹结构，以及工作所需要的核心文件。</p>
+<p>第二级是计算图级，体现的是进程和系统之间的通信。在相关小节中，我们将学习ROS的各个概念和功能，包括建立系统、处理各类进程、与多台机器通信等。</p>
+<p>第三级是社区级，我们将解释一系列的工具和概念，包括在开发人员之间如何共享知识、算法和代码。由于强大社区的支持，不仅提高了初学者理解复杂软件的能力，还解决了最常见的问题。</p>
+<h4 id="理解ros文件系统级">理解ROS文件系统级</h4>
+<p><img src="image-20200923190637341.png" /></p>
+<p>与其他操作系统类似，一个ROS程序的不同组件要放在不同的文件夹下，这些文件夹是根据功能的不同来对文件进行组织的。</p>
+<ol type="1">
+<li>功能包（Package）：功能包构成ROS中的原子级。一个功能包具有创建ROS程序最小结构和最少内容。它可以包含ROS运行时进程（节点）、配置文件等。</li>
+<li>功能包清单（Package Manifest）：功能包清单提供关于功能包、许可证、依赖关系、编译标志等的信息。包清单又一个名为<strong>package.xml</strong>的文件管理。</li>
+<li>元功能包（Metapackage）：如果你希望将几个具有<strong>某些功能的包组织在一起</strong>，那么你将使用一个元功能包。这种包的组织形式<strong>之前被称</strong>为功能包集（Stack ）。功能包集被废除，现在使用元功能包实现这个功能。在ROS中，存在大量不同用途的元功能包，例如<strong>导航功能包集</strong>。</li>
+<li>元功能包清单（Metapackage manifest）：元功能包清单（package.xml）类似普通功能包但又一个XML格式的导出标记，他在结构上也有一定的限制。</li>
+<li>消息类型（Message（msg）type）：消息是一个进程发送到其他进程的消息。ROS 的消息类型的说明存储在<strong>my_package/msg/MyMessageType.msg</strong>中。</li>
+<li>服务类型（Service (srv) Type）：服务描述说明存储在<strong>my_package/srv/MyServiceType.srv</strong>中，为ROS中由每个进程提供的服务定义请求和响应数据结构。</li>
+</ol>
+<p>下面的截图说明了<strong>turtlesim</strong>功能包的内容。所看到的是一系列文件和文件夹，包含代码、图片、启动文件服务和消息。以下只是文件的一个简短列表。</p>
+<p><img src="image-20200923193232140.png" /></p>
+<h5 id="工作空间">工作空间</h5>
+<p>工作空间包含功能包，功能包包含源文件和环境和工作空间，是集中开发的一种好方式。</p>
+<p>下图所示是一个典型的工作空间。<img src="image-20200924144159317.png" /></p>
+<p>主要包含一下内容：</p>
+<ul>
+<li>源文件空间（Source space）：在源空间（src文件夹）中，放置了功能包、项目、复制的包等。<strong>最重要文件：CMakeLists.txt</strong>。当在工作空间配置包时，通过cmake调用CMakeLists.txt。这个文件是通过<strong>catkin_init_workspace</strong>命令创建的。</li>
+<li>编译空间（build space）：在build文件夹里，cmake和catkin为功能包和项目保存缓存信息、配置和其他中间文件。</li>
+<li>开发空间（Development （devel）space）：devel文件夹用来保存编译后的程序，这些是无需安装就能用来测试的程序。</li>
+</ul>
+<p>用catkin编译包有两个选项。第一个是使用标准CMake工作流程。通过使用此方式。可以一次编译一个包，见以下命令：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">cmake packageToBuild/</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>如果想编译所有的包，可以用<strong>catkin_make</strong>命令行，见以下命令：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> workspace</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>在ROS配置的编译空间目录中，这两个命令编译出可执行文件。</p>
+<p>ROS支持覆盖（overlay）。当你正在使用ROS功能包例如（<strong>Turtlesim</strong>）时，可以使用安装版本，也可以下载源文件并编译它来使用你修改后的版本。</p>
+<p>ROS允许使用自己版本的功能包去替代安装版本。下一章我们将使用这个功能来创建自己的插件。</p>
+<h5 id="功能包">功能包</h5>
+<p>包指的是一种特定结构的文件和文件夹组合。</p>
+<table>
+<thead>
+<tr class="header">
+<th>目录</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/package_name</td>
+<td>此目录包含了需要的库的头文件</td>
+</tr>
+<tr class="even">
+<td>msg/</td>
+<td>如果开发需要<strong>非标准</strong>的消息，请把文件放在这里。</td>
+</tr>
+<tr class="odd">
+<td>script/</td>
+<td>其中包含Bash、Python或者任何其他脚本语言的可执行脚本。</td>
+</tr>
+<tr class="even">
+<td>src/</td>
+<td>存储程序源文件。可以为节点创建一个文件夹或按照希望的方式组织它。</td>
+</tr>
+<tr class="odd">
+<td>srv/</td>
+<td>（srv）服务类型</td>
+</tr>
+<tr class="even">
+<td>CMakeLists.txt</td>
+<td>CMake的生成文件</td>
+</tr>
+<tr class="odd">
+<td>package.xml</td>
+<td>功能包清单文件</td>
+</tr>
+</tbody>
+</table>
+<p>ROS提供的工具（命令）</p>
+<table>
+<thead>
+<tr class="header">
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rospack</td>
+<td>使用此命令来获取信息或在系统中查找包</td>
+</tr>
+<tr class="even">
+<td>catkin_create_pkg</td>
+<td>使用此命令创建一个新的功能包</td>
+</tr>
+<tr class="odd">
+<td>catin_make</td>
+<td>使用此命令来编译工作空间</td>
+</tr>
+<tr class="even">
+<td>rosdep</td>
+<td>使用此命令按照功能包的系统依赖项</td>
+</tr>
+<tr class="odd">
+<td>rqt_dep</td>
+<td>使用此命令来查看包的依赖关系图</td>
+</tr>
+</tbody>
+</table>
+<p>如果要在文件夹和功能包之间移动文件，ROS提供了非常有用的<strong>rosbash</strong>，功能包，其中包含的非常类似Linux命令的命令。</p>
+<table>
+<thead>
+<tr class="header">
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>roscd</td>
+<td>此命令用于更改目录，相当于Linux中的cd命令</td>
+</tr>
+<tr class="even">
+<td>rosed</td>
+<td>此命令用来编辑文件</td>
+</tr>
+<tr class="odd">
+<td>roscp</td>
+<td>此命令用于从功能包复制文件。</td>
+</tr>
+<tr class="even">
+<td>rosls</td>
+<td>此命令列出功能包下的文件，类似Linux中的ls命令。</td>
+</tr>
+</tbody>
+</table>
+<p>文件<strong>package.xml</strong>必须在每个功能包中，它用来说明此包相关的各类信息。如果你发现在某个文件夹内包含此文件，那么这个文件夹很可能是<strong>一个包或者元功能包</strong>。</p>
+<p>打开<strong>package.xml</strong>文件，可以看到包的名称、依赖关系等信息。功能包清单的作用就是为了方便安装和分发这些功能包。</p>
+<p>在<strong>package.xml</strong>文件中使用的两个典型标记是<strong><build_depend></strong>和<strong><run_depend></strong>.</p>
+<p><strong><build_depend></strong>标记会显示当前功能包安装之前必须先安装哪些功能包。这是因为新的功能包会使用其他包的一些功能。</p>
+<p><strong><run_depend></strong>标记显示运行功能包中代码所需要的包。以下是package.xml文件的示例。</p>
+<p><img src="image-20200924154802735.png" /></p>
+<h5 id="元功能包">元功能包</h5>
+<p>元包中只有一个文件，这个文件就是<strong>package.xml</strong>。它不包含其他文件，如代码等。</p>
+<p>元功能包用于指代其他按照类似功能特性分组的包，例如导航功能包集，ros_tutorials等。</p>
+<p>使用迁移的特定规则，可以讲ROS Fuerte中的功能包和功能包集转换为Kinetic等。具体参见http://wiki.ros.org/catkin/migrating_from_rosbuild。</p>
+<p>在下图中。可以看到在ros_tutorials元功能包中package.xml的内容。可以看到 &lt;export&gt;标记和&lt;run_depend&gt;标记。这些事功能包清单中必不可缺少的，在下图中也可以看到这些标记。</p>
+<p><img src="image-20200924160401768.png" /></p>
+<p>如果你想定位<strong>ros_tutorials</strong>元功能包，可以使用下面的命令：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">rosstack find ros_tutorials</span><br></pre></td></tr></table></figure>
+<p>显示路径为：</p>
+<p><img src="image-20200924161034651.png" /></p>
+<p>查看里面的代码</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
+<p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack find</strong> 命令也可以用于查找元功能包。</p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
+        <tag>ROS</tag>
       </tags>
   </entry>
   <entry>
@@ -4674,170 +4900,25 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>ROS系统学习小记(一)</title>
-    <url>/p/ROS-system-learning-notes-01/</url>
-    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
-<p><strong>关键词：</strong>ROS</p>
+    <title>使用Github Action定时重启IBM cloud foundry</title>
+    <url>/p/ibm-cloud-auto-restart/</url>
+    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
+<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
+<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
 <a id="more"></a>
-<h3 id="ros架构及概念">ROS架构及概念</h3>
-<p>ROS的架构经过设计并划分为三部分，每一部分都代表一个层级的概念：</p>
-<ul>
-<li>文件系统级（Filesystem level)</li>
-<li>计算图级(Computation Graph level)</li>
-<li>社区级(Community level)</li>
-</ul>
-<p>第一级是文件系统级。在这一级，我们会使用一组概念来解释ROS的内部构成、文件夹结构，以及工作所需要的核心文件。</p>
-<p>第二级是计算图级，体现的是进程和系统之间的通信。在相关小节中，我们将学习ROS的各个概念和功能，包括建立系统、处理各类进程、与多台机器通信等。</p>
-<p>第三级是社区级，我们将解释一系列的工具和概念，包括在开发人员之间如何共享知识、算法和代码。由于强大社区的支持，不仅提高了初学者理解复杂软件的能力，还解决了最常见的问题。</p>
-<h4 id="理解ros文件系统级">理解ROS文件系统级</h4>
-<p><img src="image-20200923190637341.png" /></p>
-<p>与其他操作系统类似，一个ROS程序的不同组件要放在不同的文件夹下，这些文件夹是根据功能的不同来对文件进行组织的。</p>
-<ol type="1">
-<li>功能包（Package）：功能包构成ROS中的原子级。一个功能包具有创建ROS程序最小结构和最少内容。它可以包含ROS运行时进程（节点）、配置文件等。</li>
-<li>功能包清单（Package Manifest）：功能包清单提供关于功能包、许可证、依赖关系、编译标志等的信息。包清单又一个名为<strong>package.xml</strong>的文件管理。</li>
-<li>元功能包（Metapackage）：如果你希望将几个具有<strong>某些功能的包组织在一起</strong>，那么你将使用一个元功能包。这种包的组织形式<strong>之前被称</strong>为功能包集（Stack ）。功能包集被废除，现在使用元功能包实现这个功能。在ROS中，存在大量不同用途的元功能包，例如<strong>导航功能包集</strong>。</li>
-<li>元功能包清单（Metapackage manifest）：元功能包清单（package.xml）类似普通功能包但又一个XML格式的导出标记，他在结构上也有一定的限制。</li>
-<li>消息类型（Message（msg）type）：消息是一个进程发送到其他进程的消息。ROS 的消息类型的说明存储在<strong>my_package/msg/MyMessageType.msg</strong>中。</li>
-<li>服务类型（Service (srv) Type）：服务描述说明存储在<strong>my_package/srv/MyServiceType.srv</strong>中，为ROS中由每个进程提供的服务定义请求和响应数据结构。</li>
-</ol>
-<p>下面的截图说明了<strong>turtlesim</strong>功能包的内容。所看到的是一系列文件和文件夹，包含代码、图片、启动文件服务和消息。以下只是文件的一个简短列表。</p>
-<p><img src="image-20200923193232140.png" /></p>
-<h5 id="工作空间">工作空间</h5>
-<p>工作空间包含功能包，功能包包含源文件和环境和工作空间，是集中开发的一种好方式。</p>
-<p>下图所示是一个典型的工作空间。<img src="image-20200924144159317.png" /></p>
-<p>主要包含一下内容：</p>
-<ul>
-<li>源文件空间（Source space）：在源空间（src文件夹）中，放置了功能包、项目、复制的包等。<strong>最重要文件：CMakeLists.txt</strong>。当在工作空间配置包时，通过cmake调用CMakeLists.txt。这个文件是通过<strong>catkin_init_workspace</strong>命令创建的。</li>
-<li>编译空间（build space）：在build文件夹里，cmake和catkin为功能包和项目保存缓存信息、配置和其他中间文件。</li>
-<li>开发空间（Development （devel）space）：devel文件夹用来保存编译后的程序，这些是无需安装就能用来测试的程序。</li>
-</ul>
-<p>用catkin编译包有两个选项。第一个是使用标准CMake工作流程。通过使用此方式。可以一次编译一个包，见以下命令：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">cmake packageToBuild/</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
-<p>如果想编译所有的包，可以用<strong>catkin_make</strong>命令行，见以下命令：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> workspace</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>在ROS配置的编译空间目录中，这两个命令编译出可执行文件。</p>
-<p>ROS支持覆盖（overlay）。当你正在使用ROS功能包例如（<strong>Turtlesim</strong>）时，可以使用安装版本，也可以下载源文件并编译它来使用你修改后的版本。</p>
-<p>ROS允许使用自己版本的功能包去替代安装版本。下一章我们将使用这个功能来创建自己的插件。</p>
-<h5 id="功能包">功能包</h5>
-<p>包指的是一种特定结构的文件和文件夹组合。</p>
-<table>
-<thead>
-<tr class="header">
-<th>目录</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>include/package_name</td>
-<td>此目录包含了需要的库的头文件</td>
-</tr>
-<tr class="even">
-<td>msg/</td>
-<td>如果开发需要<strong>非标准</strong>的消息，请把文件放在这里。</td>
-</tr>
-<tr class="odd">
-<td>script/</td>
-<td>其中包含Bash、Python或者任何其他脚本语言的可执行脚本。</td>
-</tr>
-<tr class="even">
-<td>src/</td>
-<td>存储程序源文件。可以为节点创建一个文件夹或按照希望的方式组织它。</td>
-</tr>
-<tr class="odd">
-<td>srv/</td>
-<td>（srv）服务类型</td>
-</tr>
-<tr class="even">
-<td>CMakeLists.txt</td>
-<td>CMake的生成文件</td>
-</tr>
-<tr class="odd">
-<td>package.xml</td>
-<td>功能包清单文件</td>
-</tr>
-</tbody>
-</table>
-<p>ROS提供的工具（命令）</p>
-<table>
-<thead>
-<tr class="header">
-<th>命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>rospack</td>
-<td>使用此命令来获取信息或在系统中查找包</td>
-</tr>
-<tr class="even">
-<td>catkin_create_pkg</td>
-<td>使用此命令创建一个新的功能包</td>
-</tr>
-<tr class="odd">
-<td>catin_make</td>
-<td>使用此命令来编译工作空间</td>
-</tr>
-<tr class="even">
-<td>rosdep</td>
-<td>使用此命令按照功能包的系统依赖项</td>
-</tr>
-<tr class="odd">
-<td>rqt_dep</td>
-<td>使用此命令来查看包的依赖关系图</td>
-</tr>
-</tbody>
-</table>
-<p>如果要在文件夹和功能包之间移动文件，ROS提供了非常有用的<strong>rosbash</strong>，功能包，其中包含的非常类似Linux命令的命令。</p>
-<table>
-<thead>
-<tr class="header">
-<th>命令</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>roscd</td>
-<td>此命令用于更改目录，相当于Linux中的cd命令</td>
-</tr>
-<tr class="even">
-<td>rosed</td>
-<td>此命令用来编辑文件</td>
-</tr>
-<tr class="odd">
-<td>roscp</td>
-<td>此命令用于从功能包复制文件。</td>
-</tr>
-<tr class="even">
-<td>rosls</td>
-<td>此命令列出功能包下的文件，类似Linux中的ls命令。</td>
-</tr>
-</tbody>
-</table>
-<p>文件<strong>package.xml</strong>必须在每个功能包中，它用来说明此包相关的各类信息。如果你发现在某个文件夹内包含此文件，那么这个文件夹很可能是<strong>一个包或者元功能包</strong>。</p>
-<p>打开<strong>package.xml</strong>文件，可以看到包的名称、依赖关系等信息。功能包清单的作用就是为了方便安装和分发这些功能包。</p>
-<p>在<strong>package.xml</strong>文件中使用的两个典型标记是<strong><build_depend></strong>和<strong><run_depend></strong>.</p>
-<p><strong><build_depend></strong>标记会显示当前功能包安装之前必须先安装哪些功能包。这是因为新的功能包会使用其他包的一些功能。</p>
-<p><strong><run_depend></strong>标记显示运行功能包中代码所需要的包。以下是package.xml文件的示例。</p>
-<p><img src="image-20200924154802735.png" /></p>
-<h5 id="元功能包">元功能包</h5>
-<p>元包中只有一个文件，这个文件就是<strong>package.xml</strong>。它不包含其他文件，如代码等。</p>
-<p>元功能包用于指代其他按照类似功能特性分组的包，例如导航功能包集，ros_tutorials等。</p>
-<p>使用迁移的特定规则，可以讲ROS Fuerte中的功能包和功能包集转换为Kinetic等。具体参见http://wiki.ros.org/catkin/migrating_from_rosbuild。</p>
-<p>在下图中。可以看到在ros_tutorials元功能包中package.xml的内容。可以看到 &lt;export&gt;标记和&lt;run_depend&gt;标记。这些事功能包清单中必不可缺少的，在下图中也可以看到这些标记。</p>
-<p><img src="image-20200924160401768.png" /></p>
-<p>如果你想定位<strong>ros_tutorials</strong>元功能包，可以使用下面的命令：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">rosstack find ros_tutorials</span><br></pre></td></tr></table></figure>
-<p>显示路径为：</p>
-<p><img src="image-20200924161034651.png" /></p>
-<p>查看里面的代码</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
-<p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack find</strong> 命令也可以用于查找元功能包。</p>
+<h3 id="yml配置文件">yml配置文件</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">wget</span> <span class="string">-q</span> <span class="string">-O</span> <span class="bullet">-</span> <span class="string">https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">apt-key</span> <span class="string">add</span> <span class="bullet">-</span></span><br><span class="line">        <span class="string">echo</span> <span class="string">&quot;deb https://packages.cloudfoundry.org/debian stable main&quot;</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">tee</span> <span class="string">/etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">update</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">install</span> <span class="string">cf-cli</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">login</span> <span class="string">-a</span> <span class="string">https://api.us-south.cf.cloud.ibm.com</span> <span class="string">-u</span> <span class="string">$IBM_ACCOUNT</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line">        <span class="string">$IBM_PASSWORD</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">a</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用方法">使用方法</h3>
+<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
+<h4 id="设置环境变量">设置环境变量</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
+<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
+<h4 id="效果图">效果图</h4>
+<p><img src="image-20200827193322808.png" /></p>
+<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
 ]]></content>
       <tags>
-        <tag>ROS</tag>
+        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -5229,25 +5310,85 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用Github Action定时重启IBM cloud foundry</title>
-    <url>/p/ibm-cloud-auto-restart/</url>
-    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
-<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
-<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
+    <title>使用acme.sh快速申请ssl证书</title>
+    <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
+    <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
+<p><strong>转载自：<a href="https://github.com/acmesh-official/acme.sh/wiki/说明">https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E</a></strong></p>
 <a id="more"></a>
-<h3 id="yml配置文件">yml配置文件</h3>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">wget</span> <span class="string">-q</span> <span class="string">-O</span> <span class="bullet">-</span> <span class="string">https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">apt-key</span> <span class="string">add</span> <span class="bullet">-</span></span><br><span class="line">        <span class="string">echo</span> <span class="string">&quot;deb https://packages.cloudfoundry.org/debian stable main&quot;</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">tee</span> <span class="string">/etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">update</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">install</span> <span class="string">cf-cli</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">login</span> <span class="string">-a</span> <span class="string">https://api.us-south.cf.cloud.ibm.com</span> <span class="string">-u</span> <span class="string">$IBM_ACCOUNT</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line">        <span class="string">$IBM_PASSWORD</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">a</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用方法">使用方法</h3>
-<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
-<h4 id="设置环境变量">设置环境变量</h4>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
-<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
-<h4 id="效果图">效果图</h4>
-<p><img src="image-20200827193322808.png" /></p>
-<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
+<p>主要步骤:</p>
+<ol type="1">
+<li>安装 <strong>acme.sh</strong></li>
+<li>生成证书</li>
+<li>copy 证书到 nginx/apache 或者其他服务</li>
+<li>更新证书</li>
+<li>更新 <strong>acme.sh</strong></li>
+<li>出错怎么办, 如何调试</li>
+</ol>
+<p>下面详细介绍.</p>
+<h4 id="安装-acme.sh">安装 <strong>acme.sh</strong></h4>
+<p>安装很简单, 一个命令： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl  https:&#x2F;&#x2F;get.acme.sh | sh</span><br></pre></td></tr></table></figure></p>
+<p>普通用户和 root 用户都可以安装使用. 安装过程进行了以下几步:</p>
+<ol type="1">
+<li>把 acme.sh 安装到你的 <strong>home</strong> 目录下:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">~&#x2F;.acme.sh&#x2F;</span><br></pre></td></tr></table></figure>
+<p>并创建 一个 bash 的 alias, 方便你的使用: <code>alias acme.sh=~/.acme.sh/acme.sh</code></p>
+<p>2). 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.</p>
+<p>更高级的安装选项请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-install</p>
+<p><strong>安装过程不会污染已有的系统任何功能和文件</strong>, 所有的修改都限制在安装目录中: <code>~/.acme.sh/</code></p>
+<h4 id="生成证书">生成证书</h4>
+<p><strong>acme.sh</strong> 实现了 <strong>acme</strong> 协议支持的所有验证协议. 一般有两种方式验证: http 和 dns 验证.</p>
+<h5 id="http-方式需要在你的网站根目录下放置一个文件-来验证你的域名所有权完成验证.-然后就可以生成证书了.">http 方式需要在你的网站根目录下放置一个文件, 来验证你的域名所有权,完成验证. 然后就可以生成证书了.</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  -d mydomain.com -d www.mydomain.com  --webroot  &#x2F;home&#x2F;wwwroot&#x2F;mydomain.com&#x2F;</span><br></pre></td></tr></table></figure>
+<p>只需要指定域名, 并指定域名所在的网站根目录. <strong>acme.sh</strong> 会全自动的生成验证文件, 并放到网站的根目录, 然后自动完成验证. 最后会聪明的删除验证文件. 整个过程没有任何副作用.</p>
+<p>如果你用的 <strong>apache</strong>服务器, <strong>acme.sh</strong> 还可以智能的从 <strong>apache</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --apache</span><br></pre></td></tr></table></figure></p>
+<p>如果你用的 <strong>nginx</strong>服务器, 或者反代, <strong>acme.sh</strong> 还可以智能的从 <strong>nginx</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --nginx</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意, 无论是 apache 还是 nginx 模式, acme.sh在完成验证之后, 会恢复到之前的状态, 都不会私自更改你本身的配置. 好处是你不用担心配置被搞坏, 也有一个缺点, 你需要自己配置 ssl 的配置, 否则只能成功生成证书, 你的网站还是无法访问https. 但是为了安全, 你还是自己手动改配置吧.</strong></p>
+<p>如果你还没有运行任何 web 服务, <strong>80</strong> 端口是空闲的, 那么 <strong>acme.sh</strong> 还能假装自己是一个webserver, 临时听在<strong>80</strong> 端口, 完成验证:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue -d mydomain.com   --standalone</span><br></pre></td></tr></table></figure>
+<p>更高级的用法请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-issue-a-cert</p>
+<h5 id="手动-dns-方式-手动在域名上添加一条-txt-解析记录-验证域名所有权.">手动 dns 方式, 手动在域名上添加一条 txt 解析记录, 验证域名所有权.</h5>
+<p>这种方式的好处是, 你不需要任何服务器, 不需要任何公网 ip, 只需要 dns 的解析记录即可完成验证. 坏处是，如果不同时配置 Automatic DNS API，使用这种方式 acme.sh 将无法自动更新证书，每次都需要手动再次重新解析验证域名所有权。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  --dns   -d mydomain.com</span><br></pre></td></tr></table></figure>
+<p>然后, <strong>acme.sh</strong> 会生成相应的解析记录显示出来, 你只需要在你的域名管理面板中添加这条 txt 记录即可.</p>
+<p>等待解析完成之后, 重新生成证书: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --renew   -d mydomain.com</span><br></pre></td></tr></table></figure> 注意第二次这里用的是 <code>--renew</code></p>
+<p>dns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.</p>
+<p><strong>acme.sh</strong> 目前支持 cloudflare, dnspod, cloudxns, godaddy 以及 ovh 等数十种解析商的自动集成.</p>
+<p>以 dnspod 为例, 你需要先登录到 dnspod 账号, 生成你的 api id 和 api key, 都是免费的. 然后: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export DP_Id&#x3D;&quot;1234&quot;</span><br><span class="line"></span><br><span class="line">export DP_Key&#x3D;&quot;sADDsdasdgdsf&quot;</span><br><span class="line"></span><br><span class="line">acme.sh   --issue   --dns dns_dp   -d aa.com  -d www.aa.com</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>证书就会自动生成了. 这里给出的 api id 和 api key 会被自动记录下来, 将来你在使用 dnspod api 的时候, 就不需要再次指定了. 直接生成就好了:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue   -d  mydomain2.com   --dns  dns_dp</span><br></pre></td></tr></table></figure>
+<p>更详细的 api 用法: https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md</p>
+<h4 id="copy安装-证书">copy/安装 证书</h4>
+<p>前面证书生成以后, 接下来需要把证书 copy 到真正需要用它的地方.</p>
+<p>注意, 默认生成的证书都放在安装目录下: <code>~/.acme.sh/</code>, 请不要直接使用此目录下的文件, 例如: 不要直接让 nginx/apache 的配置文件使用这下面的文件. 这里面的文件都是内部使用, 而且目录结构可能会变化.</p>
+<p>正确的使用方法是使用 <code>--installcert</code> 命令,并指定目标位置, 然后证书文件会被copy到相应的位置, 例如: ##### Apache example: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--cert-file      &#x2F;path&#x2F;to&#x2F;certfile&#x2F;in&#x2F;apache&#x2F;cert.pem  \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;apache&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;certfile&#x2F;apache&#x2F;fullchain.pem \</span><br><span class="line">--reloadcmd     &quot;service apache2 force-reload&quot;</span><br></pre></td></tr></table></figure></p>
+<h5 id="nginx-example">Nginx example:</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;nginx&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;nginx&#x2F;cert.pem \</span><br><span class="line">--reloadcmd     &quot;service nginx force-reload&quot;</span><br></pre></td></tr></table></figure>
+<p>(一个小提醒, 这里用的是 <code>service nginx force-reload</code>, 不是 <code>service nginx reload</code>, 据测试, <code>reload</code> 并不会重新加载证书, 所以用的 <code>force-reload</code>)</p>
+<p>Nginx 的配置 <code>ssl_certificate</code> 使用 <code>/etc/nginx/ssl/fullchain.cer</code> ，而非 <code>/etc/nginx/ssl/&lt;domain&gt;.cer</code> ，否则 <a href="https://www.ssllabs.com/ssltest/">SSL Labs</a> 的测试会报 <code>Chain issues Incomplete</code> 错误。</p>
+<p><code>--installcert</code>命令可以携带很多参数, 来指定目标文件. 并且可以指定 reloadcmd, 当证书更新以后, reloadcmd会被自动调用,让服务器生效.</p>
+<p>详细参数请参考: https://github.com/Neilpang/acme.sh#3-install-the-issued-cert-to-apachenginx-etc</p>
+<p>值得注意的是, 这里指定的所有参数都会被自动记录下来, 并在将来证书自动更新以后, 被再次自动调用.</p>
+<h4 id="更新证书">更新证书</h4>
+<p>目前证书在 60 天以后会自动更新, 你无需任何操作. 今后有可能会缩短这个时间, 不过都是自动的, 你不用关心.</p>
+<h4 id="更新-acme.sh">更新 acme.sh</h4>
+<p>目前由于 acme 协议和 letsencrypt CA 都在频繁的更新, 因此 acme.sh 也经常更新以保持同步.</p>
+<p>升级 acme.sh 到最新版 : <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade</span><br></pre></td></tr></table></figure></p>
+<p>如果你不想手动升级, 可以开启自动升级:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --upgrade  --auto-upgrade</span><br></pre></td></tr></table></figure>
+<p>之后, acme.sh 就会自动保持更新了.</p>
+<p>你也可以随时关闭自动更新:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade  --auto-upgrade  0</span><br></pre></td></tr></table></figure>
+<h4 id="调试">调试</h4>
+<p>如果出错, 请添加 debug log：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug </span><br></pre></td></tr></table></figure>
+<p>或者： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug  2</span><br></pre></td></tr></table></figure></p>
+<p>请参考： https://github.com/Neilpang/acme.sh/wiki/How-to-debug-acme.sh</p>
+<p>最后, 本文并非完全的使用说明, 还有很多高级的功能, 更高级的用法请参看其他 wiki 页面.</p>
+<p>https://github.com/Neilpang/acme.sh/wiki</p>
 ]]></content>
       <tags>
-        <tag>github</tag>
+        <tag>证书</tag>
       </tags>
   </entry>
   <entry>
@@ -5522,99 +5663,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>初探Tkinter(一)</title>
-    <url>/p/tkinter-tutorial-02/</url>
-    <content><![CDATA[<p>基于 Python 的 Tkinter 常用于UI界面开发。</p>
-<p>以下是Tkinter为验证函数提供的一些额外选项。</p>
-<a id="more"></a>
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 93%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>选项</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>'%d'</td>
-<td>操作代码：0表示删除操作；1表示插入操作；2表示获得、失去焦点或者<code>textvariable</code>变量的值被修改</td>
-</tr>
-<tr class="even">
-<td>'%i'</td>
-<td>当用户尝试插入或者删除操作时，该选项表示插入或者删除的位置(索引号)，如果是由于获得、失去焦点或<code>textvarible</code>变量的值被修改而调用验证函数，那么该值是-1</td>
-</tr>
-<tr class="odd">
-<td>'%P'</td>
-<td>当输入框的值允许改变的时候，该值有效。该值作为输入框的最新文本内容。</td>
-</tr>
-<tr class="even">
-<td>'%s'</td>
-<td>该值为调用验证函数前输入框的文本内容</td>
-</tr>
-<tr class="odd">
-<td>'%S'</td>
-<td>当插入或者删除操作触发验证函数时，该值有效。该选项表示文本被插入和删除的内容</td>
-</tr>
-<tr class="even">
-<td>'%v'</td>
-<td>该组件当前validate选项的值</td>
-</tr>
-<tr class="odd">
-<td>'%V'</td>
-<td>调用该验证函数的原因。该值是'focusin'、'focusout'、'key'或'forced'（textvariable选项指定的变量值被修改）中的一个</td>
-</tr>
-<tr class="even">
-<td>'%W'</td>
-<td>该组件的名字</td>
-</tr>
-</tbody>
-</table>
-<p>启用验证的开关是validate选项，该选项可以设置的值如下表所示</p>
-<table>
-<thead>
-<tr class="header">
-<th>值</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>'focus'</td>
-<td>当Entry组件获得或者失去焦点时候验证</td>
-</tr>
-<tr class="even">
-<td>'focusin'</td>
-<td>当Entry组件获得焦点的时候验证</td>
-</tr>
-<tr class="odd">
-<td>'focusont'</td>
-<td>当Entry组件失去焦点的时候验证</td>
-</tr>
-<tr class="even">
-<td>'key'</td>
-<td>当输入框被编辑的时候验证</td>
-</tr>
-<tr class="odd">
-<td>'all'</td>
-<td>当出现上面任何一种情况时验证</td>
-</tr>
-<tr class="even">
-<td>'none'</td>
-<td>关闭验证功能，默认设置。注意是字符串的<code>'none'</code>，而非<code>None</code></td>
-</tr>
-</tbody>
-</table>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>Tkinter</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探Tkinter(二)</title>
     <url>/p/tkinter-tutorial-01/</url>
     <content><![CDATA[<p>基于 Python 的 Tkinter 常用于UI界面开发。</p>
@@ -5699,6 +5747,99 @@ y=x^2e^x
 <tr class="even">
 <td>Toplevel组件</td>
 <td>类似于Frame组件，但Toplevel组件是一个独立的顶级窗口，这种窗口通常拥有标题栏、边框等部件。</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>Tkinter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探Tkinter(一)</title>
+    <url>/p/tkinter-tutorial-02/</url>
+    <content><![CDATA[<p>基于 Python 的 Tkinter 常用于UI界面开发。</p>
+<p>以下是Tkinter为验证函数提供的一些额外选项。</p>
+<a id="more"></a>
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 93%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>选项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>'%d'</td>
+<td>操作代码：0表示删除操作；1表示插入操作；2表示获得、失去焦点或者<code>textvariable</code>变量的值被修改</td>
+</tr>
+<tr class="even">
+<td>'%i'</td>
+<td>当用户尝试插入或者删除操作时，该选项表示插入或者删除的位置(索引号)，如果是由于获得、失去焦点或<code>textvarible</code>变量的值被修改而调用验证函数，那么该值是-1</td>
+</tr>
+<tr class="odd">
+<td>'%P'</td>
+<td>当输入框的值允许改变的时候，该值有效。该值作为输入框的最新文本内容。</td>
+</tr>
+<tr class="even">
+<td>'%s'</td>
+<td>该值为调用验证函数前输入框的文本内容</td>
+</tr>
+<tr class="odd">
+<td>'%S'</td>
+<td>当插入或者删除操作触发验证函数时，该值有效。该选项表示文本被插入和删除的内容</td>
+</tr>
+<tr class="even">
+<td>'%v'</td>
+<td>该组件当前validate选项的值</td>
+</tr>
+<tr class="odd">
+<td>'%V'</td>
+<td>调用该验证函数的原因。该值是'focusin'、'focusout'、'key'或'forced'（textvariable选项指定的变量值被修改）中的一个</td>
+</tr>
+<tr class="even">
+<td>'%W'</td>
+<td>该组件的名字</td>
+</tr>
+</tbody>
+</table>
+<p>启用验证的开关是validate选项，该选项可以设置的值如下表所示</p>
+<table>
+<thead>
+<tr class="header">
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>'focus'</td>
+<td>当Entry组件获得或者失去焦点时候验证</td>
+</tr>
+<tr class="even">
+<td>'focusin'</td>
+<td>当Entry组件获得焦点的时候验证</td>
+</tr>
+<tr class="odd">
+<td>'focusont'</td>
+<td>当Entry组件失去焦点的时候验证</td>
+</tr>
+<tr class="even">
+<td>'key'</td>
+<td>当输入框被编辑的时候验证</td>
+</tr>
+<tr class="odd">
+<td>'all'</td>
+<td>当出现上面任何一种情况时验证</td>
+</tr>
+<tr class="even">
+<td>'none'</td>
+<td>关闭验证功能，默认设置。注意是字符串的<code>'none'</code>，而非<code>None</code></td>
 </tr>
 </tbody>
 </table>
@@ -5965,6 +6106,44 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>利用heroku实现自动发布博客</title>
+    <url>/p/automate-blog-posting-with-heroku/</url>
+    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
+<p>关键词：<strong>heroku，自动化构建</strong></p>
+<a id="more"></a>
+<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
+<h3 id="安装">安装</h3>
+<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
+<h3 id="登录">登录</h3>
+<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
+<p>如果出现Logged in as 则表示登陆成功。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
+<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
+<p><img src="利用heroku实现自动发布博客/image-20220409100956279.png" /></p>
+<p>为了简化步骤，这里先使用第一种方式。</p>
+<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
+<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
+<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
+<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
+<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
+<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
+<p><img src="利用heroku实现自动发布博客/image-20220409125928022.png" /></p>
+<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
+<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
+<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
+<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
+]]></content>
+      <tags>
+        <tag>heroku</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>初探docker(三)</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -6150,44 +6329,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>利用heroku实现自动发布博客</title>
-    <url>/p/automate-blog-posting-with-heroku/</url>
-    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
-<p>关键词：<strong>heroku，自动化构建</strong></p>
-<a id="more"></a>
-<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
-<h3 id="安装">安装</h3>
-<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
-<h3 id="登录">登录</h3>
-<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
-<p>如果出现Logged in as 则表示登陆成功。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
-<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
-<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
-<p><img src="利用heroku实现自动发布博客/image-20220409100956279.png" /></p>
-<p>为了简化步骤，这里先使用第一种方式。</p>
-<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
-<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
-<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
-<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
-<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
-<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
-<p><img src="利用heroku实现自动发布博客/image-20220409125928022.png" /></p>
-<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
-<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
-<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
-<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
-]]></content>
-      <tags>
-        <tag>heroku</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣数组基础之二分法</title>
     <url>/p/binary-search/</url>
     <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
@@ -6250,85 +6391,21 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用acme.sh快速申请ssl证书</title>
-    <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
-    <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
-<p><strong>转载自：<a href="https://github.com/acmesh-official/acme.sh/wiki/说明">https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E</a></strong></p>
+    <title>力扣数组基础之双指针长度最小的子数组</title>
+    <url>/p/minimum-size-subarray-sum/</url>
+    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
 <a id="more"></a>
-<p>主要步骤:</p>
-<ol type="1">
-<li>安装 <strong>acme.sh</strong></li>
-<li>生成证书</li>
-<li>copy 证书到 nginx/apache 或者其他服务</li>
-<li>更新证书</li>
-<li>更新 <strong>acme.sh</strong></li>
-<li>出错怎么办, 如何调试</li>
-</ol>
-<p>下面详细介绍.</p>
-<h4 id="安装-acme.sh">安装 <strong>acme.sh</strong></h4>
-<p>安装很简单, 一个命令： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl  https:&#x2F;&#x2F;get.acme.sh | sh</span><br></pre></td></tr></table></figure></p>
-<p>普通用户和 root 用户都可以安装使用. 安装过程进行了以下几步:</p>
-<ol type="1">
-<li>把 acme.sh 安装到你的 <strong>home</strong> 目录下:</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">~&#x2F;.acme.sh&#x2F;</span><br></pre></td></tr></table></figure>
-<p>并创建 一个 bash 的 alias, 方便你的使用: <code>alias acme.sh=~/.acme.sh/acme.sh</code></p>
-<p>2). 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.</p>
-<p>更高级的安装选项请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-install</p>
-<p><strong>安装过程不会污染已有的系统任何功能和文件</strong>, 所有的修改都限制在安装目录中: <code>~/.acme.sh/</code></p>
-<h4 id="生成证书">生成证书</h4>
-<p><strong>acme.sh</strong> 实现了 <strong>acme</strong> 协议支持的所有验证协议. 一般有两种方式验证: http 和 dns 验证.</p>
-<h5 id="http-方式需要在你的网站根目录下放置一个文件-来验证你的域名所有权完成验证.-然后就可以生成证书了.">http 方式需要在你的网站根目录下放置一个文件, 来验证你的域名所有权,完成验证. 然后就可以生成证书了.</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  -d mydomain.com -d www.mydomain.com  --webroot  &#x2F;home&#x2F;wwwroot&#x2F;mydomain.com&#x2F;</span><br></pre></td></tr></table></figure>
-<p>只需要指定域名, 并指定域名所在的网站根目录. <strong>acme.sh</strong> 会全自动的生成验证文件, 并放到网站的根目录, 然后自动完成验证. 最后会聪明的删除验证文件. 整个过程没有任何副作用.</p>
-<p>如果你用的 <strong>apache</strong>服务器, <strong>acme.sh</strong> 还可以智能的从 <strong>apache</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --apache</span><br></pre></td></tr></table></figure></p>
-<p>如果你用的 <strong>nginx</strong>服务器, 或者反代, <strong>acme.sh</strong> 还可以智能的从 <strong>nginx</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --nginx</span><br></pre></td></tr></table></figure></p>
-<p><strong>注意, 无论是 apache 还是 nginx 模式, acme.sh在完成验证之后, 会恢复到之前的状态, 都不会私自更改你本身的配置. 好处是你不用担心配置被搞坏, 也有一个缺点, 你需要自己配置 ssl 的配置, 否则只能成功生成证书, 你的网站还是无法访问https. 但是为了安全, 你还是自己手动改配置吧.</strong></p>
-<p>如果你还没有运行任何 web 服务, <strong>80</strong> 端口是空闲的, 那么 <strong>acme.sh</strong> 还能假装自己是一个webserver, 临时听在<strong>80</strong> 端口, 完成验证:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue -d mydomain.com   --standalone</span><br></pre></td></tr></table></figure>
-<p>更高级的用法请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-issue-a-cert</p>
-<h5 id="手动-dns-方式-手动在域名上添加一条-txt-解析记录-验证域名所有权.">手动 dns 方式, 手动在域名上添加一条 txt 解析记录, 验证域名所有权.</h5>
-<p>这种方式的好处是, 你不需要任何服务器, 不需要任何公网 ip, 只需要 dns 的解析记录即可完成验证. 坏处是，如果不同时配置 Automatic DNS API，使用这种方式 acme.sh 将无法自动更新证书，每次都需要手动再次重新解析验证域名所有权。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  --dns   -d mydomain.com</span><br></pre></td></tr></table></figure>
-<p>然后, <strong>acme.sh</strong> 会生成相应的解析记录显示出来, 你只需要在你的域名管理面板中添加这条 txt 记录即可.</p>
-<p>等待解析完成之后, 重新生成证书: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --renew   -d mydomain.com</span><br></pre></td></tr></table></figure> 注意第二次这里用的是 <code>--renew</code></p>
-<p>dns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.</p>
-<p><strong>acme.sh</strong> 目前支持 cloudflare, dnspod, cloudxns, godaddy 以及 ovh 等数十种解析商的自动集成.</p>
-<p>以 dnspod 为例, 你需要先登录到 dnspod 账号, 生成你的 api id 和 api key, 都是免费的. 然后: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export DP_Id&#x3D;&quot;1234&quot;</span><br><span class="line"></span><br><span class="line">export DP_Key&#x3D;&quot;sADDsdasdgdsf&quot;</span><br><span class="line"></span><br><span class="line">acme.sh   --issue   --dns dns_dp   -d aa.com  -d www.aa.com</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
-<p>证书就会自动生成了. 这里给出的 api id 和 api key 会被自动记录下来, 将来你在使用 dnspod api 的时候, 就不需要再次指定了. 直接生成就好了:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue   -d  mydomain2.com   --dns  dns_dp</span><br></pre></td></tr></table></figure>
-<p>更详细的 api 用法: https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md</p>
-<h4 id="copy安装-证书">copy/安装 证书</h4>
-<p>前面证书生成以后, 接下来需要把证书 copy 到真正需要用它的地方.</p>
-<p>注意, 默认生成的证书都放在安装目录下: <code>~/.acme.sh/</code>, 请不要直接使用此目录下的文件, 例如: 不要直接让 nginx/apache 的配置文件使用这下面的文件. 这里面的文件都是内部使用, 而且目录结构可能会变化.</p>
-<p>正确的使用方法是使用 <code>--installcert</code> 命令,并指定目标位置, 然后证书文件会被copy到相应的位置, 例如: ##### Apache example: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--cert-file      &#x2F;path&#x2F;to&#x2F;certfile&#x2F;in&#x2F;apache&#x2F;cert.pem  \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;apache&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;certfile&#x2F;apache&#x2F;fullchain.pem \</span><br><span class="line">--reloadcmd     &quot;service apache2 force-reload&quot;</span><br></pre></td></tr></table></figure></p>
-<h5 id="nginx-example">Nginx example:</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;nginx&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;nginx&#x2F;cert.pem \</span><br><span class="line">--reloadcmd     &quot;service nginx force-reload&quot;</span><br></pre></td></tr></table></figure>
-<p>(一个小提醒, 这里用的是 <code>service nginx force-reload</code>, 不是 <code>service nginx reload</code>, 据测试, <code>reload</code> 并不会重新加载证书, 所以用的 <code>force-reload</code>)</p>
-<p>Nginx 的配置 <code>ssl_certificate</code> 使用 <code>/etc/nginx/ssl/fullchain.cer</code> ，而非 <code>/etc/nginx/ssl/&lt;domain&gt;.cer</code> ，否则 <a href="https://www.ssllabs.com/ssltest/">SSL Labs</a> 的测试会报 <code>Chain issues Incomplete</code> 错误。</p>
-<p><code>--installcert</code>命令可以携带很多参数, 来指定目标文件. 并且可以指定 reloadcmd, 当证书更新以后, reloadcmd会被自动调用,让服务器生效.</p>
-<p>详细参数请参考: https://github.com/Neilpang/acme.sh#3-install-the-issued-cert-to-apachenginx-etc</p>
-<p>值得注意的是, 这里指定的所有参数都会被自动记录下来, 并在将来证书自动更新以后, 被再次自动调用.</p>
-<h4 id="更新证书">更新证书</h4>
-<p>目前证书在 60 天以后会自动更新, 你无需任何操作. 今后有可能会缩短这个时间, 不过都是自动的, 你不用关心.</p>
-<h4 id="更新-acme.sh">更新 acme.sh</h4>
-<p>目前由于 acme 协议和 letsencrypt CA 都在频繁的更新, 因此 acme.sh 也经常更新以保持同步.</p>
-<p>升级 acme.sh 到最新版 : <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade</span><br></pre></td></tr></table></figure></p>
-<p>如果你不想手动升级, 可以开启自动升级:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --upgrade  --auto-upgrade</span><br></pre></td></tr></table></figure>
-<p>之后, acme.sh 就会自动保持更新了.</p>
-<p>你也可以随时关闭自动更新:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade  --auto-upgrade  0</span><br></pre></td></tr></table></figure>
-<h4 id="调试">调试</h4>
-<p>如果出错, 请添加 debug log：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug </span><br></pre></td></tr></table></figure>
-<p>或者： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug  2</span><br></pre></td></tr></table></figure></p>
-<p>请参考： https://github.com/Neilpang/acme.sh/wiki/How-to-debug-acme.sh</p>
-<p>最后, 本文并非完全的使用说明, 还有很多高级的功能, 更高级的用法请参看其他 wiki 页面.</p>
-<p>https://github.com/Neilpang/acme.sh/wiki</p>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p><img src="双指针02.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>证书</tag>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -6472,29 +6549,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>力扣每日一题之完美数</title>
-    <url>/p/perfect-number/</url>
-    <content><![CDATA[<p>对于一个正整数，如果除了它和它自身以外的所有<strong>正因子</strong>相等，我们称他为完美数。</p>
-<p>给定一个整数，如果是完美数，返回<code>true</code>，否则返回<code>false</code></p>
-<a id="more"></a>
-<p>示例 1：</p>
-<p>输入：num = 28 输出：true 解释：28 = 1 + 2 + 4 + 7 + 14 1, 2, 4, 7, 和 14 是 28 的所有正因子。</p>
-<p>示例 2：</p>
-<p>输入：num = 6 输出：true</p>
-<p>示例 3：</p>
-<p>输入：num = 496 输出：true</p>
-<h2 id="方法一枚举">方法一：枚举</h2>
-<p>枚举<code>num</code> 的所有真因子，累加所有真因子之和，记作<code>sum</code>。若<code>sum=num</code>则返回<code>true</code>，否则返回<code>false</code>.</p>
-<p>在枚举时，只需要枚举不超过$  <span class="math inline">\(的数。这是因为如果\)</span>num<span class="math inline">\(有一个大于\)</span>  <span class="math inline">\(的因数\)</span>d<span class="math inline">\(，那么它一定有一个小于\)</span>  $的因数 <span class="math inline">\(frac{num}{d}\)</span>.</p>
-<p>在枚举时，若能找到一个因数<span class="math inline">\(d\)</span>，那么就找到了因数<span class="math inline">\(frac{num}{d}\)</span>.</p>
-<p>当<span class="math inline">\(d \\times d=num\)</span>时，这两个因数相同，此时不能重复计算。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkPerfectNumber</span><span class="params">(num <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> sum <span class="keyword">int</span> = <span class="number">1</span> <span class="comment">// 和从1开始</span></span><br><span class="line">    <span class="keyword">for</span> d := <span class="number">2</span>; d * d &lt;= num; d ++ &#123;</span><br><span class="line">        <span class="keyword">if</span> num % d == <span class="number">0</span>&#123;</span><br><span class="line">            sum += d</span><br><span class="line">            <span class="keyword">if</span> d * d &lt; num &#123;</span><br><span class="line">                sum += num /d</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum == num</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣每日一题之在线选举</title>
     <url>/p/online-election/</url>
     <content><![CDATA[<p>给你两个证书数组<code>persons</code>和<code>times</code>。在选举中，第<code>i</code>张选票是在时刻为<code>times[i]</code>时投给选举人<code>persons[i]</code>的。</p>
@@ -6550,6 +6604,29 @@ t≥times[i],&amp; i=N-1
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *TopVotedCandidate)</span> <span class="title">Q</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">// 二分查找</span></span><br><span class="line">	mid := <span class="number">0</span></span><br><span class="line">	left := <span class="number">0</span></span><br><span class="line">	right := <span class="built_in">len</span>(t.times) - <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">		mid = left + (right-left)/<span class="number">2</span></span><br><span class="line">		<span class="keyword">if</span> i &gt; t.times[mid] &#123;</span><br><span class="line">			left = mid + <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> i &lt; t.times[mid] &#123;</span><br><span class="line">			right = mid - <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> t.tops[mid]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> t.tops[right]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="库函数二分查找">库函数二分查找</h3>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *TopVotedCandidate)</span> <span class="title">Q</span><span class="params">(t <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> c.tops[sort.SearchInts(c.times, t+<span class="number">1</span>)<span class="number">-1</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣每日一题之完美数</title>
+    <url>/p/perfect-number/</url>
+    <content><![CDATA[<p>对于一个正整数，如果除了它和它自身以外的所有<strong>正因子</strong>相等，我们称他为完美数。</p>
+<p>给定一个整数，如果是完美数，返回<code>true</code>，否则返回<code>false</code></p>
+<a id="more"></a>
+<p>示例 1：</p>
+<p>输入：num = 28 输出：true 解释：28 = 1 + 2 + 4 + 7 + 14 1, 2, 4, 7, 和 14 是 28 的所有正因子。</p>
+<p>示例 2：</p>
+<p>输入：num = 6 输出：true</p>
+<p>示例 3：</p>
+<p>输入：num = 496 输出：true</p>
+<h2 id="方法一枚举">方法一：枚举</h2>
+<p>枚举<code>num</code> 的所有真因子，累加所有真因子之和，记作<code>sum</code>。若<code>sum=num</code>则返回<code>true</code>，否则返回<code>false</code>.</p>
+<p>在枚举时，只需要枚举不超过$  <span class="math inline">\(的数。这是因为如果\)</span>num<span class="math inline">\(有一个大于\)</span>  <span class="math inline">\(的因数\)</span>d<span class="math inline">\(，那么它一定有一个小于\)</span>  $的因数 <span class="math inline">\(frac{num}{d}\)</span>.</p>
+<p>在枚举时，若能找到一个因数<span class="math inline">\(d\)</span>，那么就找到了因数<span class="math inline">\(frac{num}{d}\)</span>.</p>
+<p>当<span class="math inline">\(d \\times d=num\)</span>时，这两个因数相同，此时不能重复计算。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkPerfectNumber</span><span class="params">(num <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> sum <span class="keyword">int</span> = <span class="number">1</span> <span class="comment">// 和从1开始</span></span><br><span class="line">    <span class="keyword">for</span> d := <span class="number">2</span>; d * d &lt;= num; d ++ &#123;</span><br><span class="line">        <span class="keyword">if</span> num % d == <span class="number">0</span>&#123;</span><br><span class="line">            sum += d</span><br><span class="line">            <span class="keyword">if</span> d * d &lt; num &#123;</span><br><span class="line">                sum += num /d</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum == num</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -6753,26 +6830,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之移除链表元素</title>
-    <url>/p/remove-linked-list-elements/</url>
-    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="removelinked-list.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
-<p><img src="image-20220207150257390.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣链表基础之链表相交</title>
     <url>/p/intersection-of-two-linked-lists-lcci/</url>
     <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
@@ -6796,21 +6853,41 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣数组基础之双指针长度最小的子数组</title>
-    <url>/p/minimum-size-subarray-sum/</url>
-    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+    <title>力扣题目类型之回溯法（一）</title>
+    <url>/p/back-tracking-one/</url>
+    <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
+<p>回溯是递归的副产品，只要有递归就会有回溯。</p>
 <a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p><img src="双指针02.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="回溯法的效率">回溯法的效率</h2>
+<p>回溯的本质是穷举，穷举所有可能。如果还想让回溯法高效一些，可以加一些剪枝的操作，但其本质仍是穷举。</p>
+<h2 id="回溯法可以解决的问题">回溯法可以解决的问题</h2>
+<p>回溯法，一般用于解决以下问题：</p>
+<ul>
+<li>组合问题：N个数里面按一定规则找出k个数的集合；</li>
+<li>切割问题：一个字符串按一定规则有几种切割方式；</li>
+<li>子集问题：一个N个数的集合里有多少符合条件的子集；</li>
+<li>排列问题：N个数按一定规则全排列，有几种排列方式；</li>
+<li>棋盘问题：N皇后，解数独等。</li>
+</ul>
+<h2 id="如何理解回溯法">如何理解回溯法</h2>
+<p>回溯法解决的问题都可以抽象成树形结构，因为回溯法解决的都是在集合中递归查找子集：</p>
+<ul>
+<li>集合的大小是树的宽度</li>
+<li>递归的深度是树的深度</li>
+</ul>
+<p>递归要有终止条件，因此必然是一颗高度有限的树（N叉树）</p>
+<h2 id="回溯法模板">回溯法模板</h2>
+<p>回溯三部曲</p>
+<ul>
+<li><strong>返回值以及参数</strong>：一般是先写逻辑，然后需要什么参数填写什么参数。</li>
+<li><strong>终止条件</strong>：什么时候达到了终止条件，树中就可以看出，一般来说搜到叶子节点了，也就找到了满足条件的一条答案，然后把整个答案存起来，并结束本层递归。</li>
+<li><strong>遍历过程</strong>：回溯法是在集合中递归搜索，集合的大小构成了树的宽度，递归的深度构成了树的深度。</li>
+</ul>
+<p><img src="20210130173631174.png" /></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(参数)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (终止条件) &#123;</span><br><span class="line">        存放结果;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (选择; 本层集合中元素(树中节点孩子的大小就是集合的大小)) &#123; <span class="comment">// for循环是横向遍历</span></span><br><span class="line">        处理节点;</span><br><span class="line">        func(路径, 选择列表); <span class="comment">// 递归是纵向遍历</span></span><br><span class="line">        回溯，撤销处理结果</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
-        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -7168,6 +7245,26 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之移除链表元素</title>
+    <url>/p/remove-linked-list-elements/</url>
+    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="removelinked-list.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
+<p><img src="image-20220207150257390.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>机器学习基本概念03</title>
     <url>/p/Basic-Concepts-of-Machine-Learning-03/</url>
     <content><![CDATA[<p>机器学习中的归纳偏好。</p>
@@ -7264,6 +7361,38 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>现代信号分析第二章作业</title>
+    <url>/p/Chapter-01-of-Modern-Signal-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，现代信号分析</p>
+<a id="more"></a>
+<p><img src="image-20200928193703316.png" /></p>
+<p><img src="image-20201011203228683.png" /></p>
+<p><img src="image-20201011203330808.png" /></p>
+<p><img src="image-20200928193714036.png" /></p>
+<p><img src="image-20201011203626045.png" /></p>
+<p><img src="image-20201011203639917.png" /></p>
+<p><img src="image-20201011203658032.png" /></p>
+<p><img src="image-20201011203716172.png" /></p>
+<p><img src="image-20201011203748238.png" /></p>
+<p><img src="image-20201011203823320.png" /></p>
+<p><img src="image-20201011203917101.png" /></p>
+<p><img src="image-20201011203848593.png" /></p>
+<p><img src="image-20200928193737091.png" /></p>
+<p><img src="image-20201011204004991.png" /></p>
+<p><img src="image-20201011204054961.png" /></p>
+<p><img src="image-20201011204157647.png" /></p>
+<p><img src="image-20200928193754540.png" /></p>
+<p><img src="image-20201011204330872.png" /></p>
+<p><img src="image-20201011204359072.png" /></p>
+<p><img src="image-20201011204438075.png" /></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>深度学习常见损失函数</title>
     <url>/p/common-loss-functions-for-deep-learning/</url>
     <content><![CDATA[<p>我们所说的优化，即优化网络权值使得损失函数值变小。但是，损失函数值变小是否能代表模型的分类/回归精度变高呢？那么多种损失函数，应该如何选择呢？</p>
@@ -7342,44 +7471,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣题目类型之回溯法（一）</title>
-    <url>/p/back-tracking-one/</url>
-    <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
-<p>回溯是递归的副产品，只要有递归就会有回溯。</p>
-<a id="more"></a>
-<h2 id="回溯法的效率">回溯法的效率</h2>
-<p>回溯的本质是穷举，穷举所有可能。如果还想让回溯法高效一些，可以加一些剪枝的操作，但其本质仍是穷举。</p>
-<h2 id="回溯法可以解决的问题">回溯法可以解决的问题</h2>
-<p>回溯法，一般用于解决以下问题：</p>
-<ul>
-<li>组合问题：N个数里面按一定规则找出k个数的集合；</li>
-<li>切割问题：一个字符串按一定规则有几种切割方式；</li>
-<li>子集问题：一个N个数的集合里有多少符合条件的子集；</li>
-<li>排列问题：N个数按一定规则全排列，有几种排列方式；</li>
-<li>棋盘问题：N皇后，解数独等。</li>
-</ul>
-<h2 id="如何理解回溯法">如何理解回溯法</h2>
-<p>回溯法解决的问题都可以抽象成树形结构，因为回溯法解决的都是在集合中递归查找子集：</p>
-<ul>
-<li>集合的大小是树的宽度</li>
-<li>递归的深度是树的深度</li>
-</ul>
-<p>递归要有终止条件，因此必然是一颗高度有限的树（N叉树）</p>
-<h2 id="回溯法模板">回溯法模板</h2>
-<p>回溯三部曲</p>
-<ul>
-<li><strong>返回值以及参数</strong>：一般是先写逻辑，然后需要什么参数填写什么参数。</li>
-<li><strong>终止条件</strong>：什么时候达到了终止条件，树中就可以看出，一般来说搜到叶子节点了，也就找到了满足条件的一条答案，然后把整个答案存起来，并结束本层递归。</li>
-<li><strong>遍历过程</strong>：回溯法是在集合中递归搜索，集合的大小构成了树的宽度，递归的深度构成了树的深度。</li>
-</ul>
-<p><img src="20210130173631174.png" /></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(参数)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (终止条件) &#123;</span><br><span class="line">        存放结果;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (选择; 本层集合中元素(树中节点孩子的大小就是集合的大小)) &#123; <span class="comment">// for循环是横向遍历</span></span><br><span class="line">        处理节点;</span><br><span class="line">        func(路径, 选择列表); <span class="comment">// 递归是纵向遍历</span></span><br><span class="line">        回溯，撤销处理结果</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -7487,51 +7578,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>线性回归中的基函数</title>
-    <url>/p/a-basis-function-in-linear-regression/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
-<p><strong>关键词：</strong>线性回归，基函数</p>
-<a id="more"></a>
-<h4 id="线性基函数模型">线性基函数模型</h4>
-<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
-y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
-\]</span> 其中 <span class="math display">\[
-x = (x_1,...,x_D)^T
-\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
-y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
-\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
-<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
-y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
-\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
-<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
-<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
-\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
-\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
-<h4 id="代码部分">代码部分</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
-\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
-\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
-\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
-<h5 id="python中的广播规则">python中的广播规则</h5>
-<p>举个例子：</p>
-<p>假设<code>x</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
-<p><code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
-<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
-<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
-<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -7710,6 +7756,51 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>线性回归中的基函数</title>
+    <url>/p/a-basis-function-in-linear-regression/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
+<p><strong>关键词：</strong>线性回归，基函数</p>
+<a id="more"></a>
+<h4 id="线性基函数模型">线性基函数模型</h4>
+<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
+y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
+\]</span> 其中 <span class="math display">\[
+x = (x_1,...,x_D)^T
+\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
+y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
+\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
+<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
+y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
+\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
+<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
+<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
+\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
+\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
+<h4 id="代码部分">代码部分</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
+\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
+\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
+\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
+<h5 id="python中的广播规则">python中的广播规则</h5>
+<p>举个例子：</p>
+<p>假设<code>x</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
+<p><code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
+<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
+<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
+<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -7894,97 +7985,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>现代信号分析第二章作业</title>
-    <url>/p/Chapter-01-of-Modern-Signal-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，现代信号分析</p>
-<a id="more"></a>
-<p><img src="image-20200928193703316.png" /></p>
-<p><img src="image-20201011203228683.png" /></p>
-<p><img src="image-20201011203330808.png" /></p>
-<p><img src="image-20200928193714036.png" /></p>
-<p><img src="image-20201011203626045.png" /></p>
-<p><img src="image-20201011203639917.png" /></p>
-<p><img src="image-20201011203658032.png" /></p>
-<p><img src="image-20201011203716172.png" /></p>
-<p><img src="image-20201011203748238.png" /></p>
-<p><img src="image-20201011203823320.png" /></p>
-<p><img src="image-20201011203917101.png" /></p>
-<p><img src="image-20201011203848593.png" /></p>
-<p><img src="image-20200928193737091.png" /></p>
-<p><img src="image-20201011204004991.png" /></p>
-<p><img src="image-20201011204054961.png" /></p>
-<p><img src="image-20201011204157647.png" /></p>
-<p><img src="image-20200928193754540.png" /></p>
-<p><img src="image-20201011204330872.png" /></p>
-<p><img src="image-20201011204359072.png" /></p>
-<p><img src="image-20201011204438075.png" /></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Intel Realsense T265使用教程</title>
-    <url>/p/Intel-Realsense-T265-in-ubuntu/</url>
-    <content><![CDATA[<p><strong>摘要</strong>：英特尔® 实感™ 追踪摄像头 T265 是一款全新的独立同步定位与建图设备，可用于机器人、无人机等领域。本文主要介绍了如何在ubuntu系统上安装Intel Realsense T265追踪摄像头。</p>
-<p><strong>关键词</strong>：T265，ROS</p>
-<a id="more"></a>
-<h3 id="t265参数">T265参数</h3>
-<ol type="1">
-<li>T265采用了2视觉处理单元（VPU），V-SLAM算法可以直接在VPU上运行，可直接输出相机位姿；</li>
-<li>T265使用了双目鱼眼相机，分辨率848*800，刷新频率30Hz，可以生成单色图像，视场角163(±5°)；</li>
-<li>惯性测量单元（IMU）型号为BM1055；</li>
-<li>相机与IMU的参数都保存了传感器中，可以通过示例直接读取相机的内参和相机与IMU之间的外参；</li>
-<li>相机外形尺寸108x24.5x12.5mm</li>
-</ol>
-<p><img src="t265.png" /></p>
-<h3 id="t265开发环境搭建">T265开发环境搭建</h3>
-<h4 id="注册公钥">注册公钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE</span><br></pre></td></tr></table></figure>
-<h4 id="添加库">添加库</h4>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo add-apt-repository &quot;deb https:&#x2F;&#x2F;librealsense.intel.com&#x2F;Debian&#x2F;apt-repo $(lsb_release -sc) main&quot; -u</span><br></pre></td></tr></table></figure>
-<h4 id="安装库">安装库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install librealsense2-dkms</span><br><span class="line">sudo apt-get install librealsense2-utils</span><br></pre></td></tr></table></figure>
-<p>以上两行将部署 librealsense2 udev 规则，构建并激活内核模块，运行时库以及可执行的演示和工具。</p>
-<h4 id="安装开发库可选">安装开发库（可选）</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install librealsense2-dev</span><br><span class="line">sudo apt-get install librealsense2-dbg</span><br></pre></td></tr></table></figure>
-<p>安装了dev软件包后，可以使用<code>g++ -std=c++11 filename.cpp -lrealsense2</code>或者在IDE中使用<code>librealsense2</code>编译应用程序。</p>
-<h4 id="检查安装是否成功">检查安装是否成功</h4>
-<p>运行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">realsense-viewer</span><br></pre></td></tr></table></figure>
-<p>系统会自动打开一个窗口</p>
-<p><img src="realsense-viewer.png" /></p>
-<p>一旦速度过快，T265输出的位姿就会飞掉。</p>
-<h3 id="读取t265内外参数信息">读取T265内外参数信息</h3>
-<p>T265在出厂前就对相机进行了标定，每个相机内部都带有相机的内参和外参，终端输入以下命令，即可读取T265的配置信息</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rs-enumerate-devices</span><br></pre></td></tr></table></figure>
-<p><img src="rs-enumerate-devices.png" /></p>
-<p>如果需要读取相机内参和外参，以及IMU的参数可以使用如下命令（添加 -c 参数）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rs-enumerate-devices -c</span><br></pre></td></tr></table></figure>
-<p><img src="rs-enumerate-devices-c.png" /></p>
-<h3 id="使用ros包读取t265数据">使用ROS包读取T265数据</h3>
-<p>使用环境ROS melodic 版本</p>
-<h4 id="安装依赖">安装依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ros-<span class="variable">$ROS_DISTRO</span>-ddynamic-reconfigure</span><br></pre></td></tr></table></figure>
-<h4 id="下载安装ros包-realsense-ros">下载安装ROS包 realsense-ros</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/catkin_ws/src</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/IntelRealSense/realsense-ros.git</span><br><span class="line"><span class="built_in">cd</span> realsense-ros/</span><br><span class="line">git checkout `git tag | sort -V | grep -P <span class="string">&quot;^2.\d+\.\d+&quot;</span> | tail -1`</span><br><span class="line"><span class="built_in">cd</span>  ~/catkin_ws/</span><br><span class="line">catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release</span><br></pre></td></tr></table></figure>
-<h4 id="启动测试demo即可看到t265的位姿数据">启动测试demo，即可看到T265的位姿数据</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br><span class="line">roslaunch realsense2_camera demo_t265.launch</span><br></pre></td></tr></table></figure>
-<p><img src="demo_t265.jpg" /></p>
-<p>如果需要查看鱼眼相机图像数据，则需要对<code>rs_t265.launch</code>文件进行修改，使能图像输出</p>
-<p><img src="rs_t265.png" /></p>
-<p>运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roslaunch realsense2_camera demo_t265.launch</span><br></pre></td></tr></table></figure>
-<p><img src="demo_t265_2.png" /></p>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-        <tag>T265</tag>
       </tags>
   </entry>
 </search>
