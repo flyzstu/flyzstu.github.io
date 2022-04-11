@@ -183,6 +183,24 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker打包镜像文件</title>
+    <url>/p/export-docker-images-to-file/</url>
+    <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
+<p>但是这种情况也存在问题，一旦容器内的依赖（如maven、pip）发生变化，基础镜像就需要重新打包，这种情况还没想好需要怎么操作。。不过还是那句话，做了再说，遇到了问题再想办法解决。</p>
+<p>关键字：<strong>docker，打包镜像文件</strong></p>
+<a id="more"></a>
+<h4 id="打包镜像文件">打包镜像文件</h4>
+<p>第一个参数是文件名，第二个参数是镜像名</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker save -o jenkinsci.tar.gz jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
+<h4 id="读取镜像文件">读取镜像文件</h4>
+<p>第一个参数是文件名称</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker load -i jenkinsci.tar.gz</span><br><span class="line"><span class="comment"># Loaded image: jenkinsci/blueocean:latest</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker安装MySQL5.7</title>
     <url>/p/install-mysql5.7-in-docker/</url>
     <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
@@ -255,24 +273,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker打包镜像文件</title>
-    <url>/p/export-docker-images-to-file/</url>
-    <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
-<p>但是这种情况也存在问题，一旦容器内的依赖（如maven、pip）发生变化，基础镜像就需要重新打包，这种情况还没想好需要怎么操作。。不过还是那句话，做了再说，遇到了问题再想办法解决。</p>
-<p>关键字：<strong>docker，打包镜像文件</strong></p>
-<a id="more"></a>
-<h4 id="打包镜像文件">打包镜像文件</h4>
-<p>第一个参数是文件名，第二个参数是镜像名</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker save -o jenkinsci.tar.gz jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
-<h4 id="读取镜像文件">读取镜像文件</h4>
-<p>第一个参数是文件名称</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker load -i jenkinsci.tar.gz</span><br><span class="line"><span class="comment"># Loaded image: jenkinsci/blueocean:latest</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker的网络模式</title>
     <url>/p/Docker-network-mode/</url>
     <content><![CDATA[<p><code>docker</code>目前支持以下5种网络模式：</p>
@@ -296,6 +296,18 @@
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang时间处理</title>
+    <url>/p/time-processing-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
+<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -563,18 +575,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang时间处理</title>
-    <url>/p/time-processing-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
-<a id="more"></a>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>golang中的生产者消费者模型</title>
     <url>/p/producer-consumer-model-in-golang/</url>
     <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
@@ -752,6 +752,35 @@
       </tags>
   </entry>
   <entry>
+    <title>Jetson Xavier nx实现串口通信</title>
+    <url>/p/serial-communication-on-jetson-xavier-nx/</url>
+    <content><![CDATA[<p>利用Jetson Xavier和传感器模块进行串口通信</p>
+<a id="more"></a>
+<h3 id="硬件连接">硬件连接</h3>
+<p>默认情况下，Jetson Xavier NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分配为GPIO，建议使用下面标有其他功能的引脚。</p>
+<p>这里我们用的是UART1，设备地址<code>/dev/ttyTHS0</code>.</p>
+<p><img src="jetson_data_sheet.png" /></p>
+<p>其中，第8和10引脚就是我们需要的TXD和RXD引脚。</p>
+<p><img src="jetson_xavier_nx.jpg" /></p>
+<p><strong>注意：和电脑连接调试时需要注意，USB转TTL的RXD引脚需和板子的TXD引脚连接，USB转TTL的TXD引脚需和板子的RXD引脚相连。两者的GND引脚也要连起来。</strong></p>
+<h3 id="相关代码">相关代码</h3>
+<h4 id="安装相关依赖">安装相关依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install pyserial</span><br></pre></td></tr></table></figure>
+<h4 id="测试代码">测试代码</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;UART Demonstration Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">serial_port = serial.Serial(</span><br><span class="line">    port=<span class="string">&quot;/dev/ttyTHS1&quot;</span>,                                      <span class="comment">#串口设备地址</span></span><br><span class="line">    baudrate=<span class="number">115200</span>,                                          <span class="comment">#信号波特率</span></span><br><span class="line">    bytesize=serial.EIGHTBITS,                                <span class="comment">#数据位</span></span><br><span class="line">    parity=serial.PARITY_NONE,  						    <span class="comment">#是否启用奇偶校验</span></span><br><span class="line">    stopbits=serial.STOPBITS_ONE,                             <span class="comment">#停止位</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Wait a second to let the port initialize</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># Send a simple header</span></span><br><span class="line">    serial_port.write(<span class="string">&quot;UART Demonstration Program\r\n&quot;</span>.encode())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> serial_port.inWaiting() &gt; <span class="number">0</span>:</span><br><span class="line">            data = serial_port.read()</span><br><span class="line">            print(data)</span><br><span class="line">            serial_port.write(data)</span><br><span class="line">            <span class="comment"># if we get a carriage return, add a line feed too</span></span><br><span class="line">            <span class="comment"># \r is a carriage return; \n is a line feed</span></span><br><span class="line">            <span class="comment"># This is to help the tty program on the other end </span></span><br><span class="line">            <span class="comment"># Windows is \r\n for carriage return, line feed</span></span><br><span class="line">            <span class="comment"># Macintosh and Linux use \n</span></span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">&quot;\r&quot;</span>.encode():</span><br><span class="line">                <span class="comment"># For Windows boxen on the other end</span></span><br><span class="line">                serial_port.write(<span class="string">&quot;\n&quot;</span>.encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    print(<span class="string">&quot;Exiting Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> exception_error:</span><br><span class="line">    print(<span class="string">&quot;Error occurred. Exiting Program&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;Error: &quot;</span> + str(exception_error))</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    serial_port.close()</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p><img src="uart_demo.png" /></p>
+<p>参考资料：</p>
+<p>https://www.jetsonhacks.com/2019/10/10/jetson-nano-uart/</p>
+<p>https://github.com/JetsonHacksNano/UARTDemo</p>
+<p>https://github.com/pyserial/pyserial</p>
+<p>​</p>
+]]></content>
+      <tags>
+        <tag>Jetson</tag>
+        <tag>CUDA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Jetson Xavier 开发实录</title>
     <url>/p/How-to-use-Jetson-Xavier/</url>
     <content><![CDATA[<p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
@@ -920,32 +949,57 @@
       </tags>
   </entry>
   <entry>
-    <title>Jetson Xavier nx实现串口通信</title>
-    <url>/p/serial-communication-on-jetson-xavier-nx/</url>
-    <content><![CDATA[<p>利用Jetson Xavier和传感器模块进行串口通信</p>
+    <title>ubuntu2004安装最新版本MySQL并设置外网访问</title>
+    <url>/p/install-newest-mysql-in-ubuntu2004/</url>
+    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的MySQL以及如何设置MySQL外网访问。</strong></p>
+<p><strong>关键词：MySQL，Linux</strong></p>
 <a id="more"></a>
-<h3 id="硬件连接">硬件连接</h3>
-<p>默认情况下，Jetson Xavier NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分配为GPIO，建议使用下面标有其他功能的引脚。</p>
-<p>这里我们用的是UART1，设备地址<code>/dev/ttyTHS0</code>.</p>
-<p><img src="jetson_data_sheet.png" /></p>
-<p>其中，第8和10引脚就是我们需要的TXD和RXD引脚。</p>
-<p><img src="jetson_xavier_nx.jpg" /></p>
-<p><strong>注意：和电脑连接调试时需要注意，USB转TTL的RXD引脚需和板子的TXD引脚连接，USB转TTL的TXD引脚需和板子的RXD引脚相连。两者的GND引脚也要连起来。</strong></p>
-<h3 id="相关代码">相关代码</h3>
-<h4 id="安装相关依赖">安装相关依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install pyserial</span><br></pre></td></tr></table></figure>
-<h4 id="测试代码">测试代码</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;UART Demonstration Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">serial_port = serial.Serial(</span><br><span class="line">    port=<span class="string">&quot;/dev/ttyTHS1&quot;</span>,                                      <span class="comment">#串口设备地址</span></span><br><span class="line">    baudrate=<span class="number">115200</span>,                                          <span class="comment">#信号波特率</span></span><br><span class="line">    bytesize=serial.EIGHTBITS,                                <span class="comment">#数据位</span></span><br><span class="line">    parity=serial.PARITY_NONE,  						    <span class="comment">#是否启用奇偶校验</span></span><br><span class="line">    stopbits=serial.STOPBITS_ONE,                             <span class="comment">#停止位</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Wait a second to let the port initialize</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># Send a simple header</span></span><br><span class="line">    serial_port.write(<span class="string">&quot;UART Demonstration Program\r\n&quot;</span>.encode())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> serial_port.inWaiting() &gt; <span class="number">0</span>:</span><br><span class="line">            data = serial_port.read()</span><br><span class="line">            print(data)</span><br><span class="line">            serial_port.write(data)</span><br><span class="line">            <span class="comment"># if we get a carriage return, add a line feed too</span></span><br><span class="line">            <span class="comment"># \r is a carriage return; \n is a line feed</span></span><br><span class="line">            <span class="comment"># This is to help the tty program on the other end </span></span><br><span class="line">            <span class="comment"># Windows is \r\n for carriage return, line feed</span></span><br><span class="line">            <span class="comment"># Macintosh and Linux use \n</span></span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">&quot;\r&quot;</span>.encode():</span><br><span class="line">                <span class="comment"># For Windows boxen on the other end</span></span><br><span class="line">                serial_port.write(<span class="string">&quot;\n&quot;</span>.encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    print(<span class="string">&quot;Exiting Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> exception_error:</span><br><span class="line">    print(<span class="string">&quot;Error occurred. Exiting Program&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;Error: &quot;</span> + str(exception_error))</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    serial_port.close()</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p><img src="uart_demo.png" /></p>
-<p>参考资料：</p>
-<p>https://www.jetsonhacks.com/2019/10/10/jetson-nano-uart/</p>
-<p>https://github.com/JetsonHacksNano/UARTDemo</p>
-<p>https://github.com/pyserial/pyserial</p>
-<p>​</p>
+<h3 id="更新仓库">更新仓库</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<h3 id="用官方仓库安装-mysql">用官方仓库安装 MySQL</h3>
+<h4 id="下载mysql仓库工具包">下载mysql仓库工具包</h4>
+<p><a href="https%3A//dev.mysql.com/downloads/repo/apt/">下载页面</a></p>
+<p><img src="image-20211203152648123.png" /></p>
+<p>点击Download，选择<strong>No thanks, just start my download.</strong></p>
+<p><img src="image-20211203152704181.png" /></p>
+<h4 id="安装">安装</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i mysql-apt-config*</span><br></pre></td></tr></table></figure>
+<h4 id="更新仓库-1">更新仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<h4 id="安装mysql-server">安装mysql-server</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
+<p>这样做会在你的终端中打开包配置的提示。使用向下箭头选择“Ok”选项。</p>
+<p><img src="v2-b09d5038434b3b540638c382677300bb_1440w.jpg" /></p>
+<p>点击回车。这应该会提示你输入密码：这是在为 MySQL 设置 root 密码。</p>
+<p><img src="v2-b22e27255b02ea03066a398e2b90acb8_1440w.jpg" /></p>
+<p>输入密码然后点击 Tab 键去选择“Ok“。点击回车键，你将重新输入密码。</p>
+<p><img src="v2-191abdf08ed88a03f4842b715f229649_1440w.jpg" /></p>
+<p>将会展示一些关于 MySQL Server 的配置信息。再次按下 Tab 去选择 “Ok” 和按下回车键：</p>
+<p><img src="/v2-c950f3613406d1b62dfa22904be045bb_1440w.jpg" /></p>
+<p>第一种是最新的密码加密方法，第二种是sql5版本之前的密码加密方法，这里选择第二个。</p>
+<h3 id="验证安装">验证安装</h3>
+<p>要验证 MySQL 已经正确安装，使用下列命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status mysql.service</span><br></pre></td></tr></table></figure>
+<p><img src="v2-f506966fb17a1b8a145c84a8f5add612_1440w.jpg" /></p>
+<p>检查到显示running即安装成功</p>
+<h3 id="设置自动启动">设置自动启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> mysql.service</span><br></pre></td></tr></table></figure>
+<h3 id="设置外网访问">设置外网访问</h3>
+<p>链接mysql以后，在mysql命令行输入以下命令就可以允许外网访问：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#96;%&#96; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h4 id="原理">原理</h4>
+<p>mysql默认是不允许外网访问的，只允许<code>localhost</code>或者<code>127.0.0.1</code>访问。</p>
+<p>查询默认的mysql.user表，如下表示不允许外网访问，只允许本机访问：</p>
+<p><img src="image-20211203153346215.png" /></p>
+<p>更新访问权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=`%` <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211203153437479.png" /></p>
+<p>更新权限</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>Jetson</tag>
-        <tag>CUDA</tag>
+        <tag>mysql</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1335,60 +1389,6 @@
 ]]></content>
       <tags>
         <tag>Jupyter</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ubuntu2004安装最新版本MySQL并设置外网访问</title>
-    <url>/p/install-newest-mysql-in-ubuntu2004/</url>
-    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的MySQL以及如何设置MySQL外网访问。</strong></p>
-<p><strong>关键词：MySQL，Linux</strong></p>
-<a id="more"></a>
-<h3 id="更新仓库">更新仓库</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<h3 id="用官方仓库安装-mysql">用官方仓库安装 MySQL</h3>
-<h4 id="下载mysql仓库工具包">下载mysql仓库工具包</h4>
-<p><a href="https%3A//dev.mysql.com/downloads/repo/apt/">下载页面</a></p>
-<p><img src="image-20211203152648123.png" /></p>
-<p>点击Download，选择<strong>No thanks, just start my download.</strong></p>
-<p><img src="image-20211203152704181.png" /></p>
-<h4 id="安装">安装</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i mysql-apt-config*</span><br></pre></td></tr></table></figure>
-<h4 id="更新仓库-1">更新仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<h4 id="安装mysql-server">安装mysql-server</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
-<p>这样做会在你的终端中打开包配置的提示。使用向下箭头选择“Ok”选项。</p>
-<p><img src="v2-b09d5038434b3b540638c382677300bb_1440w.jpg" /></p>
-<p>点击回车。这应该会提示你输入密码：这是在为 MySQL 设置 root 密码。</p>
-<p><img src="v2-b22e27255b02ea03066a398e2b90acb8_1440w.jpg" /></p>
-<p>输入密码然后点击 Tab 键去选择“Ok“。点击回车键，你将重新输入密码。</p>
-<p><img src="v2-191abdf08ed88a03f4842b715f229649_1440w.jpg" /></p>
-<p>将会展示一些关于 MySQL Server 的配置信息。再次按下 Tab 去选择 “Ok” 和按下回车键：</p>
-<p><img src="/v2-c950f3613406d1b62dfa22904be045bb_1440w.jpg" /></p>
-<p>第一种是最新的密码加密方法，第二种是sql5版本之前的密码加密方法，这里选择第二个。</p>
-<h3 id="验证安装">验证安装</h3>
-<p>要验证 MySQL 已经正确安装，使用下列命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status mysql.service</span><br></pre></td></tr></table></figure>
-<p><img src="v2-f506966fb17a1b8a145c84a8f5add612_1440w.jpg" /></p>
-<p>检查到显示running即安装成功</p>
-<h3 id="设置自动启动">设置自动启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> mysql.service</span><br></pre></td></tr></table></figure>
-<h3 id="设置外网访问">设置外网访问</h3>
-<p>链接mysql以后，在mysql命令行输入以下命令就可以允许外网访问：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#96;%&#96; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-<h4 id="原理">原理</h4>
-<p>mysql默认是不允许外网访问的，只允许<code>localhost</code>或者<code>127.0.0.1</code>访问。</p>
-<p>查询默认的mysql.user表，如下表示不允许外网访问，只允许本机访问：</p>
-<p><img src="image-20211203153346215.png" /></p>
-<p>更新访问权限</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=`%` <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211203153437479.png" /></p>
-<p>更新权限</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>mysql</tag>
-        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1869,149 +1869,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Pandas学习小记(一)</title>
-    <url>/p/Pandas-learning-notes-01/</url>
-    <content><![CDATA[<p>Pandas是什么？</p>
-<a id="more"></a>
-<p>Pandas是一个强大的分析结构化数据的工具集；它的使用基础是Numpy（提供高性能的矩阵运算）；用于数据挖掘和数据分析，同时也提供数据清洗功能。</p>
-<h3 id="安装pandas">安装Pandas</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pandas -i http://mirrors.aliyun.com/pypi/simple/</span><br></pre></td></tr></table></figure>
-<h3 id="pandas简介">Pandas简介</h3>
-<p>Pandas 适用于处理以下类型的数据：</p>
-<ul>
-<li>与 SQL 或 Excel 表类似的，含异构列的表格数据;</li>
-<li>有序和无序（非固定频率）的时间序列数据;</li>
-<li>带行列标签的矩阵数据，包括同构或异构型数据;</li>
-<li>任意其它形式的观测、统计数据集, 数据转入 Pandas 数据结构时不必事先标记。</li>
-</ul>
-<p>Pandas 的主要数据结构是 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series">Series</a>（一维数据）与 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a>（二维数据），这两种数据结构足以<strong>处理金融、统计、社会科学、工程</strong>等领域里的大多数典型用例。对于 R 用户，DataFrame 提供了比 R 语言 data.frame 更丰富的功能。Pandas 基于 <a href="https://www.numpy.org/">NumPy</a> 开发，可以与其它第三方科学计算支持库完美集成。</p>
-<p>Pandas 就像一把万能瑞士军刀，下面仅列出了它的部分优势 ：</p>
-<ul>
-<li>处理浮点与非浮点数据里的<strong>缺失数据</strong>，表示为 <code>NaN</code>；</li>
-<li>大小可变：<strong>插入或删除</strong> DataFrame 等多维对象的列；</li>
-<li>自动、显式<strong>数据对齐</strong>：显式地将对象与一组标签对齐，也可以忽略标签，在 Series、DataFrame 计算时自动与数据对齐；</li>
-<li>强大、灵活的<strong>分组</strong>（group by）功能：<strong>拆分-应用-组合</strong>数据集，聚合、转换数据；</li>
-<li>把 Python 和 NumPy 数据结构里不规则、不同索引的数据<strong>轻松</strong>地转换为 DataFrame 对象；</li>
-<li>基于智能标签，对大型数据集进行<strong>切片</strong>、<strong>花式索引</strong>、<strong>子集分解</strong>等操作；</li>
-<li>直观地<strong>合并（merge）</strong>、<strong>连接（join）</strong>数据集；</li>
-<li>灵活地<strong>重塑（reshape）</strong>、<strong>透视（pivot）</strong>数据集；</li>
-<li><strong>轴</strong>支持结构化标签：一个刻度支持多个标签；</li>
-<li>成熟的 IO 工具：读取<strong>文本文件</strong>（CSV 等支持分隔符的文件）、Excel 文件、数据库等来源的数据，利用超快的 <strong>HDF5</strong> 格式保存 / 加载数据；</li>
-<li><strong>时间序列</strong>：支持日期范围生成、频率转换、移动窗口统计、移动窗口线性回归、日期位移等时间序列功能。</li>
-</ul>
-<p>这些功能主要是为了解决其它编程语言、科研环境的痛点。处理数据一般分为几个阶段：<strong>数据整理与清洗、数据分析与建模、数据可视化与制表</strong>，Pandas 是处理数据的理想工具。</p>
-<p>其它说明：</p>
-<ul>
-<li>Pandas 速度<strong>很快</strong>。Pandas 的很多底层算法都用 <a href="https://cython.org/">Cython</a> 优化过。然而，为了保持通用性，必然要牺牲一些性能，如果专注某一功能，完全可以开发出比 Pandas 更快的专用工具。</li>
-<li>Pandas 是 <a href="https://www.statsmodels.org/stable/index.html">statsmodels</a> 的依赖项，因此，Pandas 也是 Python 中统计计算生态系统的重要组成部分。</li>
-<li>Pandas 已广泛应用于金融领域</li>
-</ul>
-<h3 id="pandas中的数据结构">Pandas中的数据结构</h3>
-<table>
-<thead>
-<tr class="header">
-<th>维数</th>
-<th>名称</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Series</td>
-<td>带标签的一维同构数组</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>DataFrame</td>
-<td>带标签的，大小可变的，二维异构表格</td>
-</tr>
-</tbody>
-</table>
-<h3 id="为什么有多个数据结构">为什么有多个数据结构？</h3>
-<p>Pandas 数据结构就像是低维数据的容器。比如，DataFrame 是 Series 的容器，Series 则是标量的容器。使用这种方式，可以在容器中以字典的形式插入或删除对象。</p>
-<p>此外，通用 API 函数的默认操作要顾及时间序列与截面数据集的方向。多维数组存储二维或三维数据时，编写函数要注意数据集的方向，这对用户来说是一种负担；如果不考虑 C 或 Fortran 中连续性对性能的影响，一般情况下，不同的轴在程序里其实没有什么区别。Pandas 里，轴的概念主要是为了给数据赋予更直观的语义，即用“更恰当”的方式表示数据集的方向。这样做可以让用户编写数据转换函数时，少费点脑子。</p>
-<p>处理 DataFrame 等表格数据时，<strong>index</strong>（行）或 <strong>columns</strong>（列）比 <strong>axis 0</strong> 和 <strong>axis 1</strong> 更直观。用这种方式迭代 DataFrame 的列，代码更易读易懂：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> df.columns:</span><br><span class="line">    series = df[col]</span><br><span class="line">    <span class="comment"># do something with series</span></span><br></pre></td></tr></table></figure>
-<h3 id="大小可变与数据复制"><a href="https://www.pypandas.cn/docs/getting_started/overview.html#大小可变与数据复制">大小可变与数据复制</a></h3>
-<p>Pandas 所有数据结构的值都是可变的，但数据结构的大小并非都是可变的，比如，Series 的长度不可改变，但 DataFrame 里就可以插入列。</p>
-<p>Pandas 里，绝大多数方法都不改变原始的输入数据，而是复制数据，生成新的对象。 一般来说，原始输入数据<strong>不变</strong>更稳妥。</p>
-<h3 id="十分钟入门pandas"><a href="https://www.pypandas.cn/docs/getting_started/10min.html#%E5%8D%81%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8-pandas">十分钟入门Pandas</a></h3>
-<p>导入：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
-<h4 id="生成对象">生成对象</h4>
-<p>使用值列表生成Series</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">3</span>]: s = pd.Series([<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, np.nan, <span class="number">6</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: s</span><br><span class="line">Out[<span class="number">4</span>]: </span><br><span class="line"><span class="number">0</span>    <span class="number">1.0</span></span><br><span class="line"><span class="number">1</span>    <span class="number">3.0</span></span><br><span class="line"><span class="number">2</span>    <span class="number">5.0</span></span><br><span class="line"><span class="number">3</span>    NaN</span><br><span class="line"><span class="number">4</span>    <span class="number">6.0</span></span><br><span class="line"><span class="number">5</span>    <span class="number">8.0</span></span><br><span class="line">dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用含日期时间索引与标签的Numpy数组生成DataFrame</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">5</span>]: dates = pd.date_range(<span class="string">&#x27;20130101&#x27;</span>, periods=<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: dates</span><br><span class="line">Out[<span class="number">6</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: df = pd.DataFrame(np.random.randn(<span class="number">6</span>, <span class="number">4</span>), index=dates, columns=list(<span class="string">&#x27;ABCD&#x27;</span>))</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: df</span><br><span class="line">Out[<span class="number">8</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p>用Series字典对象生成DataFrame</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">In [9]: df2 &#x3D; pd.DataFrame(&#123;&#39;A&#39;: 1.,</span><br><span class="line">   ...:                     &#39;B&#39;: pd.Timestamp(&#39;20130102&#39;),</span><br><span class="line">   ...:                     &#39;C&#39;: pd.Series(1, index&#x3D;list(range(4)), dtype&#x3D;&#39;float32&#39;),</span><br><span class="line">   ...:                     &#39;D&#39;: np.array([3] * 4, dtype&#x3D;&#39;int32&#39;),</span><br><span class="line">   ...:                     &#39;E&#39;: pd.Categorical([&quot;test&quot;, &quot;train&quot;, &quot;test&quot;, &quot;train&quot;]),</span><br><span class="line">   ...:                     &#39;F&#39;: &#39;foo&#39;&#125;)</span><br><span class="line">   ...: </span><br><span class="line"></span><br><span class="line">In [10]: df2</span><br><span class="line">Out[10]: </span><br><span class="line">     A          B    C  D      E    F</span><br><span class="line">0  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">1  1.0 2013-01-02  1.0  3  train  foo</span><br><span class="line">2  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">3  1.0 2013-01-02  1.0  3  train  foo</span><br></pre></td></tr></table></figure>
-<p>DataFrame的列有不同的数据类型</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">11</span>]: df2.dtypes</span><br><span class="line">Out[<span class="number">11</span>]: </span><br><span class="line">A           float64</span><br><span class="line">B    datetime64[ns]</span><br><span class="line">C           float32</span><br><span class="line">D             int32</span><br><span class="line">E          category</span><br><span class="line">F            object</span><br><span class="line">dtype: object</span><br></pre></td></tr></table></figure>
-<p>IPython支持 tab 键自动补全列名与公共属性。下面是部分可自动补全的属性：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">12</span>]: df2.&lt;TAB&gt;  <span class="comment"># noqa: E225, E999</span></span><br><span class="line">df2.A                  df2.bool</span><br><span class="line">df2.abs                df2.boxplot</span><br><span class="line">df2.add                df2.C</span><br><span class="line">df2.add_prefix         df2.clip</span><br><span class="line">df2.add_suffix         df2.clip_lower</span><br><span class="line">df2.align              df2.clip_upper</span><br><span class="line">df2.all                df2.columns</span><br><span class="line">df2.any                df2.combine</span><br><span class="line">df2.append             df2.combine_first</span><br><span class="line">df2.apply              df2.compound</span><br><span class="line">df2.applymap           df2.consolidate</span><br><span class="line">df2.D</span><br></pre></td></tr></table></figure>
-<p>列 A、B、C、D 和 E 都可以自动补全；为简洁起见，此处只显示了部分属性。</p>
-<h4 id="查看数据">查看数据</h4>
-<p>下列代码说明了如何查看DataFrame头部和尾部的数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">13</span>]: df.head()</span><br><span class="line">Out[<span class="number">13</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: df.tail(<span class="number">3</span>) <span class="comment">#后三行	</span></span><br><span class="line">Out[<span class="number">14</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p>显示索引与列名：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">15</span>]: df.index</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: df.columns</span><br><span class="line">Out[<span class="number">16</span>]: Index([<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>], dtype=<span class="string">&#x27;object&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 输出底层数据的 NumPy 对象。注意，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 的列由多种数据类型组成时，该操作耗费系统资源较大，这也是 Pandas 和 NumPy 的本质区别：<strong>NumPy 数组只有一种数据类型，DataFrame 每列的数据类型各不相同</strong>。调用 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 时，Pandas 查找支持 DataFrame 里所有数据类型的 NumPy 数据类型。还有一种数据类型是 <code>object</code>，可以把 DataFrame 列里的值强制转换为 Python 对象。</p>
-<p>下面的 <code>df</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 里的值都是浮点数，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的操作会很快，而且不复制数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">17</span>]: df.to_numpy()</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">array([[ <span class="number">0.4691</span>, <span class="number">-0.2829</span>, <span class="number">-1.5091</span>, <span class="number">-1.1356</span>],</span><br><span class="line">       [ <span class="number">1.2121</span>, <span class="number">-0.1732</span>,  <span class="number">0.1192</span>, <span class="number">-1.0442</span>],</span><br><span class="line">       [<span class="number">-0.8618</span>, <span class="number">-2.1046</span>, <span class="number">-0.4949</span>,  <span class="number">1.0718</span>],</span><br><span class="line">       [ <span class="number">0.7216</span>, <span class="number">-0.7068</span>, <span class="number">-1.0396</span>,  <span class="number">0.2719</span>],</span><br><span class="line">       [<span class="number">-0.425</span> ,  <span class="number">0.567</span> ,  <span class="number">0.2762</span>, <span class="number">-1.0874</span>],</span><br><span class="line">       [<span class="number">-0.6737</span>,  <span class="number">0.1136</span>, <span class="number">-1.4784</span>,  <span class="number">0.525</span> ]])</span><br></pre></td></tr></table></figure>
-<p><code>df2</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 包含了多种类型，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 操作就会耗费较多资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">18</span>]: df2.to_numpy()</span><br><span class="line">Out[<span class="number">18</span>]: </span><br><span class="line">array([[<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>]], dtype=object)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>提醒：<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的输出不包含行索引和列标签。</p>
-</blockquote>
-<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.describe.html#pandas.DataFrame.describe">describe()</a> 可以快速查看数据的统计摘要：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">19</span>]: df.describe()</span><br><span class="line">Out[<span class="number">19</span>]: </span><br><span class="line">              A         B         C         D</span><br><span class="line">count  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span></span><br><span class="line">mean   <span class="number">0.073711</span> <span class="number">-0.431125</span> <span class="number">-0.687758</span> <span class="number">-0.233103</span></span><br><span class="line">std    <span class="number">0.843157</span>  <span class="number">0.922818</span>  <span class="number">0.779887</span>  <span class="number">0.973118</span></span><br><span class="line">min   <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">25</span>%   <span class="number">-0.611510</span> <span class="number">-0.600794</span> <span class="number">-1.368714</span> <span class="number">-1.076610</span></span><br><span class="line"><span class="number">50</span>%    <span class="number">0.022070</span> <span class="number">-0.228039</span> <span class="number">-0.767252</span> <span class="number">-0.386188</span></span><br><span class="line"><span class="number">75</span>%    <span class="number">0.658444</span>  <span class="number">0.041933</span> <span class="number">-0.034326</span>  <span class="number">0.461706</span></span><br><span class="line">max    <span class="number">1.212112</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
-<p>转置数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">20</span>]: df.T</span><br><span class="line">Out[<span class="number">20</span>]: </span><br><span class="line">   <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-06</span></span><br><span class="line">A    <span class="number">0.469112</span>    <span class="number">1.212112</span>   <span class="number">-0.861849</span>    <span class="number">0.721555</span>   <span class="number">-0.424972</span>   <span class="number">-0.673690</span></span><br><span class="line">B   <span class="number">-0.282863</span>   <span class="number">-0.173215</span>   <span class="number">-2.104569</span>   <span class="number">-0.706771</span>    <span class="number">0.567020</span>    <span class="number">0.113648</span></span><br><span class="line">C   <span class="number">-1.509059</span>    <span class="number">0.119209</span>   <span class="number">-0.494929</span>   <span class="number">-1.039575</span>    <span class="number">0.276232</span>   <span class="number">-1.478427</span></span><br><span class="line">D   <span class="number">-1.135632</span>   <span class="number">-1.044236</span>    <span class="number">1.071804</span>    <span class="number">0.271860</span>   <span class="number">-1.087401</span>    <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p><strong>按轴排序：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">21</span>]: df.sort_index(axis=<span class="number">1</span>, ascending=<span class="literal">False</span>)</span><br><span class="line">Out[<span class="number">21</span>]: </span><br><span class="line">                   D         C         B         A</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-1.135632</span> <span class="number">-1.509059</span> <span class="number">-0.282863</span>  <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-1.044236</span>  <span class="number">0.119209</span> <span class="number">-0.173215</span>  <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">1.071804</span> <span class="number">-0.494929</span> <span class="number">-2.104569</span> <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.271860</span> <span class="number">-1.039575</span> <span class="number">-0.706771</span>  <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-1.087401</span>  <span class="number">0.276232</span>  <span class="number">0.567020</span> <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.524988</span> <span class="number">-1.478427</span>  <span class="number">0.113648</span> <span class="number">-0.673690</span></span><br></pre></td></tr></table></figure>
-<p>按值排序：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">22</span>]: df.sort_values(by=<span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">Out[<span class="number">22</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br></pre></td></tr></table></figure>
-<h4 id="选择">选择</h4>
-<p>获取数据</p>
-<p>选择单列，产生<code>Series</code>，与<code>df.A</code>等效：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">23</span>]: df[<span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">23</span>]: </span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>    <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>    <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>   <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>    <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>   <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>   <span class="number">-0.673690</span></span><br><span class="line">Freq: D, Name: A, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用[]切片行：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">24</span>]: df[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">24</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: df[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>]</span><br><span class="line">Out[<span class="number">25</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br></pre></td></tr></table></figure>
-<h4 id="按标签选择">按标签选择</h4>
-<p>用标签提取一行数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">26</span>]: df.loc[dates[<span class="number">0</span>]]</span><br><span class="line">Out[<span class="number">26</span>]: </span><br><span class="line">A    <span class="number">0.469112</span></span><br><span class="line">B   <span class="number">-0.282863</span></span><br><span class="line">C   <span class="number">-1.509059</span></span><br><span class="line">D   <span class="number">-1.135632</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用标签选择多列数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">27</span>]: df.loc[:, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">27</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span></span><br></pre></td></tr></table></figure>
-<p>用标签切片，包含行与列结束点：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">28</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">28</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br></pre></td></tr></table></figure>
-<p>返回对象降维：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">29</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">29</span>]: </span><br><span class="line">A    <span class="number">1.212112</span></span><br><span class="line">B   <span class="number">-0.173215</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>提取标量：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">30</span>]: df.loc[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">30</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
-<p>快速访问标量，与上述方法等效。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">31</span>]: df.at[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">31</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
-<h4 id="按位置选择">按位置选择</h4>
-<p>选择第三行的数据</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">32</span>]: df.iloc[<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">32</span>]: </span><br><span class="line">A    <span class="number">0.721555</span></span><br><span class="line">B   <span class="number">-0.706771</span></span><br><span class="line">C   <span class="number">-1.039575</span></span><br><span class="line">D    <span class="number">0.271860</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>类似于Numpy/Python，用整数切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">33</span>]: df.iloc[<span class="number">3</span>:<span class="number">5</span>, <span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">Out[<span class="number">33</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br></pre></td></tr></table></figure>
-<p>类似于Numpy/Python，用整数列表按位置切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">34</span>]: df.iloc[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>], [<span class="number">0</span>, <span class="number">2</span>]]</span><br><span class="line">Out[<span class="number">34</span>]: </span><br><span class="line">                   A         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.276232</span></span><br></pre></td></tr></table></figure>
-<p>显式整行切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">35</span>]: df.iloc[<span class="number">1</span>:<span class="number">3</span>, :]</span><br><span class="line">Out[<span class="number">35</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
-<p>显式整列切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">36</span>]: df.iloc[:, <span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">36</span>]: </span><br><span class="line">                   B         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span></span><br></pre></td></tr></table></figure>
-<p>显示提取值：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">37</span>]: df.iloc[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">37</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
-<p>快速访问标量，与上述方法等效：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">38</span>]: df.iat[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">38</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>PandasPandas</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Proxmox VE折腾记录</title>
     <url>/p/pve-pci-passthrough/</url>
     <content><![CDATA[<p>什么是PVE？</p>
@@ -2390,6 +2247,23 @@
       </tags>
   </entry>
   <entry>
+    <title>Python3中decode和encode的区别</title>
+    <url>/p/how-to-use-requests-in-python/</url>
+    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
+<a id="more"></a>
+<h3 id="decode和encode的区别">decode和encode的区别</h3>
+<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
+<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
+<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>decode</tag>
+        <tag>encode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyTorch中的自动求导机制和计算图</title>
     <url>/p/automatic-derivation-mechanism-and-calculation-graph-in-PyTorch/</url>
     <content><![CDATA[<p>本文介绍了 PyTorch 的自动求导机制和计算图。</p>
@@ -2484,23 +2358,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python3中decode和encode的区别</title>
-    <url>/p/how-to-use-requests-in-python/</url>
-    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
-<a id="more"></a>
-<h3 id="decode和encode的区别">decode和encode的区别</h3>
-<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
-<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
-<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>decode</tag>
-        <tag>encode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python3中的正则表达式</title>
     <url>/p/how-to-use-re-in-python/</url>
     <content><![CDATA[<p>摘要：这个模块提供了正则表达式匹配操作。模式和被搜索的字符串既可以是unicode字符串(str类型)，也可以是8位字节串。但是两者不能混用。当进行替换操作时，替换字符串的类型也必须与所用的模式和搜索的字符串类型一致。</p>
@@ -2517,51 +2374,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>re</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python中__getattr__等的用法</title>
-    <url>/p/usage-of-getattr-and-else-in-Python/</url>
-    <content><![CDATA[<p>在使用Python的过程中可能遇到以下几个函数：</p>
-<ul>
-<li><code>getattr</code></li>
-<li><code>__getattr__</code></li>
-<li><code>__getattribute__</code></li>
-<li><code>__get__</code></li>
-</ul>
-<p>如何区别他们，如何在编程中正确使用他们呢？</p>
-<a id="more"></a>
-<h3 id="getattr">getattr</h3>
-<p><code>getattr (object, name[, default])</code>是Python的内置函数之一，它的作用是获取对象的属性。</p>
-<ul>
-<li>object 对象</li>
-<li>name 属性名</li>
-<li>default 当属性不存在时，返回的默认值</li>
-</ul>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, x</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.x = x</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Foo(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.x</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;bar&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;bar&#x27;</span></span><br></pre></td></tr></table></figure>
-<h3 id="getattr-_">_ <strong>getattr _ </strong></h3>
-<p><code>object. __getattr__(self, name)</code>是一个对象方法，如果找不到对象的属性时会调用这个方法。</p>
-<p>这个方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
-<p>注意，如果通过正常机制能找到对象属性的话，不会调用<code>__getattr__</code>方法。</p>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, bamf</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.bamf = bamf</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> <span class="string">&#x27;Frob does not have `&#123;&#125;` attribute.&#x27;</span>.format(str(name))</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob(<span class="string">&quot;bamf&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bar</span><br><span class="line"><span class="string">&#x27;Frob does not have `bar` attribute.&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line"><span class="string">&#x27;bamf&#x27;</span></span><br></pre></td></tr></table></figure>
-<h3 id="getattribute-__-__">____ getattribute __ __</h3>
-<p>当访问 某个对象的属性时，会无条件的调用这个方法。这个方法只适用于新式类。 新式类就是集成自object或者type的类。</p>
-<p>如果类还同时定义了<code>__getattr__()</code>方法，则不会调用<code>__getattr__()</code>方法，除非在<code>__getattribute__()</code>方法中显示调用<code>__getattr__()</code>或者抛出了<code>AttributeError</code>。</p>
-<p>该方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
-<p>为了避免在方法中出现无限递归的情况，应该总是使用基类的方法来获取属性：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>object.__getattribute__(self, name).</span><br></pre></td></tr></table></figure>
-<p>语法：<code>object. __getattribute__(self, name)</code></p>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>(<span class="params">object</span>):</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattribute__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">print</span> <span class="string">&quot;getting `&#123;&#125;`&quot;</span>.format(str(name))</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> object.__getattribute__(self, name)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf = <span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line">getting `bamf`</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
-<h3 id="get-__">____ __ get __</h3>
-<p><code>__get__()</code>方法是描述符方法之一。描述符用于将访问对象属性转变成调用描述符方法。</p>
-<p>示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span>(<span class="params">self, obj, objtype</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;get value=%s&quot;</span> % self.val </span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span>(<span class="params">self, obj, val</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;set value=%s&quot;</span> % val</span><br><span class="line">        self.val = val</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stu</span>(<span class="params">object</span>):</span></span><br><span class="line">    age = Descriptor()</span><br><span class="line"></span><br><span class="line">stu = Stu()</span><br><span class="line">stu.age = <span class="number">12</span>    <span class="comment"># set value=12</span></span><br><span class="line"><span class="keyword">print</span> stu.age   <span class="comment"># get value=12</span></span><br><span class="line">                <span class="comment"># 12</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2702,6 +2514,51 @@ y=x^2e^x
 </tr>
 </tbody>
 </table>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python中__getattr__等的用法</title>
+    <url>/p/usage-of-getattr-and-else-in-Python/</url>
+    <content><![CDATA[<p>在使用Python的过程中可能遇到以下几个函数：</p>
+<ul>
+<li><code>getattr</code></li>
+<li><code>__getattr__</code></li>
+<li><code>__getattribute__</code></li>
+<li><code>__get__</code></li>
+</ul>
+<p>如何区别他们，如何在编程中正确使用他们呢？</p>
+<a id="more"></a>
+<h3 id="getattr">getattr</h3>
+<p><code>getattr (object, name[, default])</code>是Python的内置函数之一，它的作用是获取对象的属性。</p>
+<ul>
+<li>object 对象</li>
+<li>name 属性名</li>
+<li>default 当属性不存在时，返回的默认值</li>
+</ul>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, x</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.x = x</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Foo(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.x</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;bar&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;bar&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="getattr-_">_ <strong>getattr _ </strong></h3>
+<p><code>object. __getattr__(self, name)</code>是一个对象方法，如果找不到对象的属性时会调用这个方法。</p>
+<p>这个方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
+<p>注意，如果通过正常机制能找到对象属性的话，不会调用<code>__getattr__</code>方法。</p>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, bamf</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.bamf = bamf</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> <span class="string">&#x27;Frob does not have `&#123;&#125;` attribute.&#x27;</span>.format(str(name))</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob(<span class="string">&quot;bamf&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bar</span><br><span class="line"><span class="string">&#x27;Frob does not have `bar` attribute.&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line"><span class="string">&#x27;bamf&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="getattribute-__-__">____ getattribute __ __</h3>
+<p>当访问 某个对象的属性时，会无条件的调用这个方法。这个方法只适用于新式类。 新式类就是集成自object或者type的类。</p>
+<p>如果类还同时定义了<code>__getattr__()</code>方法，则不会调用<code>__getattr__()</code>方法，除非在<code>__getattribute__()</code>方法中显示调用<code>__getattr__()</code>或者抛出了<code>AttributeError</code>。</p>
+<p>该方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
+<p>为了避免在方法中出现无限递归的情况，应该总是使用基类的方法来获取属性：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>object.__getattribute__(self, name).</span><br></pre></td></tr></table></figure>
+<p>语法：<code>object. __getattribute__(self, name)</code></p>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>(<span class="params">object</span>):</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattribute__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">print</span> <span class="string">&quot;getting `&#123;&#125;`&quot;</span>.format(str(name))</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> object.__getattribute__(self, name)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf = <span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line">getting `bamf`</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="get-__">____ __ get __</h3>
+<p><code>__get__()</code>方法是描述符方法之一。描述符用于将访问对象属性转变成调用描述符方法。</p>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span>(<span class="params">self, obj, objtype</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;get value=%s&quot;</span> % self.val </span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span>(<span class="params">self, obj, val</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;set value=%s&quot;</span> % val</span><br><span class="line">        self.val = val</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stu</span>(<span class="params">object</span>):</span></span><br><span class="line">    age = Descriptor()</span><br><span class="line"></span><br><span class="line">stu = Stu()</span><br><span class="line">stu.age = <span class="number">12</span>    <span class="comment"># set value=12</span></span><br><span class="line"><span class="keyword">print</span> stu.age   <span class="comment"># get value=12</span></span><br><span class="line">                <span class="comment"># 12</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>Python</tag>
@@ -3504,6 +3361,53 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python多线程的应用</title>
+    <url>/p/how-to-use-python-multithreading/</url>
+    <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
+<ul>
+<li>每个进程至少有一个线程，作为程序的入口，这个线程就是主线程。</li>
+<li>每个进程至少有一个主线程，其他线程成为工作线程。</li>
+<li>父线程：如果线程A启动了一个线程B，A就是B的父线程。</li>
+<li>子线程：B就是A的子线程。</li>
+</ul>
+<a id="more"></a>
+<h4 id="使用threading.thread模块创建线程">使用threading.Thread模块创建线程</h4>
+<p>Python3通过threading包提供对线程的支持。</p>
+<h5 id="简单使用">简单使用</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s, time_loop</span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line">        print(<span class="string">f&quot;The delay is <span class="subst">&#123;delay_s&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">2</span>, <span class="number">2</span>]).start()</span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">1</span>, <span class="number">1</span>]).start()</span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<p>程序运行到12行时，启动子线程1执行say_hello(2, 2)，此时主线程继续向下执行；</p>
+<p>程序运行到13行时，启动子线程2执行say_hello(1, 1)，此次主线程执行完毕，等待子线程执行完毕。</p>
+<p>1秒后子线程2先执行完毕，切换到另一个子线程1继续执行。</p>
+<h5 id="daemon属性的设置">daemon属性的设置</h5>
+<p>Python中，在构造线程对象时，可以设置<code>daemon</code>属性，这个属性必须在start方法前设置好。</p>
+<p>主线程是程序启动第一个线程，主线程可以在启动<code>n</code>个子线程。</p>
+<p>daemon属性可以不设置，默认为<code>None</code>，主线程默认是<code>False</code>。</p>
+<p>daemon属性分为以下三种：</p>
+<h6 id="daemonfalse">daemon=False</h6>
+<p>当<code>daemon</code>属性为<code>False</code>时，父线程在运行完毕时，会等待所有子线程退出才结束程序。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p>通过<code>isDaemon()</code>方法可以返回当前线程的<code>daemon</code>值，主线程默认是<code>False</code>，子线程也是<code>False</code>的原因是创建线程对象时指定了<code>daemon=False</code>.</p>
+<p>主程序在构造线程对象时就立即启动了，然后子线程返回了结果中的第一行内容，然后sleep(1)模拟IO，此时CPU发现子线程阻塞了，马上切换到主线程继续执行，主线程先后打印第二行和第三行，此时主线程的代码已经执行到结尾。</p>
+<p>因为主线程为子线程的<code>daemon</code>值设置为<code>False</code>，这时就又发生了线程切换到子线程，子线程先后执行完第四行和第五行，然后子线程就全部执行完毕，主线程看到子线程退出后，也立即退出，整个程序结束。</p>
+<h6 id="daemontrue">daemon=True</h6>
+<p>当<code>daemon</code>为<code>True</code>时，父线程在执行完毕后，无论子线程是否正在运行，都会伴随父进程一起退出。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p>当daemon设置为True时，即主线程不关心子线程状态，主线程退出，子线程也必须跟着退出。</p>
+<p>运行结果中子线程就执行了一行语句，此时CPU发现子线程阻塞，线程切换到主线程，主线程执行完最后两句，就立即退出，整个程序结束。</p>
+<h6 id="daemonnone">daemon=None</h6>
+<p>daemon属性可以不设置，默认值是None。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_grandson_thread</span>():</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        print(<span class="string">f&quot;say_grandson_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_son_thread</span>(<span class="params">time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_son_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        threading.Thread(target=say_grandson_thread, daemon=<span class="literal">None</span>).start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_son_thread, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p>这里在主线程中使用了延迟1秒，来让子线程启动的子线程有机会输出其daemon属性值，如果不设置延迟，还没等到子线程的子线程启动，子线程就结束了，最终导致子线程的子线程无法启动。</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python时间处理</title>
     <url>/p/time-processing-in-python/</url>
     <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
@@ -3599,53 +3503,6 @@ y=x^2e^x
 <p>filter也是Python的高级函数，为函数式编程提供便利。其作用是对序列中元素进行筛选，最终获得符合条件的序列。其一般形式为<strong>filter(function, iterable)</strong>，函数提供了一种优雅的方式来过滤掉序列中那个的所有元素。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">number = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"><span class="comment"># 找到序列中的偶数</span></span><br><span class="line">double_number = list(filter(<span class="keyword">lambda</span> x:x % <span class="number">2</span> ==<span class="number">0</span>, number))</span><br></pre></td></tr></table></figure>
 <p><img src="image-20200920144322294.png" /></p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python多线程的应用</title>
-    <url>/p/how-to-use-python-multithreading/</url>
-    <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
-<ul>
-<li>每个进程至少有一个线程，作为程序的入口，这个线程就是主线程。</li>
-<li>每个进程至少有一个主线程，其他线程成为工作线程。</li>
-<li>父线程：如果线程A启动了一个线程B，A就是B的父线程。</li>
-<li>子线程：B就是A的子线程。</li>
-</ul>
-<a id="more"></a>
-<h4 id="使用threading.thread模块创建线程">使用threading.Thread模块创建线程</h4>
-<p>Python3通过threading包提供对线程的支持。</p>
-<h5 id="简单使用">简单使用</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s, time_loop</span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line">        print(<span class="string">f&quot;The delay is <span class="subst">&#123;delay_s&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">2</span>, <span class="number">2</span>]).start()</span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">1</span>, <span class="number">1</span>]).start()</span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<p>程序运行到12行时，启动子线程1执行say_hello(2, 2)，此时主线程继续向下执行；</p>
-<p>程序运行到13行时，启动子线程2执行say_hello(1, 1)，此次主线程执行完毕，等待子线程执行完毕。</p>
-<p>1秒后子线程2先执行完毕，切换到另一个子线程1继续执行。</p>
-<h5 id="daemon属性的设置">daemon属性的设置</h5>
-<p>Python中，在构造线程对象时，可以设置<code>daemon</code>属性，这个属性必须在start方法前设置好。</p>
-<p>主线程是程序启动第一个线程，主线程可以在启动<code>n</code>个子线程。</p>
-<p>daemon属性可以不设置，默认为<code>None</code>，主线程默认是<code>False</code>。</p>
-<p>daemon属性分为以下三种：</p>
-<h6 id="daemonfalse">daemon=False</h6>
-<p>当<code>daemon</code>属性为<code>False</code>时，父线程在运行完毕时，会等待所有子线程退出才结束程序。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果：</p>
-<p>通过<code>isDaemon()</code>方法可以返回当前线程的<code>daemon</code>值，主线程默认是<code>False</code>，子线程也是<code>False</code>的原因是创建线程对象时指定了<code>daemon=False</code>.</p>
-<p>主程序在构造线程对象时就立即启动了，然后子线程返回了结果中的第一行内容，然后sleep(1)模拟IO，此时CPU发现子线程阻塞了，马上切换到主线程继续执行，主线程先后打印第二行和第三行，此时主线程的代码已经执行到结尾。</p>
-<p>因为主线程为子线程的<code>daemon</code>值设置为<code>False</code>，这时就又发生了线程切换到子线程，子线程先后执行完第四行和第五行，然后子线程就全部执行完毕，主线程看到子线程退出后，也立即退出，整个程序结束。</p>
-<h6 id="daemontrue">daemon=True</h6>
-<p>当<code>daemon</code>为<code>True</code>时，父线程在执行完毕后，无论子线程是否正在运行，都会伴随父进程一起退出。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果：</p>
-<p>当daemon设置为True时，即主线程不关心子线程状态，主线程退出，子线程也必须跟着退出。</p>
-<p>运行结果中子线程就执行了一行语句，此时CPU发现子线程阻塞，线程切换到主线程，主线程执行完最后两句，就立即退出，整个程序结束。</p>
-<h6 id="daemonnone">daemon=None</h6>
-<p>daemon属性可以不设置，默认值是None。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_grandson_thread</span>():</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        print(<span class="string">f&quot;say_grandson_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_son_thread</span>(<span class="params">time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_son_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        threading.Thread(target=say_grandson_thread, daemon=<span class="literal">None</span>).start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_son_thread, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<p>这里在主线程中使用了延迟1秒，来让子线程启动的子线程有机会输出其daemon属性值，如果不设置延迟，还没等到子线程的子线程启动，子线程就结束了，最终导致子线程的子线程无法启动。</p>
 ]]></content>
       <tags>
         <tag>Python</tag>
@@ -5493,28 +5350,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用jsdelivrCDN加速github文件</title>
-    <url>/p/Use-jsdelivrCDN-to-accelerate-github-files/</url>
-    <content><![CDATA[<p>jsDelivr 是国外的一家优秀的公共 CDN 服务提供商，也是首个「打通中国大陆（网宿公司运营）与海外的免费 CDN 服务」。</p>
-<p><strong>更新：</strong>jsDelivr新增使用政策已经于8月15日生效。根据最新的使用政策，<strong>滥用服务及其资源或将jsDelivr用作通用文件或媒体托管服务，账户将会被BAN。</strong></p>
-<p>如果将Github+jsDelivr作为图床使用的话是算违规！！！ 相关链接：https://www.jsdelivr.com/terms/acceptable-use-policy-jsdelivr-net</p>
-<a id="more"></a>
-<h3 id="jsdelivr-配置">jsDelivr 配置</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;wf09&#x2F;upload@master&#x2F;1.png</span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>gh</code> 表示来自 Github 的仓库</li>
-<li><code>wf09/upload</code> 指的是用户名/仓库名</li>
-<li><code>master</code> 仓库的分支</li>
-<li><code>1.png</code>仓库下的具体文件</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>github</tag>
-        <tag>jsdelivrCDN</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用pip离线安装PyTorch-gpu</title>
     <url>/p/Use-pip-to-install-the-GPU-version-of-PyTorch-offline/</url>
     <content><![CDATA[<p>废话不多说，上教程。</p>
@@ -5580,6 +5415,28 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用jsdelivrCDN加速github文件</title>
+    <url>/p/Use-jsdelivrCDN-to-accelerate-github-files/</url>
+    <content><![CDATA[<p>jsDelivr 是国外的一家优秀的公共 CDN 服务提供商，也是首个「打通中国大陆（网宿公司运营）与海外的免费 CDN 服务」。</p>
+<p><strong>更新：</strong>jsDelivr新增使用政策已经于8月15日生效。根据最新的使用政策，<strong>滥用服务及其资源或将jsDelivr用作通用文件或媒体托管服务，账户将会被BAN。</strong></p>
+<p>如果将Github+jsDelivr作为图床使用的话是算违规！！！ 相关链接：https://www.jsdelivr.com/terms/acceptable-use-policy-jsdelivr-net</p>
+<a id="more"></a>
+<h3 id="jsdelivr-配置">jsDelivr 配置</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;wf09&#x2F;upload@master&#x2F;1.png</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>gh</code> 表示来自 Github 的仓库</li>
+<li><code>wf09/upload</code> 指的是用户名/仓库名</li>
+<li><code>master</code> 仓库的分支</li>
+<li><code>1.png</code>仓库下的具体文件</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>github</tag>
+        <tag>jsdelivrCDN</tag>
       </tags>
   </entry>
   <entry>
@@ -6709,45 +6566,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣每日一题之适龄的朋友</title>
-    <url>/p/friends-of-appropriate-ages/</url>
-    <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
-<p>如果下述任意一个条件为真，那么用户 x 将不会向用户 y（x != y）发送好友请求：</p>
-<ul>
-<li>age[y] &lt;= 0.5 * age[x] + 7</li>
-<li>age[y] &gt; age[x]</li>
-<li>age[y] &gt; 100 &amp;&amp; age[x] &lt; 100 否则，x 将会向 y 发送一条好友请求。</li>
-</ul>
-<p>注意，如果 x 向 y 发送一条好友请求，y 不必也向 x 发送一条好友请求。另外，用户不会向自己发送好友请求。</p>
-<p>返回在该社交媒体网站上产生的好友请求总数。</p>
-<a id="more"></a>
-<p>示例 1：</p>
-<p>输入：ages = [16,16] 输出：2 解释：2 人互发好友请求。</p>
-<p>示例 2：</p>
-<p>输入：ages = [16,17,18] 输出：2 解释：产生的好友请求为 17 -&gt; 16 ，18 -&gt; 17</p>
-<p>示例 3：</p>
-<p>输入：ages = [20,30,100,110,120] 输出：3 解释：产生的好友请求为 110 -&gt; 100 ，120 -&gt; 110 ，120 -&gt; 100</p>
-<h2 id="方法一排序双指针">方法一：排序+双指针</h2>
-<p>观察题目中给出的三个条件：</p>
-<p><img src="image-20211228131642378.png" /></p>
-<p>可知条件3是蕴含条件2中的，即如果满足条件3那么也就满足条件2。因此当条件12均不满足时，用户x就会向用户y发送好友请求。</p>
-<p>用户y需要满足： <span class="math display">\[
-0.5 \times ages[x]+7 &lt; ages[y] \leq age[x]
-\]</span> 当<span class="math inline">\(age[x] \leq 14\)</span>时，不存在满足要求的ages[y]，因此我们只需要考虑<span class="math inline">\(ages[y] \geq 15\)</span>的情况，此时满足要求的<span class="math inline">\(ages[y]\)</span>的范围：<span class="math inline">\((0.5 \times ages[x]+7, age[x]]\)</span>。</p>
-<p>当<span class="math inline">\(age[x]\)</span>增加时，上述区间的左右边界均<strong>单调递增</strong>，因此如果我们将数组的<span class="math inline">\(ages\)</span>进行升序排序，那么就可以在遍历<span class="math inline">\(ages[x]\)</span>的同时，使用两个指针left和right维护满足要求的左右边界。当x向后移动一个位置时：</p>
-<ul>
-<li>如果左边界指针left指向的元素<strong>不满足</strong><span class="math inline">\(ages[left] &gt; 0.5 \ times ages[x] + 7\)</span>，那么就将左边界向右移动一个位置；</li>
-<li>如果右边界指针right指向的下一个元素<strong>满足</strong><span class="math inline">\(ages[right+1] \geq ages[x]\)</span>，那么就将右边界向右移动一个位置；</li>
-</ul>
-<p>这样一来，<span class="math inline">\([left, right]\)</span>就是满足要求的y的下标。需要注意的是，<span class="math inline">\(x\)</span>本身一定在<span class="math inline">\([left, right]\)</span>区间内，因此<span class="math inline">\(x\)</span>发送的好友请求数，即为<span class="math inline">\([left, right]\)</span>区间的长度-1.</p>
-<p>我们将每一个x对应的<span class="math inline">\([left, right]\)</span>区间的长度减去1进行累加，就可以得到最后的答案。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">numFriendRequests</span><span class="params">(ages []<span class="keyword">int</span>)</span> <span class="params">(ans <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        sort.Ints(ages)</span><br><span class="line">        left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> _, age := <span class="keyword">range</span> ages &#123;</span><br><span class="line">            <span class="keyword">if</span> age &lt; <span class="number">15</span> &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> ages[left]*<span class="number">2</span> &lt;= age+<span class="number">14</span> &#123;</span><br><span class="line">                left ++</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> right+<span class="number">1</span> &lt; <span class="built_in">len</span>(ages) &amp;&amp; ages[right+<span class="number">1</span>] &lt;= age &#123;</span><br><span class="line">                right ++</span><br><span class="line">            &#125;</span><br><span class="line">            ans += right - left</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣链表基础之两两交换链表中的节点</title>
     <url>/p/swap-nodes-in-pairs/</url>
     <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
@@ -6785,6 +6603,45 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       <tags>
         <tag>leetcode</tag>
         <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣每日一题之适龄的朋友</title>
+    <url>/p/friends-of-appropriate-ages/</url>
+    <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
+<p>如果下述任意一个条件为真，那么用户 x 将不会向用户 y（x != y）发送好友请求：</p>
+<ul>
+<li>age[y] &lt;= 0.5 * age[x] + 7</li>
+<li>age[y] &gt; age[x]</li>
+<li>age[y] &gt; 100 &amp;&amp; age[x] &lt; 100 否则，x 将会向 y 发送一条好友请求。</li>
+</ul>
+<p>注意，如果 x 向 y 发送一条好友请求，y 不必也向 x 发送一条好友请求。另外，用户不会向自己发送好友请求。</p>
+<p>返回在该社交媒体网站上产生的好友请求总数。</p>
+<a id="more"></a>
+<p>示例 1：</p>
+<p>输入：ages = [16,16] 输出：2 解释：2 人互发好友请求。</p>
+<p>示例 2：</p>
+<p>输入：ages = [16,17,18] 输出：2 解释：产生的好友请求为 17 -&gt; 16 ，18 -&gt; 17</p>
+<p>示例 3：</p>
+<p>输入：ages = [20,30,100,110,120] 输出：3 解释：产生的好友请求为 110 -&gt; 100 ，120 -&gt; 110 ，120 -&gt; 100</p>
+<h2 id="方法一排序双指针">方法一：排序+双指针</h2>
+<p>观察题目中给出的三个条件：</p>
+<p><img src="image-20211228131642378.png" /></p>
+<p>可知条件3是蕴含条件2中的，即如果满足条件3那么也就满足条件2。因此当条件12均不满足时，用户x就会向用户y发送好友请求。</p>
+<p>用户y需要满足： <span class="math display">\[
+0.5 \times ages[x]+7 &lt; ages[y] \leq age[x]
+\]</span> 当<span class="math inline">\(age[x] \leq 14\)</span>时，不存在满足要求的ages[y]，因此我们只需要考虑<span class="math inline">\(ages[y] \geq 15\)</span>的情况，此时满足要求的<span class="math inline">\(ages[y]\)</span>的范围：<span class="math inline">\((0.5 \times ages[x]+7, age[x]]\)</span>。</p>
+<p>当<span class="math inline">\(age[x]\)</span>增加时，上述区间的左右边界均<strong>单调递增</strong>，因此如果我们将数组的<span class="math inline">\(ages\)</span>进行升序排序，那么就可以在遍历<span class="math inline">\(ages[x]\)</span>的同时，使用两个指针left和right维护满足要求的左右边界。当x向后移动一个位置时：</p>
+<ul>
+<li>如果左边界指针left指向的元素<strong>不满足</strong><span class="math inline">\(ages[left] &gt; 0.5 \ times ages[x] + 7\)</span>，那么就将左边界向右移动一个位置；</li>
+<li>如果右边界指针right指向的下一个元素<strong>满足</strong><span class="math inline">\(ages[right+1] \geq ages[x]\)</span>，那么就将右边界向右移动一个位置；</li>
+</ul>
+<p>这样一来，<span class="math inline">\([left, right]\)</span>就是满足要求的y的下标。需要注意的是，<span class="math inline">\(x\)</span>本身一定在<span class="math inline">\([left, right]\)</span>区间内，因此<span class="math inline">\(x\)</span>发送的好友请求数，即为<span class="math inline">\([left, right]\)</span>区间的长度-1.</p>
+<p>我们将每一个x对应的<span class="math inline">\([left, right]\)</span>区间的长度减去1进行累加，就可以得到最后的答案。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">numFriendRequests</span><span class="params">(ages []<span class="keyword">int</span>)</span> <span class="params">(ans <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        sort.Ints(ages)</span><br><span class="line">        left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> _, age := <span class="keyword">range</span> ages &#123;</span><br><span class="line">            <span class="keyword">if</span> age &lt; <span class="number">15</span> &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> ages[left]*<span class="number">2</span> &lt;= age+<span class="number">14</span> &#123;</span><br><span class="line">                left ++</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> right+<span class="number">1</span> &lt; <span class="built_in">len</span>(ages) &amp;&amp; ages[right+<span class="number">1</span>] &lt;= age &#123;</span><br><span class="line">                right ++</span><br><span class="line">            &#125;</span><br><span class="line">            ans += right - left</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -7026,41 +6883,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>安装autojump自动切换目录</title>
-    <url>/p/install-autojump-to-automatically-switch-directories/</url>
-    <content><![CDATA[<p>本文介绍了autojump的使用，使用autojump可以很方便地切换目录。</p>
-<p><strong>摘要</strong>：熟悉Linux 的小伙伴们都知道，在终端下需要使用命令<code>cd</code>切换目录。对于多层目录，还需要不停的用使用<code>cd</code>命令或者 Tab 键补齐，如果目录下文件夹过多，还需要使用<code>ls</code>查看当前目录下的文件。<a href="https://github.com/wting/autojump">autojump</a>是浏览文件系统的一种更快的方法。它通过维护命令行中最常用的目录的数据库来工作。autojump 是通过记录进入过的目录到数据库来实现的，所以必须是曾经进入过的目录才能跳转。</p>
-<p><strong>关键字</strong>：autojump</p>
-<a id="more"></a>
-<h4 id="linux下安装">Linux下安装</h4>
-<h5 id="源码安装">源码安装</h5>
-<p>克隆以下仓库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/wting/autojump.git</span><br></pre></td></tr></table></figure>
-<p>coding分流</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://e.coding.net/fly97/github-projects/autojump.git</span><br></pre></td></tr></table></figure>
-<p>执行安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> autojump</span><br><span class="line">chmod +x install.py</span><br><span class="line">./install.py</span><br></pre></td></tr></table></figure>
-<h5 id="fish-shell的设置">fish shell的设置</h5>
-<p>执行以下命令以创建fish shell的配置文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;if test -f /root/.autojump/share/autojump/autojump.fish; . /root/.autojump/share/autojump/autojump.fish; end&quot;</span> &gt;&gt; ~/.config/fish/config.fish</span><br></pre></td></tr></table></figure>
-<h5 id="修改环境变量">修改环境变量</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export PATH=&quot;</span><span class="variable">$PATH</span>:/root/.autojump/bin<span class="string">&quot; &gt; /etc/profile</span></span><br></pre></td></tr></table></figure>
-<h5 id="执行以下命令检查是否正常运行">执行以下命令检查是否正常运行</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
-<p><img src="image-20200811140853462.png" /></p>
-<h4 id="常用命令">常用命令</h4>
-<h5 id="查看-autojump-存储的目录的状态">查看 <code>autojump</code> 存储的目录的状态</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -s</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200811142040440.png" /></p>
-<h5 id="查看使用帮助">查看使用帮助</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -h</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200811142133380.png" /></p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>循环神经网络介绍</title>
     <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
     <content><![CDATA[<p>什么是LSTM？ <a id="more"></a></p>
@@ -7109,6 +6931,27 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>LSTM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数值分析第一章作业</title>
+    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，数值分析</p>
+<a id="more"></a>
+<p><img src="image-20201013093358782.png" /></p>
+<p><img src="image-20201013102937713.png" /></p>
+<p><img src="image-20201013104909315.png" /></p>
+<p><img src="image-20201013104922645.png" /></p>
+<p><img src="image-20201013104953613.png" /></p>
+<p><img src="image-20201013110136891.png" /></p>
+<p><img src="image-20201013110806596.png" /> <span class="math display">\[
+2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
+\]</span></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
@@ -7175,24 +7018,38 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>数值分析第一章作业</title>
-    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，数值分析</p>
+    <title>安装autojump自动切换目录</title>
+    <url>/p/install-autojump-to-automatically-switch-directories/</url>
+    <content><![CDATA[<p>本文介绍了autojump的使用，使用autojump可以很方便地切换目录。</p>
+<p><strong>摘要</strong>：熟悉Linux 的小伙伴们都知道，在终端下需要使用命令<code>cd</code>切换目录。对于多层目录，还需要不停的用使用<code>cd</code>命令或者 Tab 键补齐，如果目录下文件夹过多，还需要使用<code>ls</code>查看当前目录下的文件。<a href="https://github.com/wting/autojump">autojump</a>是浏览文件系统的一种更快的方法。它通过维护命令行中最常用的目录的数据库来工作。autojump 是通过记录进入过的目录到数据库来实现的，所以必须是曾经进入过的目录才能跳转。</p>
+<p><strong>关键字</strong>：autojump</p>
 <a id="more"></a>
-<p><img src="image-20201013093358782.png" /></p>
-<p><img src="image-20201013102937713.png" /></p>
-<p><img src="image-20201013104909315.png" /></p>
-<p><img src="image-20201013104922645.png" /></p>
-<p><img src="image-20201013104953613.png" /></p>
-<p><img src="image-20201013110136891.png" /></p>
-<p><img src="image-20201013110806596.png" /> <span class="math display">\[
-2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
-\]</span></p>
+<h4 id="linux下安装">Linux下安装</h4>
+<h5 id="源码安装">源码安装</h5>
+<p>克隆以下仓库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/wting/autojump.git</span><br></pre></td></tr></table></figure>
+<p>coding分流</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://e.coding.net/fly97/github-projects/autojump.git</span><br></pre></td></tr></table></figure>
+<p>执行安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> autojump</span><br><span class="line">chmod +x install.py</span><br><span class="line">./install.py</span><br></pre></td></tr></table></figure>
+<h5 id="fish-shell的设置">fish shell的设置</h5>
+<p>执行以下命令以创建fish shell的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;if test -f /root/.autojump/share/autojump/autojump.fish; . /root/.autojump/share/autojump/autojump.fish; end&quot;</span> &gt;&gt; ~/.config/fish/config.fish</span><br></pre></td></tr></table></figure>
+<h5 id="修改环境变量">修改环境变量</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export PATH=&quot;</span><span class="variable">$PATH</span>:/root/.autojump/bin<span class="string">&quot; &gt; /etc/profile</span></span><br></pre></td></tr></table></figure>
+<h5 id="执行以下命令检查是否正常运行">执行以下命令检查是否正常运行</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20200811140853462.png" /></p>
+<h4 id="常用命令">常用命令</h4>
+<h5 id="查看-autojump-存储的目录的状态">查看 <code>autojump</code> 存储的目录的状态</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -s</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200811142040440.png" /></p>
+<h5 id="查看使用帮助">查看使用帮助</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -h</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200811142133380.png" /></p>
 ]]></content>
       <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -7315,6 +7172,50 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>梯度下降法</title>
+    <url>/p/What&#39;s-the-Gradient-descent/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
+<p><strong>关键词：</strong>Deep Learning</p>
+<a id="more"></a>
+<h3 id="核心">核心</h3>
+<p>梯度下降法的核心，是最小化目标函数。方法是在每一次迭代中，对每个变量，按照目标函数在该变量梯度的相反方向，更新对应的参数值，其中，学习率决定了函数到达局部最小值的迭代次数。<strong>我们在目标函数的超平面上，沿着斜率下降的方向前进，直到我们遇到了超平面构成的"谷底"。</strong></p>
+<h3 id="梯度下降法的变体">梯度下降法的变体</h3>
+<p>梯度下降法有三种变体，它们的区别在于用多少数据来计算目标函数的梯度。根据数据量的不同，我们需要权衡参数更新的准确性和执行一次所需要的时间。</p>
+<h4 id="batch-gradient-descent-批量梯度下降">Batch gradient descent 批量梯度下降</h4>
+<p>批量梯度下降又称<strong>Vanilla梯度下降法</strong>，也就是所谓的批量梯度下降法，在整个数据集上对每个参数求目标函数的偏导数。 <span class="math display">\[
+\theta=\theta-\eta{\nabla_\theta}J(\theta)
+\]</span> 翻译成白话文就是：用整个训练集计算目标函数的梯度参数。</p>
+<p>由于我们需要计算整个数据集的梯度来执行一次更新，因此批量梯度下降可能非常缓慢。而且需要把数据集放入内存。批量梯度下降也不允许我们在线更新我们的的模型。</p>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    params_grad = evaluate_gradient(loss_function, data, params)</span><br><span class="line">    params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
+<p>对于预先定义的多个epoch，我们首先计算关于整个数据集的损失函数的梯度向量<code>param_grad</code>.当前的一些深度学习库提供了自动求导的函数，可以有效的计算一些参数梯度。</p>
+<p>按照梯度的反方向更新参数，学习速率决定我们执行的更新的大小。保证了批梯度下降收敛于凸误差曲面的全局最小值和非凸曲面的全局最小值。</p>
+<h4 id="stochastic-gradient-descent-随机梯度下降">Stochastic gradient descent 随机梯度下降</h4>
+<p>相比之下，随机梯度下降(SGD)对每个训练示例和标号进行参数更新： <span class="math display">\[
+\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i)};y^{(i)})
+\]</span> 批量梯度下降对大数据集会有一些冗余计算，因此它在每次参数更新前重新计算类似的梯度。</p>
+<p><strong>随机梯度下降</strong>会以一个较大的方差执行频繁的更新，导致目标函数剧烈波动，如下图所示。</p>
+<p><img src="sgd_fluctuation.png" /></p>
+<p>当批量梯度下降法收敛到参数的盆地时，SGD的波动一方面会使其跳跃到新的、可能的更好的局部极小值。另一方面，这最终会使让收敛到特定最小值的过程复杂化，因为该方法可能持续的波动而不停止。但是，当我们慢慢降低学习率时，SGD表现出了与批量梯度下降法相似的收敛过程，也就是说，对非凸函数和凸函数，必然会分别收敛到他们的极小值和最小值。</p>
+<p>相比批量梯度下降法的代码，在如下的代码中，我们仅仅加入了一个循环，用以遍历所以的训练样本并求出相应的梯度值。值得注意的是，我们在每个阶段都要重新打乱训练数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> example <span class="keyword">in</span> data:</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, example, params)</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
+<h4 id="mini-batch-gradient-descent-小批量梯度下降">Mini-batch gradient descent 小批量梯度下降</h4>
+<p>小批量梯度下降具有以上两者的优点。在每次更新中，对<code>n</code>个样本构成的一批数据，计算损失函数，并对相应的参数求导： <span class="math display">\[
+\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i:i+n)};y^{(i:i+n)})
+\]</span> 这种方法，1. 降低了参数更新的方差，使得收敛过程更加稳定；</p>
+<p>​ 2. 能够利用最新的深度学习程序库中高度优化的矩阵运算器，能够高效的求出每小批数据的梯度。通常一小批数据含有的样本数量在50至256之间，但对于不同的用途也会有所变化。例如，当你的显存不够时，就把<code>batch_size</code>调小。</p>
+<p>小批量梯度下降法，通常是我们训练神经网络的首选算法。同时，有时候我们也会使用<strong>随机梯度下降法</strong>，来称呼<strong>小批量梯度下降法</strong>。</p>
+<p>在代码中，不再迭代每个示例，而是迭代大小为50的小批量样本。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> batch <span class="keyword">in</span> get_batches(data, batch_size=<span class="number">50</span>):</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, batch, params) / batch_size</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
+<h3 id="sgd的缺点">SGD的缺点</h3>
+<p>然而，小批量梯度下降法并不能保证良好地收敛，仍然存在一些问题。</p>
+<p>1.选择一个适当的学习率是一个难题太小的学习率会导致较慢的收敛速度，而太大的学习率则会阻碍收敛，并会引起损失函数在最小值处波动，甚至发散。 2. 学习率计划表(learning_rate_schedule)试图在训练过程中调整学习率，例如退火，即很具预先定义的计划表减少学习率，或当各时期之间的目标变换低于阈值时。但是，这些调度和阈值必须提前定义，因此无法适应数据集的特征。 3. 此外，我们对所有的参数都采用了相同的学习率。但如果我们的数据是稀疏的，同时特征有着不同的出现频率，那么我们不希望以相同的学习率来更新这些变量，我们希望对较少出现的特征有更大的学习率。 4. 会无数次的陷入最小值或<strong>鞍点</strong>。鞍点是在一个方向上斜率是正的、在一个方向上斜率是负的点。鞍点周围各个方向的梯度值都为0，所以<strong>SGD</strong>很难从这些鞍点中脱开。</p>
+]]></content>
+      <tags>
+        <tag>Deep Learning</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>深度学习常见损失函数</title>
     <url>/p/common-loss-functions-for-deep-learning/</url>
     <content><![CDATA[<p>我们所说的优化，即优化网络权值使得损失函数值变小。但是，损失函数值变小是否能代表模型的分类/回归精度变高呢？那么多种损失函数，应该如何选择呢？</p>
@@ -7393,50 +7294,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>梯度下降法</title>
-    <url>/p/What&#39;s-the-Gradient-descent/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
-<p><strong>关键词：</strong>Deep Learning</p>
-<a id="more"></a>
-<h3 id="核心">核心</h3>
-<p>梯度下降法的核心，是最小化目标函数。方法是在每一次迭代中，对每个变量，按照目标函数在该变量梯度的相反方向，更新对应的参数值，其中，学习率决定了函数到达局部最小值的迭代次数。<strong>我们在目标函数的超平面上，沿着斜率下降的方向前进，直到我们遇到了超平面构成的"谷底"。</strong></p>
-<h3 id="梯度下降法的变体">梯度下降法的变体</h3>
-<p>梯度下降法有三种变体，它们的区别在于用多少数据来计算目标函数的梯度。根据数据量的不同，我们需要权衡参数更新的准确性和执行一次所需要的时间。</p>
-<h4 id="batch-gradient-descent-批量梯度下降">Batch gradient descent 批量梯度下降</h4>
-<p>批量梯度下降又称<strong>Vanilla梯度下降法</strong>，也就是所谓的批量梯度下降法，在整个数据集上对每个参数求目标函数的偏导数。 <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta)
-\]</span> 翻译成白话文就是：用整个训练集计算目标函数的梯度参数。</p>
-<p>由于我们需要计算整个数据集的梯度来执行一次更新，因此批量梯度下降可能非常缓慢。而且需要把数据集放入内存。批量梯度下降也不允许我们在线更新我们的的模型。</p>
-<p>代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    params_grad = evaluate_gradient(loss_function, data, params)</span><br><span class="line">    params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<p>对于预先定义的多个epoch，我们首先计算关于整个数据集的损失函数的梯度向量<code>param_grad</code>.当前的一些深度学习库提供了自动求导的函数，可以有效的计算一些参数梯度。</p>
-<p>按照梯度的反方向更新参数，学习速率决定我们执行的更新的大小。保证了批梯度下降收敛于凸误差曲面的全局最小值和非凸曲面的全局最小值。</p>
-<h4 id="stochastic-gradient-descent-随机梯度下降">Stochastic gradient descent 随机梯度下降</h4>
-<p>相比之下，随机梯度下降(SGD)对每个训练示例和标号进行参数更新： <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i)};y^{(i)})
-\]</span> 批量梯度下降对大数据集会有一些冗余计算，因此它在每次参数更新前重新计算类似的梯度。</p>
-<p><strong>随机梯度下降</strong>会以一个较大的方差执行频繁的更新，导致目标函数剧烈波动，如下图所示。</p>
-<p><img src="sgd_fluctuation.png" /></p>
-<p>当批量梯度下降法收敛到参数的盆地时，SGD的波动一方面会使其跳跃到新的、可能的更好的局部极小值。另一方面，这最终会使让收敛到特定最小值的过程复杂化，因为该方法可能持续的波动而不停止。但是，当我们慢慢降低学习率时，SGD表现出了与批量梯度下降法相似的收敛过程，也就是说，对非凸函数和凸函数，必然会分别收敛到他们的极小值和最小值。</p>
-<p>相比批量梯度下降法的代码，在如下的代码中，我们仅仅加入了一个循环，用以遍历所以的训练样本并求出相应的梯度值。值得注意的是，我们在每个阶段都要重新打乱训练数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> example <span class="keyword">in</span> data:</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, example, params)</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<h4 id="mini-batch-gradient-descent-小批量梯度下降">Mini-batch gradient descent 小批量梯度下降</h4>
-<p>小批量梯度下降具有以上两者的优点。在每次更新中，对<code>n</code>个样本构成的一批数据，计算损失函数，并对相应的参数求导： <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i:i+n)};y^{(i:i+n)})
-\]</span> 这种方法，1. 降低了参数更新的方差，使得收敛过程更加稳定；</p>
-<p>​ 2. 能够利用最新的深度学习程序库中高度优化的矩阵运算器，能够高效的求出每小批数据的梯度。通常一小批数据含有的样本数量在50至256之间，但对于不同的用途也会有所变化。例如，当你的显存不够时，就把<code>batch_size</code>调小。</p>
-<p>小批量梯度下降法，通常是我们训练神经网络的首选算法。同时，有时候我们也会使用<strong>随机梯度下降法</strong>，来称呼<strong>小批量梯度下降法</strong>。</p>
-<p>在代码中，不再迭代每个示例，而是迭代大小为50的小批量样本。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> batch <span class="keyword">in</span> get_batches(data, batch_size=<span class="number">50</span>):</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, batch, params) / batch_size</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<h3 id="sgd的缺点">SGD的缺点</h3>
-<p>然而，小批量梯度下降法并不能保证良好地收敛，仍然存在一些问题。</p>
-<p>1.选择一个适当的学习率是一个难题太小的学习率会导致较慢的收敛速度，而太大的学习率则会阻碍收敛，并会引起损失函数在最小值处波动，甚至发散。 2. 学习率计划表(learning_rate_schedule)试图在训练过程中调整学习率，例如退火，即很具预先定义的计划表减少学习率，或当各时期之间的目标变换低于阈值时。但是，这些调度和阈值必须提前定义，因此无法适应数据集的特征。 3. 此外，我们对所有的参数都采用了相同的学习率。但如果我们的数据是稀疏的，同时特征有着不同的出现频率，那么我们不希望以相同的学习率来更新这些变量，我们希望对较少出现的特征有更大的学习率。 4. 会无数次的陷入最小值或<strong>鞍点</strong>。鞍点是在一个方向上斜率是正的、在一个方向上斜率是负的点。鞍点周围各个方向的梯度值都为0，所以<strong>SGD</strong>很难从这些鞍点中脱开。</p>
-]]></content>
-      <tags>
-        <tag>Deep Learning</tag>
       </tags>
   </entry>
   <entry>
@@ -7677,6 +7534,44 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
+    <title>零基础入门ROS(一)</title>
+    <url>/p/ros-tutorial-01/</url>
+    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
+<p>此次记录的主要是软件安装过程中遇到的问题。</p>
+<a id="more"></a>
+<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
+<p>安装好Ubuntu 1804以后首先换源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
+<h3 id="安装ros-melodic">安装ROS Melodic</h3>
+<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
+<h4 id="设置sources.list">设置sources.list</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h5 id="更新">【更新】</h5>
+<p>国科大ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>北外ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置密钥">设置密钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
+<p>另一种方式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<h4 id="安装">安装</h4>
+<p>桌面完整版：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
+<h3 id="初始化rosdep">初始化rosdep</h3>
+<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
+<h3 id="设置环境">设置环境</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="构建工厂依赖">构建工厂依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>记一次重装系统</title>
     <url>/p/an-experience-of-reinstalling-win10/</url>
     <content><![CDATA[<p>本文主要介绍了如何使用U盘进行重装系统，主要面向电脑小白用户。</p>
@@ -7800,44 +7695,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>零基础入门ROS(一)</title>
-    <url>/p/ros-tutorial-01/</url>
-    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
-<p>此次记录的主要是软件安装过程中遇到的问题。</p>
-<a id="more"></a>
-<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
-<p>安装好Ubuntu 1804以后首先换源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
-<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
-<h3 id="安装ros-melodic">安装ROS Melodic</h3>
-<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
-<h4 id="设置sources.list">设置sources.list</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h5 id="更新">【更新】</h5>
-<p>国科大ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>北外ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="设置密钥">设置密钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
-<p>另一种方式</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
-<h4 id="安装">安装</h4>
-<p>桌面完整版：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
-<h3 id="初始化rosdep">初始化rosdep</h3>
-<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
-<h3 id="设置环境">设置环境</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
-<h3 id="构建工厂依赖">构建工厂依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
       </tags>
   </entry>
   <entry>
@@ -7984,6 +7841,149 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Pandas学习小记(一)</title>
+    <url>/p/Pandas-learning-notes-01/</url>
+    <content><![CDATA[<p>Pandas是什么？</p>
+<a id="more"></a>
+<p>Pandas是一个强大的分析结构化数据的工具集；它的使用基础是Numpy（提供高性能的矩阵运算）；用于数据挖掘和数据分析，同时也提供数据清洗功能。</p>
+<h3 id="安装pandas">安装Pandas</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pandas -i http://mirrors.aliyun.com/pypi/simple/</span><br></pre></td></tr></table></figure>
+<h3 id="pandas简介">Pandas简介</h3>
+<p>Pandas 适用于处理以下类型的数据：</p>
+<ul>
+<li>与 SQL 或 Excel 表类似的，含异构列的表格数据;</li>
+<li>有序和无序（非固定频率）的时间序列数据;</li>
+<li>带行列标签的矩阵数据，包括同构或异构型数据;</li>
+<li>任意其它形式的观测、统计数据集, 数据转入 Pandas 数据结构时不必事先标记。</li>
+</ul>
+<p>Pandas 的主要数据结构是 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series">Series</a>（一维数据）与 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a>（二维数据），这两种数据结构足以<strong>处理金融、统计、社会科学、工程</strong>等领域里的大多数典型用例。对于 R 用户，DataFrame 提供了比 R 语言 data.frame 更丰富的功能。Pandas 基于 <a href="https://www.numpy.org/">NumPy</a> 开发，可以与其它第三方科学计算支持库完美集成。</p>
+<p>Pandas 就像一把万能瑞士军刀，下面仅列出了它的部分优势 ：</p>
+<ul>
+<li>处理浮点与非浮点数据里的<strong>缺失数据</strong>，表示为 <code>NaN</code>；</li>
+<li>大小可变：<strong>插入或删除</strong> DataFrame 等多维对象的列；</li>
+<li>自动、显式<strong>数据对齐</strong>：显式地将对象与一组标签对齐，也可以忽略标签，在 Series、DataFrame 计算时自动与数据对齐；</li>
+<li>强大、灵活的<strong>分组</strong>（group by）功能：<strong>拆分-应用-组合</strong>数据集，聚合、转换数据；</li>
+<li>把 Python 和 NumPy 数据结构里不规则、不同索引的数据<strong>轻松</strong>地转换为 DataFrame 对象；</li>
+<li>基于智能标签，对大型数据集进行<strong>切片</strong>、<strong>花式索引</strong>、<strong>子集分解</strong>等操作；</li>
+<li>直观地<strong>合并（merge）</strong>、<strong>连接（join）</strong>数据集；</li>
+<li>灵活地<strong>重塑（reshape）</strong>、<strong>透视（pivot）</strong>数据集；</li>
+<li><strong>轴</strong>支持结构化标签：一个刻度支持多个标签；</li>
+<li>成熟的 IO 工具：读取<strong>文本文件</strong>（CSV 等支持分隔符的文件）、Excel 文件、数据库等来源的数据，利用超快的 <strong>HDF5</strong> 格式保存 / 加载数据；</li>
+<li><strong>时间序列</strong>：支持日期范围生成、频率转换、移动窗口统计、移动窗口线性回归、日期位移等时间序列功能。</li>
+</ul>
+<p>这些功能主要是为了解决其它编程语言、科研环境的痛点。处理数据一般分为几个阶段：<strong>数据整理与清洗、数据分析与建模、数据可视化与制表</strong>，Pandas 是处理数据的理想工具。</p>
+<p>其它说明：</p>
+<ul>
+<li>Pandas 速度<strong>很快</strong>。Pandas 的很多底层算法都用 <a href="https://cython.org/">Cython</a> 优化过。然而，为了保持通用性，必然要牺牲一些性能，如果专注某一功能，完全可以开发出比 Pandas 更快的专用工具。</li>
+<li>Pandas 是 <a href="https://www.statsmodels.org/stable/index.html">statsmodels</a> 的依赖项，因此，Pandas 也是 Python 中统计计算生态系统的重要组成部分。</li>
+<li>Pandas 已广泛应用于金融领域</li>
+</ul>
+<h3 id="pandas中的数据结构">Pandas中的数据结构</h3>
+<table>
+<thead>
+<tr class="header">
+<th>维数</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Series</td>
+<td>带标签的一维同构数组</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>DataFrame</td>
+<td>带标签的，大小可变的，二维异构表格</td>
+</tr>
+</tbody>
+</table>
+<h3 id="为什么有多个数据结构">为什么有多个数据结构？</h3>
+<p>Pandas 数据结构就像是低维数据的容器。比如，DataFrame 是 Series 的容器，Series 则是标量的容器。使用这种方式，可以在容器中以字典的形式插入或删除对象。</p>
+<p>此外，通用 API 函数的默认操作要顾及时间序列与截面数据集的方向。多维数组存储二维或三维数据时，编写函数要注意数据集的方向，这对用户来说是一种负担；如果不考虑 C 或 Fortran 中连续性对性能的影响，一般情况下，不同的轴在程序里其实没有什么区别。Pandas 里，轴的概念主要是为了给数据赋予更直观的语义，即用“更恰当”的方式表示数据集的方向。这样做可以让用户编写数据转换函数时，少费点脑子。</p>
+<p>处理 DataFrame 等表格数据时，<strong>index</strong>（行）或 <strong>columns</strong>（列）比 <strong>axis 0</strong> 和 <strong>axis 1</strong> 更直观。用这种方式迭代 DataFrame 的列，代码更易读易懂：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> df.columns:</span><br><span class="line">    series = df[col]</span><br><span class="line">    <span class="comment"># do something with series</span></span><br></pre></td></tr></table></figure>
+<h3 id="大小可变与数据复制"><a href="https://www.pypandas.cn/docs/getting_started/overview.html#大小可变与数据复制">大小可变与数据复制</a></h3>
+<p>Pandas 所有数据结构的值都是可变的，但数据结构的大小并非都是可变的，比如，Series 的长度不可改变，但 DataFrame 里就可以插入列。</p>
+<p>Pandas 里，绝大多数方法都不改变原始的输入数据，而是复制数据，生成新的对象。 一般来说，原始输入数据<strong>不变</strong>更稳妥。</p>
+<h3 id="十分钟入门pandas"><a href="https://www.pypandas.cn/docs/getting_started/10min.html#%E5%8D%81%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8-pandas">十分钟入门Pandas</a></h3>
+<p>导入：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
+<h4 id="生成对象">生成对象</h4>
+<p>使用值列表生成Series</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">3</span>]: s = pd.Series([<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, np.nan, <span class="number">6</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: s</span><br><span class="line">Out[<span class="number">4</span>]: </span><br><span class="line"><span class="number">0</span>    <span class="number">1.0</span></span><br><span class="line"><span class="number">1</span>    <span class="number">3.0</span></span><br><span class="line"><span class="number">2</span>    <span class="number">5.0</span></span><br><span class="line"><span class="number">3</span>    NaN</span><br><span class="line"><span class="number">4</span>    <span class="number">6.0</span></span><br><span class="line"><span class="number">5</span>    <span class="number">8.0</span></span><br><span class="line">dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用含日期时间索引与标签的Numpy数组生成DataFrame</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">5</span>]: dates = pd.date_range(<span class="string">&#x27;20130101&#x27;</span>, periods=<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: dates</span><br><span class="line">Out[<span class="number">6</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: df = pd.DataFrame(np.random.randn(<span class="number">6</span>, <span class="number">4</span>), index=dates, columns=list(<span class="string">&#x27;ABCD&#x27;</span>))</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: df</span><br><span class="line">Out[<span class="number">8</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p>用Series字典对象生成DataFrame</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">In [9]: df2 &#x3D; pd.DataFrame(&#123;&#39;A&#39;: 1.,</span><br><span class="line">   ...:                     &#39;B&#39;: pd.Timestamp(&#39;20130102&#39;),</span><br><span class="line">   ...:                     &#39;C&#39;: pd.Series(1, index&#x3D;list(range(4)), dtype&#x3D;&#39;float32&#39;),</span><br><span class="line">   ...:                     &#39;D&#39;: np.array([3] * 4, dtype&#x3D;&#39;int32&#39;),</span><br><span class="line">   ...:                     &#39;E&#39;: pd.Categorical([&quot;test&quot;, &quot;train&quot;, &quot;test&quot;, &quot;train&quot;]),</span><br><span class="line">   ...:                     &#39;F&#39;: &#39;foo&#39;&#125;)</span><br><span class="line">   ...: </span><br><span class="line"></span><br><span class="line">In [10]: df2</span><br><span class="line">Out[10]: </span><br><span class="line">     A          B    C  D      E    F</span><br><span class="line">0  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">1  1.0 2013-01-02  1.0  3  train  foo</span><br><span class="line">2  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">3  1.0 2013-01-02  1.0  3  train  foo</span><br></pre></td></tr></table></figure>
+<p>DataFrame的列有不同的数据类型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">11</span>]: df2.dtypes</span><br><span class="line">Out[<span class="number">11</span>]: </span><br><span class="line">A           float64</span><br><span class="line">B    datetime64[ns]</span><br><span class="line">C           float32</span><br><span class="line">D             int32</span><br><span class="line">E          category</span><br><span class="line">F            object</span><br><span class="line">dtype: object</span><br></pre></td></tr></table></figure>
+<p>IPython支持 tab 键自动补全列名与公共属性。下面是部分可自动补全的属性：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">12</span>]: df2.&lt;TAB&gt;  <span class="comment"># noqa: E225, E999</span></span><br><span class="line">df2.A                  df2.bool</span><br><span class="line">df2.abs                df2.boxplot</span><br><span class="line">df2.add                df2.C</span><br><span class="line">df2.add_prefix         df2.clip</span><br><span class="line">df2.add_suffix         df2.clip_lower</span><br><span class="line">df2.align              df2.clip_upper</span><br><span class="line">df2.all                df2.columns</span><br><span class="line">df2.any                df2.combine</span><br><span class="line">df2.append             df2.combine_first</span><br><span class="line">df2.apply              df2.compound</span><br><span class="line">df2.applymap           df2.consolidate</span><br><span class="line">df2.D</span><br></pre></td></tr></table></figure>
+<p>列 A、B、C、D 和 E 都可以自动补全；为简洁起见，此处只显示了部分属性。</p>
+<h4 id="查看数据">查看数据</h4>
+<p>下列代码说明了如何查看DataFrame头部和尾部的数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">13</span>]: df.head()</span><br><span class="line">Out[<span class="number">13</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: df.tail(<span class="number">3</span>) <span class="comment">#后三行	</span></span><br><span class="line">Out[<span class="number">14</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p>显示索引与列名：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">15</span>]: df.index</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: df.columns</span><br><span class="line">Out[<span class="number">16</span>]: Index([<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>], dtype=<span class="string">&#x27;object&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 输出底层数据的 NumPy 对象。注意，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 的列由多种数据类型组成时，该操作耗费系统资源较大，这也是 Pandas 和 NumPy 的本质区别：<strong>NumPy 数组只有一种数据类型，DataFrame 每列的数据类型各不相同</strong>。调用 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 时，Pandas 查找支持 DataFrame 里所有数据类型的 NumPy 数据类型。还有一种数据类型是 <code>object</code>，可以把 DataFrame 列里的值强制转换为 Python 对象。</p>
+<p>下面的 <code>df</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 里的值都是浮点数，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的操作会很快，而且不复制数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">17</span>]: df.to_numpy()</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">array([[ <span class="number">0.4691</span>, <span class="number">-0.2829</span>, <span class="number">-1.5091</span>, <span class="number">-1.1356</span>],</span><br><span class="line">       [ <span class="number">1.2121</span>, <span class="number">-0.1732</span>,  <span class="number">0.1192</span>, <span class="number">-1.0442</span>],</span><br><span class="line">       [<span class="number">-0.8618</span>, <span class="number">-2.1046</span>, <span class="number">-0.4949</span>,  <span class="number">1.0718</span>],</span><br><span class="line">       [ <span class="number">0.7216</span>, <span class="number">-0.7068</span>, <span class="number">-1.0396</span>,  <span class="number">0.2719</span>],</span><br><span class="line">       [<span class="number">-0.425</span> ,  <span class="number">0.567</span> ,  <span class="number">0.2762</span>, <span class="number">-1.0874</span>],</span><br><span class="line">       [<span class="number">-0.6737</span>,  <span class="number">0.1136</span>, <span class="number">-1.4784</span>,  <span class="number">0.525</span> ]])</span><br></pre></td></tr></table></figure>
+<p><code>df2</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 包含了多种类型，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 操作就会耗费较多资源。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">18</span>]: df2.to_numpy()</span><br><span class="line">Out[<span class="number">18</span>]: </span><br><span class="line">array([[<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>]], dtype=object)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提醒：<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的输出不包含行索引和列标签。</p>
+</blockquote>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.describe.html#pandas.DataFrame.describe">describe()</a> 可以快速查看数据的统计摘要：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">19</span>]: df.describe()</span><br><span class="line">Out[<span class="number">19</span>]: </span><br><span class="line">              A         B         C         D</span><br><span class="line">count  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span></span><br><span class="line">mean   <span class="number">0.073711</span> <span class="number">-0.431125</span> <span class="number">-0.687758</span> <span class="number">-0.233103</span></span><br><span class="line">std    <span class="number">0.843157</span>  <span class="number">0.922818</span>  <span class="number">0.779887</span>  <span class="number">0.973118</span></span><br><span class="line">min   <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">25</span>%   <span class="number">-0.611510</span> <span class="number">-0.600794</span> <span class="number">-1.368714</span> <span class="number">-1.076610</span></span><br><span class="line"><span class="number">50</span>%    <span class="number">0.022070</span> <span class="number">-0.228039</span> <span class="number">-0.767252</span> <span class="number">-0.386188</span></span><br><span class="line"><span class="number">75</span>%    <span class="number">0.658444</span>  <span class="number">0.041933</span> <span class="number">-0.034326</span>  <span class="number">0.461706</span></span><br><span class="line">max    <span class="number">1.212112</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
+<p>转置数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">20</span>]: df.T</span><br><span class="line">Out[<span class="number">20</span>]: </span><br><span class="line">   <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-06</span></span><br><span class="line">A    <span class="number">0.469112</span>    <span class="number">1.212112</span>   <span class="number">-0.861849</span>    <span class="number">0.721555</span>   <span class="number">-0.424972</span>   <span class="number">-0.673690</span></span><br><span class="line">B   <span class="number">-0.282863</span>   <span class="number">-0.173215</span>   <span class="number">-2.104569</span>   <span class="number">-0.706771</span>    <span class="number">0.567020</span>    <span class="number">0.113648</span></span><br><span class="line">C   <span class="number">-1.509059</span>    <span class="number">0.119209</span>   <span class="number">-0.494929</span>   <span class="number">-1.039575</span>    <span class="number">0.276232</span>   <span class="number">-1.478427</span></span><br><span class="line">D   <span class="number">-1.135632</span>   <span class="number">-1.044236</span>    <span class="number">1.071804</span>    <span class="number">0.271860</span>   <span class="number">-1.087401</span>    <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p><strong>按轴排序：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">21</span>]: df.sort_index(axis=<span class="number">1</span>, ascending=<span class="literal">False</span>)</span><br><span class="line">Out[<span class="number">21</span>]: </span><br><span class="line">                   D         C         B         A</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-1.135632</span> <span class="number">-1.509059</span> <span class="number">-0.282863</span>  <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-1.044236</span>  <span class="number">0.119209</span> <span class="number">-0.173215</span>  <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">1.071804</span> <span class="number">-0.494929</span> <span class="number">-2.104569</span> <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.271860</span> <span class="number">-1.039575</span> <span class="number">-0.706771</span>  <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-1.087401</span>  <span class="number">0.276232</span>  <span class="number">0.567020</span> <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.524988</span> <span class="number">-1.478427</span>  <span class="number">0.113648</span> <span class="number">-0.673690</span></span><br></pre></td></tr></table></figure>
+<p>按值排序：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">22</span>]: df.sort_values(by=<span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">Out[<span class="number">22</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br></pre></td></tr></table></figure>
+<h4 id="选择">选择</h4>
+<p>获取数据</p>
+<p>选择单列，产生<code>Series</code>，与<code>df.A</code>等效：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">23</span>]: df[<span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">23</span>]: </span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>    <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>    <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>   <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>    <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>   <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>   <span class="number">-0.673690</span></span><br><span class="line">Freq: D, Name: A, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用[]切片行：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">24</span>]: df[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">24</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: df[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>]</span><br><span class="line">Out[<span class="number">25</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br></pre></td></tr></table></figure>
+<h4 id="按标签选择">按标签选择</h4>
+<p>用标签提取一行数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">26</span>]: df.loc[dates[<span class="number">0</span>]]</span><br><span class="line">Out[<span class="number">26</span>]: </span><br><span class="line">A    <span class="number">0.469112</span></span><br><span class="line">B   <span class="number">-0.282863</span></span><br><span class="line">C   <span class="number">-1.509059</span></span><br><span class="line">D   <span class="number">-1.135632</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用标签选择多列数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">27</span>]: df.loc[:, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">27</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span></span><br></pre></td></tr></table></figure>
+<p>用标签切片，包含行与列结束点：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">28</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">28</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br></pre></td></tr></table></figure>
+<p>返回对象降维：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">29</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">29</span>]: </span><br><span class="line">A    <span class="number">1.212112</span></span><br><span class="line">B   <span class="number">-0.173215</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>提取标量：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">30</span>]: df.loc[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">30</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
+<p>快速访问标量，与上述方法等效。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">31</span>]: df.at[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">31</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
+<h4 id="按位置选择">按位置选择</h4>
+<p>选择第三行的数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">32</span>]: df.iloc[<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">32</span>]: </span><br><span class="line">A    <span class="number">0.721555</span></span><br><span class="line">B   <span class="number">-0.706771</span></span><br><span class="line">C   <span class="number">-1.039575</span></span><br><span class="line">D    <span class="number">0.271860</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>类似于Numpy/Python，用整数切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">33</span>]: df.iloc[<span class="number">3</span>:<span class="number">5</span>, <span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">Out[<span class="number">33</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br></pre></td></tr></table></figure>
+<p>类似于Numpy/Python，用整数列表按位置切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">34</span>]: df.iloc[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>], [<span class="number">0</span>, <span class="number">2</span>]]</span><br><span class="line">Out[<span class="number">34</span>]: </span><br><span class="line">                   A         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.276232</span></span><br></pre></td></tr></table></figure>
+<p>显式整行切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">35</span>]: df.iloc[<span class="number">1</span>:<span class="number">3</span>, :]</span><br><span class="line">Out[<span class="number">35</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
+<p>显式整列切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">36</span>]: df.iloc[:, <span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">36</span>]: </span><br><span class="line">                   B         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span></span><br></pre></td></tr></table></figure>
+<p>显示提取值：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">37</span>]: df.iloc[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">37</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
+<p>快速访问标量，与上述方法等效：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">38</span>]: df.iat[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">38</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>PandasPandas</tag>
       </tags>
   </entry>
 </search>
