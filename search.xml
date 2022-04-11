@@ -6805,6 +6805,27 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之反转链表</title>
+    <url>/p/everse-linked-list/</url>
+    <content><![CDATA[<p>题目：给你单链表的头节点 <code>head</code> ，请你反转链表，并返回反转后的链表。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="rev1ex1.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5]</span><br><span class="line">输出：[5,4,3,2,1]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>首先定义一个<code>pre</code>指针指向<code>nil</code>, 然后定义一个<code>cur</code>指向头节点。然后开始翻转：</p>
+<p>首先把<code>cur-&gt;next</code>节点用<code>tmp</code>指针保存一下，接下来改变<code>cur-next</code>的指向，将<code>cur-&gt;next</code>指向<code>pre</code>.</p>
+<p>随后依次更新pre和cur。</p>
+<p><img src="008eGmZEly1gnrf1oboupg30gy0c44qp.gif" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	Val  <span class="keyword">int</span></span><br><span class="line">	Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverseList</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> pre *ListNode</span><br><span class="line">	cur := head</span><br><span class="line">	<span class="keyword">for</span> cur != <span class="literal">nil</span> &#123;</span><br><span class="line">		tmp := cur.Next</span><br><span class="line">		cur.Next = pre</span><br><span class="line">		pre = cur</span><br><span class="line">		cur = tmp</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pre</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣链表基础之环形链表 II</title>
     <url>/p/linked-list-cycle-ii/</url>
     <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
@@ -6860,27 +6881,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之反转链表</title>
-    <url>/p/everse-linked-list/</url>
-    <content><![CDATA[<p>题目：给你单链表的头节点 <code>head</code> ，请你反转链表，并返回反转后的链表。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="rev1ex1.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5]</span><br><span class="line">输出：[5,4,3,2,1]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>首先定义一个<code>pre</code>指针指向<code>nil</code>, 然后定义一个<code>cur</code>指向头节点。然后开始翻转：</p>
-<p>首先把<code>cur-&gt;next</code>节点用<code>tmp</code>指针保存一下，接下来改变<code>cur-next</code>的指向，将<code>cur-&gt;next</code>指向<code>pre</code>.</p>
-<p>随后依次更新pre和cur。</p>
-<p><img src="008eGmZEly1gnrf1oboupg30gy0c44qp.gif" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	Val  <span class="keyword">int</span></span><br><span class="line">	Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverseList</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> pre *ListNode</span><br><span class="line">	cur := head</span><br><span class="line">	<span class="keyword">for</span> cur != <span class="literal">nil</span> &#123;</span><br><span class="line">		tmp := cur.Next</span><br><span class="line">		cur.Next = pre</span><br><span class="line">		pre = cur</span><br><span class="line">		cur = tmp</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pre</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
