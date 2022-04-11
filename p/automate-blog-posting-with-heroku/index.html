@@ -32,14 +32,14 @@
 <meta property="og:site_name" content="个人随想">
 <meta property="og:description" content="之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。 关键词：heroku，自动化构建">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fly97.cn/p/automate-blog-posting-with-heroku/利用heroku实现自动发布博客/image-20220409100956279.png">
-<meta property="og:image" content="https://fly97.cn/p/automate-blog-posting-with-heroku/利用heroku实现自动发布博客/image-20220409125928022.png">
+<meta property="og:image" content="https://fly97.cn/p/automate-blog-posting-with-heroku/image-20220409100956279.png">
+<meta property="og:image" content="https://fly97.cn/p/automate-blog-posting-with-heroku/image-20220409125928022.png">
 <meta property="article:published_time" content="2022-04-09T01:45:00.000Z">
 <meta property="article:modified_time" content="2022-04-09T01:45:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="heroku">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fly97.cn/p/automate-blog-posting-with-heroku/利用heroku实现自动发布博客/image-20220409100956279.png">
+<meta name="twitter:image" content="https://fly97.cn/p/automate-blog-posting-with-heroku/image-20220409100956279.png">
 
 
 <link rel="canonical" href="https://fly97.cn/p/automate-blog-posting-with-heroku/">
@@ -345,7 +345,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
 <h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
 <p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
-<p><img src="利用heroku实现自动发布博客/image-20220409100956279.png" /></p>
+<p><img src="image-20220409100956279.png" /></p>
 <p>为了简化步骤，这里先使用第一种方式。</p>
 <h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
 <h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
@@ -357,7 +357,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
 <p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
 <p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
-<p><img src="利用heroku实现自动发布博客/image-20220409125928022.png" /></p>
+<p><img src="image-20220409125928022.png" /></p>
 <p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
 <h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
 <p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
