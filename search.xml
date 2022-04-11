@@ -159,102 +159,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Dedian 10 使用qbittorrent-nox web</title>
-    <url>/p/qbittorrent-nox-on-debian/</url>
-    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
-<a id="more"></a>
-<h3 id="下载安装包">下载安装包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p>
-<h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;qBittorrent Command Line Client</span><br><span class="line">After&#x3D;network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;forking</span><br><span class="line">User&#x3D;qbittorrent-nox</span><br><span class="line">Group&#x3D;qbittorrent-nox</span><br><span class="line">UMask&#x3D;007</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;qbittorrent-nox -d --webui-port&#x3D;8090</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure>
-<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
-<p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p>
-<p>在tools-options-Web UI中找到Authentication，修改username及password。</p>
-]]></content>
-      <tags>
-        <tag>Debian</tag>
-        <tag>qbittorrent-nox</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker安装MySQL5.7</title>
-    <url>/p/install-mysql5.7-in-docker/</url>
-    <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
-<a id="more"></a>
-<p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
-<h3 id="安装docker">安装docker</h3>
-<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
-<h3 id="安装mysql容器">安装MySQL容器</h3>
-<p>以官方的MySQL5.7为例：<a href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
-<p>首先确保docker服务已经正常启动：</p>
-<p>linux执行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
-<p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
-<h4 id="拉取镜像">拉取镜像</h4>
-<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
-<h4 id="运行容器">运行容器</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
-<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
-<li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
-<ul>
-<li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
-</ul></li>
-</ul>
-<h3 id="设置mysql容器">设置MySQL容器</h3>
-<h4 id="配置文件">配置文件</h4>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysql]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4</span><br></pre></td></tr></table></figure>
-<h4 id="允许外网访问">允许外网访问</h4>
-<p>先进入容器</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql-5.7 /bin/bash</span><br></pre></td></tr></table></figure>
-<p>输入密码，连接mysql</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>修改表项</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#39;%&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-<p>查看修改后的结果</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT USER,HOST FROM mysql.user;</span><br></pre></td></tr></table></figure>
-<p>结果如下所示，说明修改成功</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT USER,HOST FROM mysql.user;</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| USER          | HOST      |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| root          | %         |</span><br><span class="line">| mysql.session | localhost |</span><br><span class="line">| mysql.sys     | localhost |</span><br><span class="line">| root          | localhost |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">4 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
-<h4 id="设置日志路径">设置日志路径</h4>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 错误日志</span></span><br><span class="line"><span class="attr">log_error</span> = /var/log/mysql/error.log</span><br><span class="line"><span class="comment"># 查询日志</span></span><br><span class="line"><span class="attr">general_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span> = /var/log/mysql/general.log</span><br><span class="line"><span class="comment"># 慢查询日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">slow_query_log_file</span> = /var/log/mysql/slow.log</span><br><span class="line"><span class="comment"># 同步写binlog</span></span><br><span class="line"><span class="attr">log_bin_index</span> = /var/log/mysql/bin</span><br><span class="line"><span class="attr">max_binlog_size</span> = <span class="number">4</span>M</span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用docker-compose.yml">使用docker-compose.yml</h3>
-<p>废话不多说直接上干货</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=ff143253-f1dd-266f-2a4b-cdb747c31150</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/conf:/etc/mysql/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/sql:/root/sqls</span></span><br></pre></td></tr></table></figure>
-<h3 id="后记">后记</h3>
-<h4 id="权限问题">权限问题</h4>
-<p>由于一些原因需要把mysql容器中的日志映射出来，但是在操作的时候遇到了以下问题：</p>
-<p><img src="Docker安装MySQL5.7/image-20220315193804894.png" /></p>
-<p>根据一些“高人博客”的指点，在Dockerfile做了以下修改：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> mysql:<span class="number">5</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown -R mysql:mysql /var/<span class="built_in">log</span>/mysql</span></span><br></pre></td></tr></table></figure>
-<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code> 目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
-<p>仍旧失败，经过一翻查找，发现了原因，这里就不贴原文了，大致意思是：</p>
-<p><strong>容器中的<code>/var/log/mysql</code>这个目录一旦被映射到宿主机，Dockerfile中的命令就对它失去了作用</strong></p>
-<p>问题的根本原因在于，容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，所有才会出现<strong><code>Permission denied</code></strong>.</p>
-<p>换一个思路，既然容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，那么找一个有权限的文件写不就好了吗？</p>
-<p>于是将日志文件夹设置为<code>/tmp/mysqlog</code>不就可以正常读写了吗？<code>/tmp</code>目录下应该所有用户都有相关权限吧。</p>
-<p>一顿操作以后，又发现了问题：</p>
-<p><strong>映射出来的文件，我本地用户竟然无法读写！！竟然需要root用户才可以读写！</strong></p>
-<p>经过查找，发现了问题所在：</p>
-<p><strong>mysql容器运行的用户是mysql，uid是999，而本地创建的默认用户uid是1000。换句话说，映射出来的文件的所有者不是你，是容器中的uid为999的用户！！</strong></p>
-<h4 id="解决方案">解决方案</h4>
-<p>将映射文件夹的所有者修改为999（uid），所在用户组修改为1000（uid）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R 999:1000 *</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-        <tag>mysql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker打包镜像文件</title>
     <url>/p/export-docker-images-to-file/</url>
     <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
@@ -296,6 +200,30 @@
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Dedian 10 使用qbittorrent-nox web</title>
+    <url>/p/qbittorrent-nox-on-debian/</url>
+    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
+<a id="more"></a>
+<h3 id="下载安装包">下载安装包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p>
+<h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;qBittorrent Command Line Client</span><br><span class="line">After&#x3D;network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;forking</span><br><span class="line">User&#x3D;qbittorrent-nox</span><br><span class="line">Group&#x3D;qbittorrent-nox</span><br><span class="line">UMask&#x3D;007</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;qbittorrent-nox -d --webui-port&#x3D;8090</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure>
+<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
+<p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p>
+<p>在tools-options-Web UI中找到Authentication，修改username及password。</p>
+]]></content>
+      <tags>
+        <tag>Debian</tag>
+        <tag>qbittorrent-nox</tag>
       </tags>
   </entry>
   <entry>
@@ -590,6 +518,78 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker安装MySQL5.7</title>
+    <url>/p/install-mysql5.7-in-docker/</url>
+    <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
+<a id="more"></a>
+<p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
+<h3 id="安装docker">安装docker</h3>
+<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
+<h3 id="安装mysql容器">安装MySQL容器</h3>
+<p>以官方的MySQL5.7为例：<a href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
+<p>首先确保docker服务已经正常启动：</p>
+<p>linux执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
+<p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
+<h4 id="拉取镜像">拉取镜像</h4>
+<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
+<h4 id="运行容器">运行容器</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
+<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
+<li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
+<ul>
+<li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
+</ul></li>
+</ul>
+<h3 id="设置mysql容器">设置MySQL容器</h3>
+<h4 id="配置文件">配置文件</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysql]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4</span><br></pre></td></tr></table></figure>
+<h4 id="允许外网访问">允许外网访问</h4>
+<p>先进入容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql-5.7 /bin/bash</span><br></pre></td></tr></table></figure>
+<p>输入密码，连接mysql</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<p>修改表项</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#39;%&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<p>查看修改后的结果</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT USER,HOST FROM mysql.user;</span><br></pre></td></tr></table></figure>
+<p>结果如下所示，说明修改成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT USER,HOST FROM mysql.user;</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| USER          | HOST      |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| root          | %         |</span><br><span class="line">| mysql.session | localhost |</span><br><span class="line">| mysql.sys     | localhost |</span><br><span class="line">| root          | localhost |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">4 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="设置日志路径">设置日志路径</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 错误日志</span></span><br><span class="line"><span class="attr">log_error</span> = /var/log/mysql/error.log</span><br><span class="line"><span class="comment"># 查询日志</span></span><br><span class="line"><span class="attr">general_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span> = /var/log/mysql/general.log</span><br><span class="line"><span class="comment"># 慢查询日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">slow_query_log_file</span> = /var/log/mysql/slow.log</span><br><span class="line"><span class="comment"># 同步写binlog</span></span><br><span class="line"><span class="attr">log_bin_index</span> = /var/log/mysql/bin</span><br><span class="line"><span class="attr">max_binlog_size</span> = <span class="number">4</span>M</span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用docker-compose.yml">使用docker-compose.yml</h3>
+<p>废话不多说直接上干货</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=ff143253-f1dd-266f-2a4b-cdb747c31150</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/conf:/etc/mysql/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/home/deepsoft01/mysql/sql:/root/sqls</span></span><br></pre></td></tr></table></figure>
+<h3 id="后记">后记</h3>
+<h4 id="权限问题">权限问题</h4>
+<p>由于一些原因需要把mysql容器中的日志映射出来，但是在操作的时候遇到了以下问题：</p>
+<p><img src="Docker安装MySQL5.7/image-20220315193804894.png" /></p>
+<p>根据一些“高人博客”的指点，在Dockerfile做了以下修改：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> mysql:<span class="number">5</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown -R mysql:mysql /var/<span class="built_in">log</span>/mysql</span></span><br></pre></td></tr></table></figure>
+<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code> 目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
+<p>仍旧失败，经过一翻查找，发现了原因，这里就不贴原文了，大致意思是：</p>
+<p><strong>容器中的<code>/var/log/mysql</code>这个目录一旦被映射到宿主机，Dockerfile中的命令就对它失去了作用</strong></p>
+<p>问题的根本原因在于，容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，所有才会出现<strong><code>Permission denied</code></strong>.</p>
+<p>换一个思路，既然容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，那么找一个有权限的文件写不就好了吗？</p>
+<p>于是将日志文件夹设置为<code>/tmp/mysqlog</code>不就可以正常读写了吗？<code>/tmp</code>目录下应该所有用户都有相关权限吧。</p>
+<p>一顿操作以后，又发现了问题：</p>
+<p><strong>映射出来的文件，我本地用户竟然无法读写！！竟然需要root用户才可以读写！</strong></p>
+<p>经过查找，发现了问题所在：</p>
+<p><strong>mysql容器运行的用户是mysql，uid是999，而本地创建的默认用户uid是1000。换句话说，映射出来的文件的所有者不是你，是容器中的uid为999的用户！！</strong></p>
+<h4 id="解决方案">解决方案</h4>
+<p>将映射文件夹的所有者修改为999（uid），所在用户组修改为1000（uid）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R 999:1000 *</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go语言中的切片、Map和Channel</title>
     <url>/p/slice-map-and-channel-in-golang/</url>
     <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
@@ -749,6 +749,35 @@
       <tags>
         <tag>jenkins</tag>
         <tag>CI/CD</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Jetson Xavier nx实现串口通信</title>
+    <url>/p/serial-communication-on-jetson-xavier-nx/</url>
+    <content><![CDATA[<p>利用Jetson Xavier和传感器模块进行串口通信</p>
+<a id="more"></a>
+<h3 id="硬件连接">硬件连接</h3>
+<p>默认情况下，Jetson Xavier NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分配为GPIO，建议使用下面标有其他功能的引脚。</p>
+<p>这里我们用的是UART1，设备地址<code>/dev/ttyTHS0</code>.</p>
+<p><img src="jetson_data_sheet.png" /></p>
+<p>其中，第8和10引脚就是我们需要的TXD和RXD引脚。</p>
+<p><img src="jetson_xavier_nx.jpg" /></p>
+<p><strong>注意：和电脑连接调试时需要注意，USB转TTL的RXD引脚需和板子的TXD引脚连接，USB转TTL的TXD引脚需和板子的RXD引脚相连。两者的GND引脚也要连起来。</strong></p>
+<h3 id="相关代码">相关代码</h3>
+<h4 id="安装相关依赖">安装相关依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install pyserial</span><br></pre></td></tr></table></figure>
+<h4 id="测试代码">测试代码</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;UART Demonstration Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">serial_port = serial.Serial(</span><br><span class="line">    port=<span class="string">&quot;/dev/ttyTHS1&quot;</span>,                                      <span class="comment">#串口设备地址</span></span><br><span class="line">    baudrate=<span class="number">115200</span>,                                          <span class="comment">#信号波特率</span></span><br><span class="line">    bytesize=serial.EIGHTBITS,                                <span class="comment">#数据位</span></span><br><span class="line">    parity=serial.PARITY_NONE,  						    <span class="comment">#是否启用奇偶校验</span></span><br><span class="line">    stopbits=serial.STOPBITS_ONE,                             <span class="comment">#停止位</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Wait a second to let the port initialize</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># Send a simple header</span></span><br><span class="line">    serial_port.write(<span class="string">&quot;UART Demonstration Program\r\n&quot;</span>.encode())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> serial_port.inWaiting() &gt; <span class="number">0</span>:</span><br><span class="line">            data = serial_port.read()</span><br><span class="line">            print(data)</span><br><span class="line">            serial_port.write(data)</span><br><span class="line">            <span class="comment"># if we get a carriage return, add a line feed too</span></span><br><span class="line">            <span class="comment"># \r is a carriage return; \n is a line feed</span></span><br><span class="line">            <span class="comment"># This is to help the tty program on the other end </span></span><br><span class="line">            <span class="comment"># Windows is \r\n for carriage return, line feed</span></span><br><span class="line">            <span class="comment"># Macintosh and Linux use \n</span></span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">&quot;\r&quot;</span>.encode():</span><br><span class="line">                <span class="comment"># For Windows boxen on the other end</span></span><br><span class="line">                serial_port.write(<span class="string">&quot;\n&quot;</span>.encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    print(<span class="string">&quot;Exiting Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> exception_error:</span><br><span class="line">    print(<span class="string">&quot;Error occurred. Exiting Program&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;Error: &quot;</span> + str(exception_error))</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    serial_port.close()</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p><img src="uart_demo.png" /></p>
+<p>参考资料：</p>
+<p>https://www.jetsonhacks.com/2019/10/10/jetson-nano-uart/</p>
+<p>https://github.com/JetsonHacksNano/UARTDemo</p>
+<p>https://github.com/pyserial/pyserial</p>
+<p>​</p>
+]]></content>
+      <tags>
+        <tag>Jetson</tag>
+        <tag>CUDA</tag>
       </tags>
   </entry>
   <entry>
@@ -917,35 +946,6 @@
       <tags>
         <tag>Jetson</tag>
         <tag>NVIDIA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Jetson Xavier nx实现串口通信</title>
-    <url>/p/serial-communication-on-jetson-xavier-nx/</url>
-    <content><![CDATA[<p>利用Jetson Xavier和传感器模块进行串口通信</p>
-<a id="more"></a>
-<h3 id="硬件连接">硬件连接</h3>
-<p>默认情况下，Jetson Xavier NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分配为GPIO，建议使用下面标有其他功能的引脚。</p>
-<p>这里我们用的是UART1，设备地址<code>/dev/ttyTHS0</code>.</p>
-<p><img src="jetson_data_sheet.png" /></p>
-<p>其中，第8和10引脚就是我们需要的TXD和RXD引脚。</p>
-<p><img src="jetson_xavier_nx.jpg" /></p>
-<p><strong>注意：和电脑连接调试时需要注意，USB转TTL的RXD引脚需和板子的TXD引脚连接，USB转TTL的TXD引脚需和板子的RXD引脚相连。两者的GND引脚也要连起来。</strong></p>
-<h3 id="相关代码">相关代码</h3>
-<h4 id="安装相关依赖">安装相关依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install pyserial</span><br></pre></td></tr></table></figure>
-<h4 id="测试代码">测试代码</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;UART Demonstration Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">serial_port = serial.Serial(</span><br><span class="line">    port=<span class="string">&quot;/dev/ttyTHS1&quot;</span>,                                      <span class="comment">#串口设备地址</span></span><br><span class="line">    baudrate=<span class="number">115200</span>,                                          <span class="comment">#信号波特率</span></span><br><span class="line">    bytesize=serial.EIGHTBITS,                                <span class="comment">#数据位</span></span><br><span class="line">    parity=serial.PARITY_NONE,  						    <span class="comment">#是否启用奇偶校验</span></span><br><span class="line">    stopbits=serial.STOPBITS_ONE,                             <span class="comment">#停止位</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Wait a second to let the port initialize</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># Send a simple header</span></span><br><span class="line">    serial_port.write(<span class="string">&quot;UART Demonstration Program\r\n&quot;</span>.encode())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> serial_port.inWaiting() &gt; <span class="number">0</span>:</span><br><span class="line">            data = serial_port.read()</span><br><span class="line">            print(data)</span><br><span class="line">            serial_port.write(data)</span><br><span class="line">            <span class="comment"># if we get a carriage return, add a line feed too</span></span><br><span class="line">            <span class="comment"># \r is a carriage return; \n is a line feed</span></span><br><span class="line">            <span class="comment"># This is to help the tty program on the other end </span></span><br><span class="line">            <span class="comment"># Windows is \r\n for carriage return, line feed</span></span><br><span class="line">            <span class="comment"># Macintosh and Linux use \n</span></span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">&quot;\r&quot;</span>.encode():</span><br><span class="line">                <span class="comment"># For Windows boxen on the other end</span></span><br><span class="line">                serial_port.write(<span class="string">&quot;\n&quot;</span>.encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    print(<span class="string">&quot;Exiting Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> exception_error:</span><br><span class="line">    print(<span class="string">&quot;Error occurred. Exiting Program&quot;</span>)</span><br><span class="line">    print(<span class="string">&quot;Error: &quot;</span> + str(exception_error))</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    serial_port.close()</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p><img src="uart_demo.png" /></p>
-<p>参考资料：</p>
-<p>https://www.jetsonhacks.com/2019/10/10/jetson-nano-uart/</p>
-<p>https://github.com/JetsonHacksNano/UARTDemo</p>
-<p>https://github.com/pyserial/pyserial</p>
-<p>​</p>
-]]></content>
-      <tags>
-        <tag>Jetson</tag>
-        <tag>CUDA</tag>
       </tags>
   </entry>
   <entry>
@@ -1392,92 +1392,6 @@
       </tags>
   </entry>
   <entry>
-    <title>ubuntu2004安装最新版本Redis并设置开机启动</title>
-    <url>/p/install-newest-redis-in-ubuntu2004/</url>
-    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的Redis以及如何设置Redis开机自动启动。</strong></p>
-<p><strong>关键词：Redis，Linux</strong></p>
-<a id="more"></a>
-<h3 id="官方网站">官方网站</h3>
-<p><a href="https://redis.io/download">Redis</a></p>
-<p><img src="image-20211024202247242.png" /></p>
-<h3 id="中文网">中文网</h3>
-<p><a href="http://www.redis.cn/">redis中文官方网站</a></p>
-<blockquote>
-<p>注意，中文网的版本要比官方的版本要低</p>
-</blockquote>
-<p><img src="image-20211024202614937.png" /></p>
-<h3 id="下载并安装">下载并安装</h3>
-<p>这里选择的官网下载的版本。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://download.redis.io/releases/redis-6.2.6.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="直接安装编译好的版本">直接安装编译好的版本</h3>
-<p><a href="https://fly97.coding.net/s/ab90cc76-374d-49d4-a79f-edf6ec5e7d79">jemalloc_5.2.1-1_amd64.deb</a></p>
-<p><a href="https://fly97.coding.net/s/b45f9603-dc1d-4c13-9e32-b94a7e236fa4">redis_6.2.6-1_amd64.deb</a></p>
-<h4 id="解压">解压</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf redis-6.2.6.tar.gz</span><br></pre></td></tr></table></figure>
-<h4 id="编译安装">编译安装</h4>
-<h5 id="首先查看gcc版本">首先查看gcc版本</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -v</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211024202923989.png" /></p>
-<p>太旧的版本可能需要升级才能安装。这里用的是<strong>ubuntu20 04 LTS</strong>。</p>
-<h5 id="尝试编译">尝试编译</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make </span><br></pre></td></tr></table></figure>
-<h6 id="有可能出现的问题">有可能出现的问题</h6>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">zmalloc.h:50:10: fatal error: jemalloc/jemalloc.h:</span><br></pre></td></tr></table></figure>
-<h6 id="解决方法">解决方法</h6>
-<ol type="1">
-<li>使用以下命令进行编译</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make MALLOC=libc</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li><p>安装jemalloc</p>
-<p><a href="https://blog.csdn.net/SweeNeil/article/details/94648313">jemalloc安装与使用</a></p></li>
-</ol>
-<h4 id="打包成deb包">打包成deb包</h4>
-<p>为什么要打包成deb包呢？可以方便后续卸载等其他操作。</p>
-<h5 id="首先安装checkinstall">首先安装checkinstall</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br></pre></td></tr></table></figure>
-<h5 id="执行打包命令">执行打包命令</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo checkinstall -y</span><br></pre></td></tr></table></figure>
-<h5 id="打包完成">打包完成</h5>
-<p><img src="image-20211024204914879.png" /></p>
-<p>如果想卸载就执行执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -r redis</span><br></pre></td></tr></table></figure>
-<h4 id="检测是否安装完毕">检测是否安装完毕</h4>
-<p>运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">redis-server</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211024211634295.png" /></p>
-<p>如有上图显示则说明运行成功</p>
-<h3 id="后续的配置">后续的配置</h3>
-<h4 id="配置文件">配置文件</h4>
-<p>将配置文件移动到系统目录下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir /etc/redis </span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv redis.conf /etc/redis/</span><br></pre></td></tr></table></figure>
-<h5 id="修改监听ip">修改监听IP</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211203163721863.png" /></p>
-<h5 id="修改端口">修改端口</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211203163751891.png" /></p>
-<h4 id="设置开机自启动">设置开机自启动</h4>
-<p>将redis使用service进行管理</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">touch redis.service</span><br></pre></td></tr></table></figure>
-<p><code>redis.service</code>文件的格式如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Redis data structure server</span><br><span class="line">Documentation=https://redis.io</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User=root</span><br><span class="line">Type=simple</span><br><span class="line">ExecStart=/usr/<span class="built_in">local</span>/bin/redis-server /etc/redis/redis.conf</span><br><span class="line">ExecStop=/usr/<span class="built_in">local</span>/bin/redis-cli -p 6379 shutdown</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-<p>将redis.service移动到系统目录下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv redis.service /etc/systemd/system/redis.service</span><br></pre></td></tr></table></figure>
-<p>设置自启动</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> redis.service</span><br></pre></td></tr></table></figure>
-<p>查看是否启动成功</p>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status redis.service</span><br></pre></td></tr></table></figure></p>
-<p><img src="image-20211024220501733.png" /></p>
-<p>完。</p>
-]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>redis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux之crontab定时任务</title>
     <url>/p/how-to-use-crontab/</url>
     <content><![CDATA[<p>Linux中的crontab - - - -一个自定义定时器</p>
@@ -1580,6 +1494,92 @@
 ]]></content>
       <tags>
         <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ubuntu2004安装最新版本Redis并设置开机启动</title>
+    <url>/p/install-newest-redis-in-ubuntu2004/</url>
+    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的Redis以及如何设置Redis开机自动启动。</strong></p>
+<p><strong>关键词：Redis，Linux</strong></p>
+<a id="more"></a>
+<h3 id="官方网站">官方网站</h3>
+<p><a href="https://redis.io/download">Redis</a></p>
+<p><img src="image-20211024202247242.png" /></p>
+<h3 id="中文网">中文网</h3>
+<p><a href="http://www.redis.cn/">redis中文官方网站</a></p>
+<blockquote>
+<p>注意，中文网的版本要比官方的版本要低</p>
+</blockquote>
+<p><img src="image-20211024202614937.png" /></p>
+<h3 id="下载并安装">下载并安装</h3>
+<p>这里选择的官网下载的版本。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://download.redis.io/releases/redis-6.2.6.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="直接安装编译好的版本">直接安装编译好的版本</h3>
+<p><a href="https://fly97.coding.net/s/ab90cc76-374d-49d4-a79f-edf6ec5e7d79">jemalloc_5.2.1-1_amd64.deb</a></p>
+<p><a href="https://fly97.coding.net/s/b45f9603-dc1d-4c13-9e32-b94a7e236fa4">redis_6.2.6-1_amd64.deb</a></p>
+<h4 id="解压">解压</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf redis-6.2.6.tar.gz</span><br></pre></td></tr></table></figure>
+<h4 id="编译安装">编译安装</h4>
+<h5 id="首先查看gcc版本">首先查看gcc版本</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -v</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211024202923989.png" /></p>
+<p>太旧的版本可能需要升级才能安装。这里用的是<strong>ubuntu20 04 LTS</strong>。</p>
+<h5 id="尝试编译">尝试编译</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make </span><br></pre></td></tr></table></figure>
+<h6 id="有可能出现的问题">有可能出现的问题</h6>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">zmalloc.h:50:10: fatal error: jemalloc/jemalloc.h:</span><br></pre></td></tr></table></figure>
+<h6 id="解决方法">解决方法</h6>
+<ol type="1">
+<li>使用以下命令进行编译</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make MALLOC=libc</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li><p>安装jemalloc</p>
+<p><a href="https://blog.csdn.net/SweeNeil/article/details/94648313">jemalloc安装与使用</a></p></li>
+</ol>
+<h4 id="打包成deb包">打包成deb包</h4>
+<p>为什么要打包成deb包呢？可以方便后续卸载等其他操作。</p>
+<h5 id="首先安装checkinstall">首先安装checkinstall</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br></pre></td></tr></table></figure>
+<h5 id="执行打包命令">执行打包命令</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo checkinstall -y</span><br></pre></td></tr></table></figure>
+<h5 id="打包完成">打包完成</h5>
+<p><img src="image-20211024204914879.png" /></p>
+<p>如果想卸载就执行执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -r redis</span><br></pre></td></tr></table></figure>
+<h4 id="检测是否安装完毕">检测是否安装完毕</h4>
+<p>运行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">redis-server</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211024211634295.png" /></p>
+<p>如有上图显示则说明运行成功</p>
+<h3 id="后续的配置">后续的配置</h3>
+<h4 id="配置文件">配置文件</h4>
+<p>将配置文件移动到系统目录下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir /etc/redis </span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv redis.conf /etc/redis/</span><br></pre></td></tr></table></figure>
+<h5 id="修改监听ip">修改监听IP</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211203163721863.png" /></p>
+<h5 id="修改端口">修改端口</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211203163751891.png" /></p>
+<h4 id="设置开机自启动">设置开机自启动</h4>
+<p>将redis使用service进行管理</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">touch redis.service</span><br></pre></td></tr></table></figure>
+<p><code>redis.service</code>文件的格式如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Redis data structure server</span><br><span class="line">Documentation=https://redis.io</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User=root</span><br><span class="line">Type=simple</span><br><span class="line">ExecStart=/usr/<span class="built_in">local</span>/bin/redis-server /etc/redis/redis.conf</span><br><span class="line">ExecStop=/usr/<span class="built_in">local</span>/bin/redis-cli -p 6379 shutdown</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>将redis.service移动到系统目录下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv redis.service /etc/systemd/system/redis.service</span><br></pre></td></tr></table></figure>
+<p>设置自启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> redis.service</span><br></pre></td></tr></table></figure>
+<p>查看是否启动成功</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status redis.service</span><br></pre></td></tr></table></figure></p>
+<p><img src="image-20211024220501733.png" /></p>
+<p>完。</p>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>redis</tag>
       </tags>
   </entry>
   <entry>
@@ -2274,30 +2274,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
-    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>不说废话，直接上教程。</p>
-<a id="more"></a>
-<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
-<h6 id="介绍">介绍</h6>
-<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
-<h6 id="区别1">区别1</h6>
-<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
-<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
-<h5 id="区别2">区别2</h5>
-<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
-<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
-<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PyTorch中对图像的操作</title>
     <url>/p/How-to-process-images-in-Pytorch/</url>
     <content><![CDATA[<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。</p>
@@ -2370,6 +2346,47 @@
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
+    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>不说废话，直接上教程。</p>
+<a id="more"></a>
+<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
+<h6 id="介绍">介绍</h6>
+<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
+<h6 id="区别1">区别1</h6>
+<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
+<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
+<h5 id="区别2">区别2</h5>
+<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
+<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
+<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyTorch中的损失函数和优化器</title>
+    <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
+    <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
+<p><strong>关键字</strong>：PyTorch，损失函数，优化器</p>
+<a id="more"></a>
+<h2 id="损失函数">损失函数</h2>
+<p>一般来说，PyTorch的损失函数有两种形式：函数形式和模块形式。前者调用的是torch.nn.funtional库中的函数，通过传入神经网络预测值和目标值来计算损失函数，后者是torch.nn库里的模块，通过新建一个模块的实例，然后通过调用模块的方法来计算最终的损失函数。</p>
+<p>由于训练数据一般以<strong>迷你批次</strong>的形式输入神经网络，最后预测的只也是以迷你批次的形式输出的，而损失函数最后的输出结果应该是一个标量张量，因此，对于迷你批次的化简一般有两种方法，一般是对迷你批次的损失函数求和，第二种是对迷你批次的损失函数u求平均。一般来说，也是默认和最常见的情形，最后输出的损失函数是迷你批次损失函数的平均。</p>
+<p>神经网络处理的预测问题主要分为<strong>回归问题和分类问题</strong>。对于回归问题，一般情况下使用的是<code>torch.nn.MSELoss</code>模块，即平方损失函数。通过创建这个模块的实例（一般使用默认参数，即在类的构造函数中不传入任何参数，这样会输出迷你批次的平均；如果要输出迷你批次的每个损失函数，可以指定参数<code>reduction='none'</code>；如果要输出迷你批次的损失函数，可以指定参数<code>reduction='sum'</code>.在实例中传入神经网络预测的值和目标值，能够计算得到最终的损失函数。具体的代码可以参考：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mse = t.nn.MSELoss()  <span class="comment">#初始化平方损失模块</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t1</span></span><br><span class="line">t2 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t2</span></span><br><span class="line">mse(t1, t2) <span class="comment"># 计算张量t1和t2之间的平方损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.9193, grad_fn=&lt;MeanBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">bse = t.nn.BCELoss() <span class="comment"># 初始化二分类交叉损失函数</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#随机生成张量t1</span></span><br><span class="line">t1s = t.sigmoid(t1) <span class="comment"># 对张量求sigmoid函数, 转换为(0, 1)之间的概率</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">5</span>,)).float() <span class="comment">#随机生成0, 1整数序列, 并转换为浮点数</span></span><br><span class="line">bse(t1s, t2) <span class="comment">#计算二分类的交叉熵</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">bce_logits = t.nn.BCEWithLogitsLoss() <span class="comment">#初始化交叉熵对数损失函数</span></span><br><span class="line">bce_logits(t1, t2) <span class="comment">#计算二分类的交叉熵 (和前面结果一样)</span></span><br><span class="line"><span class="comment"># 这是因为, BCEWithLogitsLoss会先让输入经过sigmoid函数, 变成概率分布的形式, 再计算二分类交叉熵.</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyWithLogitsBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">N = <span class="number">10</span> <span class="comment"># 定义分类数目</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, N, requires_grad=<span class="literal">True</span>) <span class="comment">#随机产生预测张量</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, N, (<span class="number">5</span>, ))            <span class="comment">#随机产生目标张量</span></span><br><span class="line">t1s = t.nn.functional.log_softmax(t1, <span class="number">-1</span>) <span class="comment"># 计算预测张量的LogSoftmax</span></span><br><span class="line">nll = t.nn.NLLLoss() <span class="comment">#定义NLL损失函数</span></span><br><span class="line">nll(t1s, t2) <span class="comment">#计算损失函数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">ce = t.nn.CrossEntropyLoss() <span class="comment">#定义交叉熵损失函数</span></span><br><span class="line">ce(t1, t2) <span class="comment"># 和前面计算结果相同</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+        <tag>计算图</tag>
       </tags>
   </entry>
   <entry>
@@ -2545,23 +2562,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch中的损失函数和优化器</title>
-    <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
-    <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
-<p><strong>关键字</strong>：PyTorch，损失函数，优化器</p>
-<a id="more"></a>
-<h2 id="损失函数">损失函数</h2>
-<p>一般来说，PyTorch的损失函数有两种形式：函数形式和模块形式。前者调用的是torch.nn.funtional库中的函数，通过传入神经网络预测值和目标值来计算损失函数，后者是torch.nn库里的模块，通过新建一个模块的实例，然后通过调用模块的方法来计算最终的损失函数。</p>
-<p>由于训练数据一般以<strong>迷你批次</strong>的形式输入神经网络，最后预测的只也是以迷你批次的形式输出的，而损失函数最后的输出结果应该是一个标量张量，因此，对于迷你批次的化简一般有两种方法，一般是对迷你批次的损失函数求和，第二种是对迷你批次的损失函数u求平均。一般来说，也是默认和最常见的情形，最后输出的损失函数是迷你批次损失函数的平均。</p>
-<p>神经网络处理的预测问题主要分为<strong>回归问题和分类问题</strong>。对于回归问题，一般情况下使用的是<code>torch.nn.MSELoss</code>模块，即平方损失函数。通过创建这个模块的实例（一般使用默认参数，即在类的构造函数中不传入任何参数，这样会输出迷你批次的平均；如果要输出迷你批次的每个损失函数，可以指定参数<code>reduction='none'</code>；如果要输出迷你批次的损失函数，可以指定参数<code>reduction='sum'</code>.在实例中传入神经网络预测的值和目标值，能够计算得到最终的损失函数。具体的代码可以参考：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mse = t.nn.MSELoss()  <span class="comment">#初始化平方损失模块</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t1</span></span><br><span class="line">t2 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t2</span></span><br><span class="line">mse(t1, t2) <span class="comment"># 计算张量t1和t2之间的平方损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.9193, grad_fn=&lt;MeanBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">bse = t.nn.BCELoss() <span class="comment"># 初始化二分类交叉损失函数</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#随机生成张量t1</span></span><br><span class="line">t1s = t.sigmoid(t1) <span class="comment"># 对张量求sigmoid函数, 转换为(0, 1)之间的概率</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">5</span>,)).float() <span class="comment">#随机生成0, 1整数序列, 并转换为浮点数</span></span><br><span class="line">bse(t1s, t2) <span class="comment">#计算二分类的交叉熵</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">bce_logits = t.nn.BCEWithLogitsLoss() <span class="comment">#初始化交叉熵对数损失函数</span></span><br><span class="line">bce_logits(t1, t2) <span class="comment">#计算二分类的交叉熵 (和前面结果一样)</span></span><br><span class="line"><span class="comment"># 这是因为, BCEWithLogitsLoss会先让输入经过sigmoid函数, 变成概率分布的形式, 再计算二分类交叉熵.</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyWithLogitsBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">N = <span class="number">10</span> <span class="comment"># 定义分类数目</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, N, requires_grad=<span class="literal">True</span>) <span class="comment">#随机产生预测张量</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, N, (<span class="number">5</span>, ))            <span class="comment">#随机产生目标张量</span></span><br><span class="line">t1s = t.nn.functional.log_softmax(t1, <span class="number">-1</span>) <span class="comment"># 计算预测张量的LogSoftmax</span></span><br><span class="line">nll = t.nn.NLLLoss() <span class="comment">#定义NLL损失函数</span></span><br><span class="line">nll(t1s, t2) <span class="comment">#计算损失函数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">ce = t.nn.CrossEntropyLoss() <span class="comment">#定义交叉熵损失函数</span></span><br><span class="line">ce(t1, t2) <span class="comment"># 和前面计算结果相同</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-        <tag>计算图</tag>
       </tags>
   </entry>
   <entry>
