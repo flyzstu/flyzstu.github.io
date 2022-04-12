@@ -592,21 +592,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang中的生产者消费者模型</title>
-    <url>/p/producer-consumer-model-in-golang/</url>
-    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
-<p><strong>关键词</strong>：生产者消费者模型，golang</p>
-<a id="more"></a>
-<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
-<h2 id="简易生产者模型">简易生产者模型</h2>
-<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go语言中的切片、Map和Channel</title>
     <url>/p/slice-map-and-channel-in-golang/</url>
     <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
@@ -648,6 +633,21 @@
 <h2 id="json序列化结构体到json格式的字符串">json序列化：结构体到json格式的字符串</h2>
 <h3 id="代码-1">代码</h3>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line">users := []User&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    user := User&#123;</span><br><span class="line">        ID:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Name: <span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Password:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    users = <span class="built_in">append</span>(users, user)</span><br><span class="line">u := &amp;Users&#123;</span><br><span class="line">    ZstuUrl:<span class="string">&quot;https://google.com&quot;</span>,</span><br><span class="line">    ZstuUsers: users</span><br><span class="line">&#125;</span><br><span class="line">jsonData, err := json.Marshal(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;json序列化失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;json:%s\n&quot;</span>, jsonData)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中的生产者消费者模型</title>
+    <url>/p/producer-consumer-model-in-golang/</url>
+    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
+<p><strong>关键词</strong>：生产者消费者模型，golang</p>
+<a id="more"></a>
+<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
+<h2 id="简易生产者模型">简易生产者模型</h2>
+<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -1600,6 +1600,115 @@
       </tags>
   </entry>
   <entry>
+    <title>golang LogAgent 项目实战（四）</title>
+    <url>/p/LogAgent-project-action-in-golang-4/</url>
+    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
+<p><strong>关键词：日志收集项目</strong></p>
+<a id="more"></a>
+<h2 id="日志收集项目">日志收集项目</h2>
+<h3 id="上次进度">上次进度</h3>
+<ol type="1">
+<li>kafka：消息队列</li>
+<li>tailf：从文件里读取文件</li>
+<li>go-ini：解析配置文件</li>
+</ol>
+<h3 id="为什么不用elk">为什么不用ELK？</h3>
+<p>ELK：部署的时候比较麻烦，每一个filebeat都需要配置一个配置文件</p>
+<p>使用etcd来管理被收集的日志项。</p>
+<ul>
+<li>每次logagent都会主动从etcd中拉取配置，免去了手动写配置项的麻烦；</li>
+</ul>
+<p><img src="image-20211130214306450.png" /></p>
+<h2 id="etcd">etcd</h2>
+<h3 id="etcd介绍">etcd介绍</h3>
+<p>etcd是使用Go语言开发的一个开源的、高可用的分布式key-value存储系统，可以用于<strong>配置共享</strong>和<strong>服务注册发现</strong>。</p>
+<p>类似的项目由zookeeper和consul。</p>
+<p>etcd具有以下特点：</p>
+<ul>
+<li>完全复制：集群中的每个节点都可以使用完整的存档</li>
+<li>高可用性：etcd可用于避免硬件的单点故障或者网络问题</li>
+<li>一致性：每次读取都会返回跨多主机的最新写入</li>
+<li>简单：包括了一个定义良好、面向用户的API（gRPC）</li>
+<li>安全：实现了带有可选的客户端证书身份验证的自动化TLS</li>
+<li>快速：每秒10000次写入的基准速度</li>
+<li>可靠：使用Raft算法实现了强一致、高可用的服务存储目录
+<ul>
+<li><strong>Raft协议</strong>
+<ol type="1">
+<li>选举</li>
+<li>日志复制机制</li>
+<li>异常处理（脑裂）</li>
+<li>zookeeper的zad协议的区别</li>
+</ol></li>
+<li><strong>etcd的watch是怎么实现的？</strong>
+<ol type="1">
+<li>etcd底层如何实现watch给客户端发通知的</li>
+</ol></li>
+</ul></li>
+</ul>
+<h3 id="etcd应用场景">etcd应用场景</h3>
+<h4 id="服务注册发现">服务注册发现</h4>
+<p>服务发现要解决的也是分布式系统常见的问题，即在同一个分布式集群中的进程或服务，要如何才能找到对方建立连接。</p>
+<p>本质上说，服务发现就是想要了解集群中<strong>是否有进程在监听tcp或者udp端口，并且通过名字就可以查找和连接</strong>。</p>
+<p><img src="image-20211203193827699.png" /></p>
+<h4 id="配置中心">配置中心</h4>
+<p>将一些配置信息放到etcd上进行集中管理。</p>
+<p>通常的应用场景：应用在启动的时候主动从etcd获取一次配置消息，同时，在etcd节点上注册一个Watcher并等待，以后每次配置有更新的时候，etcd都会实时通知订阅者，以此达到获取最新配置信息的目的。</p>
+<h4 id="分布式锁">分布式锁</h4>
+<p>因为etcd使用Raft算法保持了数据的强一致性，某次操作存储到集群中的值必然是全局一致的，所有很容易实现分布式锁。锁服务有两种使用方式：一是保持独占，二是保持时序。</p>
+<ul>
+<li><strong>保持独占即所有获取锁的用户最终只有一个可以得到</strong>。etcd提供了一套实现分布式锁原子操作CAS( CompareAndSwap)的API。通过设置<code>prevExist</code>值，可以保证在多个节点同时创建某个目录时，只有一个成功。创建成功的用户就可以认为是获得了锁。</li>
+<li>控制时序，即所有获得锁的用户都会被安排执行。但是<strong>获得锁的顺序全局唯一，同时决定了执行顺序</strong>。etcd提供了一套API（自动创建有序键），对一个目录建值时指定为POST动作，这样etcd会自动在目录下生成一个当前最大的值为键，存储这个新的值（客户端编号）。同时还可以使用API按顺序列出当前目录下的键值。此时这些键的值就是客户的时序，而这些键存储的值可以是代表客户端的编号。</li>
+</ul>
+<p><img src="image-20211203195339151.png" /></p>
+<h3 id="为什么用etcd而不用zookeeper">为什么用etcd而不用zookeeper？</h3>
+<p>etcd实现的这些功能，zookeeper都能实现，那为什么要用etcd而不是直接使用zookeeper呢？</p>
+<p>相较之下，zookeeper有以下缺点：</p>
+<ol type="1">
+<li>复杂。zookeeper的<strong>部署维护复杂</strong>，管理员需要掌握一系列的知识和技能；Paxos强一致性<strong>算法素来以复杂难懂而闻名于世</strong>；zookeeper的使用也比较复杂，需要安装客户端，而且只提供了<strong>Java和C语言</strong>的两种接口。</li>
+<li>Java编写。Java本身偏向于<strong>重型应用</strong>，引入大量的依赖。而运维人员则普遍希望保持强一致、高可用的机器集群尽可能简单，维护起来不容易出错。</li>
+<li><strong>发展缓慢</strong>。Apache基金会特有的"Apache Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的结构以及松散的管理导致项目发展缓慢。</li>
+</ol>
+<p>etcd作为一个后起之秀，其优点也很明显：</p>
+<ol type="1">
+<li>简单。使用go语言编写<strong>部署简单</strong>；使用HTTP作为<strong>接口使用简单</strong>；<strong>使用Raft算法保证强一致性便于用户理解。</strong></li>
+<li><strong>数据持久化</strong>。etcd默认数据已更新就进行持久化。</li>
+<li><strong>安全</strong>。etcd支持SSL客户端安全验证。</li>
+</ol>
+<p>etcd作为一个年轻的项目，既是一个优点也是一个缺点。优点是未来无限可能，缺点是无法的发哦大项目长时间使用的检验。</p>
+<p>目前CoreOS、Kubernetes和CloudFoundry等知名项目均在生产环境使用了etcd，etcd值得去尝试。</p>
+<h3 id="etcd架构">etcd架构</h3>
+<p><img src="image-20211203201212153.png" /></p>
+<p><img src="image-20211203201343566.png" /></p>
+<h3 id="etcd集群">etcd集群</h3>
+<p>etcd作为一个高可以键值存储系统，天生就是为集群化而设计的。由于Raft算法在做决策时需要多数节点的投票，所有etcd一般部署集群推荐奇数节点，推荐3，5，7个节点构成一个集群。</p>
+<h4 id="搭建一个3节点集群实例">搭建一个3节点集群实例</h4>
+<p><img src="image-20211203201817418.png" /></p>
+<p><img src="image-20211203201903787.png" /></p>
+<p><img src="image-20211203202157587.png" /></p>
+<p><img src="image-20211203202209008.png" /></p>
+<h3 id="etcd服务端">etcd服务端</h3>
+<h4 id="文档">文档</h4>
+<p>https://doczhcn.gitbook.io/etcd/index/index-1/configuration</p>
+<h4 id="允许外网访问">允许外网访问</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> ETCD_LISTEN_CLIENT_URLS=<span class="string">&quot;http://0.0.0.0:2379&quot;</span></span><br><span class="line"><span class="built_in">export</span> ETCD_ADVERTISE_CLIENT_URLS=<span class="string">&quot;http://0.0.0.0:2379&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="etcd客户端">etcd客户端</h3>
+<p>官方客户端：https://github.com/etcd-io/etcd</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get go.etcd.io/etcd/client/v3</span><br></pre></td></tr></table></figure>
+<h4 id="实例">实例</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	clientv3 <span class="string">&quot;go.etcd.io/etcd/client/v3&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		config clientv3.Config</span><br><span class="line">		client *clientv3.Client</span><br><span class="line">		err    error</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 客户端配置</span></span><br><span class="line">	config = clientv3.Config&#123;</span><br><span class="line">		Endpoints:   []<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:2379&quot;</span>&#125;,</span><br><span class="line">		DialTimeout: <span class="number">5</span> * time.Second,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 建立连接</span></span><br><span class="line">	client, err = clientv3.New(config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;connent to etcd succeed&quot;</span>)</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 存</span></span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), time.Second)</span><br><span class="line">	_, err = client.Put(ctx, <span class="string">&quot;q1mi&quot;</span>, <span class="string">&quot;dsb&quot;</span>)</span><br><span class="line">	cancel() <span class="comment">// 立即释放资源</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 取</span></span><br><span class="line">	ctx, cancel = context.WithTimeout(context.Background(), time.Second)</span><br><span class="line">	resp, err := client.Get(ctx, <span class="string">&quot;q1mi&quot;</span>)</span><br><span class="line">	cancel() <span class="comment">// 立即释放资源</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, kv := <span class="keyword">range</span> resp.Kvs &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;key:%s value:%s\n&quot;</span>, <span class="keyword">string</span>(kv.Key), <span class="keyword">string</span>(kv.Value)) <span class="comment">// 索引键值对</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 哨兵：监视键的变化</span></span><br><span class="line">	rch := client.Watch(context.Background(), <span class="string">&quot;q1mi&quot;</span>) <span class="comment">// &lt;-chan watchResponse</span></span><br><span class="line">	<span class="keyword">for</span> wresp := <span class="keyword">range</span> rch &#123;</span><br><span class="line">		<span class="keyword">for</span> _, kv := <span class="keyword">range</span> wresp.Events &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;Type:%s Key:%s Value:%s\n&quot;</span>, kv.Type, kv.Kv.Key, kv.Kv.Value)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./etcd.exe</span><br><span class="line">connent to etcd succeed</span><br><span class="line">key:q1mi value:dsb</span><br><span class="line">Type:PUT Key:q1mi Value:111 <span class="comment"># 得到了键的变化</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用etcd优化项目代码">使用etcd优化项目代码</h2>
+<p><img src="image-20211205131214769.png" /></p>
+<p><img src="image-20211205131939536.png" /></p>
+<p><img src="image-20211205134219893.png" /></p>
+<p><img src="image-20211205153501064.png" /></p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang LogAgent 项目实战（二）</title>
     <url>/p/LogAgent-project-action-in-golang-2/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1712,115 +1821,6 @@
 <h2 id="zookeeper">Zookeeper</h2>
 <p>zookeeper是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby的一个开源实现，是集群的管理者，监视着集群中各个系欸但的状态，并根据节点提交的反馈进行下一步合理操作。最终将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
 <p><img src="image-20211201190723113.png" /></p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang LogAgent 项目实战（四）</title>
-    <url>/p/LogAgent-project-action-in-golang-4/</url>
-    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
-<p><strong>关键词：日志收集项目</strong></p>
-<a id="more"></a>
-<h2 id="日志收集项目">日志收集项目</h2>
-<h3 id="上次进度">上次进度</h3>
-<ol type="1">
-<li>kafka：消息队列</li>
-<li>tailf：从文件里读取文件</li>
-<li>go-ini：解析配置文件</li>
-</ol>
-<h3 id="为什么不用elk">为什么不用ELK？</h3>
-<p>ELK：部署的时候比较麻烦，每一个filebeat都需要配置一个配置文件</p>
-<p>使用etcd来管理被收集的日志项。</p>
-<ul>
-<li>每次logagent都会主动从etcd中拉取配置，免去了手动写配置项的麻烦；</li>
-</ul>
-<p><img src="image-20211130214306450.png" /></p>
-<h2 id="etcd">etcd</h2>
-<h3 id="etcd介绍">etcd介绍</h3>
-<p>etcd是使用Go语言开发的一个开源的、高可用的分布式key-value存储系统，可以用于<strong>配置共享</strong>和<strong>服务注册发现</strong>。</p>
-<p>类似的项目由zookeeper和consul。</p>
-<p>etcd具有以下特点：</p>
-<ul>
-<li>完全复制：集群中的每个节点都可以使用完整的存档</li>
-<li>高可用性：etcd可用于避免硬件的单点故障或者网络问题</li>
-<li>一致性：每次读取都会返回跨多主机的最新写入</li>
-<li>简单：包括了一个定义良好、面向用户的API（gRPC）</li>
-<li>安全：实现了带有可选的客户端证书身份验证的自动化TLS</li>
-<li>快速：每秒10000次写入的基准速度</li>
-<li>可靠：使用Raft算法实现了强一致、高可用的服务存储目录
-<ul>
-<li><strong>Raft协议</strong>
-<ol type="1">
-<li>选举</li>
-<li>日志复制机制</li>
-<li>异常处理（脑裂）</li>
-<li>zookeeper的zad协议的区别</li>
-</ol></li>
-<li><strong>etcd的watch是怎么实现的？</strong>
-<ol type="1">
-<li>etcd底层如何实现watch给客户端发通知的</li>
-</ol></li>
-</ul></li>
-</ul>
-<h3 id="etcd应用场景">etcd应用场景</h3>
-<h4 id="服务注册发现">服务注册发现</h4>
-<p>服务发现要解决的也是分布式系统常见的问题，即在同一个分布式集群中的进程或服务，要如何才能找到对方建立连接。</p>
-<p>本质上说，服务发现就是想要了解集群中<strong>是否有进程在监听tcp或者udp端口，并且通过名字就可以查找和连接</strong>。</p>
-<p><img src="image-20211203193827699.png" /></p>
-<h4 id="配置中心">配置中心</h4>
-<p>将一些配置信息放到etcd上进行集中管理。</p>
-<p>通常的应用场景：应用在启动的时候主动从etcd获取一次配置消息，同时，在etcd节点上注册一个Watcher并等待，以后每次配置有更新的时候，etcd都会实时通知订阅者，以此达到获取最新配置信息的目的。</p>
-<h4 id="分布式锁">分布式锁</h4>
-<p>因为etcd使用Raft算法保持了数据的强一致性，某次操作存储到集群中的值必然是全局一致的，所有很容易实现分布式锁。锁服务有两种使用方式：一是保持独占，二是保持时序。</p>
-<ul>
-<li><strong>保持独占即所有获取锁的用户最终只有一个可以得到</strong>。etcd提供了一套实现分布式锁原子操作CAS( CompareAndSwap)的API。通过设置<code>prevExist</code>值，可以保证在多个节点同时创建某个目录时，只有一个成功。创建成功的用户就可以认为是获得了锁。</li>
-<li>控制时序，即所有获得锁的用户都会被安排执行。但是<strong>获得锁的顺序全局唯一，同时决定了执行顺序</strong>。etcd提供了一套API（自动创建有序键），对一个目录建值时指定为POST动作，这样etcd会自动在目录下生成一个当前最大的值为键，存储这个新的值（客户端编号）。同时还可以使用API按顺序列出当前目录下的键值。此时这些键的值就是客户的时序，而这些键存储的值可以是代表客户端的编号。</li>
-</ul>
-<p><img src="image-20211203195339151.png" /></p>
-<h3 id="为什么用etcd而不用zookeeper">为什么用etcd而不用zookeeper？</h3>
-<p>etcd实现的这些功能，zookeeper都能实现，那为什么要用etcd而不是直接使用zookeeper呢？</p>
-<p>相较之下，zookeeper有以下缺点：</p>
-<ol type="1">
-<li>复杂。zookeeper的<strong>部署维护复杂</strong>，管理员需要掌握一系列的知识和技能；Paxos强一致性<strong>算法素来以复杂难懂而闻名于世</strong>；zookeeper的使用也比较复杂，需要安装客户端，而且只提供了<strong>Java和C语言</strong>的两种接口。</li>
-<li>Java编写。Java本身偏向于<strong>重型应用</strong>，引入大量的依赖。而运维人员则普遍希望保持强一致、高可用的机器集群尽可能简单，维护起来不容易出错。</li>
-<li><strong>发展缓慢</strong>。Apache基金会特有的"Apache Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的结构以及松散的管理导致项目发展缓慢。</li>
-</ol>
-<p>etcd作为一个后起之秀，其优点也很明显：</p>
-<ol type="1">
-<li>简单。使用go语言编写<strong>部署简单</strong>；使用HTTP作为<strong>接口使用简单</strong>；<strong>使用Raft算法保证强一致性便于用户理解。</strong></li>
-<li><strong>数据持久化</strong>。etcd默认数据已更新就进行持久化。</li>
-<li><strong>安全</strong>。etcd支持SSL客户端安全验证。</li>
-</ol>
-<p>etcd作为一个年轻的项目，既是一个优点也是一个缺点。优点是未来无限可能，缺点是无法的发哦大项目长时间使用的检验。</p>
-<p>目前CoreOS、Kubernetes和CloudFoundry等知名项目均在生产环境使用了etcd，etcd值得去尝试。</p>
-<h3 id="etcd架构">etcd架构</h3>
-<p><img src="image-20211203201212153.png" /></p>
-<p><img src="image-20211203201343566.png" /></p>
-<h3 id="etcd集群">etcd集群</h3>
-<p>etcd作为一个高可以键值存储系统，天生就是为集群化而设计的。由于Raft算法在做决策时需要多数节点的投票，所有etcd一般部署集群推荐奇数节点，推荐3，5，7个节点构成一个集群。</p>
-<h4 id="搭建一个3节点集群实例">搭建一个3节点集群实例</h4>
-<p><img src="image-20211203201817418.png" /></p>
-<p><img src="image-20211203201903787.png" /></p>
-<p><img src="image-20211203202157587.png" /></p>
-<p><img src="image-20211203202209008.png" /></p>
-<h3 id="etcd服务端">etcd服务端</h3>
-<h4 id="文档">文档</h4>
-<p>https://doczhcn.gitbook.io/etcd/index/index-1/configuration</p>
-<h4 id="允许外网访问">允许外网访问</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> ETCD_LISTEN_CLIENT_URLS=<span class="string">&quot;http://0.0.0.0:2379&quot;</span></span><br><span class="line"><span class="built_in">export</span> ETCD_ADVERTISE_CLIENT_URLS=<span class="string">&quot;http://0.0.0.0:2379&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="etcd客户端">etcd客户端</h3>
-<p>官方客户端：https://github.com/etcd-io/etcd</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get go.etcd.io/etcd/client/v3</span><br></pre></td></tr></table></figure>
-<h4 id="实例">实例</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	clientv3 <span class="string">&quot;go.etcd.io/etcd/client/v3&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		config clientv3.Config</span><br><span class="line">		client *clientv3.Client</span><br><span class="line">		err    error</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 客户端配置</span></span><br><span class="line">	config = clientv3.Config&#123;</span><br><span class="line">		Endpoints:   []<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:2379&quot;</span>&#125;,</span><br><span class="line">		DialTimeout: <span class="number">5</span> * time.Second,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 建立连接</span></span><br><span class="line">	client, err = clientv3.New(config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;connent to etcd succeed&quot;</span>)</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 存</span></span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), time.Second)</span><br><span class="line">	_, err = client.Put(ctx, <span class="string">&quot;q1mi&quot;</span>, <span class="string">&quot;dsb&quot;</span>)</span><br><span class="line">	cancel() <span class="comment">// 立即释放资源</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 取</span></span><br><span class="line">	ctx, cancel = context.WithTimeout(context.Background(), time.Second)</span><br><span class="line">	resp, err := client.Get(ctx, <span class="string">&quot;q1mi&quot;</span>)</span><br><span class="line">	cancel() <span class="comment">// 立即释放资源</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, kv := <span class="keyword">range</span> resp.Kvs &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;key:%s value:%s\n&quot;</span>, <span class="keyword">string</span>(kv.Key), <span class="keyword">string</span>(kv.Value)) <span class="comment">// 索引键值对</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 哨兵：监视键的变化</span></span><br><span class="line">	rch := client.Watch(context.Background(), <span class="string">&quot;q1mi&quot;</span>) <span class="comment">// &lt;-chan watchResponse</span></span><br><span class="line">	<span class="keyword">for</span> wresp := <span class="keyword">range</span> rch &#123;</span><br><span class="line">		<span class="keyword">for</span> _, kv := <span class="keyword">range</span> wresp.Events &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;Type:%s Key:%s Value:%s\n&quot;</span>, kv.Type, kv.Kv.Key, kv.Kv.Value)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./etcd.exe</span><br><span class="line">connent to etcd succeed</span><br><span class="line">key:q1mi value:dsb</span><br><span class="line">Type:PUT Key:q1mi Value:111 <span class="comment"># 得到了键的变化</span></span><br></pre></td></tr></table></figure>
-<h2 id="使用etcd优化项目代码">使用etcd优化项目代码</h2>
-<p><img src="image-20211205131214769.png" /></p>
-<p><img src="image-20211205131939536.png" /></p>
-<p><img src="image-20211205134219893.png" /></p>
-<p><img src="image-20211205153501064.png" /></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -5191,35 +5191,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用PyTorch进行MNIST识别</title>
-    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
-    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
-<a id="more"></a>
-<h5 id="数据集部分">数据集部分：</h5>
-<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
-<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
-<h5 id="网络定义部分">网络定义部分：</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
-<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
-<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
-<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
-<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
-<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
-<p><strong>详细描述：</strong></p>
-<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
-<h5 id="卷积计算公式">卷积计算公式：</h5>
-<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
-<h5 id="池化计算公式">池化计算公式：</h5>
-<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-        <tag>CNN</tag>
-        <tag>MNIST</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用WSL链接Github仓库以及如何配置ssh权限问题</title>
     <url>/p/Use-WSL-to-link-Github-repositories-and-how-to-configure-ssh-permissions/</url>
     <content><![CDATA[<p>话不多说，先上教程。</p>
@@ -5277,6 +5248,35 @@ y=x^2e^x
         <tag>git</tag>
         <tag>SSH</tag>
         <tag>WSL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用PyTorch进行MNIST识别</title>
+    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
+    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
+<a id="more"></a>
+<h5 id="数据集部分">数据集部分：</h5>
+<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
+<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
+<h5 id="网络定义部分">网络定义部分：</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
+<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
+<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
+<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
+<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
+<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
+<p><strong>详细描述：</strong></p>
+<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
+<h5 id="卷积计算公式">卷积计算公式：</h5>
+<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
+<h5 id="池化计算公式">池化计算公式：</h5>
+<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+        <tag>CNN</tag>
+        <tag>MNIST</tag>
       </tags>
   </entry>
   <entry>
@@ -6306,6 +6306,29 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: nums &#x3D; [-1, 0, 3, 5, 9, 12], target &#x3D; 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img src="新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>利用heroku实现自动发布博客</title>
     <url>/p/automate-blog-posting-with-heroku/</url>
     <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
@@ -6341,29 +6364,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>heroku</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之二分法</title>
-    <url>/p/binary-search/</url>
-    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: nums &#x3D; [-1, 0, 3, 5, 9, 12], target &#x3D; 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
-<p>定义target在左闭右闭区间[left, right]内：</p>
-<ul>
-<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
-<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
-</ul>
-<p><strong>示意图</strong></p>
-<p><img src="新建位图图像.bmp" /></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -7597,51 +7597,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
-    <title>线性回归中的基函数</title>
-    <url>/p/a-basis-function-in-linear-regression/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
-<p><strong>关键词：</strong>线性回归，基函数</p>
-<a id="more"></a>
-<h4 id="线性基函数模型">线性基函数模型</h4>
-<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
-y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
-\]</span> 其中 <span class="math display">\[
-x = (x_1,...,x_D)^T
-\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
-y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
-\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
-<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
-y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
-\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
-<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
-<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
-\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
-\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
-<h4 id="代码部分">代码部分</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
-\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
-\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
-\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
-<h5 id="python中的广播规则">python中的广播规则</h5>
-<p>举个例子：</p>
-<p>假设<code>x</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
-<p><code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
-<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
-<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
-<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记MT7621平台刷入OpenWRT</title>
     <url>/p/how-to-config-OpenWRT/</url>
     <content><![CDATA[<p>什么是OpenWRT？</p>
@@ -7817,6 +7772,51 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>线性回归中的基函数</title>
+    <url>/p/a-basis-function-in-linear-regression/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
+<p><strong>关键词：</strong>线性回归，基函数</p>
+<a id="more"></a>
+<h4 id="线性基函数模型">线性基函数模型</h4>
+<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
+y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
+\]</span> 其中 <span class="math display">\[
+x = (x_1,...,x_D)^T
+\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
+y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
+\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
+<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
+y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
+\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
+<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
+<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
+\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
+\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
+<h4 id="代码部分">代码部分</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
+\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
+\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
+\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
+<h5 id="python中的广播规则">python中的广播规则</h5>
+<p>举个例子：</p>
+<p>假设<code>x</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
+<p><code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
+<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
+<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
+<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
