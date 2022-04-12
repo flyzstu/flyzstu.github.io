@@ -6454,34 +6454,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>力扣数组基础之双指针长度最小的子数组</title>
-    <url>/p/minimum-size-subarray-sum-2/</url>
-    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>滑动窗口问题主要确定以下三点：</p>
-<ul>
-<li>窗口内是什么？</li>
-<li>如何移动窗口的起始位置？</li>
-<li>如何移动窗口的结束位置？</li>
-</ul>
-<p>本题中，<strong>窗口就是满足与其和≥s的长度最小的连续子数组</strong>。</p>
-<p>窗口的起始位置如何移动：如果当前窗口的值大于s了，窗口就要向前移动了（也就是该缩小了）。</p>
-<p>窗口的结束位置如何移动：窗口的结束位置就是遍历数组的指针，窗口的起始位置设置为数组的起始位置就可以了。</p>
-<p><img src="20210312160441942.png" /></p>
-<p>滑动窗口的精髓就是<strong>根据当前子序列和大小的情况，不断调节子序列的起始位置</strong>，从而降低复杂度到O(n).</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 滑动窗口</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> result = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">    <span class="keyword">var</span> sum = <span class="number">0</span> <span class="comment">// 滑动窗口数值之和</span></span><br><span class="line">    <span class="keyword">var</span> i = <span class="number">0</span> <span class="comment">// 滑动窗口起始位置</span></span><br><span class="line">    <span class="keyword">var</span> subLength = <span class="number">0</span> <span class="comment">// 滑动窗口的长度</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(nums); j++ &#123;</span><br><span class="line">        sum += nums[j]</span><br><span class="line">        <span class="keyword">for</span> target &lt;= sum &#123; <span class="comment">// 直到target大于和</span></span><br><span class="line">            subLength = (j - i + <span class="number">1</span>) <span class="comment">// 子序列长度</span></span><br><span class="line">            result = min(result, subLength) <span class="comment">// 取子序列长度和result最小值</span></span><br><span class="line">            sum -= num[i++] <span class="comment">// 滑动窗口不断收缩</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> result == <span class="built_in">len</span>(nums) + <span class="number">1</span>&#123; <span class="comment">// 此种情况下没有符合条件的子序列</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣每日一题之位运算的应用</title>
     <url>/p/to-lower-case/</url>
     <content><![CDATA[<p>给你一个字符串 <code>s</code> ，将该字符串中的大写字母转换成相同的小写字母，返回新的字符串。</p>
@@ -6561,6 +6533,34 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之双指针长度最小的子数组</title>
+    <url>/p/minimum-size-subarray-sum-2/</url>
+    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>滑动窗口问题主要确定以下三点：</p>
+<ul>
+<li>窗口内是什么？</li>
+<li>如何移动窗口的起始位置？</li>
+<li>如何移动窗口的结束位置？</li>
+</ul>
+<p>本题中，<strong>窗口就是满足与其和≥s的长度最小的连续子数组</strong>。</p>
+<p>窗口的起始位置如何移动：如果当前窗口的值大于s了，窗口就要向前移动了（也就是该缩小了）。</p>
+<p>窗口的结束位置如何移动：窗口的结束位置就是遍历数组的指针，窗口的起始位置设置为数组的起始位置就可以了。</p>
+<p><img src="20210312160441942.png" /></p>
+<p>滑动窗口的精髓就是<strong>根据当前子序列和大小的情况，不断调节子序列的起始位置</strong>，从而降低复杂度到O(n).</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 滑动窗口</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> result = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">    <span class="keyword">var</span> sum = <span class="number">0</span> <span class="comment">// 滑动窗口数值之和</span></span><br><span class="line">    <span class="keyword">var</span> i = <span class="number">0</span> <span class="comment">// 滑动窗口起始位置</span></span><br><span class="line">    <span class="keyword">var</span> subLength = <span class="number">0</span> <span class="comment">// 滑动窗口的长度</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(nums); j++ &#123;</span><br><span class="line">        sum += nums[j]</span><br><span class="line">        <span class="keyword">for</span> target &lt;= sum &#123; <span class="comment">// 直到target大于和</span></span><br><span class="line">            subLength = (j - i + <span class="number">1</span>) <span class="comment">// 子序列长度</span></span><br><span class="line">            result = min(result, subLength) <span class="comment">// 取子序列长度和result最小值</span></span><br><span class="line">            sum -= num[i++] <span class="comment">// 滑动窗口不断收缩</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> result == <span class="built_in">len</span>(nums) + <span class="number">1</span>&#123; <span class="comment">// 此种情况下没有符合条件的子序列</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
