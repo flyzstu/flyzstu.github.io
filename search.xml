@@ -1519,6 +1519,35 @@
       </tags>
   </entry>
   <entry>
+    <title>golang LogAgent 项目实战（三）</title>
+    <url>/p/LogAgent-project-action-in-golang-3/</url>
+    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
+<p><strong>关键词：日志收集项目</strong></p>
+<a id="more"></a>
+<h2 id="架构图">架构图</h2>
+<p><img src="image-20211130214306450.png" /></p>
+<h3 id="logagent工作流程">LogAgent工作流程</h3>
+<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="往kafka里写日志">往Kafka里写日志</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
+<h4 id="tail介绍">tail介绍</h4>
+<h3 id="第一版程序">第一版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
+<p><img src="image-20211201205643407.png" /></p>
+<p>设计包的入口函数时，要考虑上面的设计模式。</p>
+<h3 id="第二版程序">第二版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
+<p>读取配置文件版本的logAgent</p>
+<h4 id="go-ini库的使用">go-ini库的使用</h4>
+<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang LogAgent 项目实战（一）</title>
     <url>/p/LogAgent-project-action-in-golang-1/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1565,35 +1594,6 @@
 <li>Kafka和zookeeper的使用</li>
 <li>etcd的使用</li>
 </ul>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang LogAgent 项目实战（三）</title>
-    <url>/p/LogAgent-project-action-in-golang-3/</url>
-    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
-<p><strong>关键词：日志收集项目</strong></p>
-<a id="more"></a>
-<h2 id="架构图">架构图</h2>
-<p><img src="image-20211130214306450.png" /></p>
-<h3 id="logagent工作流程">LogAgent工作流程</h3>
-<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="往kafka里写日志">往Kafka里写日志</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
-<h4 id="tail介绍">tail介绍</h4>
-<h3 id="第一版程序">第一版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
-<p><img src="image-20211201205643407.png" /></p>
-<p>设计包的入口函数时，要考虑上面的设计模式。</p>
-<h3 id="第二版程序">第二版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
-<p>读取配置文件版本的logAgent</p>
-<h4 id="go-ini库的使用">go-ini库的使用</h4>
-<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -7457,6 +7457,25 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
+    <title>现代信号分析第四章作业</title>
+    <url>/p/Chapter-02-of-Modern-Signal-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，现代信号分析</p>
+<a id="more"></a>
+<p><img src="image-20201012134854422.png" /></p>
+<p><img src="image-20201012135051489-16370605554431.png" /></p>
+<p><img src="image-20201012135105822.png" /></p>
+<p><img src="image-20201012135149144.png" /></p>
+<p><img src="image-20201012140126858.png" /></p>
+<p><img src="image-20201012140338034.png" /></p>
+<p><img src="image-20201012141112290.png" /></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>现代信号分析第二章作业</title>
     <url>/p/Chapter-01-of-Modern-Signal-Analysis/</url>
     <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
@@ -7482,25 +7501,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 <p><img src="image-20201011204330872.png" /></p>
 <p><img src="image-20201011204359072.png" /></p>
 <p><img src="image-20201011204438075.png" /></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>现代信号分析第四章作业</title>
-    <url>/p/Chapter-02-of-Modern-Signal-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，现代信号分析</p>
-<a id="more"></a>
-<p><img src="image-20201012134854422.png" /></p>
-<p><img src="image-20201012135051489-16370605554431.png" /></p>
-<p><img src="image-20201012135105822.png" /></p>
-<p><img src="image-20201012135149144.png" /></p>
-<p><img src="image-20201012140126858.png" /></p>
-<p><img src="image-20201012140338034.png" /></p>
-<p><img src="image-20201012141112290.png" /></p>
 ]]></content>
       <tags>
         <tag>研一</tag>
@@ -7820,44 +7820,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
-    <title>零基础入门ROS(一)</title>
-    <url>/p/ros-tutorial-01/</url>
-    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
-<p>此次记录的主要是软件安装过程中遇到的问题。</p>
-<a id="more"></a>
-<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
-<p>安装好Ubuntu 1804以后首先换源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
-<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
-<h3 id="安装ros-melodic">安装ROS Melodic</h3>
-<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
-<h4 id="设置sources.list">设置sources.list</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h5 id="更新">【更新】</h5>
-<p>国科大ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>北外ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="设置密钥">设置密钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
-<p>另一种方式</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
-<h4 id="安装">安装</h4>
-<p>桌面完整版：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
-<h3 id="初始化rosdep">初始化rosdep</h3>
-<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
-<h3 id="设置环境">设置环境</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
-<h3 id="构建工厂依赖">构建工厂依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>零基础入门ROS(三)</title>
     <url>/p/ros-tutorial-03/</url>
     <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
@@ -7998,6 +7960,44 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 </tr>
 </tbody>
 </table>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础入门ROS(一)</title>
+    <url>/p/ros-tutorial-01/</url>
+    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
+<p>此次记录的主要是软件安装过程中遇到的问题。</p>
+<a id="more"></a>
+<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
+<p>安装好Ubuntu 1804以后首先换源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
+<h3 id="安装ros-melodic">安装ROS Melodic</h3>
+<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
+<h4 id="设置sources.list">设置sources.list</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h5 id="更新">【更新】</h5>
+<p>国科大ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>北外ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置密钥">设置密钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
+<p>另一种方式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<h4 id="安装">安装</h4>
+<p>桌面完整版：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
+<h3 id="初始化rosdep">初始化rosdep</h3>
+<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
+<h3 id="设置环境">设置环境</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="构建工厂依赖">构建工厂依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ROS</tag>
