@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Anacoda3 安装Pytorch小记录</title>
+    <url>/p/Install-Pytorch-using-Anaconda3/</url>
+    <content><![CDATA[<p>话不多说，先上教程。</p>
+<a id="more"></a>
+<h4 id="下载anadoda3安装包">1.下载Anadoda3安装包</h4>
+<ul>
+<li><p>可以选择清华镜像源</p>
+<p>https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-2019.10-Windows-x86_64.exe</p></li>
+</ul>
+<p><img src="image-20191228165427982-16370643305702.png" /></p>
+<ul>
+<li><p>有条件的可以选择官网下载</p>
+<p>https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe</p>
+<p><img src="image-20191228170139071.png" /></p></li>
+</ul>
+<h4 id="双击安装">2.双击安装</h4>
+<p><em>注意：安装时可以选择将Anaconda注册为默认的Python环境</em></p>
+<p>​ <img src="image-20191228170508433.png" style="zoom:67%;" /></p>
+<p>然后一路next就可以了</p>
+<p>安装完成！</p>
+<p><img src="image-20191228170821162.png" /></p>
+<p>接下来到了很重要的环节————</p>
+<h4 id="创建conda虚拟环境">3.创建conda虚拟环境</h4>
+<p>为什么要创建虚拟环境呢？</p>
+<p>Anaconda主要是对python中的各个包进行管理与部署，从而方便用户的使用体验。</p>
+<p>在从github上面下载别人的代码之后，不同的代码往往需要特定的运行环境。比如说有些代码需要在python3.6的环境下运行，有些代码需要在python2.7的环境下运行。</p>
+<p>这个时候，就需要conda出马了</p>
+<h5 id="选择anaconda-prompt-anaconda3以管理员身份运行">选择Anaconda Prompt (Anaconda3)以管理员身份运行</h5>
+<p><img src="image-20191228171544280.png" /></p>
+<h5 id="输入命令">输入命令：</h5>
+<p><code>conda create -n environment_name python=3 numpy  pytorch torchvision cpuonly -c pytorch</code></p>
+<p>注意：以上命令是安装CPU版本的Pytorch</p>
+<h5 id="如需安装gpu版本的pytorch可以去官网查看对应命令">如需安装GPU版本的Pytorch可以去官网查看对应命令</h5>
+<p>https://pytorch.org/get-started/locally/</p>
+<p><img src="image-20191228172220826.png" /></p>
+<h5 id="然后一路敲y直到安装完成">然后一路敲y直到安装完成</h5>
+<p><img src="image-20191228172356834.png" /></p>
+<p>接下来需要切换到刚刚创建好的虚拟环境</p>
+<h5 id="输入命令-1">输入命令：</h5>
+<p><code>conda activate pytorch</code></p>
+<p><img src="image-20191228172503786.png" /></p>
+<h5 id="安装-librosa-音频处理库">安装 librosa 音频处理库</h5>
+<p><code>conda install -c conda-forge librosa</code></p>
+<h4 id="最后一步安装spyder-ide">4.最后一步：安装Spyder IDE</h4>
+<h5 id="输入命令-2">输入命令：</h5>
+<p><code>conda install spyder</code></p>
+<h5 id="没有问题的话输入命令">没有问题的话输入命令：</h5>
+<p><code>spyder</code></p>
+<p>会自动打开spyder4窗口</p>
+<h5 id="如果出现">如果出现</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(pytorch) C:\Windows\system32&gt;spyder</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">204</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">from</span> PySide <span class="keyword">import</span> __version__ <span class="keyword">as</span> PYSIDE_VERSION  <span class="comment"># analysis:ignore</span></span><br><span class="line">ModuleNotFoundError: No module named <span class="string">&#x27;PySide&#x27;</span></span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\Scripts\spyder-script.py&quot;</span>, line <span class="number">10</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    sys.exit(main())</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\start.py&quot;</span>, line <span class="number">201</span>, <span class="keyword">in</span> main</span><br><span class="line">    <span class="keyword">from</span> spyder.app <span class="keyword">import</span> mainwindow</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\mainwindow.py&quot;</span>, line <span class="number">52</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    requirements.check_qt()</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\requirements.py&quot;</span>, line <span class="number">41</span>, <span class="keyword">in</span> check_qt</span><br><span class="line">    <span class="keyword">import</span> qtpy</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">210</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">raise</span> PythonQtError(<span class="string">&#x27;No Qt bindings could be found&#x27;</span>)</span><br><span class="line">qtpy.PythonQtError: No Qt bindings could be found</span><br></pre></td></tr></table></figure>
+<p>说明没有安装 pyqt</p>
+<p>输入命令</p>
+<p><code>conda install pyqt</code></p>
+<p>即可</p>
+<h5 id="至此pytorch安装完成你又可以愉快的机器学习了">至此，pytorch安装完成，你又可以愉快的机器学习了</h5>
+<p>安装完成后，你会发现开始栏多了一个Spyder，从此，可以直接从这里打开你刚刚创建的虚拟环境对应的Spyder~</p>
+<p><img src="image-20191228174316358.png" /></p>
+]]></content>
+      <tags>
+        <tag>Anacoda3</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>安装Anaconda3(一)</title>
     <url>/p/Chapter-01-of-how-to-install-anaconda/</url>
     <content><![CDATA[<p>Python是一种面向对象的解释型计算机程序设计语言，其使用，具有跨平台的特点，可以在Linux、macOS以及Windows系统中搭建环境并使用，其编写的代码在不同平台上运行时，几乎不需要做较大的改动，使用者无不受益于它的便捷性。</p>
@@ -3457,70 +3521,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Anacoda3 安装Pytorch小记录</title>
-    <url>/p/Install-Pytorch-using-Anaconda3/</url>
-    <content><![CDATA[<p>话不多说，先上教程。</p>
-<a id="more"></a>
-<h4 id="下载anadoda3安装包">1.下载Anadoda3安装包</h4>
-<ul>
-<li><p>可以选择清华镜像源</p>
-<p>https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-2019.10-Windows-x86_64.exe</p></li>
-</ul>
-<p><img src="image-20191228165427982-16370643305702.png" /></p>
-<ul>
-<li><p>有条件的可以选择官网下载</p>
-<p>https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe</p>
-<p><img src="image-20191228170139071.png" /></p></li>
-</ul>
-<h4 id="双击安装">2.双击安装</h4>
-<p><em>注意：安装时可以选择将Anaconda注册为默认的Python环境</em></p>
-<p>​ <img src="image-20191228170508433.png" style="zoom:67%;" /></p>
-<p>然后一路next就可以了</p>
-<p>安装完成！</p>
-<p><img src="image-20191228170821162.png" /></p>
-<p>接下来到了很重要的环节————</p>
-<h4 id="创建conda虚拟环境">3.创建conda虚拟环境</h4>
-<p>为什么要创建虚拟环境呢？</p>
-<p>Anaconda主要是对python中的各个包进行管理与部署，从而方便用户的使用体验。</p>
-<p>在从github上面下载别人的代码之后，不同的代码往往需要特定的运行环境。比如说有些代码需要在python3.6的环境下运行，有些代码需要在python2.7的环境下运行。</p>
-<p>这个时候，就需要conda出马了</p>
-<h5 id="选择anaconda-prompt-anaconda3以管理员身份运行">选择Anaconda Prompt (Anaconda3)以管理员身份运行</h5>
-<p><img src="image-20191228171544280.png" /></p>
-<h5 id="输入命令">输入命令：</h5>
-<p><code>conda create -n environment_name python=3 numpy  pytorch torchvision cpuonly -c pytorch</code></p>
-<p>注意：以上命令是安装CPU版本的Pytorch</p>
-<h5 id="如需安装gpu版本的pytorch可以去官网查看对应命令">如需安装GPU版本的Pytorch可以去官网查看对应命令</h5>
-<p>https://pytorch.org/get-started/locally/</p>
-<p><img src="image-20191228172220826.png" /></p>
-<h5 id="然后一路敲y直到安装完成">然后一路敲y直到安装完成</h5>
-<p><img src="image-20191228172356834.png" /></p>
-<p>接下来需要切换到刚刚创建好的虚拟环境</p>
-<h5 id="输入命令-1">输入命令：</h5>
-<p><code>conda activate pytorch</code></p>
-<p><img src="image-20191228172503786.png" /></p>
-<h5 id="安装-librosa-音频处理库">安装 librosa 音频处理库</h5>
-<p><code>conda install -c conda-forge librosa</code></p>
-<h4 id="最后一步安装spyder-ide">4.最后一步：安装Spyder IDE</h4>
-<h5 id="输入命令-2">输入命令：</h5>
-<p><code>conda install spyder</code></p>
-<h5 id="没有问题的话输入命令">没有问题的话输入命令：</h5>
-<p><code>spyder</code></p>
-<p>会自动打开spyder4窗口</p>
-<h5 id="如果出现">如果出现</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(pytorch) C:\Windows\system32&gt;spyder</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">204</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">from</span> PySide <span class="keyword">import</span> __version__ <span class="keyword">as</span> PYSIDE_VERSION  <span class="comment"># analysis:ignore</span></span><br><span class="line">ModuleNotFoundError: No module named <span class="string">&#x27;PySide&#x27;</span></span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\Scripts\spyder-script.py&quot;</span>, line <span class="number">10</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    sys.exit(main())</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\start.py&quot;</span>, line <span class="number">201</span>, <span class="keyword">in</span> main</span><br><span class="line">    <span class="keyword">from</span> spyder.app <span class="keyword">import</span> mainwindow</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\mainwindow.py&quot;</span>, line <span class="number">52</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    requirements.check_qt()</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\requirements.py&quot;</span>, line <span class="number">41</span>, <span class="keyword">in</span> check_qt</span><br><span class="line">    <span class="keyword">import</span> qtpy</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">210</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">raise</span> PythonQtError(<span class="string">&#x27;No Qt bindings could be found&#x27;</span>)</span><br><span class="line">qtpy.PythonQtError: No Qt bindings could be found</span><br></pre></td></tr></table></figure>
-<p>说明没有安装 pyqt</p>
-<p>输入命令</p>
-<p><code>conda install pyqt</code></p>
-<p>即可</p>
-<h5 id="至此pytorch安装完成你又可以愉快的机器学习了">至此，pytorch安装完成，你又可以愉快的机器学习了</h5>
-<p>安装完成后，你会发现开始栏多了一个Spyder，从此，可以直接从这里打开你刚刚创建的虚拟环境对应的Spyder~</p>
-<p><img src="image-20191228174316358.png" /></p>
-]]></content>
-      <tags>
-        <tag>Anacoda3</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python多线程的应用</title>
     <url>/p/how-to-use-python-multithreading/</url>
     <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
@@ -5280,51 +5280,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用Zerotier搭建内网穿透服务</title>
-    <url>/p/how-to-use-Zerotier/</url>
-    <content><![CDATA[<p>什么是Zerotier？</p>
-<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
-<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
-<a id="more"></a>
-<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
-<h4 id="创建账号">创建账号</h4>
-<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
-<p><img src="image-20210128181221059.png" /></p>
-<p>根据自己需要，选择注册方式。</p>
-<p><img src="image-20210128181326421.png" /></p>
-<h4 id="创建网络">创建网络</h4>
-<p><img src="image-20210128181610919.png" /></p>
-<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
-<p><img src="image-20210128181706204.png" /></p>
-<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
-<p><img src="image-20210128181808319.png" /></p>
-<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
-<h4 id="加入网络">加入网络</h4>
-<p><img src="image-20210128181920181.png" /></p>
-<p>点击<code>Download</code>，进入下载页面。</p>
-<p><img src="image-20210128181957790.png" style="zoom:67%;" /></p>
-<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
-<p><img src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
-<p>等待下载完成，然后安装。</p>
-<p><img src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
-<p>打开以后会默认在任务栏运行。</p>
-<figure>
-<img src="image-20210128182448852.png" alt="image-20210128182448852" /><figcaption aria-hidden="true">image-20210128182448852</figcaption>
-</figure>
-<p>右键选择<code>Join a network</code>。</p>
-<p><img src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
-<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
-<p><img src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
-<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
-<p><img src="image-20210128182844550.png" /></p>
-<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
-<p><img src="image-20210128183032664.png" /></p>
-]]></content>
-      <tags>
-        <tag>Zerotier</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用acme.sh快速申请ssl证书</title>
     <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
     <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
@@ -5404,6 +5359,51 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>证书</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Zerotier搭建内网穿透服务</title>
+    <url>/p/how-to-use-Zerotier/</url>
+    <content><![CDATA[<p>什么是Zerotier？</p>
+<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
+<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
+<a id="more"></a>
+<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
+<h4 id="创建账号">创建账号</h4>
+<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
+<p><img src="image-20210128181221059.png" /></p>
+<p>根据自己需要，选择注册方式。</p>
+<p><img src="image-20210128181326421.png" /></p>
+<h4 id="创建网络">创建网络</h4>
+<p><img src="image-20210128181610919.png" /></p>
+<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
+<p><img src="image-20210128181706204.png" /></p>
+<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
+<p><img src="image-20210128181808319.png" /></p>
+<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
+<h4 id="加入网络">加入网络</h4>
+<p><img src="image-20210128181920181.png" /></p>
+<p>点击<code>Download</code>，进入下载页面。</p>
+<p><img src="image-20210128181957790.png" style="zoom:67%;" /></p>
+<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
+<p><img src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
+<p>等待下载完成，然后安装。</p>
+<p><img src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
+<p>打开以后会默认在任务栏运行。</p>
+<figure>
+<img src="image-20210128182448852.png" alt="image-20210128182448852" /><figcaption aria-hidden="true">image-20210128182448852</figcaption>
+</figure>
+<p>右键选择<code>Join a network</code>。</p>
+<p><img src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
+<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
+<p><img src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
+<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
+<p><img src="image-20210128182844550.png" /></p>
+<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
+<p><img src="image-20210128183032664.png" /></p>
+]]></content>
+      <tags>
+        <tag>Zerotier</tag>
       </tags>
   </entry>
   <entry>
@@ -6384,6 +6384,24 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>力扣数组基础之双指针长度最小的子数组</title>
+    <url>/p/minimum-size-subarray-sum/</url>
+    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p><img src="双指针02.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣数组基础之双指针移除元素</title>
     <url>/p/remove-element/</url>
     <content><![CDATA[<p>题目：给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。</p>
@@ -6399,24 +6417,6 @@ y=x^2e^x
 <p><strong>示意图</strong></p>
 <p><img src="双指针.png" /></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElement</span><span class="params">(nums []<span class="keyword">int</span>, val <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> slowIndex <span class="keyword">int</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> fastIndex := <span class="number">0</span>; fastIndex &lt; <span class="built_in">len</span>(nums);fastIndex++&#123;</span><br><span class="line">        <span class="keyword">if</span> nums[fastIndex] != val &#123;</span><br><span class="line">            nums[slowIndex] = nums[fastIndex]</span><br><span class="line">            slowIndex += <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> slowIndex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之双指针长度最小的子数组</title>
-    <url>/p/minimum-size-subarray-sum/</url>
-    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p><img src="双指针02.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
