@@ -3568,6 +3568,42 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python时间处理</title>
+    <url>/p/time-processing-in-python/</url>
+    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
+<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
+<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
+<a id="more"></a>
+<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
+<p>datetime 是Python处理日期和时间的标准库。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
+<h4 id="打印当地时间">打印当地时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
+<h4 id="unix时间戳转换">unix时间戳转换</h4>
+<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
+<ul>
+<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
+<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
+<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
+<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
+<ul>
+<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
+<li>利用<code>strftime()</code>函数重新格式化为时间</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
+<p>参考链接</p>
+<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python的一些高级用法</title>
     <url>/p/Some-advanced-usages-of-Python/</url>
     <content><![CDATA[<p>此文介绍了一些Python的一些常见的高级用法。</p>
@@ -3850,42 +3886,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Numpy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python时间处理</title>
-    <url>/p/time-processing-in-python/</url>
-    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
-<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
-<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
-<a id="more"></a>
-<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
-<p>datetime 是Python处理日期和时间的标准库。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
-<h4 id="打印当地时间">打印当地时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
-<h4 id="unix时间戳转换">unix时间戳转换</h4>
-<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
-<ul>
-<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
-<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
-<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
-<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
-<ul>
-<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
-<li>利用<code>strftime()</code>函数重新格式化为时间</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
-<p>参考链接</p>
-<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -7642,6 +7642,58 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
+    <title>记MT7621平台刷入OpenWRT</title>
+    <url>/p/how-to-config-OpenWRT/</url>
+    <content><![CDATA[<p>什么是OpenWRT？</p>
+<a id="more"></a>
+<hr />
+<h3 id="安装luci相关">安装luci相关</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg install luci luci-base luci-i18n-base-zh-cn</span><br></pre></td></tr></table></figure>
+<h3 id="开启sftp">开启sftp</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install vsftpd openssh-sftp-server</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;vsftpd enable</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;vsftpd start</span><br></pre></td></tr></table></figure>
+<h3 id="opkg-腾讯源">opkg 腾讯源</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;opkg&#x2F;distfeeds.conf</span><br></pre></td></tr></table></figure>
+<p>写入以下文字</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">src&#x2F;gz openwrt_core https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;targets&#x2F;ramips&#x2F;mt7621&#x2F;packages</span><br><span class="line">src&#x2F;gz openwrt_base https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;base</span><br><span class="line">src&#x2F;gz openwrt_packages  https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;packages</span><br><span class="line">src&#x2F;gz openwrt_luci https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;luci</span><br><span class="line">src&#x2F;gz openwrt_routing https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;routing</span><br><span class="line">src&#x2F;gz openwrt_freifunk https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;freifunk</span><br><span class="line">src&#x2F;gz openwrt_telephony https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;telephony</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="luci禁用缓存">luci禁用缓存</h3>
+<p>编辑/etc/config/luci</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">config internal &#39;ccache&#39;</span><br><span class="line">        option enable &#39;0&#39;</span><br></pre></td></tr></table></figure>
+<p>重启即可</p>
+<h3 id="扩容root分区">扩容root分区</h3>
+<p>安装依赖</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">opkg update &amp;&amp; opkg install block-mount kmod-fs-ext4 kmod-usb-storage kmod-usb-ohci kmod-usb-uhci e2fsprogs fdisk</span><br></pre></td></tr></table></figure>
+<p>查看sd卡信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">block info</span><br></pre></td></tr></table></figure>
+<p>有类似回显，其中<code>/dev/mmcblk0p1</code>就是sd卡</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;dev&#x2F;mtdblock5: UUID&#x3D;&quot;d1f1302b-91ce24ca-2c74336e-eea51b51&quot; VERSION&#x3D;&quot;4.0&quot; MOUNT&#x3D;&quot;&#x2F;rom&quot; TYPE&#x3D;&quot;squashfs&quot;</span><br><span class="line">&#x2F;dev&#x2F;mtdblock6: MOUNT&#x3D;&quot;&#x2F;overlay&quot; TYPE&#x3D;&quot;jffs2&quot;</span><br><span class="line">&#x2F;dev&#x2F;mmcblk0p1: UUID&#x3D;&quot;746ffc51-1f29-2646-b2cb-fc2c03fe3c1a&quot; LABEL&#x3D;&quot;sdcard&quot; VERSION&#x3D;&quot;1.0&quot; TYPE&#x3D;&quot;ext4&quot;</span><br></pre></td></tr></table></figure>
+<p>格式化内存卡</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/mmcblk0p1</span><br></pre></td></tr></table></figure>
+<p>将下面的DEVICE换成你的sd卡分区</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">DEVICE=<span class="string">&quot;/dev/mmcblk0p1&quot;</span></span><br><span class="line"><span class="built_in">eval</span> $(block info <span class="string">&quot;<span class="variable">$&#123;DEVICE&#125;</span>&quot;</span> | grep -o -e <span class="string">&quot;UUID=\S*&quot;</span>)</span><br><span class="line">uci -q delete fstab.overlay</span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay=<span class="string">&quot;mount&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.uuid=<span class="string">&quot;<span class="variable">$&#123;UUID&#125;</span>&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.target=<span class="string">&quot;/overlay&quot;</span></span><br><span class="line">uci commit fstab</span><br></pre></td></tr></table></figure>
+<p>转移数据</p>
+<p>如有报错请先查看否自动挂载了sd卡，挂载sd卡时也可能出现如下报错，实测不影响。</p>
+<p>报错信息：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">root@GL-MT1300:~<span class="comment"># mount /dev/mmcblk0p1 /mnt/</span></span><br><span class="line">NTFS signature is missing.</span><br><span class="line">Failed to mount <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span>: Invalid argument</span><br><span class="line">The device <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span> doesn<span class="string">&#x27;t seem to have a valid NTFS.</span></span><br><span class="line"><span class="string">Maybe the wrong device is used? Or the whole disk instead of a</span></span><br><span class="line"><span class="string">partition (e.g. /dev/sda, not /dev/sda1)? Or the other way around?</span></span><br></pre></td></tr></table></figure>
+<p>执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mount &#x2F;dev&#x2F;mmcblk0p1 &#x2F;mnt</span><br><span class="line">cp -f -a &#x2F;overlay&#x2F;. &#x2F;mnt</span><br><span class="line">umount &#x2F;mnt</span><br></pre></td></tr></table></figure>
+<p>然后重启</p>
+<p>扩展分区前</p>
+<p><img src="image-20210122191844339.png" /></p>
+<p>扩展分区后</p>
+<p><img src="image-20210122191907269.png" /></p>
+<h3 id="单独编译openwrt-ipk">单独编译openwrt ipk</h3>
+<p>先执行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">make menuconfig </span><br></pre></td></tr></table></figure>
+<p>然后选中相关组件</p>
+<p>再执行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">make package&#x2F;feeds&#x2F;luci&#x2F;luci-base&#x2F;compile -j1 V&#x3D;s</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>MT7621</tag>
+        <tag>OpenWRT</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>记一次重装系统</title>
     <url>/p/an-experience-of-reinstalling-win10/</url>
     <content><![CDATA[<p>本文主要介绍了如何使用U盘进行重装系统，主要面向电脑小白用户。</p>
@@ -7803,58 +7855,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记MT7621平台刷入OpenWRT</title>
-    <url>/p/how-to-config-OpenWRT/</url>
-    <content><![CDATA[<p>什么是OpenWRT？</p>
-<a id="more"></a>
-<hr />
-<h3 id="安装luci相关">安装luci相关</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg install luci luci-base luci-i18n-base-zh-cn</span><br></pre></td></tr></table></figure>
-<h3 id="开启sftp">开启sftp</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install vsftpd openssh-sftp-server</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;vsftpd enable</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;vsftpd start</span><br></pre></td></tr></table></figure>
-<h3 id="opkg-腾讯源">opkg 腾讯源</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;opkg&#x2F;distfeeds.conf</span><br></pre></td></tr></table></figure>
-<p>写入以下文字</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">src&#x2F;gz openwrt_core https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;targets&#x2F;ramips&#x2F;mt7621&#x2F;packages</span><br><span class="line">src&#x2F;gz openwrt_base https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;base</span><br><span class="line">src&#x2F;gz openwrt_packages  https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;packages</span><br><span class="line">src&#x2F;gz openwrt_luci https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;luci</span><br><span class="line">src&#x2F;gz openwrt_routing https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;routing</span><br><span class="line">src&#x2F;gz openwrt_freifunk https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;freifunk</span><br><span class="line">src&#x2F;gz openwrt_telephony https:&#x2F;&#x2F;mirrors.cloud.tencent.com&#x2F;openwrt&#x2F;releases&#x2F;19.07.2&#x2F;packages&#x2F;mipsel_24kc&#x2F;telephony</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="luci禁用缓存">luci禁用缓存</h3>
-<p>编辑/etc/config/luci</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">config internal &#39;ccache&#39;</span><br><span class="line">        option enable &#39;0&#39;</span><br></pre></td></tr></table></figure>
-<p>重启即可</p>
-<h3 id="扩容root分区">扩容root分区</h3>
-<p>安装依赖</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">opkg update &amp;&amp; opkg install block-mount kmod-fs-ext4 kmod-usb-storage kmod-usb-ohci kmod-usb-uhci e2fsprogs fdisk</span><br></pre></td></tr></table></figure>
-<p>查看sd卡信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">block info</span><br></pre></td></tr></table></figure>
-<p>有类似回显，其中<code>/dev/mmcblk0p1</code>就是sd卡</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;dev&#x2F;mtdblock5: UUID&#x3D;&quot;d1f1302b-91ce24ca-2c74336e-eea51b51&quot; VERSION&#x3D;&quot;4.0&quot; MOUNT&#x3D;&quot;&#x2F;rom&quot; TYPE&#x3D;&quot;squashfs&quot;</span><br><span class="line">&#x2F;dev&#x2F;mtdblock6: MOUNT&#x3D;&quot;&#x2F;overlay&quot; TYPE&#x3D;&quot;jffs2&quot;</span><br><span class="line">&#x2F;dev&#x2F;mmcblk0p1: UUID&#x3D;&quot;746ffc51-1f29-2646-b2cb-fc2c03fe3c1a&quot; LABEL&#x3D;&quot;sdcard&quot; VERSION&#x3D;&quot;1.0&quot; TYPE&#x3D;&quot;ext4&quot;</span><br></pre></td></tr></table></figure>
-<p>格式化内存卡</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/mmcblk0p1</span><br></pre></td></tr></table></figure>
-<p>将下面的DEVICE换成你的sd卡分区</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">DEVICE=<span class="string">&quot;/dev/mmcblk0p1&quot;</span></span><br><span class="line"><span class="built_in">eval</span> $(block info <span class="string">&quot;<span class="variable">$&#123;DEVICE&#125;</span>&quot;</span> | grep -o -e <span class="string">&quot;UUID=\S*&quot;</span>)</span><br><span class="line">uci -q delete fstab.overlay</span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay=<span class="string">&quot;mount&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.uuid=<span class="string">&quot;<span class="variable">$&#123;UUID&#125;</span>&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.target=<span class="string">&quot;/overlay&quot;</span></span><br><span class="line">uci commit fstab</span><br></pre></td></tr></table></figure>
-<p>转移数据</p>
-<p>如有报错请先查看否自动挂载了sd卡，挂载sd卡时也可能出现如下报错，实测不影响。</p>
-<p>报错信息：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">root@GL-MT1300:~<span class="comment"># mount /dev/mmcblk0p1 /mnt/</span></span><br><span class="line">NTFS signature is missing.</span><br><span class="line">Failed to mount <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span>: Invalid argument</span><br><span class="line">The device <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span> doesn<span class="string">&#x27;t seem to have a valid NTFS.</span></span><br><span class="line"><span class="string">Maybe the wrong device is used? Or the whole disk instead of a</span></span><br><span class="line"><span class="string">partition (e.g. /dev/sda, not /dev/sda1)? Or the other way around?</span></span><br></pre></td></tr></table></figure>
-<p>执行以下命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mount &#x2F;dev&#x2F;mmcblk0p1 &#x2F;mnt</span><br><span class="line">cp -f -a &#x2F;overlay&#x2F;. &#x2F;mnt</span><br><span class="line">umount &#x2F;mnt</span><br></pre></td></tr></table></figure>
-<p>然后重启</p>
-<p>扩展分区前</p>
-<p><img src="image-20210122191844339.png" /></p>
-<p>扩展分区后</p>
-<p><img src="image-20210122191907269.png" /></p>
-<h3 id="单独编译openwrt-ipk">单独编译openwrt ipk</h3>
-<p>先执行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">make menuconfig </span><br></pre></td></tr></table></figure>
-<p>然后选中相关组件</p>
-<p>再执行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">make package&#x2F;feeds&#x2F;luci&#x2F;luci-base&#x2F;compile -j1 V&#x3D;s</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>MT7621</tag>
-        <tag>OpenWRT</tag>
       </tags>
   </entry>
   <entry>
