@@ -6121,6 +6121,67 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>利用heroku实现自动发布博客</title>
+    <url>/p/automate-blog-posting-with-heroku/</url>
+    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
+<p>关键词：<strong>heroku，自动化构建</strong></p>
+<a id="more"></a>
+<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
+<h3 id="安装">安装</h3>
+<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
+<h3 id="登录">登录</h3>
+<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
+<p>如果出现Logged in as 则表示登陆成功。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
+<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
+<p><img src="image-20220409100956279.png" /></p>
+<p>为了简化步骤，这里先使用第一种方式。</p>
+<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
+<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
+<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
+<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
+<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
+<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
+<p><img src="image-20220409125928022.png" /></p>
+<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
+<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
+<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
+<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
+]]></content>
+      <tags>
+        <tag>heroku</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: nums &#x3D; [-1, 0, 3, 5, 9, 12], target &#x3D; 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img src="新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>初探docker(三)</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -6303,67 +6364,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>利用heroku实现自动发布博客</title>
-    <url>/p/automate-blog-posting-with-heroku/</url>
-    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
-<p>关键词：<strong>heroku，自动化构建</strong></p>
-<a id="more"></a>
-<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
-<h3 id="安装">安装</h3>
-<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
-<h3 id="登录">登录</h3>
-<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
-<p>如果出现Logged in as 则表示登陆成功。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
-<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
-<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
-<p><img src="image-20220409100956279.png" /></p>
-<p>为了简化步骤，这里先使用第一种方式。</p>
-<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
-<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
-<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
-<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
-<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
-<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
-<p><img src="image-20220409125928022.png" /></p>
-<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
-<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
-<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
-<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
-]]></content>
-      <tags>
-        <tag>heroku</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之二分法</title>
-    <url>/p/binary-search/</url>
-    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: nums &#x3D; [-1, 0, 3, 5, 9, 12], target &#x3D; 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
-<p>定义target在左闭右闭区间[left, right]内：</p>
-<ul>
-<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
-<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
-</ul>
-<p><strong>示意图</strong></p>
-<p><img src="新建位图图像.bmp" /></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
