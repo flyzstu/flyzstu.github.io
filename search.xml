@@ -4543,6 +4543,30 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>crontab定时任务不执行</title>
+    <url>/p/crontab-does-not-work/</url>
+    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
+<p><strong>关键词：crontab定时计划任务不执行</strong></p>
+<a id="more"></a>
+<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
+<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
+<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
+<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
+<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
+<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
+<h5 id="附录linux重定向">附录：linux重定向</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
+<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
+<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
+<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
+]]></content>
+      <tags>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker in docker</title>
     <url>/p/docker-in-docker/</url>
     <content><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
@@ -4602,30 +4626,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>crontab定时任务不执行</title>
-    <url>/p/crontab-does-not-work/</url>
-    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
-<p><strong>关键词：crontab定时计划任务不执行</strong></p>
-<a id="more"></a>
-<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
-<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
-<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
-<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
-<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
-<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
-<h5 id="附录linux重定向">附录：linux重定向</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
-<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
-<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
-<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
-]]></content>
-      <tags>
-        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
@@ -5153,35 +5153,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用PyTorch进行MNIST识别</title>
-    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
-    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
-<a id="more"></a>
-<h5 id="数据集部分">数据集部分：</h5>
-<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
-<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
-<h5 id="网络定义部分">网络定义部分：</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
-<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
-<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
-<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
-<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
-<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
-<p><strong>详细描述：</strong></p>
-<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
-<h5 id="卷积计算公式">卷积计算公式：</h5>
-<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
-<h5 id="池化计算公式">池化计算公式：</h5>
-<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-        <tag>CNN</tag>
-        <tag>MNIST</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu配置jdk-12环境</title>
     <url>/p/install-jdk12-on-ubuntu2004/</url>
     <content><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p>
@@ -5217,6 +5188,35 @@ y=x^2e^x
       <tags>
         <tag>linux</tag>
         <tag>jdk</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用PyTorch进行MNIST识别</title>
+    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
+    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
+<a id="more"></a>
+<h5 id="数据集部分">数据集部分：</h5>
+<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
+<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
+<h5 id="网络定义部分">网络定义部分：</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
+<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
+<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
+<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
+<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
+<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
+<p><strong>详细描述：</strong></p>
+<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
+<h5 id="卷积计算公式">卷积计算公式：</h5>
+<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
+<h5 id="池化计算公式">池化计算公式：</h5>
+<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+        <tag>CNN</tag>
+        <tag>MNIST</tag>
       </tags>
   </entry>
   <entry>
@@ -6726,25 +6726,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <url>/p/swap-nodes-in-pairs/</url>
-    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="swap_ex1.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
-<p><img src="image-20220214194056147.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣每日一题之适龄的朋友</title>
     <url>/p/friends-of-appropriate-ages/</url>
     <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
@@ -6781,6 +6762,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <url>/p/swap-nodes-in-pairs/</url>
+    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="swap_ex1.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
+<p><img src="image-20220214194056147.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -6865,6 +6865,29 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之链表相交</title>
+    <url>/p/intersection-of-two-linked-lists-lcci/</url>
+    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Intersected at &#39;8&#39;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
+<ul>
+<li>a + c + b = b + c + a</li>
+<li>若无交集，则a + b = b + a</li>
+</ul>
+<p><img src="image-20220216162953801.png" /></p>
+<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣题目类型之回溯法（一）</title>
     <url>/p/back-tracking-one/</url>
     <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
@@ -6900,29 +6923,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之链表相交</title>
-    <url>/p/intersection-of-two-linked-lists-lcci/</url>
-    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Intersected at &#39;8&#39;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
-<ul>
-<li>a + c + b = b + c + a</li>
-<li>若无交集，则a + b = b + a</li>
-</ul>
-<p><img src="image-20220216162953801.png" /></p>
-<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
