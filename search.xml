@@ -1495,6 +1495,30 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux之crontab定时任务</title>
+    <url>/p/how-to-use-crontab/</url>
+    <content><![CDATA[<p>Linux中的crontab - - - -一个自定义定时器</p>
+<a id="more"></a>
+<h5 id="crontab命令">1.crontab命令</h5>
+<p>重新指定crobtab定时任务文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab $filepath</span><br></pre></td></tr></table></figure>
+<p>查看crontab定时任务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
+<p>编辑、安装定时任务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p><strong>2.crontab时间举例</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 每天早上6点 </span></span><br><span class="line">0 6 * * * echo &quot;Good morning.&quot; &gt;&gt; /tmp/test.txt //注意单纯echo，从屏幕上看不到任何输出，因为cron把任何输出都email到root的信箱了。</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每两个小时 </span></span><br><span class="line">0 */2 * * * echo &quot;Have a break now.&quot; &gt;&gt; /tmp/test.txt  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 晚上11点到早上8点之间每两个小时和早上八点 </span></span><br><span class="line">0 23-7/2，8 * * * echo &quot;Have a good dream&quot; &gt;&gt; /tmp/test.txt</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点 </span></span><br><span class="line">0 11 4 * 1-3 command line</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 1月1日早上4点 </span></span><br><span class="line">0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/ </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每小时（第一分钟）执行/etc/cron.hourly内的脚本</span></span><br><span class="line">01 * * * * root run-parts /etc/cron.hourly</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天（凌晨4：02）执行/etc/cron.daily内的脚本</span></span><br><span class="line">02 4 * * * root run-parts /etc/cron.daily </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每星期（周日凌晨4：22）执行/etc/cron.weekly内的脚本</span></span><br><span class="line">22 4 * * 0 root run-parts /etc/cron.weekly </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每月（1号凌晨4：42）去执行/etc/cron.monthly内的脚本 </span></span><br><span class="line">42 4 1 * * root run-parts /etc/cron.monthly </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 注意:  <span class="string">&quot;run-parts&quot;</span>这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名。 　 </span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。 </span></span><br><span class="line">5，15，25，35，45，55 16，17，18 * * * command</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每周一，三，五的下午3：00系统进入维护状态，重新启动系统。</span></span><br><span class="line">00 15 * *1，3，5 shutdown -r +5</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每小时的10分，40分执行用户目录下的innd/bbslin这个指令： </span></span><br><span class="line">10，40 * * * * innd/bbslink </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每小时的1分执行用户目录下的bin/account这个指令： </span></span><br><span class="line">1 * * * * bin/account</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每1分钟执行以下命令</span></span><br><span class="line">*/1 * * * * bin/python</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天早晨三点二十分执行用户目录下如下所示的两个指令（每个指令以;分隔）： </span></span><br><span class="line">203 * * * （/bin/rm -f expire.ls logins.bad;bin/expire$#@62;expire.1st）　</span><br></pre></td></tr></table></figure>
+<h5 id="crontab任务举例">3.crontab任务举例</h5>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">*/5 * * * * /bin/bash /root/kaoyan/tiaoji.sh</span><br></pre></td></tr></table></figure>
+<p>sh写法举例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin</span><br><span class="line">export PATH</span><br><span class="line"></span><br><span class="line">cd /root/kaoyan</span><br><span class="line">/root/***/python3 *.py &gt;&gt; /root/****/*.log 2&gt;&amp;1</span><br><span class="line"><span class="meta">#</span><span class="bash">将所有输出写入日志文件</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang LogAgent 项目实战（一）</title>
     <url>/p/LogAgent-project-action-in-golang-1/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1544,30 +1568,6 @@
 ]]></content>
       <tags>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux之crontab定时任务</title>
-    <url>/p/how-to-use-crontab/</url>
-    <content><![CDATA[<p>Linux中的crontab - - - -一个自定义定时器</p>
-<a id="more"></a>
-<h5 id="crontab命令">1.crontab命令</h5>
-<p>重新指定crobtab定时任务文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab $filepath</span><br></pre></td></tr></table></figure>
-<p>查看crontab定时任务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
-<p>编辑、安装定时任务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p><strong>2.crontab时间举例</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 每天早上6点 </span></span><br><span class="line">0 6 * * * echo &quot;Good morning.&quot; &gt;&gt; /tmp/test.txt //注意单纯echo，从屏幕上看不到任何输出，因为cron把任何输出都email到root的信箱了。</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每两个小时 </span></span><br><span class="line">0 */2 * * * echo &quot;Have a break now.&quot; &gt;&gt; /tmp/test.txt  </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 晚上11点到早上8点之间每两个小时和早上八点 </span></span><br><span class="line">0 23-7/2，8 * * * echo &quot;Have a good dream&quot; &gt;&gt; /tmp/test.txt</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点 </span></span><br><span class="line">0 11 4 * 1-3 command line</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 1月1日早上4点 </span></span><br><span class="line">0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/ </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每小时（第一分钟）执行/etc/cron.hourly内的脚本</span></span><br><span class="line">01 * * * * root run-parts /etc/cron.hourly</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天（凌晨4：02）执行/etc/cron.daily内的脚本</span></span><br><span class="line">02 4 * * * root run-parts /etc/cron.daily </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每星期（周日凌晨4：22）执行/etc/cron.weekly内的脚本</span></span><br><span class="line">22 4 * * 0 root run-parts /etc/cron.weekly </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每月（1号凌晨4：42）去执行/etc/cron.monthly内的脚本 </span></span><br><span class="line">42 4 1 * * root run-parts /etc/cron.monthly </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 注意:  <span class="string">&quot;run-parts&quot;</span>这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名。 　 </span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。 </span></span><br><span class="line">5，15，25，35，45，55 16，17，18 * * * command</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每周一，三，五的下午3：00系统进入维护状态，重新启动系统。</span></span><br><span class="line">00 15 * *1，3，5 shutdown -r +5</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每小时的10分，40分执行用户目录下的innd/bbslin这个指令： </span></span><br><span class="line">10，40 * * * * innd/bbslink </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每小时的1分执行用户目录下的bin/account这个指令： </span></span><br><span class="line">1 * * * * bin/account</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每1分钟执行以下命令</span></span><br><span class="line">*/1 * * * * bin/python</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天早晨三点二十分执行用户目录下如下所示的两个指令（每个指令以;分隔）： </span></span><br><span class="line">203 * * * （/bin/rm -f expire.ls logins.bad;bin/expire$#@62;expire.1st）　</span><br></pre></td></tr></table></figure>
-<h5 id="crontab任务举例">3.crontab任务举例</h5>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">*/5 * * * * /bin/bash /root/kaoyan/tiaoji.sh</span><br></pre></td></tr></table></figure>
-<p>sh写法举例</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin</span><br><span class="line">export PATH</span><br><span class="line"></span><br><span class="line">cd /root/kaoyan</span><br><span class="line">/root/***/python3 *.py &gt;&gt; /root/****/*.log 2&gt;&amp;1</span><br><span class="line"><span class="meta">#</span><span class="bash">将所有输出写入日志文件</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
@@ -2725,178 +2725,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python中的map函数</title>
-    <url>/p/how-map-functions-works-in-Python/</url>
-    <content><![CDATA[<p>Python内建了map()函数。</p>
-<a id="more"></a>
-<p>Python内建了map()函数。</p>
-<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
-<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
-<p>下面来看Python代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
-<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
-<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
-<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
-<blockquote>
-<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
-</blockquote>
-<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
-<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
-<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
-<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
-<p>只需要一行代码。</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python列表生成式</title>
-    <url>/p/list-generation-in-python/</url>
-    <content><![CDATA[<p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。</p>
-<p><strong>关键词</strong>：Python，列表</p>
-<a id="more"></a>
-<h4 id="列表生成式">列表生成式</h4>
-<p>举个例子，要生成list<code>[1,2,3,4,5,6,7,8,9]</code>可以用<code>list(range(1, 11))</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">1</span>, <span class="number">11</span>))</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
-<p>若想生成上述列表对应值的平方，应该怎么办？</p>
-<p>一种方法是循环：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>):</span><br><span class="line"><span class="meta">... </span>   	L.append(x * x)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>L</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ..., <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p>但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">11</span>)]</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ... , <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>写列表生成式时，把要生成的元素<code>x*x</code>放在前面，后面跟<code>for</code>循环，就可以创建对应的列表。</strong></p>
-<p>for循环后面还可以加上<code>if</code>判断，这样我们就可以筛选出仅偶数的平方：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">16</span>, <span class="number">26</span>, <span class="number">64</span>, <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p>还可以使用两层循环，可以生成全排列：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[m + n <span class="keyword">for</span> m <span class="keyword">in</span> <span class="string">&#x27;ABC&#x27;</span> <span class="keyword">for</span> n <span class="keyword">in</span> <span class="string">&#x27;XYZ&#x27;</span>]</span><br><span class="line">[<span class="string">&#x27;AX&#x27;</span>, <span class="string">&#x27;AY&#x27;</span>, <span class="string">&#x27;AZ&#x27;</span>, <span class="string">&#x27;BX&#x27;</span>, <span class="string">&#x27;BY&#x27;</span>, <span class="string">&#x27;BZ&#x27;</span>, <span class="string">&#x27;CX&#x27;</span>, <span class="string">&#x27;CY&#x27;</span>, <span class="string">&#x27;CZ&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>使用列表生成式，可以写出非常简洁的代码。例如列出当前目录下的所有文件和目录名，可以通过一行代码实现：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[d <span class="keyword">for</span> d <span class="keyword">in</span> os.listdir(<span class="string">&#x27;.&#x27;</span>)] </span><br><span class="line"><span class="comment"># 省略输出</span></span><br></pre></td></tr></table></figure>
-<p>Python的for循环可以使用两个甚至多个变量，比如<code>dict</code>的<code>items()</code>就可以同时迭代key和value：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> k, v <span class="keyword">in</span> d.items():</span><br><span class="line">...		print(k, <span class="string">&#x27;=&#x27;</span>, v)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line">x = A</span><br><span class="line">y = B</span><br><span class="line">z = C</span><br></pre></td></tr></table></figure>
-<p>因此列表生成式也可以用两个变量来生成list：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[k +<span class="string">&#x27;=&#x27;</span> v <span class="keyword">for</span> k, v <span class="keyword">in</span> d.items()]</span><br><span class="line">[<span class="string">&#x27;x=A&#x27;</span>, <span class="string">&#x27;y=B&#x27;</span>, <span class="string">&#x27;z=C&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>还可以使用列表生成式把所有的字符串变成小写：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = [<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>, <span class="string">&#x27;IBM&#x27;</span>, <span class="string">&#x27;Apple&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L]</span><br><span class="line">[<span class="string">&#x27;hello&#x27;</span>, <span class="string">&#x27;world&#x27;</span>, <span class="string">&#x27;ibm&#x27;</span>, <span class="string">&#x27;apple&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h4 id="if-...-else">if ... else</h4>
-<p>使用列表生成式时，经常搞不清楚<code>if...else</code>的用法。</p>
-<p>例如，以下代码可以正常输出偶数：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>但是</strong>，我们无法在最后的<code>if</code>加上<code>else</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
-<p>这是因为跟在<code>for</code>后面的<code>if</code>是一个筛选条件，不能带<code>else</code>.</p>
-<p>如果把<code>if</code>写在<code>for</code> 前面必须加<code>else</code>，否则报错：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
-<p>这是因为<code>for</code>前面的部分是一个表达式，必须根据<code>x</code>计算出一个结果。因此，考察表达式：<code>x if x % 2 == 0</code>，它无法根据<code>x</code>计算出结果，因此必须加上<code>else</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line"><span class="number">-1</span>, <span class="number">2</span>, <span class="number">-3</span>, <span class="number">4</span>, <span class="number">-5</span>, <span class="number">6</span>, <span class="number">-7</span>, <span class="number">8</span>, <span class="number">-9</span>, <span class="number">10</span></span><br></pre></td></tr></table></figure>
-<p>上述<code>for</code>前面的表达式<code>x if x % 2 == 0 else -x</code>才能根据<code>x</code>计算出确定的结果。</p>
-<p>可见，在一个列表生成式中，<code>for</code>前面的<code>if ... else</code>是表达式，而<code>for</code> 后面的<code>if</code>的过滤条件，不能带<code>else</code>.</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>list</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python升级pip</title>
-    <url>/p/how-to-upgrade%20pip-in-python/</url>
-    <content><![CDATA[<p>安装pip：<code>apt install python3-pip</code></p>
-<p>升级pip：<code>python -m pip install --upgrade pip</code></p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>pip</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python多线程的应用</title>
-    <url>/p/how-to-use-python-multithreading/</url>
-    <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
-<ul>
-<li>每个进程至少有一个线程，作为程序的入口，这个线程就是主线程。</li>
-<li>每个进程至少有一个主线程，其他线程成为工作线程。</li>
-<li>父线程：如果线程A启动了一个线程B，A就是B的父线程。</li>
-<li>子线程：B就是A的子线程。</li>
-</ul>
-<a id="more"></a>
-<h4 id="使用threading.thread模块创建线程">使用threading.Thread模块创建线程</h4>
-<p>Python3通过threading包提供对线程的支持。</p>
-<h5 id="简单使用">简单使用</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s, time_loop</span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line">        print(<span class="string">f&quot;The delay is <span class="subst">&#123;delay_s&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">2</span>, <span class="number">2</span>]).start()</span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">1</span>, <span class="number">1</span>]).start()</span><br></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<p>程序运行到12行时，启动子线程1执行say_hello(2, 2)，此时主线程继续向下执行；</p>
-<p>程序运行到13行时，启动子线程2执行say_hello(1, 1)，此次主线程执行完毕，等待子线程执行完毕。</p>
-<p>1秒后子线程2先执行完毕，切换到另一个子线程1继续执行。</p>
-<h5 id="daemon属性的设置">daemon属性的设置</h5>
-<p>Python中，在构造线程对象时，可以设置<code>daemon</code>属性，这个属性必须在start方法前设置好。</p>
-<p>主线程是程序启动第一个线程，主线程可以在启动<code>n</code>个子线程。</p>
-<p>daemon属性可以不设置，默认为<code>None</code>，主线程默认是<code>False</code>。</p>
-<p>daemon属性分为以下三种：</p>
-<h6 id="daemonfalse">daemon=False</h6>
-<p>当<code>daemon</code>属性为<code>False</code>时，父线程在运行完毕时，会等待所有子线程退出才结束程序。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果：</p>
-<p>通过<code>isDaemon()</code>方法可以返回当前线程的<code>daemon</code>值，主线程默认是<code>False</code>，子线程也是<code>False</code>的原因是创建线程对象时指定了<code>daemon=False</code>.</p>
-<p>主程序在构造线程对象时就立即启动了，然后子线程返回了结果中的第一行内容，然后sleep(1)模拟IO，此时CPU发现子线程阻塞了，马上切换到主线程继续执行，主线程先后打印第二行和第三行，此时主线程的代码已经执行到结尾。</p>
-<p>因为主线程为子线程的<code>daemon</code>值设置为<code>False</code>，这时就又发生了线程切换到子线程，子线程先后执行完第四行和第五行，然后子线程就全部执行完毕，主线程看到子线程退出后，也立即退出，整个程序结束。</p>
-<h6 id="daemontrue">daemon=True</h6>
-<p>当<code>daemon</code>为<code>True</code>时，父线程在执行完毕后，无论子线程是否正在运行，都会伴随父进程一起退出。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果：</p>
-<p>当daemon设置为True时，即主线程不关心子线程状态，主线程退出，子线程也必须跟着退出。</p>
-<p>运行结果中子线程就执行了一行语句，此时CPU发现子线程阻塞，线程切换到主线程，主线程执行完最后两句，就立即退出，整个程序结束。</p>
-<h6 id="daemonnone">daemon=None</h6>
-<p>daemon属性可以不设置，默认值是None。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_grandson_thread</span>():</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        print(<span class="string">f&quot;say_grandson_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_son_thread</span>(<span class="params">time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_son_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        threading.Thread(target=say_grandson_thread, daemon=<span class="literal">None</span>).start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_son_thread, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<p>这里在主线程中使用了延迟1秒，来让子线程启动的子线程有机会输出其daemon属性值，如果不设置延迟，还没等到子线程的子线程启动，子线程就结束了，最终导致子线程的子线程无法启动。</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python时间处理</title>
-    <url>/p/time-processing-in-python/</url>
-    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
-<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
-<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
-<a id="more"></a>
-<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
-<p>datetime 是Python处理日期和时间的标准库。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
-<h4 id="打印当地时间">打印当地时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
-<h4 id="unix时间戳转换">unix时间戳转换</h4>
-<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
-<ul>
-<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
-<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
-<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
-<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
-<ul>
-<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
-<li>利用<code>strftime()</code>函数重新格式化为时间</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
-<p>参考链接</p>
-<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python中正则表达式用法</title>
     <url>/p/regular-expression-usage-in-python/</url>
     <content><![CDATA[<h4 id="正则表达式全集">正则表达式全集</h4>
@@ -3604,6 +3432,243 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python中的map函数</title>
+    <url>/p/how-map-functions-works-in-Python/</url>
+    <content><![CDATA[<p>Python内建了map()函数。</p>
+<a id="more"></a>
+<p>Python内建了map()函数。</p>
+<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
+<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
+<p>下面来看Python代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
+<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
+<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
+<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
+<blockquote>
+<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
+</blockquote>
+<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
+<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
+<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
+<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>只需要一行代码。</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python列表生成式</title>
+    <url>/p/list-generation-in-python/</url>
+    <content><![CDATA[<p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。</p>
+<p><strong>关键词</strong>：Python，列表</p>
+<a id="more"></a>
+<h4 id="列表生成式">列表生成式</h4>
+<p>举个例子，要生成list<code>[1,2,3,4,5,6,7,8,9]</code>可以用<code>list(range(1, 11))</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">1</span>, <span class="number">11</span>))</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p>若想生成上述列表对应值的平方，应该怎么办？</p>
+<p>一种方法是循环：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>):</span><br><span class="line"><span class="meta">... </span>   	L.append(x * x)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>L</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ..., <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p>但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">11</span>)]</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ... , <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>写列表生成式时，把要生成的元素<code>x*x</code>放在前面，后面跟<code>for</code>循环，就可以创建对应的列表。</strong></p>
+<p>for循环后面还可以加上<code>if</code>判断，这样我们就可以筛选出仅偶数的平方：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">16</span>, <span class="number">26</span>, <span class="number">64</span>, <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p>还可以使用两层循环，可以生成全排列：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[m + n <span class="keyword">for</span> m <span class="keyword">in</span> <span class="string">&#x27;ABC&#x27;</span> <span class="keyword">for</span> n <span class="keyword">in</span> <span class="string">&#x27;XYZ&#x27;</span>]</span><br><span class="line">[<span class="string">&#x27;AX&#x27;</span>, <span class="string">&#x27;AY&#x27;</span>, <span class="string">&#x27;AZ&#x27;</span>, <span class="string">&#x27;BX&#x27;</span>, <span class="string">&#x27;BY&#x27;</span>, <span class="string">&#x27;BZ&#x27;</span>, <span class="string">&#x27;CX&#x27;</span>, <span class="string">&#x27;CY&#x27;</span>, <span class="string">&#x27;CZ&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>使用列表生成式，可以写出非常简洁的代码。例如列出当前目录下的所有文件和目录名，可以通过一行代码实现：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[d <span class="keyword">for</span> d <span class="keyword">in</span> os.listdir(<span class="string">&#x27;.&#x27;</span>)] </span><br><span class="line"><span class="comment"># 省略输出</span></span><br></pre></td></tr></table></figure>
+<p>Python的for循环可以使用两个甚至多个变量，比如<code>dict</code>的<code>items()</code>就可以同时迭代key和value：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> k, v <span class="keyword">in</span> d.items():</span><br><span class="line">...		print(k, <span class="string">&#x27;=&#x27;</span>, v)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line">x = A</span><br><span class="line">y = B</span><br><span class="line">z = C</span><br></pre></td></tr></table></figure>
+<p>因此列表生成式也可以用两个变量来生成list：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[k +<span class="string">&#x27;=&#x27;</span> v <span class="keyword">for</span> k, v <span class="keyword">in</span> d.items()]</span><br><span class="line">[<span class="string">&#x27;x=A&#x27;</span>, <span class="string">&#x27;y=B&#x27;</span>, <span class="string">&#x27;z=C&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>还可以使用列表生成式把所有的字符串变成小写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = [<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>, <span class="string">&#x27;IBM&#x27;</span>, <span class="string">&#x27;Apple&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L]</span><br><span class="line">[<span class="string">&#x27;hello&#x27;</span>, <span class="string">&#x27;world&#x27;</span>, <span class="string">&#x27;ibm&#x27;</span>, <span class="string">&#x27;apple&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="if-...-else">if ... else</h4>
+<p>使用列表生成式时，经常搞不清楚<code>if...else</code>的用法。</p>
+<p>例如，以下代码可以正常输出偶数：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>但是</strong>，我们无法在最后的<code>if</code>加上<code>else</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>这是因为跟在<code>for</code>后面的<code>if</code>是一个筛选条件，不能带<code>else</code>.</p>
+<p>如果把<code>if</code>写在<code>for</code> 前面必须加<code>else</code>，否则报错：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>这是因为<code>for</code>前面的部分是一个表达式，必须根据<code>x</code>计算出一个结果。因此，考察表达式：<code>x if x % 2 == 0</code>，它无法根据<code>x</code>计算出结果，因此必须加上<code>else</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line"><span class="number">-1</span>, <span class="number">2</span>, <span class="number">-3</span>, <span class="number">4</span>, <span class="number">-5</span>, <span class="number">6</span>, <span class="number">-7</span>, <span class="number">8</span>, <span class="number">-9</span>, <span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p>上述<code>for</code>前面的表达式<code>x if x % 2 == 0 else -x</code>才能根据<code>x</code>计算出确定的结果。</p>
+<p>可见，在一个列表生成式中，<code>for</code>前面的<code>if ... else</code>是表达式，而<code>for</code> 后面的<code>if</code>的过滤条件，不能带<code>else</code>.</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>list</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python升级pip</title>
+    <url>/p/how-to-upgrade%20pip-in-python/</url>
+    <content><![CDATA[<p>安装pip：<code>apt install python3-pip</code></p>
+<p>升级pip：<code>python -m pip install --upgrade pip</code></p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>pip</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python多线程的应用</title>
+    <url>/p/how-to-use-python-multithreading/</url>
+    <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
+<ul>
+<li>每个进程至少有一个线程，作为程序的入口，这个线程就是主线程。</li>
+<li>每个进程至少有一个主线程，其他线程成为工作线程。</li>
+<li>父线程：如果线程A启动了一个线程B，A就是B的父线程。</li>
+<li>子线程：B就是A的子线程。</li>
+</ul>
+<a id="more"></a>
+<h4 id="使用threading.thread模块创建线程">使用threading.Thread模块创建线程</h4>
+<p>Python3通过threading包提供对线程的支持。</p>
+<h5 id="简单使用">简单使用</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s, time_loop</span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line">        print(<span class="string">f&quot;The delay is <span class="subst">&#123;delay_s&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">2</span>, <span class="number">2</span>]).start()</span><br><span class="line">threading.Thread(target=say_hello, args=[<span class="number">1</span>, <span class="number">1</span>]).start()</span><br></pre></td></tr></table></figure>
+<p>执行结果：</p>
+<p>程序运行到12行时，启动子线程1执行say_hello(2, 2)，此时主线程继续向下执行；</p>
+<p>程序运行到13行时，启动子线程2执行say_hello(1, 1)，此次主线程执行完毕，等待子线程执行完毕。</p>
+<p>1秒后子线程2先执行完毕，切换到另一个子线程1继续执行。</p>
+<h5 id="daemon属性的设置">daemon属性的设置</h5>
+<p>Python中，在构造线程对象时，可以设置<code>daemon</code>属性，这个属性必须在start方法前设置好。</p>
+<p>主线程是程序启动第一个线程，主线程可以在启动<code>n</code>个子线程。</p>
+<p>daemon属性可以不设置，默认为<code>None</code>，主线程默认是<code>False</code>。</p>
+<p>daemon属性分为以下三种：</p>
+<h6 id="daemonfalse">daemon=False</h6>
+<p>当<code>daemon</code>属性为<code>False</code>时，父线程在运行完毕时，会等待所有子线程退出才结束程序。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p>通过<code>isDaemon()</code>方法可以返回当前线程的<code>daemon</code>值，主线程默认是<code>False</code>，子线程也是<code>False</code>的原因是创建线程对象时指定了<code>daemon=False</code>.</p>
+<p>主程序在构造线程对象时就立即启动了，然后子线程返回了结果中的第一行内容，然后sleep(1)模拟IO，此时CPU发现子线程阻塞了，马上切换到主线程继续执行，主线程先后打印第二行和第三行，此时主线程的代码已经执行到结尾。</p>
+<p>因为主线程为子线程的<code>daemon</code>值设置为<code>False</code>，这时就又发生了线程切换到子线程，子线程先后执行完第四行和第五行，然后子线程就全部执行完毕，主线程看到子线程退出后，也立即退出，整个程序结束。</p>
+<h6 id="daemontrue">daemon=True</h6>
+<p>当<code>daemon</code>为<code>True</code>时，父线程在执行完毕后，无论子线程是否正在运行，都会伴随父进程一起退出。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_hello</span>(<span class="params">delay_s=<span class="number">1</span>, time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_hello daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">        time.sleep(delay_s)</span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_hello, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p>当daemon设置为True时，即主线程不关心子线程状态，主线程退出，子线程也必须跟着退出。</p>
+<p>运行结果中子线程就执行了一行语句，此时CPU发现子线程阻塞，线程切换到主线程，主线程执行完最后两句，就立即退出，整个程序结束。</p>
+<h6 id="daemonnone">daemon=None</h6>
+<p>daemon属性可以不设置，默认值是None。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_grandson_thread</span>():</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        print(<span class="string">f&quot;say_grandson_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">say_son_thread</span>(<span class="params">time_loop=<span class="number">3</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(time_loop):</span><br><span class="line">        print(<span class="string">f&quot;i = <span class="subst">&#123;i&#125;</span>, say_son_thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>\n&quot;</span>)</span><br><span class="line">        threading.Thread(target=say_grandson_thread, daemon=<span class="literal">None</span>).start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">threading.Thread(target=say_son_thread, daemon=<span class="literal">True</span>).start()</span><br><span class="line">print(<span class="string">f&quot;Main thread daemon is <span class="subst">&#123;threading.current_thread().isDaemon()&#125;</span>&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">print(<span class="string">&quot;Main thread daemon Exit.&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p>这里在主线程中使用了延迟1秒，来让子线程启动的子线程有机会输出其daemon属性值，如果不设置延迟，还没等到子线程的子线程启动，子线程就结束了，最终导致子线程的子线程无法启动。</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python时间处理</title>
+    <url>/p/time-processing-in-python/</url>
+    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
+<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
+<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
+<a id="more"></a>
+<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
+<p>datetime 是Python处理日期和时间的标准库。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
+<h4 id="打印当地时间">打印当地时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
+<h4 id="unix时间戳转换">unix时间戳转换</h4>
+<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
+<ul>
+<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
+<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
+<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
+<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
+<ul>
+<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
+<li>利用<code>strftime()</code>函数重新格式化为时间</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
+<p>参考链接</p>
+<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python的一些高级用法</title>
+    <url>/p/Some-advanced-usages-of-Python/</url>
+    <content><![CDATA[<p>此文介绍了一些Python的一些常见的高级用法。</p>
+<a id="more"></a>
+<h4 id="format格式化字符串">format格式化字符串</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">t = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime())</span><br></pre></td></tr></table></figure>
+<h5 id="按照位置来填充">按照位置来填充</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918213811743.png" /></p>
+<h6 id="同一个参数可以填充多次">同一个参数可以填充多次</h6>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;0&#125;---&#123;0&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918214059634.png" /></p>
+<h5 id="通过索引来填充">通过索引来填充</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;[0]&#125;&quot;</span>.format(s1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(l1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(t1))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918215314962.png" /></p>
+<p>另外一种写法</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;p[1]&#125;&quot;</span>.format(p=s1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=l1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=t1))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918215656093.png" /></p>
+<h4 id="三元运算符">三元运算符</h4>
+<p>固定格式</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[on_true]  if  [expression]  else [on_false]</span><br></pre></td></tr></table></figure>
+<p>上式表达的语义为：若<strong>表达式expression</strong>的结果为<strong>真</strong>，该式的结果是<strong>[on_true]</strong>；若<strong>表达式expression</strong>的结果为<strong>假</strong>，则该式的结果是<strong>[on_false]</strong></p>
+<p>例子</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br><span class="line">b = <span class="number">2</span></span><br><span class="line">c = a-b <span class="keyword">if</span> a&gt;b <span class="keyword">else</span> a+b</span><br></pre></td></tr></table></figure>
+<p><img src="Python的一些高级用法/image-20200918221607752.png" /></p>
+<h4 id="lambda表达式">Lambda表达式</h4>
+<p>Python使用Lambda表达式创建匿名函数</p>
+<ul>
+<li>Lambda只是一个表达式，函数体比def简单的多</li>
+<li>Lambda的主体是一个表达式，而不是一个代码块，只能在lambda表达式中封装有限的逻辑进去</li>
+<li>Lambda函数拥有自己的名字空间，且不能访问自有参数列表之外或全局名字空间里的参数。</li>
+<li>虽然lamda函数看起来只能写一行，却不等于C或C++的内联函数，后者是调用小函数时不占用内存，从而提升运行效率。</li>
+</ul>
+<p>Lambda表达式语法：<code>lambda argument_list: expression</code></p>
+<p>案例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">summary = <span class="keyword">lambda</span> x,y:x+y</span><br><span class="line">print(<span class="string">&quot;summary=&#123;&#125;&quot;</span>.format(summary(<span class="number">3</span>,<span class="number">4</span>)))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918230330027.png" /></p>
+<p>上述lambda表达式与以下函数等价</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">summary</span>(<span class="params">x, y</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918231354891.png" /></p>
+<h4 id="map函数">map函数</h4>
+<p>map是Python的高级函数，为函数式编程提供便利。</p>
+<p>形式为<code>map(func, *iterables)</code>：第一个参数func是一个函数的名字；第二个参数为一个可迭代对象。map将函数func应用于列表的所有元素。</p>
+<p>在Python3之前，map用于返回一个列表，其中结果列表的每个元素都是应用于列表或元组序列相应元素上的func结果。</p>
+<p>在Python3中，map返回一个迭代器。</p>
+<p>实例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">seq_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</span><br><span class="line">F = list(map(<span class="keyword">lambda</span> x:x*x, seq_list))</span><br><span class="line">print(F)</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918233144997.png" /></p>
+<p>map可以用于多个列表，列表不必有相同的长度。map会将<code>lambda函数</code>应用于参数列表的元素，即它首先应用于具有第0个索引的元素，然后应用于具有第一个索引的元素，直到第n个索引。</p>
+<p>如果一个列表的元素少于其他元素，当最短列表消耗完时，map结束迭代。</p>
+<p>示例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">b = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br><span class="line">c = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用到多个列表</span></span><br><span class="line">ab = list(map(<span class="keyword">lambda</span> x,y:x + y, a, b))</span><br><span class="line">print(ab)</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200920142041359.png" /></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 若其中一个列表的元素少于其他元素, 当最短列表消耗完时, map停止迭代</span></span><br><span class="line">ac = list(map(<span class="keyword">lambda</span> x,y:x + y, a, c))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200920142144318.png" /></p>
+<h4 id="filter函数">Filter函数</h4>
+<p>filter也是Python的高级函数，为函数式编程提供便利。其作用是对序列中元素进行筛选，最终获得符合条件的序列。其一般形式为<strong>filter(function, iterable)</strong>，函数提供了一种优雅的方式来过滤掉序列中那个的所有元素。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">number = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"><span class="comment"># 找到序列中的偶数</span></span><br><span class="line">double_number = list(filter(<span class="keyword">lambda</span> x:x % <span class="number">2</span> ==<span class="number">0</span>, number))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200920144322294.png" /></p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python科学计算库Numpy</title>
     <url>/p/an-introduction-to-numpy/</url>
     <content><![CDATA[<p><strong>摘要：</strong>Numpy是一个开源的Python科学计算库，它是Python科学计算库的基础库，许多其他著名的科学计算库如Pandas、Scikit-learn等，都要用的Numpy库的一些功能。</p>
@@ -3839,6 +3904,84 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>ROS系统学习小记(二)</title>
+    <url>/p/ROS-system-learning-notes-02/</url>
+    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
+<p><strong>关键词：</strong>ROS</p>
+<a id="more"></a>
+<h3 id="ros试用练习">ROS试用练习</h3>
+<h4 id="ros文件系统">ROS文件系统</h4>
+<p>我们通过命令行工具来浏览ROS的文件系统。</p>
+<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
+<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
+<p>你将要获得以下信息：</p>
+<p><img src="image-20201019194410801.png" /></p>
+<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
+<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
+<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
+<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
+<p><img src="image-20201019195209283.png" /></p>
+<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
+<p>将获得以下新路径：</p>
+<p><img src="image-20201019195406492.png" /></p>
+<h4 id="创建工作空间">创建工作空间</h4>
+<p>我们会在工作空间完成本书使用的所有代码。</p>
+<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
+<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
+<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
+<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
+<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
+<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
+<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
+<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
+<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
+<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
+<p>如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
+<p>这些依赖项主要包括以下几个：</p>
+<ul>
+<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
+<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
+</ul>
+<p>如果所有步骤一切顺利，结果如下图所示：</p>
+<p><img src="image-20201019202650647.png" /></p>
+<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
+<ul>
+<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
+<li>rospack find TEST：此命令用于查看依赖关系。</li>
+<li>rosls TEST：此命令用于查看内容</li>
+<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
+</ul>
+<h4 id="编译ros功能包">编译ROS功能包</h4>
+<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
+<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
+<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
+<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
+<p><img src="image-20201019204443411.png" /></p>
+<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
+<p>如果编译单个工具包，可以使用如下格式的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4003,71 +4146,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python的一些高级用法</title>
-    <url>/p/Some-advanced-usages-of-Python/</url>
-    <content><![CDATA[<p>此文介绍了一些Python的一些常见的高级用法。</p>
-<a id="more"></a>
-<h4 id="format格式化字符串">format格式化字符串</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">t = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime())</span><br></pre></td></tr></table></figure>
-<h5 id="按照位置来填充">按照位置来填充</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918213811743.png" /></p>
-<h6 id="同一个参数可以填充多次">同一个参数可以填充多次</h6>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;0&#125;---&#123;0&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918214059634.png" /></p>
-<h5 id="通过索引来填充">通过索引来填充</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;[0]&#125;&quot;</span>.format(s1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(l1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(t1))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918215314962.png" /></p>
-<p>另外一种写法</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;p[1]&#125;&quot;</span>.format(p=s1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=l1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=t1))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918215656093.png" /></p>
-<h4 id="三元运算符">三元运算符</h4>
-<p>固定格式</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[on_true]  if  [expression]  else [on_false]</span><br></pre></td></tr></table></figure>
-<p>上式表达的语义为：若<strong>表达式expression</strong>的结果为<strong>真</strong>，该式的结果是<strong>[on_true]</strong>；若<strong>表达式expression</strong>的结果为<strong>假</strong>，则该式的结果是<strong>[on_false]</strong></p>
-<p>例子</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br><span class="line">b = <span class="number">2</span></span><br><span class="line">c = a-b <span class="keyword">if</span> a&gt;b <span class="keyword">else</span> a+b</span><br></pre></td></tr></table></figure>
-<p><img src="Python的一些高级用法/image-20200918221607752.png" /></p>
-<h4 id="lambda表达式">Lambda表达式</h4>
-<p>Python使用Lambda表达式创建匿名函数</p>
-<ul>
-<li>Lambda只是一个表达式，函数体比def简单的多</li>
-<li>Lambda的主体是一个表达式，而不是一个代码块，只能在lambda表达式中封装有限的逻辑进去</li>
-<li>Lambda函数拥有自己的名字空间，且不能访问自有参数列表之外或全局名字空间里的参数。</li>
-<li>虽然lamda函数看起来只能写一行，却不等于C或C++的内联函数，后者是调用小函数时不占用内存，从而提升运行效率。</li>
-</ul>
-<p>Lambda表达式语法：<code>lambda argument_list: expression</code></p>
-<p>案例</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">summary = <span class="keyword">lambda</span> x,y:x+y</span><br><span class="line">print(<span class="string">&quot;summary=&#123;&#125;&quot;</span>.format(summary(<span class="number">3</span>,<span class="number">4</span>)))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918230330027.png" /></p>
-<p>上述lambda表达式与以下函数等价</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">summary</span>(<span class="params">x, y</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918231354891.png" /></p>
-<h4 id="map函数">map函数</h4>
-<p>map是Python的高级函数，为函数式编程提供便利。</p>
-<p>形式为<code>map(func, *iterables)</code>：第一个参数func是一个函数的名字；第二个参数为一个可迭代对象。map将函数func应用于列表的所有元素。</p>
-<p>在Python3之前，map用于返回一个列表，其中结果列表的每个元素都是应用于列表或元组序列相应元素上的func结果。</p>
-<p>在Python3中，map返回一个迭代器。</p>
-<p>实例</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">seq_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</span><br><span class="line">F = list(map(<span class="keyword">lambda</span> x:x*x, seq_list))</span><br><span class="line">print(F)</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918233144997.png" /></p>
-<p>map可以用于多个列表，列表不必有相同的长度。map会将<code>lambda函数</code>应用于参数列表的元素，即它首先应用于具有第0个索引的元素，然后应用于具有第一个索引的元素，直到第n个索引。</p>
-<p>如果一个列表的元素少于其他元素，当最短列表消耗完时，map结束迭代。</p>
-<p>示例</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">b = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br><span class="line">c = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用到多个列表</span></span><br><span class="line">ab = list(map(<span class="keyword">lambda</span> x,y:x + y, a, b))</span><br><span class="line">print(ab)</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200920142041359.png" /></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 若其中一个列表的元素少于其他元素, 当最短列表消耗完时, map停止迭代</span></span><br><span class="line">ac = list(map(<span class="keyword">lambda</span> x,y:x + y, a, c))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200920142144318.png" /></p>
-<h4 id="filter函数">Filter函数</h4>
-<p>filter也是Python的高级函数，为函数式编程提供便利。其作用是对序列中元素进行筛选，最终获得符合条件的序列。其一般形式为<strong>filter(function, iterable)</strong>，函数提供了一种优雅的方式来过滤掉序列中那个的所有元素。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">number = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"><span class="comment"># 找到序列中的偶数</span></span><br><span class="line">double_number = list(filter(<span class="keyword">lambda</span> x:x % <span class="number">2</span> ==<span class="number">0</span>, number))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200920144322294.png" /></p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4834,84 +4912,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ROS系统学习小记(二)</title>
-    <url>/p/ROS-system-learning-notes-02/</url>
-    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
-<p><strong>关键词：</strong>ROS</p>
-<a id="more"></a>
-<h3 id="ros试用练习">ROS试用练习</h3>
-<h4 id="ros文件系统">ROS文件系统</h4>
-<p>我们通过命令行工具来浏览ROS的文件系统。</p>
-<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
-<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
-<p>你将要获得以下信息：</p>
-<p><img src="image-20201019194410801.png" /></p>
-<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
-<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
-<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
-<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
-<p><img src="image-20201019195209283.png" /></p>
-<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
-<p>将获得以下新路径：</p>
-<p><img src="image-20201019195406492.png" /></p>
-<h4 id="创建工作空间">创建工作空间</h4>
-<p>我们会在工作空间完成本书使用的所有代码。</p>
-<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
-<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
-<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
-<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
-<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
-<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
-<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
-<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
-<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
-<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
-<p>如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
-<p>这些依赖项主要包括以下几个：</p>
-<ul>
-<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
-<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
-</ul>
-<p>如果所有步骤一切顺利，结果如下图所示：</p>
-<p><img src="image-20201019202650647.png" /></p>
-<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
-<ul>
-<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
-<li>rospack find TEST：此命令用于查看依赖关系。</li>
-<li>rosls TEST：此命令用于查看内容</li>
-<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
-</ul>
-<h4 id="编译ros功能包">编译ROS功能包</h4>
-<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
-<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
-<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
-<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
-<p><img src="image-20201019204443411.png" /></p>
-<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
-<p>如果编译单个工具包，可以使用如下格式的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
       </tags>
   </entry>
   <entry>
