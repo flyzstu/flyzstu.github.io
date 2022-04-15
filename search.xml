@@ -713,6 +713,62 @@
       </tags>
   </entry>
   <entry>
+    <title>Jenkins和持续集成</title>
+    <url>/p/jenkins-and-CI/</url>
+    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
+<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
+<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
+<p>关键词：<strong>jenkins，持续集成</strong></p>
+<a id="more"></a>
+<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
+<p>持续集成，Continuous Integration，简称CI。</p>
+<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
+<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
+<h3 id="持续集成的特点">持续集成的特点</h3>
+<ul>
+<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
+<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
+<li><p>需要代码托管工具支持</p></li>
+</ul>
+<h3 id="持续集成的作用">持续集成的作用</h3>
+<ul>
+<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
+<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
+</ul>
+<h2 id="如何实现持续集成">如何实现持续集成？</h2>
+<h3 id="jenkins介绍">Jenkins介绍</h3>
+<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
+<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
+<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
+<ul>
+<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
+<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
+<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
+<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
+</ul>
+<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
+<h3 id="jenkins特点">Jenkins特点</h3>
+<ul>
+<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
+<li><p>易配置：提供友好的GUI配置界面；</p></li>
+<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
+<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
+<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
+<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
+<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
+<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
+<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
+</ul>
+<h3 id="其他集成工具">其他集成工具</h3>
+<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
+<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
+]]></content>
+      <tags>
+        <tag>jenkins</tag>
+        <tag>CI/CD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Jetson Xavier 开发实录</title>
     <url>/p/How-to-use-Jetson-Xavier/</url>
     <content><![CDATA[<p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
@@ -907,62 +963,6 @@
       <tags>
         <tag>Jetson</tag>
         <tag>CUDA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Jenkins和持续集成</title>
-    <url>/p/jenkins-and-CI/</url>
-    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
-<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
-<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
-<p>关键词：<strong>jenkins，持续集成</strong></p>
-<a id="more"></a>
-<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
-<p>持续集成，Continuous Integration，简称CI。</p>
-<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
-<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
-<h3 id="持续集成的特点">持续集成的特点</h3>
-<ul>
-<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
-<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
-<li><p>需要代码托管工具支持</p></li>
-</ul>
-<h3 id="持续集成的作用">持续集成的作用</h3>
-<ul>
-<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
-<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
-</ul>
-<h2 id="如何实现持续集成">如何实现持续集成？</h2>
-<h3 id="jenkins介绍">Jenkins介绍</h3>
-<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
-<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
-<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
-<ul>
-<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
-<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
-<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
-<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
-</ul>
-<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
-<h3 id="jenkins特点">Jenkins特点</h3>
-<ul>
-<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
-<li><p>易配置：提供友好的GUI配置界面；</p></li>
-<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
-<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
-<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
-<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
-<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
-<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
-<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
-</ul>
-<h3 id="其他集成工具">其他集成工具</h3>
-<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
-<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
-]]></content>
-      <tags>
-        <tag>jenkins</tag>
-        <tag>CI/CD</tag>
       </tags>
   </entry>
   <entry>
@@ -3510,6 +3510,17 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python升级pip</title>
+    <url>/p/how-to-upgrade%20pip-in-python/</url>
+    <content><![CDATA[<p>安装pip：<code>apt install python3-pip</code></p>
+<p>升级pip：<code>python -m pip install --upgrade pip</code></p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>pip</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python多线程的应用</title>
     <url>/p/how-to-use-python-multithreading/</url>
     <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
@@ -3554,17 +3565,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python升级pip</title>
-    <url>/p/how-to-upgrade%20pip-in-python/</url>
-    <content><![CDATA[<p>安装pip：<code>apt install python3-pip</code></p>
-<p>升级pip：<code>python -m pip install --upgrade pip</code></p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>pip</tag>
       </tags>
   </entry>
   <entry>
@@ -4567,26 +4567,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>docker安装jenkins</title>
-    <url>/p/install-jenkins-in-docker/</url>
-    <content><![CDATA[<p>关键词：docker，jenkins</p>
-<p>为什么要用docker？这个不在赘述。</p>
-<p>最近要求部署的项目要求是内外网隔离的，代码跑起来估计要安装各种依赖，想想就头大。。。</p>
-<p>现在考虑的是可以通过部署docker私有仓库，拉取镜像，跑容器。</p>
-<p>为啥还需要jenkins呢，因为项目还没有开发完毕，但是交付的日期还有不到10天了。。。</p>
-<a id="more"></a>
-<h3 id="安装">安装</h3>
-<p>官方教程：https://www.jenkins.io/doc/book/installing/linux/</p>
-<p>建议参考英文，看不懂的可以用谷歌翻译。</p>
-<p>官网给出方法的是通过<code>docker:dind</code>镜像运行另外一个部署了docker daemon的容器（区别于宿主机），然后通过<code>docker-workflow</code>方式使用，这样就实现了<strong>宿主机和构建环境</strong>的隔离，但是这样有点麻烦。。。于是就采用了之前文章中说过的<strong>docker in docker 的用法</strong>。</p>
-<h4 id="直接使用docker-compose安装">直接使用docker-compose安装</h4>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-        <tag>jenkins</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker in docker</title>
     <url>/p/docker-in-docker/</url>
     <content><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
@@ -4646,6 +4626,26 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker安装jenkins</title>
+    <url>/p/install-jenkins-in-docker/</url>
+    <content><![CDATA[<p>关键词：docker，jenkins</p>
+<p>为什么要用docker？这个不在赘述。</p>
+<p>最近要求部署的项目要求是内外网隔离的，代码跑起来估计要安装各种依赖，想想就头大。。。</p>
+<p>现在考虑的是可以通过部署docker私有仓库，拉取镜像，跑容器。</p>
+<p>为啥还需要jenkins呢，因为项目还没有开发完毕，但是交付的日期还有不到10天了。。。</p>
+<a id="more"></a>
+<h3 id="安装">安装</h3>
+<p>官方教程：https://www.jenkins.io/doc/book/installing/linux/</p>
+<p>建议参考英文，看不懂的可以用谷歌翻译。</p>
+<p>官网给出方法的是通过<code>docker:dind</code>镜像运行另外一个部署了docker daemon的容器（区别于宿主机），然后通过<code>docker-workflow</code>方式使用，这样就实现了<strong>宿主机和构建环境</strong>的隔离，但是这样有点麻烦。。。于是就采用了之前文章中说过的<strong>docker in docker 的用法</strong>。</p>
+<h4 id="直接使用docker-compose安装">直接使用docker-compose安装</h4>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>jenkins</tag>
       </tags>
   </entry>
   <entry>
