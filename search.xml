@@ -636,6 +636,24 @@
       </tags>
   </entry>
   <entry>
+    <title>Go语言读取json文件</title>
+    <url>/p/read-json-file-in-golang/</url>
+    <content><![CDATA[<p>使用golang内置库<code>encoding/json</code>读取json格式文件</p>
+<p><strong>关键词</strong>：golang</p>
+<a id="more"></a>
+<h2 id="json反序列化json文件到结构体">json反序列化：json文件到结构体</h2>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://xxxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;usersInfo&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xxxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">        &#125;, </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xx&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="代码">代码</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID       <span class="keyword">string</span> <span class="string">`json:&quot;zstuID&quot;`</span> <span class="comment">// 结构体Tag, 指定json的Key</span></span><br><span class="line">	Name     <span class="keyword">string</span> <span class="string">`json:&quot;zstuName&quot;`</span></span><br><span class="line">	Password <span class="keyword">string</span> <span class="string">`json:&quot;zstuPassword&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Users <span class="keyword">struct</span> &#123;</span><br><span class="line">	ZstuUsers []User <span class="string">`json:&quot;usersInfo&quot;`</span></span><br><span class="line">	ZstuUrl   <span class="keyword">string</span> <span class="string">`json:&quot;url&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jsonData, err := os.ReadFile(fileName)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;读取json文件失败，错误：%v\n&quot;</span>, err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">err = json.Unmarshal(jsonData, &amp;userInfo)  <span class="comment">// 注意是传地址</span></span><br></pre></td></tr></table></figure>
+<h2 id="json序列化结构体到json格式的字符串">json序列化：结构体到json格式的字符串</h2>
+<h3 id="代码-1">代码</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">users := []User&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    user := User&#123;</span><br><span class="line">        ID:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Name: <span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Password:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    users = <span class="built_in">append</span>(users, user)</span><br><span class="line">u := &amp;Users&#123;</span><br><span class="line">    ZstuUrl:<span class="string">&quot;https://google.com&quot;</span>,</span><br><span class="line">    ZstuUsers: users</span><br><span class="line">&#125;</span><br><span class="line">jsonData, err := json.Marshal(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;json序列化失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;json:%s\n&quot;</span>, jsonData)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Intel Realsense T265使用教程</title>
     <url>/p/Intel-Realsense-T265-in-ubuntu/</url>
     <content><![CDATA[<p><strong>摘要</strong>：英特尔® 实感™ 追踪摄像头 T265 是一款全新的独立同步定位与建图设备，可用于机器人、无人机等领域。本文主要介绍了如何在ubuntu系统上安装Intel Realsense T265追踪摄像头。</p>
@@ -1553,6 +1571,35 @@
       </tags>
   </entry>
   <entry>
+    <title>golang LogAgent 项目实战（三）</title>
+    <url>/p/LogAgent-project-action-in-golang-3/</url>
+    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
+<p><strong>关键词：日志收集项目</strong></p>
+<a id="more"></a>
+<h2 id="架构图">架构图</h2>
+<p><img src="image-20211130214306450.png" /></p>
+<h3 id="logagent工作流程">LogAgent工作流程</h3>
+<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="往kafka里写日志">往Kafka里写日志</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
+<h4 id="tail介绍">tail介绍</h4>
+<h3 id="第一版程序">第一版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
+<p><img src="image-20211201205643407.png" /></p>
+<p>设计包的入口函数时，要考虑上面的设计模式。</p>
+<h3 id="第二版程序">第二版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
+<p>读取配置文件版本的logAgent</p>
+<h4 id="go-ini库的使用">go-ini库的使用</h4>
+<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang LogAgent 项目实战（二）</title>
     <url>/p/LogAgent-project-action-in-golang-2/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1665,35 +1712,6 @@
 <h2 id="zookeeper">Zookeeper</h2>
 <p>zookeeper是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby的一个开源实现，是集群的管理者，监视着集群中各个系欸但的状态，并根据节点提交的反馈进行下一步合理操作。最终将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
 <p><img src="image-20211201190723113.png" /></p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang LogAgent 项目实战（三）</title>
-    <url>/p/LogAgent-project-action-in-golang-3/</url>
-    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
-<p><strong>关键词：日志收集项目</strong></p>
-<a id="more"></a>
-<h2 id="架构图">架构图</h2>
-<p><img src="image-20211130214306450.png" /></p>
-<h3 id="logagent工作流程">LogAgent工作流程</h3>
-<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="往kafka里写日志">往Kafka里写日志</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
-<h4 id="tail介绍">tail介绍</h4>
-<h3 id="第一版程序">第一版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
-<p><img src="image-20211201205643407.png" /></p>
-<p>设计包的入口函数时，要考虑上面的设计模式。</p>
-<h3 id="第二版程序">第二版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
-<p>读取配置文件版本的logAgent</p>
-<h4 id="go-ini库的使用">go-ini库的使用</h4>
-<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -2561,24 +2579,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go语言读取json文件</title>
-    <url>/p/read-json-file-in-golang/</url>
-    <content><![CDATA[<p>使用golang内置库<code>encoding/json</code>读取json格式文件</p>
-<p><strong>关键词</strong>：golang</p>
-<a id="more"></a>
-<h2 id="json反序列化json文件到结构体">json反序列化：json文件到结构体</h2>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://xxxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;usersInfo&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xxxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">        &#125;, </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xx&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="代码">代码</h3>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID       <span class="keyword">string</span> <span class="string">`json:&quot;zstuID&quot;`</span> <span class="comment">// 结构体Tag, 指定json的Key</span></span><br><span class="line">	Name     <span class="keyword">string</span> <span class="string">`json:&quot;zstuName&quot;`</span></span><br><span class="line">	Password <span class="keyword">string</span> <span class="string">`json:&quot;zstuPassword&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Users <span class="keyword">struct</span> &#123;</span><br><span class="line">	ZstuUsers []User <span class="string">`json:&quot;usersInfo&quot;`</span></span><br><span class="line">	ZstuUrl   <span class="keyword">string</span> <span class="string">`json:&quot;url&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jsonData, err := os.ReadFile(fileName)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;读取json文件失败，错误：%v\n&quot;</span>, err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">err = json.Unmarshal(jsonData, &amp;userInfo)  <span class="comment">// 注意是传地址</span></span><br></pre></td></tr></table></figure>
-<h2 id="json序列化结构体到json格式的字符串">json序列化：结构体到json格式的字符串</h2>
-<h3 id="代码-1">代码</h3>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">users := []User&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    user := User&#123;</span><br><span class="line">        ID:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Name: <span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Password:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    users = <span class="built_in">append</span>(users, user)</span><br><span class="line">u := &amp;Users&#123;</span><br><span class="line">    ZstuUrl:<span class="string">&quot;https://google.com&quot;</span>,</span><br><span class="line">    ZstuUsers: users</span><br><span class="line">&#125;</span><br><span class="line">jsonData, err := json.Marshal(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;json序列化失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;json:%s\n&quot;</span>, jsonData)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -7045,6 +7045,44 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣题目类型之回溯法（一）</title>
+    <url>/p/back-tracking-one/</url>
+    <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
+<p>回溯是递归的副产品，只要有递归就会有回溯。</p>
+<a id="more"></a>
+<h2 id="回溯法的效率">回溯法的效率</h2>
+<p>回溯的本质是穷举，穷举所有可能。如果还想让回溯法高效一些，可以加一些剪枝的操作，但其本质仍是穷举。</p>
+<h2 id="回溯法可以解决的问题">回溯法可以解决的问题</h2>
+<p>回溯法，一般用于解决以下问题：</p>
+<ul>
+<li>组合问题：N个数里面按一定规则找出k个数的集合；</li>
+<li>切割问题：一个字符串按一定规则有几种切割方式；</li>
+<li>子集问题：一个N个数的集合里有多少符合条件的子集；</li>
+<li>排列问题：N个数按一定规则全排列，有几种排列方式；</li>
+<li>棋盘问题：N皇后，解数独等。</li>
+</ul>
+<h2 id="如何理解回溯法">如何理解回溯法</h2>
+<p>回溯法解决的问题都可以抽象成树形结构，因为回溯法解决的都是在集合中递归查找子集：</p>
+<ul>
+<li>集合的大小是树的宽度</li>
+<li>递归的深度是树的深度</li>
+</ul>
+<p>递归要有终止条件，因此必然是一颗高度有限的树（N叉树）</p>
+<h2 id="回溯法模板">回溯法模板</h2>
+<p>回溯三部曲</p>
+<ul>
+<li><strong>返回值以及参数</strong>：一般是先写逻辑，然后需要什么参数填写什么参数。</li>
+<li><strong>终止条件</strong>：什么时候达到了终止条件，树中就可以看出，一般来说搜到叶子节点了，也就找到了满足条件的一条答案，然后把整个答案存起来，并结束本层递归。</li>
+<li><strong>遍历过程</strong>：回溯法是在集合中递归搜索，集合的大小构成了树的宽度，递归的深度构成了树的深度。</li>
+</ul>
+<p><img src="20210130173631174.png" /></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(参数)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (终止条件) &#123;</span><br><span class="line">        存放结果;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (选择; 本层集合中元素(树中节点孩子的大小就是集合的大小)) &#123; <span class="comment">// for循环是横向遍历</span></span><br><span class="line">        处理节点;</span><br><span class="line">        func(路径, 选择列表); <span class="comment">// 递归是纵向遍历</span></span><br><span class="line">        回溯，撤销处理结果</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>奥卡姆剃刀和没有免费的午餐定理</title>
     <url>/p/Occam&#39;s-razor-and-no-free-lunch-theorem/</url>
     <content><![CDATA[<p>本文原载于<a href="https://imlogm.github.io/">https://imlogm.github.io</a>，转载请注明出处！</p>
@@ -8175,44 +8213,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣题目类型之回溯法（一）</title>
-    <url>/p/back-tracking-one/</url>
-    <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
-<p>回溯是递归的副产品，只要有递归就会有回溯。</p>
-<a id="more"></a>
-<h2 id="回溯法的效率">回溯法的效率</h2>
-<p>回溯的本质是穷举，穷举所有可能。如果还想让回溯法高效一些，可以加一些剪枝的操作，但其本质仍是穷举。</p>
-<h2 id="回溯法可以解决的问题">回溯法可以解决的问题</h2>
-<p>回溯法，一般用于解决以下问题：</p>
-<ul>
-<li>组合问题：N个数里面按一定规则找出k个数的集合；</li>
-<li>切割问题：一个字符串按一定规则有几种切割方式；</li>
-<li>子集问题：一个N个数的集合里有多少符合条件的子集；</li>
-<li>排列问题：N个数按一定规则全排列，有几种排列方式；</li>
-<li>棋盘问题：N皇后，解数独等。</li>
-</ul>
-<h2 id="如何理解回溯法">如何理解回溯法</h2>
-<p>回溯法解决的问题都可以抽象成树形结构，因为回溯法解决的都是在集合中递归查找子集：</p>
-<ul>
-<li>集合的大小是树的宽度</li>
-<li>递归的深度是树的深度</li>
-</ul>
-<p>递归要有终止条件，因此必然是一颗高度有限的树（N叉树）</p>
-<h2 id="回溯法模板">回溯法模板</h2>
-<p>回溯三部曲</p>
-<ul>
-<li><strong>返回值以及参数</strong>：一般是先写逻辑，然后需要什么参数填写什么参数。</li>
-<li><strong>终止条件</strong>：什么时候达到了终止条件，树中就可以看出，一般来说搜到叶子节点了，也就找到了满足条件的一条答案，然后把整个答案存起来，并结束本层递归。</li>
-<li><strong>遍历过程</strong>：回溯法是在集合中递归搜索，集合的大小构成了树的宽度，递归的深度构成了树的深度。</li>
-</ul>
-<p><img src="20210130173631174.png" /></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(参数)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (终止条件) &#123;</span><br><span class="line">        存放结果;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (选择; 本层集合中元素(树中节点孩子的大小就是集合的大小)) &#123; <span class="comment">// for循环是横向遍历</span></span><br><span class="line">        处理节点;</span><br><span class="line">        func(路径, 选择列表); <span class="comment">// 递归是纵向遍历</span></span><br><span class="line">        回溯，撤销处理结果</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
       </tags>
   </entry>
 </search>
