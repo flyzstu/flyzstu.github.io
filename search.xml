@@ -966,6 +966,60 @@
       </tags>
   </entry>
   <entry>
+    <title>ubuntu2004安装最新版本MySQL并设置外网访问</title>
+    <url>/p/install-newest-mysql-in-ubuntu2004/</url>
+    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的MySQL以及如何设置MySQL外网访问。</strong></p>
+<p><strong>关键词：MySQL，Linux</strong></p>
+<a id="more"></a>
+<h3 id="更新仓库">更新仓库</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<h3 id="用官方仓库安装-mysql">用官方仓库安装 MySQL</h3>
+<h4 id="下载mysql仓库工具包">下载mysql仓库工具包</h4>
+<p><a href="https%3A//dev.mysql.com/downloads/repo/apt/">下载页面</a></p>
+<p><img src="image-20211203152648123.png" /></p>
+<p>点击Download，选择<strong>No thanks, just start my download.</strong></p>
+<p><img src="image-20211203152704181.png" /></p>
+<h4 id="安装">安装</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i mysql-apt-config*</span><br></pre></td></tr></table></figure>
+<h4 id="更新仓库-1">更新仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<h4 id="安装mysql-server">安装mysql-server</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
+<p>这样做会在你的终端中打开包配置的提示。使用向下箭头选择“Ok”选项。</p>
+<p><img src="v2-b09d5038434b3b540638c382677300bb_1440w.jpg" /></p>
+<p>点击回车。这应该会提示你输入密码：这是在为 MySQL 设置 root 密码。</p>
+<p><img src="v2-b22e27255b02ea03066a398e2b90acb8_1440w.jpg" /></p>
+<p>输入密码然后点击 Tab 键去选择“Ok“。点击回车键，你将重新输入密码。</p>
+<p><img src="v2-191abdf08ed88a03f4842b715f229649_1440w.jpg" /></p>
+<p>将会展示一些关于 MySQL Server 的配置信息。再次按下 Tab 去选择 “Ok” 和按下回车键：</p>
+<p><img src="/v2-c950f3613406d1b62dfa22904be045bb_1440w.jpg" /></p>
+<p>第一种是最新的密码加密方法，第二种是sql5版本之前的密码加密方法，这里选择第二个。</p>
+<h3 id="验证安装">验证安装</h3>
+<p>要验证 MySQL 已经正确安装，使用下列命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status mysql.service</span><br></pre></td></tr></table></figure>
+<p><img src="v2-f506966fb17a1b8a145c84a8f5add612_1440w.jpg" /></p>
+<p>检查到显示running即安装成功</p>
+<h3 id="设置自动启动">设置自动启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> mysql.service</span><br></pre></td></tr></table></figure>
+<h3 id="设置外网访问">设置外网访问</h3>
+<p>链接mysql以后，在mysql命令行输入以下命令就可以允许外网访问：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#96;%&#96; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h4 id="原理">原理</h4>
+<p>mysql默认是不允许外网访问的，只允许<code>localhost</code>或者<code>127.0.0.1</code>访问。</p>
+<p>查询默认的mysql.user表，如下表示不允许外网访问，只允许本机访问：</p>
+<p><img src="image-20211203153346215.png" /></p>
+<p>更新访问权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=`%` <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211203153437479.png" /></p>
+<p>更新权限</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Jupyter NoteBook的快捷键使用指南</title>
     <url>/p/jupyter-notebook-keyboard-shortcut/</url>
     <content><![CDATA[<p><strong>概述：</strong>Jupyter Notebook是基于网页的用于交互计算的应用程序。其可被应用于全过程计算：开发、文档编写、运行代码和展示结果。</p>
@@ -1352,60 +1406,6 @@
 ]]></content>
       <tags>
         <tag>Jupyter</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ubuntu2004安装最新版本MySQL并设置外网访问</title>
-    <url>/p/install-newest-mysql-in-ubuntu2004/</url>
-    <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的MySQL以及如何设置MySQL外网访问。</strong></p>
-<p><strong>关键词：MySQL，Linux</strong></p>
-<a id="more"></a>
-<h3 id="更新仓库">更新仓库</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<h3 id="用官方仓库安装-mysql">用官方仓库安装 MySQL</h3>
-<h4 id="下载mysql仓库工具包">下载mysql仓库工具包</h4>
-<p><a href="https%3A//dev.mysql.com/downloads/repo/apt/">下载页面</a></p>
-<p><img src="image-20211203152648123.png" /></p>
-<p>点击Download，选择<strong>No thanks, just start my download.</strong></p>
-<p><img src="image-20211203152704181.png" /></p>
-<h4 id="安装">安装</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i mysql-apt-config*</span><br></pre></td></tr></table></figure>
-<h4 id="更新仓库-1">更新仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<h4 id="安装mysql-server">安装mysql-server</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install mysql-server -y</span><br></pre></td></tr></table></figure>
-<p>这样做会在你的终端中打开包配置的提示。使用向下箭头选择“Ok”选项。</p>
-<p><img src="v2-b09d5038434b3b540638c382677300bb_1440w.jpg" /></p>
-<p>点击回车。这应该会提示你输入密码：这是在为 MySQL 设置 root 密码。</p>
-<p><img src="v2-b22e27255b02ea03066a398e2b90acb8_1440w.jpg" /></p>
-<p>输入密码然后点击 Tab 键去选择“Ok“。点击回车键，你将重新输入密码。</p>
-<p><img src="v2-191abdf08ed88a03f4842b715f229649_1440w.jpg" /></p>
-<p>将会展示一些关于 MySQL Server 的配置信息。再次按下 Tab 去选择 “Ok” 和按下回车键：</p>
-<p><img src="/v2-c950f3613406d1b62dfa22904be045bb_1440w.jpg" /></p>
-<p>第一种是最新的密码加密方法，第二种是sql5版本之前的密码加密方法，这里选择第二个。</p>
-<h3 id="验证安装">验证安装</h3>
-<p>要验证 MySQL 已经正确安装，使用下列命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status mysql.service</span><br></pre></td></tr></table></figure>
-<p><img src="v2-f506966fb17a1b8a145c84a8f5add612_1440w.jpg" /></p>
-<p>检查到显示running即安装成功</p>
-<h3 id="设置自动启动">设置自动启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> mysql.service</span><br></pre></td></tr></table></figure>
-<h3 id="设置外网访问">设置外网访问</h3>
-<p>链接mysql以后，在mysql命令行输入以下命令就可以允许外网访问：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#96;%&#96; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-<h4 id="原理">原理</h4>
-<p>mysql默认是不允许外网访问的，只允许<code>localhost</code>或者<code>127.0.0.1</code>访问。</p>
-<p>查询默认的mysql.user表，如下表示不允许外网访问，只允许本机访问：</p>
-<p><img src="image-20211203153346215.png" /></p>
-<p>更新访问权限</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update mysql.user <span class="built_in">set</span> host=`%` <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span>;</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211203153437479.png" /></p>
-<p>更新权限</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>mysql</tag>
-        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -5153,44 +5153,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu配置jdk-12环境</title>
-    <url>/p/install-jdk12-on-ubuntu2004/</url>
-    <content><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p>
-<p><strong>关键词：jdk，ubuntu，linux</strong></p>
-<a id="more"></a>
-<h3 id="下载jdk">下载jdk</h3>
-<p>下载相应版本的jdk，这里以jdk-12为例：</p>
-<p>https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html</p>
-<p><img src="image-20211130153041694.png" /></p>
-<p>此处需要登录Oracle账号。</p>
-<p>根据自己的系统类型选择即可，这里选择打包好的<strong>二进制文件.tar.gz</strong>。</p>
-<p>下载完上传到服务器即可。</p>
-<h3 id="安装jdk">安装jdk</h3>
-<h4 id="解压文件">解压文件</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvfz jdk-12.0.2_linux-x64_bin.tar.gz</span><br></pre></td></tr></table></figure>
-<p>移动到目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv jdk-12.0.2 /usr/<span class="built_in">local</span>/</span><br></pre></td></tr></table></figure>
-<h4 id="设置环境变量">设置环境变量</h4>
-<p>设置环境变量一般有三种：</p>
-<ul>
-<li><code>/etc/profile</code>：对全部用户生效，对所有shell解释器生效；</li>
-<li><code>/etc/bash.bashrc</code>：对全部用户生效，对bash解释器生效；</li>
-<li><code>/home/&lt;user_name&gt;/.bashrc</code>：仅对当前用户名生效，对bash解释器生效。</li>
-</ul>
-<p>这里选择第二种。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk-12.0.2</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="comment"># export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span></span><br></pre></td></tr></table></figure>
-<h3 id="检查jdk是否安装成功">检查jdk是否安装成功</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211130155722694.png" /></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">javac -version</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211130155802514.png" /></p>
-]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>jdk</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用PyTorch进行MNIST识别</title>
     <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
     <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
@@ -5862,6 +5824,44 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>Tkinter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu配置jdk-12环境</title>
+    <url>/p/install-jdk12-on-ubuntu2004/</url>
+    <content><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p>
+<p><strong>关键词：jdk，ubuntu，linux</strong></p>
+<a id="more"></a>
+<h3 id="下载jdk">下载jdk</h3>
+<p>下载相应版本的jdk，这里以jdk-12为例：</p>
+<p>https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html</p>
+<p><img src="image-20211130153041694.png" /></p>
+<p>此处需要登录Oracle账号。</p>
+<p>根据自己的系统类型选择即可，这里选择打包好的<strong>二进制文件.tar.gz</strong>。</p>
+<p>下载完上传到服务器即可。</p>
+<h3 id="安装jdk">安装jdk</h3>
+<h4 id="解压文件">解压文件</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvfz jdk-12.0.2_linux-x64_bin.tar.gz</span><br></pre></td></tr></table></figure>
+<p>移动到目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv jdk-12.0.2 /usr/<span class="built_in">local</span>/</span><br></pre></td></tr></table></figure>
+<h4 id="设置环境变量">设置环境变量</h4>
+<p>设置环境变量一般有三种：</p>
+<ul>
+<li><code>/etc/profile</code>：对全部用户生效，对所有shell解释器生效；</li>
+<li><code>/etc/bash.bashrc</code>：对全部用户生效，对bash解释器生效；</li>
+<li><code>/home/&lt;user_name&gt;/.bashrc</code>：仅对当前用户名生效，对bash解释器生效。</li>
+</ul>
+<p>这里选择第二种。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/<span class="built_in">local</span>/jdk-12.0.2</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="comment"># export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span></span><br></pre></td></tr></table></figure>
+<h3 id="检查jdk是否安装成功">检查jdk是否安装成功</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211130155722694.png" /></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">javac -version</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211130155802514.png" /></p>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>jdk</tag>
       </tags>
   </entry>
   <entry>
@@ -7116,6 +7116,41 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>安装Chromium浏览器并解决缺少 Google API 密钥问题</title>
+    <url>/p/how-to-install-Chromium-and-solve-the-problem/</url>
+    <content><![CDATA[<p><strong>Chromium</strong>是<a href="https://zh.wikipedia.org/wiki/Google">Google</a>为发展浏览器<a href="https://zh.wikipedia.org/wiki/Google_Chrome">Google Chrome</a>而开启的免费开源软件项目。Chromium的用户界面极简。Google期望使浏览器“在认知和物理上都让人感觉轻巧，快速”。（英语：feel lightweight (cognitively and physically) and fast.</p>
+<p>本文主要介绍如何下载Chromium浏览器并解决缺少 Google API 密钥问题。</p>
+<p><strong>关键词：Chromium缺少 Google API</strong></p>
+<a id="more"></a>
+<h4 id="下载chromium">下载Chromium</h4>
+<p>官方站点：https://download-chromium.appspot.com/</p>
+<p>分发站点：<a href="https://chromium.woolyss.com/#updater">Download latest stable Chromium binaries (64-bit and 32-bit) (woolyss.com)</a></p>
+<p>解压后放置到任意文件夹。</p>
+<h4 id="关闭缺少-google-api-密钥提示">关闭缺少 Google API 密钥提示</h4>
+<p>首次打开Chromium时，地址栏下方会提示 <strong>缺少 Google API 密钥，因此 Chromium 的部分功能将无法使用</strong>。</p>
+<p>法一：如不需要登录谷歌账户，仅仅想屏蔽上述烦人的提示，可以直接设置<strong>相关环境变量为<code>no</code></strong>，屏蔽提示。</p>
+<p>打开 windows 的 <code>cmd</code> 命令提示符，依次输入以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setx GOOGLE_API_KEY <span class="string">&quot;no&quot;</span></span><br><span class="line">setx GOOGLE_DEFAULT_CLIENT_ID <span class="string">&quot;no&quot;</span></span><br><span class="line">setx GOOGLE_DEFAULT_CLIENT_SECRET <span class="string">&quot;no&quot;</span></span><br></pre></td></tr></table></figure>
+<p>法二：加入Chromuim-Dev谷歌群组并开启相关API</p>
+<p>搬运自：http://www.chromium.org/developers/how-tos/api-keys</p>
+<ol type="1">
+<li><p>加入Google Groups <a href="https://groups.google.com/a/chromium.org/forum/?fromgroups#!forum/chromium-dev">chromium-dev@chromium.org</a>，如果介意相关邮件打扰可以选择退订相关邮件。为方便起见，以下API仅限对订加入社群的人可见</p></li>
+<li><p>确保登陆了已经订阅chromium-dev社群的Google账号</p></li>
+<li><p>打开 https://cloud.google.com/console</p></li>
+<li><p>创建或使用现有项目</p></li>
+<li><p>选择 <code>API和服务-&gt;库</code>，搜索下图给出的API，并按需启用相关API</p></li>
+<li><p>返回上级菜单，选择<code>凭据-&gt;创建凭据-&gt;OAuth客户端ID</code>，应用类型选择<code>桌面应用</code>，名称<code>任选</code>。记录得到的客户端ID和客户端密钥。</p></li>
+<li><p>返回上级菜单，选择<code>凭据-&gt;创建凭据-&gt;API密钥</code>，名称<code>任选</code>。</p></li>
+</ol>
+<h5 id="设置环境变量">设置环境变量</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">GOOGLE_API_KEY&#x3D;your_api_key</span><br><span class="line">GOOGLE_DEFAULT_CLIENT_ID&#x3D;your_client_id</span><br><span class="line">GOOGLE_DEFAULT_CLIENT_SECRET&#x3D;your_client_secret</span><br></pre></td></tr></table></figure>
+<p>完.</p>
+]]></content>
+      <tags>
+        <tag>Chromium</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>安装Fish自动匹配历史命令</title>
     <url>/p/install-fish-shell-to-automatically-match-historical-commands/</url>
     <content><![CDATA[<p>本文介绍了Fish的使用，使用Fish可以根据输入自动匹配历史命令。</p>
@@ -7498,87 +7533,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>深度学习常见损失函数</title>
-    <url>/p/common-loss-functions-for-deep-learning/</url>
-    <content><![CDATA[<p>我们所说的优化，即优化网络权值使得损失函数值变小。但是，损失函数值变小是否能代表模型的分类/回归精度变高呢？那么多种损失函数，应该如何选择呢？</p>
-<a id="more"></a>
-<h4 id="l1范数损失-l1loss">L1范数损失 L1Loss</h4>
-<p>功能： 计算 output 和 target 之差的绝对值，可选返回同维度的tensor或者是一个标量。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.L1Loss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<h4 id="均方损失误差-mesloss">均方损失误差 MESLoss</h4>
-<p>功能： 计算 output 和 target 之差的平方，可选返回同维度的tensor或者是一个标量。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.MSELoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<h4 id="交叉熵损失-crossentropyloss">交叉熵损失 CrossEntropyLoss</h4>
-<p>功能： 将输入经过 softmax 激活函数之后，再计算其与 target 的交叉熵损失。即该方法将 nn.LogSoftmax() 和 nn.NLLLoss() 进行了结合。严格意义上的交叉熵损失函数应该是 nn.NLLLoss()。</p>
-<p>当训练有 C 个类别的分类问题时很有效，可选参数<code>weight</code>必须是一个1维<code>Tensor</code>，权重将被分配给各个类别。对于不平衡的训练集非常有效。</p>
-<p>在多分类任务中，经常采用 softmax 激活函数+交叉熵损失函数。因为交叉熵描述了两个<strong>概率分布</strong>的差异，然而神经网络输出的是向量，并不是概率分布的形式。所以需要 softmax 激活函数将一个向量进行“归一化”成概率分布的形式，再采用交叉熵损失函数计算 loss. <span class="math display">\[
-loss(x,class)=weight[class]\left(-x[class]+log \left(\sum_{j}^{}exp(x[  j])\right)\right)
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.CrossEntropyLoss(weight=<span class="literal">None</span>,ignore_index=<span class="number">-100</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>weight (Tensor, optional) – 自定义的每个类别的权重. 必须是一个长度为 C 的 Tensor</p>
-<p>ignore_index (int, optional) – 设置一个目标值, 该目标值会被忽略, 从而不会影响到 输入的梯度。</p>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<h4 id="kl散度损失-kldivloss">KL散度损失 KLDivLoss</h4>
-<p>功能：计算 input 和 target 之间的 KL 散度。KL散度可用于衡量不同的连续分布之间的距离，在连续的输出分布的空间上(离散采样)上进行直接回归时<strong>很有效</strong>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.KLDivLoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<blockquote>
-<p>补充：KL散度 KL散度( Kullback–Leibler divergence) 又称为相对熵(Relative Entropy)，用于描述两个概率分布之间的差异。计算公式(离散时)：</p>
-<p>其中p表示真实分布，q表示p的拟合分布， D(P||Q)表示当用概率分布q来拟合真实分布p时，产生的信息损耗。这里的信息损耗，可以理解为损失，损失越低，拟合分布q越接近真实分布p。同时也可以从另外一个角度上观察这个公式，即计算的是 p 与 q 之间的对数差在 p 上的期望值。 特别注意，D(p||q) ≠ D(q||p)， 其不具有对称性，因此不能称为K-L距离。</p>
-<p><strong>信息熵 = 交叉熵 - 相对熵</strong> 从信息论角度观察三者，其关系为信息熵 = 交叉熵 - 相对熵。在机器学习中，当训练数据固定，最小化相对熵 D(p||q) 等价于最小化交叉熵 H(p,q) 。</p>
-</blockquote>
-<p>使用注意事项： 要想获得真正的KL散度，需要如下操作：</p>
-<ol type="1">
-<li><p>reduce = True ；size_average=False</p></li>
-<li><p>计算得到的 loss 要对 batch 进行求平均</p></li>
-</ol>
-<h4 id="二进制交叉熵损失-bceloss">二进制交叉熵损失 BCELoss</h4>
-<p>功能： 二分类任务时的交叉熵计算函数。此函数可以认为是nn.CrossEntropyLoss函数的特例。其分类限定为二分类，y必须是{0,1}。还需要注意的是，input应该为概率分布的形式，这样才符合交叉熵的应用。所以在BCELoss之前，input一般为sigmoid激活层的输出。该损失函数在自编码器中常用。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.BCELoss(weight=<span class="literal">None</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>weight (Tensor, optional) – 自定义的每个 batch 元素的 loss 的权重. 必须是一个长度为 “nbatch” 的 的 Tensor</p>
-</blockquote>
-<h4 id="bcewithlogitsloss">BCEWithLogitsLoss</h4>
-<p>功能： 将Sigmoid与BCELoss结合，类似于CrossEntropyLoss(将nn.LogSoftmax()和 nn.NLLLoss()进行结合）。即input会经过Sigmoid激活函数，将input变成概率分布的形式。 计算公式：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.BCEWithLogitsLoss(weight=<span class="literal">None</span>, reduction=<span class="string">&#x27;mean&#x27;</span>, pos_weight=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>weight (Tensor, optional) – 自定义的每个 batch 元素的 loss 的权重. 必须是一个长度 为 “nbatch” 的 Tensor</p>
-</blockquote>
-<h4 id="marginrankingloss">MarginRankingLoss</h4>
-<p>功能： 计算两个向量之间的相似度，当两个向量之间的距离大于margin，则loss为正，小于margin，loss为0。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.MarginRankingLoss(margin=<span class="number">0.0</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>对于 mini-batch (小批量) 中每个实例的损失函数如下： <span class="math display">\[
-loss(x,y)=max(0,-y*(x1-x2)+margin)
-\]</span> 参数：</p>
-<blockquote>
-<p>margin：默认值是0</p>
-</blockquote>
-<h4 id="hingeembeddingloss">HingeEmbeddingLoss</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.HingeEmbeddingLoss(margin=<span class="number">1.0</span>,  reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>功能： 未知。主要用于衡量两个输入是否相似。 used for learning nonlinear embeddings or semi-supervised 。</p>
-<p>转载自：https://zhuanlan.zhihu.com/p/61379965</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>牛客SQL刷题</title>
     <url>/p/niuke-SQL-brush-questions/</url>
     <content><![CDATA[<p>本文主要介绍牛客网上SQL刷题的题目。</p>
@@ -7703,41 +7657,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       <tags>
         <tag>Python</tag>
         <tag>abstractmethod</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>安装Chromium浏览器并解决缺少 Google API 密钥问题</title>
-    <url>/p/how-to-install-Chromium-and-solve-the-problem/</url>
-    <content><![CDATA[<p><strong>Chromium</strong>是<a href="https://zh.wikipedia.org/wiki/Google">Google</a>为发展浏览器<a href="https://zh.wikipedia.org/wiki/Google_Chrome">Google Chrome</a>而开启的免费开源软件项目。Chromium的用户界面极简。Google期望使浏览器“在认知和物理上都让人感觉轻巧，快速”。（英语：feel lightweight (cognitively and physically) and fast.</p>
-<p>本文主要介绍如何下载Chromium浏览器并解决缺少 Google API 密钥问题。</p>
-<p><strong>关键词：Chromium缺少 Google API</strong></p>
-<a id="more"></a>
-<h4 id="下载chromium">下载Chromium</h4>
-<p>官方站点：https://download-chromium.appspot.com/</p>
-<p>分发站点：<a href="https://chromium.woolyss.com/#updater">Download latest stable Chromium binaries (64-bit and 32-bit) (woolyss.com)</a></p>
-<p>解压后放置到任意文件夹。</p>
-<h4 id="关闭缺少-google-api-密钥提示">关闭缺少 Google API 密钥提示</h4>
-<p>首次打开Chromium时，地址栏下方会提示 <strong>缺少 Google API 密钥，因此 Chromium 的部分功能将无法使用</strong>。</p>
-<p>法一：如不需要登录谷歌账户，仅仅想屏蔽上述烦人的提示，可以直接设置<strong>相关环境变量为<code>no</code></strong>，屏蔽提示。</p>
-<p>打开 windows 的 <code>cmd</code> 命令提示符，依次输入以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setx GOOGLE_API_KEY <span class="string">&quot;no&quot;</span></span><br><span class="line">setx GOOGLE_DEFAULT_CLIENT_ID <span class="string">&quot;no&quot;</span></span><br><span class="line">setx GOOGLE_DEFAULT_CLIENT_SECRET <span class="string">&quot;no&quot;</span></span><br></pre></td></tr></table></figure>
-<p>法二：加入Chromuim-Dev谷歌群组并开启相关API</p>
-<p>搬运自：http://www.chromium.org/developers/how-tos/api-keys</p>
-<ol type="1">
-<li><p>加入Google Groups <a href="https://groups.google.com/a/chromium.org/forum/?fromgroups#!forum/chromium-dev">chromium-dev@chromium.org</a>，如果介意相关邮件打扰可以选择退订相关邮件。为方便起见，以下API仅限对订加入社群的人可见</p></li>
-<li><p>确保登陆了已经订阅chromium-dev社群的Google账号</p></li>
-<li><p>打开 https://cloud.google.com/console</p></li>
-<li><p>创建或使用现有项目</p></li>
-<li><p>选择 <code>API和服务-&gt;库</code>，搜索下图给出的API，并按需启用相关API</p></li>
-<li><p>返回上级菜单，选择<code>凭据-&gt;创建凭据-&gt;OAuth客户端ID</code>，应用类型选择<code>桌面应用</code>，名称<code>任选</code>。记录得到的客户端ID和客户端密钥。</p></li>
-<li><p>返回上级菜单，选择<code>凭据-&gt;创建凭据-&gt;API密钥</code>，名称<code>任选</code>。</p></li>
-</ol>
-<h5 id="设置环境变量">设置环境变量</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">GOOGLE_API_KEY&#x3D;your_api_key</span><br><span class="line">GOOGLE_DEFAULT_CLIENT_ID&#x3D;your_client_id</span><br><span class="line">GOOGLE_DEFAULT_CLIENT_SECRET&#x3D;your_client_secret</span><br></pre></td></tr></table></figure>
-<p>完.</p>
-]]></content>
-      <tags>
-        <tag>Chromium</tag>
       </tags>
   </entry>
   <entry>
@@ -8213,6 +8132,87 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>深度学习常见损失函数</title>
+    <url>/p/common-loss-functions-for-deep-learning/</url>
+    <content><![CDATA[<p>我们所说的优化，即优化网络权值使得损失函数值变小。但是，损失函数值变小是否能代表模型的分类/回归精度变高呢？那么多种损失函数，应该如何选择呢？</p>
+<a id="more"></a>
+<h4 id="l1范数损失-l1loss">L1范数损失 L1Loss</h4>
+<p>功能： 计算 output 和 target 之差的绝对值，可选返回同维度的tensor或者是一个标量。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.L1Loss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<blockquote>
+<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
+</blockquote>
+<h4 id="均方损失误差-mesloss">均方损失误差 MESLoss</h4>
+<p>功能： 计算 output 和 target 之差的平方，可选返回同维度的tensor或者是一个标量。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.MSELoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<blockquote>
+<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
+</blockquote>
+<h4 id="交叉熵损失-crossentropyloss">交叉熵损失 CrossEntropyLoss</h4>
+<p>功能： 将输入经过 softmax 激活函数之后，再计算其与 target 的交叉熵损失。即该方法将 nn.LogSoftmax() 和 nn.NLLLoss() 进行了结合。严格意义上的交叉熵损失函数应该是 nn.NLLLoss()。</p>
+<p>当训练有 C 个类别的分类问题时很有效，可选参数<code>weight</code>必须是一个1维<code>Tensor</code>，权重将被分配给各个类别。对于不平衡的训练集非常有效。</p>
+<p>在多分类任务中，经常采用 softmax 激活函数+交叉熵损失函数。因为交叉熵描述了两个<strong>概率分布</strong>的差异，然而神经网络输出的是向量，并不是概率分布的形式。所以需要 softmax 激活函数将一个向量进行“归一化”成概率分布的形式，再采用交叉熵损失函数计算 loss. <span class="math display">\[
+loss(x,class)=weight[class]\left(-x[class]+log \left(\sum_{j}^{}exp(x[  j])\right)\right)
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.CrossEntropyLoss(weight=<span class="literal">None</span>,ignore_index=<span class="number">-100</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<blockquote>
+<p>weight (Tensor, optional) – 自定义的每个类别的权重. 必须是一个长度为 C 的 Tensor</p>
+<p>ignore_index (int, optional) – 设置一个目标值, 该目标值会被忽略, 从而不会影响到 输入的梯度。</p>
+<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
+</blockquote>
+<h4 id="kl散度损失-kldivloss">KL散度损失 KLDivLoss</h4>
+<p>功能：计算 input 和 target 之间的 KL 散度。KL散度可用于衡量不同的连续分布之间的距离，在连续的输出分布的空间上(离散采样)上进行直接回归时<strong>很有效</strong>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.KLDivLoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<blockquote>
+<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
+</blockquote>
+<blockquote>
+<p>补充：KL散度 KL散度( Kullback–Leibler divergence) 又称为相对熵(Relative Entropy)，用于描述两个概率分布之间的差异。计算公式(离散时)：</p>
+<p>其中p表示真实分布，q表示p的拟合分布， D(P||Q)表示当用概率分布q来拟合真实分布p时，产生的信息损耗。这里的信息损耗，可以理解为损失，损失越低，拟合分布q越接近真实分布p。同时也可以从另外一个角度上观察这个公式，即计算的是 p 与 q 之间的对数差在 p 上的期望值。 特别注意，D(p||q) ≠ D(q||p)， 其不具有对称性，因此不能称为K-L距离。</p>
+<p><strong>信息熵 = 交叉熵 - 相对熵</strong> 从信息论角度观察三者，其关系为信息熵 = 交叉熵 - 相对熵。在机器学习中，当训练数据固定，最小化相对熵 D(p||q) 等价于最小化交叉熵 H(p,q) 。</p>
+</blockquote>
+<p>使用注意事项： 要想获得真正的KL散度，需要如下操作：</p>
+<ol type="1">
+<li><p>reduce = True ；size_average=False</p></li>
+<li><p>计算得到的 loss 要对 batch 进行求平均</p></li>
+</ol>
+<h4 id="二进制交叉熵损失-bceloss">二进制交叉熵损失 BCELoss</h4>
+<p>功能： 二分类任务时的交叉熵计算函数。此函数可以认为是nn.CrossEntropyLoss函数的特例。其分类限定为二分类，y必须是{0,1}。还需要注意的是，input应该为概率分布的形式，这样才符合交叉熵的应用。所以在BCELoss之前，input一般为sigmoid激活层的输出。该损失函数在自编码器中常用。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.BCELoss(weight=<span class="literal">None</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<blockquote>
+<p>weight (Tensor, optional) – 自定义的每个 batch 元素的 loss 的权重. 必须是一个长度为 “nbatch” 的 的 Tensor</p>
+</blockquote>
+<h4 id="bcewithlogitsloss">BCEWithLogitsLoss</h4>
+<p>功能： 将Sigmoid与BCELoss结合，类似于CrossEntropyLoss(将nn.LogSoftmax()和 nn.NLLLoss()进行结合）。即input会经过Sigmoid激活函数，将input变成概率分布的形式。 计算公式：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.BCEWithLogitsLoss(weight=<span class="literal">None</span>, reduction=<span class="string">&#x27;mean&#x27;</span>, pos_weight=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<blockquote>
+<p>weight (Tensor, optional) – 自定义的每个 batch 元素的 loss 的权重. 必须是一个长度 为 “nbatch” 的 Tensor</p>
+</blockquote>
+<h4 id="marginrankingloss">MarginRankingLoss</h4>
+<p>功能： 计算两个向量之间的相似度，当两个向量之间的距离大于margin，则loss为正，小于margin，loss为0。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.MarginRankingLoss(margin=<span class="number">0.0</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>对于 mini-batch (小批量) 中每个实例的损失函数如下： <span class="math display">\[
+loss(x,y)=max(0,-y*(x1-x2)+margin)
+\]</span> 参数：</p>
+<blockquote>
+<p>margin：默认值是0</p>
+</blockquote>
+<h4 id="hingeembeddingloss">HingeEmbeddingLoss</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.HingeEmbeddingLoss(margin=<span class="number">1.0</span>,  reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>功能： 未知。主要用于衡量两个输入是否相似。 used for learning nonlinear embeddings or semi-supervised 。</p>
+<p>转载自：https://zhuanlan.zhihu.com/p/61379965</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
 </search>
