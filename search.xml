@@ -580,6 +580,18 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang时间处理</title>
+    <url>/p/time-processing-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
+<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang中的生产者消费者模型</title>
     <url>/p/producer-consumer-model-in-golang/</url>
     <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
@@ -621,18 +633,6 @@
 ]]></content>
       <tags>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang时间处理</title>
-    <url>/p/time-processing-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
-<a id="more"></a>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-        <tag>time</tag>
       </tags>
   </entry>
   <entry>
@@ -2365,31 +2365,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PyTorch中的Tensor</title>
-    <url>/p/Tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
-<a id="more"></a>
-<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
-<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
-<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
-<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
-<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PyTorch中的损失函数和优化器</title>
     <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
     <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
@@ -2495,6 +2470,31 @@ y=x^2e^x
 <p><img src="image-20200820172727826.png" style="zoom:50%;" /></p>
 <p>在 PyTorch 实现中，<code>autograd</code>会随着用户的操作，记录生成当前 <strong>Tensor</strong> 的所有操作，并由此建立一个有向无环图。用户没进行一个操作，相应的计算图就会发生改变。更底层的实现中，图中记录了操作<code>Function</code>，每个变量在图中的位置可通过其<code>grad_fn</code>属性在图中的位置可以推测得到。在反向传播过程中，<code>autograd</code>沿着这个图从当前变量(根节点<span class="math inline">\(z\)</span>)溯源，可以利用链式求导法则计算所有叶子节点的梯度。每一个前向传播操作的函数都有与之对应的反向传播函数用来计算输入的各个Tensor的梯度，这些函数的函数名通常以<code>Backward</code>结尾。</p>
 <p>部分转载自：https://zhuanlan.zhihu.com/p/83172023</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyTorch中的Tensor</title>
+    <url>/p/Tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
+<a id="more"></a>
+<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
+<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
+<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
+<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
@@ -3904,6 +3904,133 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>ROS系统学习小记(二)</title>
+    <url>/p/ROS-system-learning-notes-02/</url>
+    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
+<p><strong>关键词：</strong>ROS</p>
+<a id="more"></a>
+<h3 id="ros试用练习">ROS试用练习</h3>
+<h4 id="ros文件系统">ROS文件系统</h4>
+<p>我们通过命令行工具来浏览ROS的文件系统。</p>
+<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
+<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
+<p>你将要获得以下信息：</p>
+<p><img src="image-20201019194410801.png" /></p>
+<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
+<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
+<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
+<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
+<p><img src="image-20201019195209283.png" /></p>
+<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
+<p>将获得以下新路径：</p>
+<p><img src="image-20201019195406492.png" /></p>
+<h4 id="创建工作空间">创建工作空间</h4>
+<p>我们会在工作空间完成本书使用的所有代码。</p>
+<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
+<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
+<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
+<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
+<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
+<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
+<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
+<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
+<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
+<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
+<p>如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
+<p>这些依赖项主要包括以下几个：</p>
+<ul>
+<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
+<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
+</ul>
+<p>如果所有步骤一切顺利，结果如下图所示：</p>
+<p><img src="image-20201019202650647.png" /></p>
+<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
+<ul>
+<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
+<li>rospack find TEST：此命令用于查看依赖关系。</li>
+<li>rosls TEST：此命令用于查看内容</li>
+<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
+</ul>
+<h4 id="编译ros功能包">编译ROS功能包</h4>
+<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
+<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
+<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
+<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
+<p><img src="image-20201019204443411.png" /></p>
+<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
+<p>如果编译单个工具包，可以使用如下格式的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu18.04更换镜像源</title>
+    <url>/p/How-to-change-the-mirror-source-on-Ubuntu-1804/</url>
+    <content><![CDATA[<h4 id="ubuntu18.04更换镜像源">Ubuntu18.04更换镜像源</h4>
+<h5 id="备份原有镜像源">1.备份原有镜像源</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/apt/sources.list /etc/apt/sourses.list.bak</span><br></pre></td></tr></table></figure>
+<h5 id="修改etcaptsources.list文件">2.修改/etc/apt/sources.list文件</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/apt/sources.list</span><br><span class="line"><span class="comment">#中科大源</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#阿里云源</span></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#清华源</span></span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#香港中文科技大学源</span></span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br></pre></td></tr></table></figure>
+<h5 id="其他相关命令">3.其他相关命令</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update  更新源</span><br><span class="line">sudo apt-get install package 安装包</span><br><span class="line">sudo apt-get remove package 删除包</span><br><span class="line">sudo apt-cache search package 搜索软件包</span><br><span class="line">sudo apt-cache show package  获取包的相关信息，如说明、大小、版本等</span><br><span class="line">sudo apt-get install package --reinstall  重新安装包</span><br><span class="line">sudo apt-get -f install  修复安装</span><br><span class="line">sudo apt-get remove package --purge 删除包，包括配置文件等</span><br><span class="line">sudo apt-get build-dep package 安装相关的编译环境</span><br><span class="line">sudo apt-get upgrade 更新已安装的包</span><br><span class="line">sudo apt-get dist-upgrade 升级系统</span><br><span class="line">sudo apt-cache depends package 了解使用该包依赖那些包</span><br><span class="line">sudo apt-cache rdepends package 查看该包被哪些包依赖</span><br><span class="line">sudo apt-get <span class="built_in">source</span> package  下载该包的源代码</span><br><span class="line">sudo apt-get clean &amp;&amp; sudo apt-get autoclean 清理无用的包</span><br><span class="line">sudo apt-get check 检查是否有损坏的依赖</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Ubuntu18.04</tag>
+        <tag>镜像源</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu安装nodejs并更改npm镜像源</title>
+    <url>/p/How-to-install-nodejs-and-change-npm-mirror-source-on-Ubuntu/</url>
+    <content><![CDATA[<h4 id="ubuntu安装nodejs并更改npm镜像源">Ubuntu安装nodejs并更改npm镜像源</h4>
+<p>由于众所周知的原因，在国内使用原有的源安装<code>nodejs</code>速度非常缓慢，故可以采用清华大学的源</p>
+<h5 id="运行">运行</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sL https://deb.nodesource.com/setup_12.x | sudo bash</span><br></pre></td></tr></table></figure>
+<h5 id="编辑-etcaptsources.list.dnodesource.list">编辑 /etc/apt/sources.list.d/nodesource.list</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb https://deb.nodesource.com/node_12.x xenial main</span><br><span class="line">deb-src https://deb.nodesource.com/node_12.x xenial main</span><br></pre></td></tr></table></figure>
+<h5 id="更改为">更改为：</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/nodesource/deb_12.x xenial main</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/nodesource/deb_12.x xenial main</span><br></pre></td></tr></table></figure>
+<h5 id="更新源">更新源</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get clean</span><br><span class="line">apt-get update</span><br></pre></td></tr></table></figure>
+<h5 id="安装nodejs">安装nodejs</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install nodejs</span><br></pre></td></tr></table></figure>
+<h5 id="查看版本">查看版本</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nodejs -v</span><br><span class="line"></span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+<h5 id="更换npm源">更换npm源</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+<h5 id="验证是否成功">验证是否成功</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config get registry</span><br></pre></td></tr></table></figure>
+<h5 id="安装hexo">安装Hexo</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+<h5 id="初始化hexo">初始化Hexo</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<h5 id="生成静态网页">生成静态网页</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Linux运维</tag>
+        <tag>nodejs</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4068,133 +4195,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ROS系统学习小记(二)</title>
-    <url>/p/ROS-system-learning-notes-02/</url>
-    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
-<p><strong>关键词：</strong>ROS</p>
-<a id="more"></a>
-<h3 id="ros试用练习">ROS试用练习</h3>
-<h4 id="ros文件系统">ROS文件系统</h4>
-<p>我们通过命令行工具来浏览ROS的文件系统。</p>
-<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
-<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
-<p>你将要获得以下信息：</p>
-<p><img src="image-20201019194410801.png" /></p>
-<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
-<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
-<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
-<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
-<p><img src="image-20201019195209283.png" /></p>
-<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
-<p>将获得以下新路径：</p>
-<p><img src="image-20201019195406492.png" /></p>
-<h4 id="创建工作空间">创建工作空间</h4>
-<p>我们会在工作空间完成本书使用的所有代码。</p>
-<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
-<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
-<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
-<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
-<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
-<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
-<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
-<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
-<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
-<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
-<p>如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
-<p>这些依赖项主要包括以下几个：</p>
-<ul>
-<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
-<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
-</ul>
-<p>如果所有步骤一切顺利，结果如下图所示：</p>
-<p><img src="image-20201019202650647.png" /></p>
-<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
-<ul>
-<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
-<li>rospack find TEST：此命令用于查看依赖关系。</li>
-<li>rosls TEST：此命令用于查看内容</li>
-<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
-</ul>
-<h4 id="编译ros功能包">编译ROS功能包</h4>
-<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
-<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
-<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
-<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
-<p><img src="image-20201019204443411.png" /></p>
-<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
-<p>如果编译单个工具包，可以使用如下格式的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu18.04更换镜像源</title>
-    <url>/p/How-to-change-the-mirror-source-on-Ubuntu-1804/</url>
-    <content><![CDATA[<h4 id="ubuntu18.04更换镜像源">Ubuntu18.04更换镜像源</h4>
-<h5 id="备份原有镜像源">1.备份原有镜像源</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/apt/sources.list /etc/apt/sourses.list.bak</span><br></pre></td></tr></table></figure>
-<h5 id="修改etcaptsources.list文件">2.修改/etc/apt/sources.list文件</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/apt/sources.list</span><br><span class="line"><span class="comment">#中科大源</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#阿里云源</span></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#清华源</span></span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#香港中文科技大学源</span></span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br></pre></td></tr></table></figure>
-<h5 id="其他相关命令">3.其他相关命令</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update  更新源</span><br><span class="line">sudo apt-get install package 安装包</span><br><span class="line">sudo apt-get remove package 删除包</span><br><span class="line">sudo apt-cache search package 搜索软件包</span><br><span class="line">sudo apt-cache show package  获取包的相关信息，如说明、大小、版本等</span><br><span class="line">sudo apt-get install package --reinstall  重新安装包</span><br><span class="line">sudo apt-get -f install  修复安装</span><br><span class="line">sudo apt-get remove package --purge 删除包，包括配置文件等</span><br><span class="line">sudo apt-get build-dep package 安装相关的编译环境</span><br><span class="line">sudo apt-get upgrade 更新已安装的包</span><br><span class="line">sudo apt-get dist-upgrade 升级系统</span><br><span class="line">sudo apt-cache depends package 了解使用该包依赖那些包</span><br><span class="line">sudo apt-cache rdepends package 查看该包被哪些包依赖</span><br><span class="line">sudo apt-get <span class="built_in">source</span> package  下载该包的源代码</span><br><span class="line">sudo apt-get clean &amp;&amp; sudo apt-get autoclean 清理无用的包</span><br><span class="line">sudo apt-get check 检查是否有损坏的依赖</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Ubuntu18.04</tag>
-        <tag>镜像源</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu安装nodejs并更改npm镜像源</title>
-    <url>/p/How-to-install-nodejs-and-change-npm-mirror-source-on-Ubuntu/</url>
-    <content><![CDATA[<h4 id="ubuntu安装nodejs并更改npm镜像源">Ubuntu安装nodejs并更改npm镜像源</h4>
-<p>由于众所周知的原因，在国内使用原有的源安装<code>nodejs</code>速度非常缓慢，故可以采用清华大学的源</p>
-<h5 id="运行">运行</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sL https://deb.nodesource.com/setup_12.x | sudo bash</span><br></pre></td></tr></table></figure>
-<h5 id="编辑-etcaptsources.list.dnodesource.list">编辑 /etc/apt/sources.list.d/nodesource.list</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb https://deb.nodesource.com/node_12.x xenial main</span><br><span class="line">deb-src https://deb.nodesource.com/node_12.x xenial main</span><br></pre></td></tr></table></figure>
-<h5 id="更改为">更改为：</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/nodesource/deb_12.x xenial main</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/nodesource/deb_12.x xenial main</span><br></pre></td></tr></table></figure>
-<h5 id="更新源">更新源</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get clean</span><br><span class="line">apt-get update</span><br></pre></td></tr></table></figure>
-<h5 id="安装nodejs">安装nodejs</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install nodejs</span><br></pre></td></tr></table></figure>
-<h5 id="查看版本">查看版本</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nodejs -v</span><br><span class="line"></span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
-<h5 id="更换npm源">更换npm源</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-<h5 id="验证是否成功">验证是否成功</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config get registry</span><br></pre></td></tr></table></figure>
-<h5 id="安装hexo">安装Hexo</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-<h5 id="初始化hexo">初始化Hexo</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-<h5 id="生成静态网页">生成静态网页</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Linux运维</tag>
-        <tag>nodejs</tag>
       </tags>
   </entry>
   <entry>
@@ -4994,68 +4994,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>selenium常用方法</title>
-    <url>/p/Selenium-positioning-method/</url>
-    <content><![CDATA[<p>Selenium 是一个综合性的项目，为web浏览器的自动化提供了各种工具和依赖包。本文主要介绍的是 selenium的常用方法。</p>
-<p><strong>关键词：Selenium常用方法</strong></p>
-<a id="more"></a>
-<h3 id="模拟手机访问">模拟手机访问</h3>
-<p>一般情况下，手机端页面更简单，容易提取元素</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> selenium</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">options = webdriver.ChromeOptions()</span><br><span class="line">options.add_experimental_option(<span class="string">&#x27;mobileEmulation&#x27;</span>, mobile_emulation)</span><br></pre></td></tr></table></figure>
-<h3 id="设置chrome为无头模式">设置chrome为无头模式</h3>
-<p>在 Chrome 59　中开始搭载 <a href="https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md">Headless Chrome</a>。这是一种在无需显示<em>headless</em>的环境下运行 Chrome 浏览器的方式。从本质上来说，就是不用打卡Chrome窗口来运行 Chrome 的功能。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">options.add_argument(<span class="string">&#x27;--headless&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="加载网址">加载网址</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.get(&quot;http:&#x2F;&#x2F;stu.zstu.edu.cn&quot;)</span><br></pre></td></tr></table></figure>
-<h3 id="定位元素">定位元素</h3>
-<h4 id="id定位">id定位</h4>
-<p>HTML 规定id 属性在HTML 文档中必须是唯一的。这类似于公民的身份证号，具有很强的唯一性</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_id(&quot;app&quot;)</span><br></pre></td></tr></table></figure>
-<h4 id="name定位">name定位</h4>
-<p>HTML 规定name 来指定元素的名称，因此它的作用更像是人的姓名</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_name(&quot;name&quot;)</span><br></pre></td></tr></table></figure>
-<h4 id="class定位">class定位</h4>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_class(&quot;classname&quot;)</span><br></pre></td></tr></table></figure>
-<h4 id="tag定位">tag定位</h4>
-<p>HTML 的本质就是通过tag来定义实现不同的功能，每一个元素本质上也是一个tag.</p>
-<p>因为一个tag 往往用来定义一类功能，所以通过tag识别某个元素的概率很低.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_tag_name(&quot;tagname&quot;)</span><br></pre></td></tr></table></figure>
-<h4 id="link-text-定位"><strong>link text 定位</strong></h4>
-<p>find_element_by_link_text()方法通过元素标签对之间的文本信息来定位元素</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_link_text(&quot;text&quot;)</span><br></pre></td></tr></table></figure>
-<h4 id="partial-link-定位"><strong>partial link 定位</strong></h4>
-<p>partial link 定位是对link 定位的一种补充，有些文本链接会比较长，这个时候可以取文本链接的一部分定位，只要这一部分信息可以唯一地标识这个链接</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_partial_link_text(&quot;partial text&quot;)</span><br></pre></td></tr></table></figure>
-<h4 id="xpath定位">XPATH定位</h4>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_xpath(&quot;&quot;)</span><br></pre></td></tr></table></figure>
-<p>XPath是XML的路径语言，通俗一点讲就是通过元素的路径来查找到这个标签元素</p>
-<h5 id="定位页面下所有元素">定位页面下所有元素</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;*[@id&#x3D;&quot;app&quot;]&#x2F;div</span><br></pre></td></tr></table></figure>
-<h5 id="绝对路径定位">绝对路径定位</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;html&#x2F;body&#x2F;div&#x2F;div</span><br></pre></td></tr></table></figure>
-<h5 id="利用元素属性定位">利用元素属性定位</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;&#x2F;&#x2F;input[@placeholder&#x3D;&#39;请通过XPATH定位元素&#39;]&quot;</span><br></pre></td></tr></table></figure>
-<h5 id="利用标签所含文字进行定位">利用标签所含文字进行定位</h5>
-<p>严格匹配</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;div[text()&#x3D;&quot;健康申报&quot;]</span><br></pre></td></tr></table></figure>
-<p>部分匹配</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;div[contains(text(), &quot;健康申报&quot;)]</span><br></pre></td></tr></table></figure>
-<h5 id="层级与属性相结合">层级与属性相结合</h5>
-<p>当标签页重复时，Xpath提供了层级过滤。</p>
-<p>例如，找不到儿子，那么就先找他的爸爸，或者找他的爷爷。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#39;&#x2F;&#x2F;label[contains(text(), &quot;文本内容&quot;)]&#x2F;..&#x2F;following-sibling::div[1]&#x2F;&#x2F;input&#39;</span><br></pre></td></tr></table></figure>
-<p><code>..</code> 表示当前节点的父节点</p>
-<p><code>following-sibling::div[1]</code> 表示当前节点的<strong>兄弟节点</strong>中的 <strong>第 1 个</strong> <strong>div</strong>标签</p>
-<h5 id="使用逻辑运算符">使用逻辑运算符</h5>
-<p>如果一个属性不能唯一的区分一个元素，可以使用逻辑运算符连接多个属性来查找元素</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;select[@name&#x3D;&#39;city&#39; and @size&#x3D;&#39;4&#39; and @multiple&#x3D;&quot;multiple&quot;]</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ssh-genkey参数</title>
     <url>/p/ssh-genkey/</url>
     <content><![CDATA[<p>什么是ssh-genkey？</p>
@@ -5153,32 +5091,65 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用PyTorch进行MNIST识别</title>
-    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
-    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
+    <title>selenium常用方法</title>
+    <url>/p/Selenium-positioning-method/</url>
+    <content><![CDATA[<p>Selenium 是一个综合性的项目，为web浏览器的自动化提供了各种工具和依赖包。本文主要介绍的是 selenium的常用方法。</p>
+<p><strong>关键词：Selenium常用方法</strong></p>
 <a id="more"></a>
-<h5 id="数据集部分">数据集部分：</h5>
-<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
-<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
-<h5 id="网络定义部分">网络定义部分：</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
-<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
-<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
-<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
-<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
-<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
-<p><strong>详细描述：</strong></p>
-<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
-<h5 id="卷积计算公式">卷积计算公式：</h5>
-<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
-<h5 id="池化计算公式">池化计算公式：</h5>
-<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
+<h3 id="模拟手机访问">模拟手机访问</h3>
+<p>一般情况下，手机端页面更简单，容易提取元素</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> selenium</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">options = webdriver.ChromeOptions()</span><br><span class="line">options.add_experimental_option(<span class="string">&#x27;mobileEmulation&#x27;</span>, mobile_emulation)</span><br></pre></td></tr></table></figure>
+<h3 id="设置chrome为无头模式">设置chrome为无头模式</h3>
+<p>在 Chrome 59　中开始搭载 <a href="https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md">Headless Chrome</a>。这是一种在无需显示<em>headless</em>的环境下运行 Chrome 浏览器的方式。从本质上来说，就是不用打卡Chrome窗口来运行 Chrome 的功能。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">options.add_argument(<span class="string">&#x27;--headless&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="加载网址">加载网址</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.get(&quot;http:&#x2F;&#x2F;stu.zstu.edu.cn&quot;)</span><br></pre></td></tr></table></figure>
+<h3 id="定位元素">定位元素</h3>
+<h4 id="id定位">id定位</h4>
+<p>HTML 规定id 属性在HTML 文档中必须是唯一的。这类似于公民的身份证号，具有很强的唯一性</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_id(&quot;app&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="name定位">name定位</h4>
+<p>HTML 规定name 来指定元素的名称，因此它的作用更像是人的姓名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_name(&quot;name&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="class定位">class定位</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_class(&quot;classname&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="tag定位">tag定位</h4>
+<p>HTML 的本质就是通过tag来定义实现不同的功能，每一个元素本质上也是一个tag.</p>
+<p>因为一个tag 往往用来定义一类功能，所以通过tag识别某个元素的概率很低.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_tag_name(&quot;tagname&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="link-text-定位"><strong>link text 定位</strong></h4>
+<p>find_element_by_link_text()方法通过元素标签对之间的文本信息来定位元素</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_link_text(&quot;text&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="partial-link-定位"><strong>partial link 定位</strong></h4>
+<p>partial link 定位是对link 定位的一种补充，有些文本链接会比较长，这个时候可以取文本链接的一部分定位，只要这一部分信息可以唯一地标识这个链接</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_partial_link_text(&quot;partial text&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="xpath定位">XPATH定位</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chrome.find_element_by_xpath(&quot;&quot;)</span><br></pre></td></tr></table></figure>
+<p>XPath是XML的路径语言，通俗一点讲就是通过元素的路径来查找到这个标签元素</p>
+<h5 id="定位页面下所有元素">定位页面下所有元素</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;*[@id&#x3D;&quot;app&quot;]&#x2F;div</span><br></pre></td></tr></table></figure>
+<h5 id="绝对路径定位">绝对路径定位</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;html&#x2F;body&#x2F;div&#x2F;div</span><br></pre></td></tr></table></figure>
+<h5 id="利用元素属性定位">利用元素属性定位</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;&#x2F;&#x2F;input[@placeholder&#x3D;&#39;请通过XPATH定位元素&#39;]&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="利用标签所含文字进行定位">利用标签所含文字进行定位</h5>
+<p>严格匹配</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;div[text()&#x3D;&quot;健康申报&quot;]</span><br></pre></td></tr></table></figure>
+<p>部分匹配</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;div[contains(text(), &quot;健康申报&quot;)]</span><br></pre></td></tr></table></figure>
+<h5 id="层级与属性相结合">层级与属性相结合</h5>
+<p>当标签页重复时，Xpath提供了层级过滤。</p>
+<p>例如，找不到儿子，那么就先找他的爸爸，或者找他的爷爷。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#39;&#x2F;&#x2F;label[contains(text(), &quot;文本内容&quot;)]&#x2F;..&#x2F;following-sibling::div[1]&#x2F;&#x2F;input&#39;</span><br></pre></td></tr></table></figure>
+<p><code>..</code> 表示当前节点的父节点</p>
+<p><code>following-sibling::div[1]</code> 表示当前节点的<strong>兄弟节点</strong>中的 <strong>第 1 个</strong> <strong>div</strong>标签</p>
+<h5 id="使用逻辑运算符">使用逻辑运算符</h5>
+<p>如果一个属性不能唯一的区分一个元素，可以使用逻辑运算符连接多个属性来查找元素</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;select[@name&#x3D;&#39;city&#39; and @size&#x3D;&#39;4&#39; and @multiple&#x3D;&quot;multiple&quot;]</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>PyTorch</tag>
-        <tag>CNN</tag>
-        <tag>MNIST</tag>
+        <tag>Python</tag>
+        <tag>Selenium</tag>
       </tags>
   </entry>
   <entry>
@@ -5217,6 +5188,35 @@ y=x^2e^x
       <tags>
         <tag>linux</tag>
         <tag>jdk</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用PyTorch进行MNIST识别</title>
+    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
+    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
+<a id="more"></a>
+<h5 id="数据集部分">数据集部分：</h5>
+<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
+<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
+<h5 id="网络定义部分">网络定义部分：</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
+<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
+<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
+<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
+<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
+<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
+<p><strong>详细描述：</strong></p>
+<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
+<h5 id="卷积计算公式">卷积计算公式：</h5>
+<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
+<h5 id="池化计算公式">池化计算公式：</h5>
+<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+        <tag>CNN</tag>
+        <tag>MNIST</tag>
       </tags>
   </entry>
   <entry>
@@ -6782,6 +6782,29 @@ t≥times[i],&amp; i=N-1
       </tags>
   </entry>
   <entry>
+    <title>力扣每日一题之完美数</title>
+    <url>/p/perfect-number/</url>
+    <content><![CDATA[<p>对于一个正整数，如果除了它和它自身以外的所有<strong>正因子</strong>相等，我们称他为完美数。</p>
+<p>给定一个整数，如果是完美数，返回<code>true</code>，否则返回<code>false</code></p>
+<a id="more"></a>
+<p>示例 1：</p>
+<p>输入：num = 28 输出：true 解释：28 = 1 + 2 + 4 + 7 + 14 1, 2, 4, 7, 和 14 是 28 的所有正因子。</p>
+<p>示例 2：</p>
+<p>输入：num = 6 输出：true</p>
+<p>示例 3：</p>
+<p>输入：num = 496 输出：true</p>
+<h2 id="方法一枚举">方法一：枚举</h2>
+<p>枚举<code>num</code> 的所有真因子，累加所有真因子之和，记作<code>sum</code>。若<code>sum=num</code>则返回<code>true</code>，否则返回<code>false</code>.</p>
+<p>在枚举时，只需要枚举不超过$  <span class="math inline">\(的数。这是因为如果\)</span>num<span class="math inline">\(有一个大于\)</span>  <span class="math inline">\(的因数\)</span>d<span class="math inline">\(，那么它一定有一个小于\)</span>  $的因数 <span class="math inline">\(frac{num}{d}\)</span>.</p>
+<p>在枚举时，若能找到一个因数<span class="math inline">\(d\)</span>，那么就找到了因数<span class="math inline">\(frac{num}{d}\)</span>.</p>
+<p>当<span class="math inline">\(d \\times d=num\)</span>时，这两个因数相同，此时不能重复计算。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkPerfectNumber</span><span class="params">(num <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> sum <span class="keyword">int</span> = <span class="number">1</span> <span class="comment">// 和从1开始</span></span><br><span class="line">    <span class="keyword">for</span> d := <span class="number">2</span>; d * d &lt;= num; d ++ &#123;</span><br><span class="line">        <span class="keyword">if</span> num % d == <span class="number">0</span>&#123;</span><br><span class="line">            sum += d</span><br><span class="line">            <span class="keyword">if</span> d * d &lt; num &#123;</span><br><span class="line">                sum += num /d</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum == num</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之最短补全词</title>
     <url>/p/shortest-completing-word/</url>
     <content><![CDATA[<p>给你一个字符串<code>licensePlate</code>和一个字符串数组<code>words</code>，请你找出并返回<code>words</code>中最短补全词。</p>
@@ -6899,6 +6922,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <url>/p/swap-nodes-in-pairs/</url>
+    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="swap_ex1.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
+<p><img src="image-20220214194056147.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣链表基础之删除链表的倒数第N个节点</title>
     <url>/p/remove-nth-node-from-end-of-list/</url>
     <content><![CDATA[<p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p>
@@ -6913,25 +6955,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p><img src="image-20220215193937378.png" /></p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// fast先移动n+1步，然后让fast和slow同时移动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeNthFromEnd</span><span class="params">(head *ListNode, n <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">	dummy.Next = head</span><br><span class="line">	fast := dummy</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">	&#125;</span><br><span class="line">	slow := dummy</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">		slow = slow.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> slow != <span class="literal">nil</span> &amp;&amp; slow.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow.Next = slow.Next.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <url>/p/swap-nodes-in-pairs/</url>
-    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="swap_ex1.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
-<p><img src="image-20220214194056147.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7209,29 +7232,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣每日一题之完美数</title>
-    <url>/p/perfect-number/</url>
-    <content><![CDATA[<p>对于一个正整数，如果除了它和它自身以外的所有<strong>正因子</strong>相等，我们称他为完美数。</p>
-<p>给定一个整数，如果是完美数，返回<code>true</code>，否则返回<code>false</code></p>
-<a id="more"></a>
-<p>示例 1：</p>
-<p>输入：num = 28 输出：true 解释：28 = 1 + 2 + 4 + 7 + 14 1, 2, 4, 7, 和 14 是 28 的所有正因子。</p>
-<p>示例 2：</p>
-<p>输入：num = 6 输出：true</p>
-<p>示例 3：</p>
-<p>输入：num = 496 输出：true</p>
-<h2 id="方法一枚举">方法一：枚举</h2>
-<p>枚举<code>num</code> 的所有真因子，累加所有真因子之和，记作<code>sum</code>。若<code>sum=num</code>则返回<code>true</code>，否则返回<code>false</code>.</p>
-<p>在枚举时，只需要枚举不超过$  <span class="math inline">\(的数。这是因为如果\)</span>num<span class="math inline">\(有一个大于\)</span>  <span class="math inline">\(的因数\)</span>d<span class="math inline">\(，那么它一定有一个小于\)</span>  $的因数 <span class="math inline">\(frac{num}{d}\)</span>.</p>
-<p>在枚举时，若能找到一个因数<span class="math inline">\(d\)</span>，那么就找到了因数<span class="math inline">\(frac{num}{d}\)</span>.</p>
-<p>当<span class="math inline">\(d \\times d=num\)</span>时，这两个因数相同，此时不能重复计算。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkPerfectNumber</span><span class="params">(num <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> sum <span class="keyword">int</span> = <span class="number">1</span> <span class="comment">// 和从1开始</span></span><br><span class="line">    <span class="keyword">for</span> d := <span class="number">2</span>; d * d &lt;= num; d ++ &#123;</span><br><span class="line">        <span class="keyword">if</span> num % d == <span class="number">0</span>&#123;</span><br><span class="line">            sum += d</span><br><span class="line">            <span class="keyword">if</span> d * d &lt; num &#123;</span><br><span class="line">                sum += num /d</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum == num</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
