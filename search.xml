@@ -2034,149 +2034,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Pandas学习小记(一)</title>
-    <url>/p/Pandas-learning-notes-01/</url>
-    <content><![CDATA[<p>Pandas是什么？</p>
-<a id="more"></a>
-<p>Pandas是一个强大的分析结构化数据的工具集；它的使用基础是Numpy（提供高性能的矩阵运算）；用于数据挖掘和数据分析，同时也提供数据清洗功能。</p>
-<h3 id="安装pandas">安装Pandas</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pandas -i http://mirrors.aliyun.com/pypi/simple/</span><br></pre></td></tr></table></figure>
-<h3 id="pandas简介">Pandas简介</h3>
-<p>Pandas 适用于处理以下类型的数据：</p>
-<ul>
-<li>与 SQL 或 Excel 表类似的，含异构列的表格数据;</li>
-<li>有序和无序（非固定频率）的时间序列数据;</li>
-<li>带行列标签的矩阵数据，包括同构或异构型数据;</li>
-<li>任意其它形式的观测、统计数据集, 数据转入 Pandas 数据结构时不必事先标记。</li>
-</ul>
-<p>Pandas 的主要数据结构是 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series">Series</a>（一维数据）与 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a>（二维数据），这两种数据结构足以<strong>处理金融、统计、社会科学、工程</strong>等领域里的大多数典型用例。对于 R 用户，DataFrame 提供了比 R 语言 data.frame 更丰富的功能。Pandas 基于 <a href="https://www.numpy.org/">NumPy</a> 开发，可以与其它第三方科学计算支持库完美集成。</p>
-<p>Pandas 就像一把万能瑞士军刀，下面仅列出了它的部分优势 ：</p>
-<ul>
-<li>处理浮点与非浮点数据里的<strong>缺失数据</strong>，表示为 <code>NaN</code>；</li>
-<li>大小可变：<strong>插入或删除</strong> DataFrame 等多维对象的列；</li>
-<li>自动、显式<strong>数据对齐</strong>：显式地将对象与一组标签对齐，也可以忽略标签，在 Series、DataFrame 计算时自动与数据对齐；</li>
-<li>强大、灵活的<strong>分组</strong>（group by）功能：<strong>拆分-应用-组合</strong>数据集，聚合、转换数据；</li>
-<li>把 Python 和 NumPy 数据结构里不规则、不同索引的数据<strong>轻松</strong>地转换为 DataFrame 对象；</li>
-<li>基于智能标签，对大型数据集进行<strong>切片</strong>、<strong>花式索引</strong>、<strong>子集分解</strong>等操作；</li>
-<li>直观地<strong>合并（merge）</strong>、<strong>连接（join）</strong>数据集；</li>
-<li>灵活地<strong>重塑（reshape）</strong>、<strong>透视（pivot）</strong>数据集；</li>
-<li><strong>轴</strong>支持结构化标签：一个刻度支持多个标签；</li>
-<li>成熟的 IO 工具：读取<strong>文本文件</strong>（CSV 等支持分隔符的文件）、Excel 文件、数据库等来源的数据，利用超快的 <strong>HDF5</strong> 格式保存 / 加载数据；</li>
-<li><strong>时间序列</strong>：支持日期范围生成、频率转换、移动窗口统计、移动窗口线性回归、日期位移等时间序列功能。</li>
-</ul>
-<p>这些功能主要是为了解决其它编程语言、科研环境的痛点。处理数据一般分为几个阶段：<strong>数据整理与清洗、数据分析与建模、数据可视化与制表</strong>，Pandas 是处理数据的理想工具。</p>
-<p>其它说明：</p>
-<ul>
-<li>Pandas 速度<strong>很快</strong>。Pandas 的很多底层算法都用 <a href="https://cython.org/">Cython</a> 优化过。然而，为了保持通用性，必然要牺牲一些性能，如果专注某一功能，完全可以开发出比 Pandas 更快的专用工具。</li>
-<li>Pandas 是 <a href="https://www.statsmodels.org/stable/index.html">statsmodels</a> 的依赖项，因此，Pandas 也是 Python 中统计计算生态系统的重要组成部分。</li>
-<li>Pandas 已广泛应用于金融领域</li>
-</ul>
-<h3 id="pandas中的数据结构">Pandas中的数据结构</h3>
-<table>
-<thead>
-<tr class="header">
-<th>维数</th>
-<th>名称</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Series</td>
-<td>带标签的一维同构数组</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>DataFrame</td>
-<td>带标签的，大小可变的，二维异构表格</td>
-</tr>
-</tbody>
-</table>
-<h3 id="为什么有多个数据结构">为什么有多个数据结构？</h3>
-<p>Pandas 数据结构就像是低维数据的容器。比如，DataFrame 是 Series 的容器，Series 则是标量的容器。使用这种方式，可以在容器中以字典的形式插入或删除对象。</p>
-<p>此外，通用 API 函数的默认操作要顾及时间序列与截面数据集的方向。多维数组存储二维或三维数据时，编写函数要注意数据集的方向，这对用户来说是一种负担；如果不考虑 C 或 Fortran 中连续性对性能的影响，一般情况下，不同的轴在程序里其实没有什么区别。Pandas 里，轴的概念主要是为了给数据赋予更直观的语义，即用“更恰当”的方式表示数据集的方向。这样做可以让用户编写数据转换函数时，少费点脑子。</p>
-<p>处理 DataFrame 等表格数据时，<strong>index</strong>（行）或 <strong>columns</strong>（列）比 <strong>axis 0</strong> 和 <strong>axis 1</strong> 更直观。用这种方式迭代 DataFrame 的列，代码更易读易懂：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> df.columns:</span><br><span class="line">    series = df[col]</span><br><span class="line">    <span class="comment"># do something with series</span></span><br></pre></td></tr></table></figure>
-<h3 id="大小可变与数据复制"><a href="https://www.pypandas.cn/docs/getting_started/overview.html#大小可变与数据复制">大小可变与数据复制</a></h3>
-<p>Pandas 所有数据结构的值都是可变的，但数据结构的大小并非都是可变的，比如，Series 的长度不可改变，但 DataFrame 里就可以插入列。</p>
-<p>Pandas 里，绝大多数方法都不改变原始的输入数据，而是复制数据，生成新的对象。 一般来说，原始输入数据<strong>不变</strong>更稳妥。</p>
-<h3 id="十分钟入门pandas"><a href="https://www.pypandas.cn/docs/getting_started/10min.html#%E5%8D%81%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8-pandas">十分钟入门Pandas</a></h3>
-<p>导入：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
-<h4 id="生成对象">生成对象</h4>
-<p>使用值列表生成Series</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">3</span>]: s = pd.Series([<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, np.nan, <span class="number">6</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: s</span><br><span class="line">Out[<span class="number">4</span>]: </span><br><span class="line"><span class="number">0</span>    <span class="number">1.0</span></span><br><span class="line"><span class="number">1</span>    <span class="number">3.0</span></span><br><span class="line"><span class="number">2</span>    <span class="number">5.0</span></span><br><span class="line"><span class="number">3</span>    NaN</span><br><span class="line"><span class="number">4</span>    <span class="number">6.0</span></span><br><span class="line"><span class="number">5</span>    <span class="number">8.0</span></span><br><span class="line">dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用含日期时间索引与标签的Numpy数组生成DataFrame</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">5</span>]: dates = pd.date_range(<span class="string">&#x27;20130101&#x27;</span>, periods=<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: dates</span><br><span class="line">Out[<span class="number">6</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: df = pd.DataFrame(np.random.randn(<span class="number">6</span>, <span class="number">4</span>), index=dates, columns=list(<span class="string">&#x27;ABCD&#x27;</span>))</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: df</span><br><span class="line">Out[<span class="number">8</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p>用Series字典对象生成DataFrame</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">In [9]: df2 &#x3D; pd.DataFrame(&#123;&#39;A&#39;: 1.,</span><br><span class="line">   ...:                     &#39;B&#39;: pd.Timestamp(&#39;20130102&#39;),</span><br><span class="line">   ...:                     &#39;C&#39;: pd.Series(1, index&#x3D;list(range(4)), dtype&#x3D;&#39;float32&#39;),</span><br><span class="line">   ...:                     &#39;D&#39;: np.array([3] * 4, dtype&#x3D;&#39;int32&#39;),</span><br><span class="line">   ...:                     &#39;E&#39;: pd.Categorical([&quot;test&quot;, &quot;train&quot;, &quot;test&quot;, &quot;train&quot;]),</span><br><span class="line">   ...:                     &#39;F&#39;: &#39;foo&#39;&#125;)</span><br><span class="line">   ...: </span><br><span class="line"></span><br><span class="line">In [10]: df2</span><br><span class="line">Out[10]: </span><br><span class="line">     A          B    C  D      E    F</span><br><span class="line">0  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">1  1.0 2013-01-02  1.0  3  train  foo</span><br><span class="line">2  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">3  1.0 2013-01-02  1.0  3  train  foo</span><br></pre></td></tr></table></figure>
-<p>DataFrame的列有不同的数据类型</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">11</span>]: df2.dtypes</span><br><span class="line">Out[<span class="number">11</span>]: </span><br><span class="line">A           float64</span><br><span class="line">B    datetime64[ns]</span><br><span class="line">C           float32</span><br><span class="line">D             int32</span><br><span class="line">E          category</span><br><span class="line">F            object</span><br><span class="line">dtype: object</span><br></pre></td></tr></table></figure>
-<p>IPython支持 tab 键自动补全列名与公共属性。下面是部分可自动补全的属性：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">12</span>]: df2.&lt;TAB&gt;  <span class="comment"># noqa: E225, E999</span></span><br><span class="line">df2.A                  df2.bool</span><br><span class="line">df2.abs                df2.boxplot</span><br><span class="line">df2.add                df2.C</span><br><span class="line">df2.add_prefix         df2.clip</span><br><span class="line">df2.add_suffix         df2.clip_lower</span><br><span class="line">df2.align              df2.clip_upper</span><br><span class="line">df2.all                df2.columns</span><br><span class="line">df2.any                df2.combine</span><br><span class="line">df2.append             df2.combine_first</span><br><span class="line">df2.apply              df2.compound</span><br><span class="line">df2.applymap           df2.consolidate</span><br><span class="line">df2.D</span><br></pre></td></tr></table></figure>
-<p>列 A、B、C、D 和 E 都可以自动补全；为简洁起见，此处只显示了部分属性。</p>
-<h4 id="查看数据">查看数据</h4>
-<p>下列代码说明了如何查看DataFrame头部和尾部的数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">13</span>]: df.head()</span><br><span class="line">Out[<span class="number">13</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: df.tail(<span class="number">3</span>) <span class="comment">#后三行	</span></span><br><span class="line">Out[<span class="number">14</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p>显示索引与列名：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">15</span>]: df.index</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: df.columns</span><br><span class="line">Out[<span class="number">16</span>]: Index([<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>], dtype=<span class="string">&#x27;object&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 输出底层数据的 NumPy 对象。注意，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 的列由多种数据类型组成时，该操作耗费系统资源较大，这也是 Pandas 和 NumPy 的本质区别：<strong>NumPy 数组只有一种数据类型，DataFrame 每列的数据类型各不相同</strong>。调用 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 时，Pandas 查找支持 DataFrame 里所有数据类型的 NumPy 数据类型。还有一种数据类型是 <code>object</code>，可以把 DataFrame 列里的值强制转换为 Python 对象。</p>
-<p>下面的 <code>df</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 里的值都是浮点数，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的操作会很快，而且不复制数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">17</span>]: df.to_numpy()</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">array([[ <span class="number">0.4691</span>, <span class="number">-0.2829</span>, <span class="number">-1.5091</span>, <span class="number">-1.1356</span>],</span><br><span class="line">       [ <span class="number">1.2121</span>, <span class="number">-0.1732</span>,  <span class="number">0.1192</span>, <span class="number">-1.0442</span>],</span><br><span class="line">       [<span class="number">-0.8618</span>, <span class="number">-2.1046</span>, <span class="number">-0.4949</span>,  <span class="number">1.0718</span>],</span><br><span class="line">       [ <span class="number">0.7216</span>, <span class="number">-0.7068</span>, <span class="number">-1.0396</span>,  <span class="number">0.2719</span>],</span><br><span class="line">       [<span class="number">-0.425</span> ,  <span class="number">0.567</span> ,  <span class="number">0.2762</span>, <span class="number">-1.0874</span>],</span><br><span class="line">       [<span class="number">-0.6737</span>,  <span class="number">0.1136</span>, <span class="number">-1.4784</span>,  <span class="number">0.525</span> ]])</span><br></pre></td></tr></table></figure>
-<p><code>df2</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 包含了多种类型，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 操作就会耗费较多资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">18</span>]: df2.to_numpy()</span><br><span class="line">Out[<span class="number">18</span>]: </span><br><span class="line">array([[<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>]], dtype=object)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>提醒：<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的输出不包含行索引和列标签。</p>
-</blockquote>
-<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.describe.html#pandas.DataFrame.describe">describe()</a> 可以快速查看数据的统计摘要：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">19</span>]: df.describe()</span><br><span class="line">Out[<span class="number">19</span>]: </span><br><span class="line">              A         B         C         D</span><br><span class="line">count  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span></span><br><span class="line">mean   <span class="number">0.073711</span> <span class="number">-0.431125</span> <span class="number">-0.687758</span> <span class="number">-0.233103</span></span><br><span class="line">std    <span class="number">0.843157</span>  <span class="number">0.922818</span>  <span class="number">0.779887</span>  <span class="number">0.973118</span></span><br><span class="line">min   <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">25</span>%   <span class="number">-0.611510</span> <span class="number">-0.600794</span> <span class="number">-1.368714</span> <span class="number">-1.076610</span></span><br><span class="line"><span class="number">50</span>%    <span class="number">0.022070</span> <span class="number">-0.228039</span> <span class="number">-0.767252</span> <span class="number">-0.386188</span></span><br><span class="line"><span class="number">75</span>%    <span class="number">0.658444</span>  <span class="number">0.041933</span> <span class="number">-0.034326</span>  <span class="number">0.461706</span></span><br><span class="line">max    <span class="number">1.212112</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
-<p>转置数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">20</span>]: df.T</span><br><span class="line">Out[<span class="number">20</span>]: </span><br><span class="line">   <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-06</span></span><br><span class="line">A    <span class="number">0.469112</span>    <span class="number">1.212112</span>   <span class="number">-0.861849</span>    <span class="number">0.721555</span>   <span class="number">-0.424972</span>   <span class="number">-0.673690</span></span><br><span class="line">B   <span class="number">-0.282863</span>   <span class="number">-0.173215</span>   <span class="number">-2.104569</span>   <span class="number">-0.706771</span>    <span class="number">0.567020</span>    <span class="number">0.113648</span></span><br><span class="line">C   <span class="number">-1.509059</span>    <span class="number">0.119209</span>   <span class="number">-0.494929</span>   <span class="number">-1.039575</span>    <span class="number">0.276232</span>   <span class="number">-1.478427</span></span><br><span class="line">D   <span class="number">-1.135632</span>   <span class="number">-1.044236</span>    <span class="number">1.071804</span>    <span class="number">0.271860</span>   <span class="number">-1.087401</span>    <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p><strong>按轴排序：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">21</span>]: df.sort_index(axis=<span class="number">1</span>, ascending=<span class="literal">False</span>)</span><br><span class="line">Out[<span class="number">21</span>]: </span><br><span class="line">                   D         C         B         A</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-1.135632</span> <span class="number">-1.509059</span> <span class="number">-0.282863</span>  <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-1.044236</span>  <span class="number">0.119209</span> <span class="number">-0.173215</span>  <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">1.071804</span> <span class="number">-0.494929</span> <span class="number">-2.104569</span> <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.271860</span> <span class="number">-1.039575</span> <span class="number">-0.706771</span>  <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-1.087401</span>  <span class="number">0.276232</span>  <span class="number">0.567020</span> <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.524988</span> <span class="number">-1.478427</span>  <span class="number">0.113648</span> <span class="number">-0.673690</span></span><br></pre></td></tr></table></figure>
-<p>按值排序：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">22</span>]: df.sort_values(by=<span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">Out[<span class="number">22</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br></pre></td></tr></table></figure>
-<h4 id="选择">选择</h4>
-<p>获取数据</p>
-<p>选择单列，产生<code>Series</code>，与<code>df.A</code>等效：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">23</span>]: df[<span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">23</span>]: </span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>    <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>    <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>   <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>    <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>   <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>   <span class="number">-0.673690</span></span><br><span class="line">Freq: D, Name: A, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用[]切片行：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">24</span>]: df[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">24</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: df[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>]</span><br><span class="line">Out[<span class="number">25</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br></pre></td></tr></table></figure>
-<h4 id="按标签选择">按标签选择</h4>
-<p>用标签提取一行数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">26</span>]: df.loc[dates[<span class="number">0</span>]]</span><br><span class="line">Out[<span class="number">26</span>]: </span><br><span class="line">A    <span class="number">0.469112</span></span><br><span class="line">B   <span class="number">-0.282863</span></span><br><span class="line">C   <span class="number">-1.509059</span></span><br><span class="line">D   <span class="number">-1.135632</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用标签选择多列数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">27</span>]: df.loc[:, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">27</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span></span><br></pre></td></tr></table></figure>
-<p>用标签切片，包含行与列结束点：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">28</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">28</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br></pre></td></tr></table></figure>
-<p>返回对象降维：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">29</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">29</span>]: </span><br><span class="line">A    <span class="number">1.212112</span></span><br><span class="line">B   <span class="number">-0.173215</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>提取标量：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">30</span>]: df.loc[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">30</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
-<p>快速访问标量，与上述方法等效。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">31</span>]: df.at[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">31</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
-<h4 id="按位置选择">按位置选择</h4>
-<p>选择第三行的数据</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">32</span>]: df.iloc[<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">32</span>]: </span><br><span class="line">A    <span class="number">0.721555</span></span><br><span class="line">B   <span class="number">-0.706771</span></span><br><span class="line">C   <span class="number">-1.039575</span></span><br><span class="line">D    <span class="number">0.271860</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>类似于Numpy/Python，用整数切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">33</span>]: df.iloc[<span class="number">3</span>:<span class="number">5</span>, <span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">Out[<span class="number">33</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br></pre></td></tr></table></figure>
-<p>类似于Numpy/Python，用整数列表按位置切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">34</span>]: df.iloc[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>], [<span class="number">0</span>, <span class="number">2</span>]]</span><br><span class="line">Out[<span class="number">34</span>]: </span><br><span class="line">                   A         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.276232</span></span><br></pre></td></tr></table></figure>
-<p>显式整行切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">35</span>]: df.iloc[<span class="number">1</span>:<span class="number">3</span>, :]</span><br><span class="line">Out[<span class="number">35</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
-<p>显式整列切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">36</span>]: df.iloc[:, <span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">36</span>]: </span><br><span class="line">                   B         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span></span><br></pre></td></tr></table></figure>
-<p>显示提取值：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">37</span>]: df.iloc[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">37</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
-<p>快速访问标量，与上述方法等效：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">38</span>]: df.iat[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">38</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>PandasPandas</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PyQt5教程</title>
     <url>/p/PyQt5-Chinese-tutorial/</url>
     <content><![CDATA[<p>学习PyQt的基本功能。</p>
@@ -2722,713 +2579,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python中正则表达式用法</title>
-    <url>/p/regular-expression-usage-in-python/</url>
-    <content><![CDATA[<h4 id="正则表达式全集">正则表达式全集</h4>
-<a id="more"></a>
-<table>
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 78%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>字符</th>
-<th><strong>描述</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>\</td>
-<td>将下一个字符标记为一个特殊字符、或一个原义字符、或一个向后引用、或一个八进制转义符。例如，“<code>n</code>”匹配字符“<code>n</code>”。“<code>\n</code>”匹配一个换行符。串行“<code>\\</code>”匹配“<code>\</code>”而“<code>\(</code>”则匹配“<code>(</code>”。</td>
-</tr>
-<tr class="even">
-<td><strong>^</strong></td>
-<td>匹配输入字符串的开始位置。如果设置了RegExp对象的Multiline属性，^也匹配“<code>\n</code>”或“<code>\r</code>”之后的位置。</td>
-</tr>
-<tr class="odd">
-<td>**<span class="math inline">\(** | 匹配输入字符串的结束位置。如果设置了RegExp对象的Multiline属性，\)</span>也匹配“<code>\n</code>”或“<code>\r</code>”之前的位置。</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>*****</td>
-<td>匹配前面的子表达式零次或多次。例如，zo<em>能匹配“<code>z</code>”以及“<code>zoo</code>”。</em>等价于{0,}。</td>
-</tr>
-<tr class="odd">
-<td><strong>+</strong></td>
-<td>匹配前面的子表达式一次或多次。例如，“<code>zo+</code>”能匹配“<code>zo</code>”以及“<code>zoo</code>”，但不能匹配“<code>z</code>”。+等价于{1,}。</td>
-</tr>
-<tr class="even">
-<td><strong>?</strong></td>
-<td>匹配前面的子表达式零次或一次。例如，“<code>do(es)?</code>”可以匹配“<code>does</code>”或“<code>does</code>”中的“<code>do</code>”。?等价于{0,1}。</td>
-</tr>
-<tr class="odd">
-<td><strong>{n}</strong></td>
-<td><em>n</em>是一个非负整数。匹配确定的<em>n</em>次。例如，“<code>o&#123;2&#125;</code>”不能匹配“<code>Bob</code>”中的“<code>o</code>”，但是能匹配“<code>food</code>”中的两个o。</td>
-</tr>
-<tr class="even">
-<td><strong>{n,}</strong></td>
-<td><em>n</em>是一个非负整数。至少匹配<em>n</em>次。例如，“<code>o&#123;2,&#125;</code>”不能匹配“<code>Bob</code>”中的“<code>o</code>”，但能匹配“<code>foooood</code>”中的所有o。“<code>o&#123;1,&#125;</code>”等价于“<code>o+</code>”。“<code>o&#123;0,&#125;</code>”则等价于“<code>o*</code>”。</td>
-</tr>
-<tr class="odd">
-<td><strong>{n,m}</strong></td>
-<td><em>m</em>和<em>n</em>均为非负整数，其中<em>n</em>&lt;=<em>m</em>。最少匹配<em>n</em>次且最多匹配<em>m</em>次。例如，“<code>o&#123;1,3&#125;</code>”将匹配“<code>fooooood</code>”中的前三个o。“<code>o&#123;0,1&#125;</code>”等价于“<code>o?</code>”。请注意在逗号和两个数之间不能有空格。</td>
-</tr>
-<tr class="even">
-<td><strong>?</strong></td>
-<td>当该字符紧跟在任何一个其他限制符（<em>,+,?，{</em>n<em>}，{</em>n<em>,}，{</em>n<em>,</em>m*}）后面时，匹配模式是非贪婪的。非贪婪模式尽可能少的匹配所搜索的字符串，而默认的贪婪模式则尽可能多的匹配所搜索的字符串。例如，对于字符串“<code>oooo</code>”，“<code>o+?</code>”将匹配单个“<code>o</code>”，而“<code>o+</code>”将匹配所有“<code>o</code>”。</td>
-</tr>
-<tr class="odd">
-<td><strong>.</strong></td>
-<td>匹配除“<code>\</code><em><code>n</code></em>”之外的任何单个字符。要匹配包括“<code>\</code><em><code>n</code></em>”在内的任何字符，请使用像“<code>(. | | **(pattern)**    | 匹配pattern并获取这一匹配。所获取的匹配可以从产生的Matches集合得到，在VBScript中使用SubMatches集合，在JScript中则使用$0…$9属性。要匹配圆括号字符，请使用“</code>(<code>”或“</code>)<code>”。 | | **(?:pattern)**  | 匹配pattern但不获取匹配结果，也就是说这是一个非获取匹配，不进行存储供以后使用。 | | **(?=pattern)**  | 正向肯定预查，在任何匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。 | | **(?!pattern)**  | 正向否定预查，在任何不匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。 | | **(?&lt;=pattern)** | 反向肯定预查，与正向肯定预查类拟，只是方向相反。             | | **(?&lt;!pattern)** | 反向否定预查，与正向否定预查类拟，只是方向相反。             | | **x\|y**         | 匹配x或y                                                     | | **[xyz]**        | 字符集合。匹配所包含的任意一个字符。                         | | **[^xyz]**       | 负值字符集合。匹配未包含的任意字符。                         | | **[a-z]**        | 字符范围。匹配指定范围内的任意字符。                         | | **[^a-z]**       | 负值字符范围。匹配任何不在指定范围内的任意字符。             | | **\b**           | 匹配一个单词边界，也就是指单词和空格间的位置。例如，“</code>er”可以匹配“<code>never</code>”中的“<code>er</code>”，但不能匹配“<code>verb</code>”中的“<code>er</code>”。</td>
-</tr>
-<tr class="even">
-<td>***</td>
-<td>匹配非单词边界。“<code>er\B</code>”能匹配“<code>verb</code>”中的“<code>er</code>”，但不能匹配“<code>never</code>”中的“<code>er</code>”。</td>
-</tr>
-<tr class="odd">
-<td>***</td>
-<td>匹配由x指明的控制字符。例如，-M或回车符。x的值必须为A-Z或a-z之一。否则，将c视为一个原义的“<code>c</code>”字符。</td>
-</tr>
-<tr class="even">
-<td>**</td>
-<td>匹配一个数字字符。等价于[0-9]。</td>
-</tr>
-<tr class="odd">
-<td>***</td>
-<td>匹配一个非数字字符。等价于[^0-9]。</td>
-</tr>
-<tr class="even">
-<td>**</td>
-<td>匹配一个换页符。等价于0c和。</td>
-</tr>
-<tr class="odd">
-<td>***</td>
-<td>匹配一个换行符。等价于0a和。</td>
-</tr>
-<tr class="even">
-<td>**</td>
-<td>匹配一个回车符。等价于0d和。</td>
-</tr>
-<tr class="odd">
-<td>***</td>
-<td>匹配任何空白字符，包括空格、制表符、换页符等等。等价于[ 。</td>
-</tr>
-<tr class="even">
-<td>***</td>
-<td>匹配任何非空白字符。等价于[ 。</td>
-</tr>
-<tr class="odd">
-<td>**</td>
-<td>匹配一个制表符。等价于09和。</td>
-</tr>
-<tr class="even">
-<td>**</td>
-<td>匹配一个垂直制表符。等价于0b和。</td>
-</tr>
-<tr class="odd">
-<td>***</td>
-<td>匹配包括下划线的任何单词字符。等价于“<code>[A-Za-z0-9_]</code>”。</td>
-</tr>
-<tr class="even">
-<td>***</td>
-<td>匹配任何非单词字符。等价于“<code>[^A-Za-z0-9_]</code>”。</td>
-</tr>
-<tr class="odd">
-<td>***</td>
-<td>匹配<em>n</em>，其中<em>n</em>为十六进制转义值。十六进制转义值必须为确定的两个数字长。例如，“<code>\x41</code>”匹配“<code>A</code>”。“<code>\x041</code>”则等价于“<code>\x04&amp;1</code>”。正则表达式中可以使用ASCII编码。.</td>
-</tr>
-<tr class="even">
-<td><strong>\num</strong></td>
-<td>匹配<em>num</em>，其中<em>num</em>是一个正整数。对所获取的匹配的引用。例如，“<code>(.)\1</code>”匹配两个连续的相同字符。</td>
-</tr>
-<tr class="odd">
-<td><strong>\n</strong></td>
-<td>标识一个八进制转义值或一个向后引用。如果*n<em>之前至少</em>n<em>个获取的子表达式，则</em>n<em>为向后引用。否则，如果</em>n<em>为八进制数字（0-7），则</em>n为一个八进制转义值。</td>
-</tr>
-<tr class="even">
-<td><strong>\nm</strong></td>
-<td>标识一个八进制转义值或一个向后引用。如果*nm<em>之前至少有</em>nm<em>个获得子表达式，则</em>nm<em>为向后引用。如果*nm</em>之前至少有<em>n</em>个获取，则<em>n</em>为一个后跟文字<em>m</em>的向后引用。如果前面的条件都不满足，若<em>n</em>和<em>m</em>均为八进制数字（0-7），则*nm<em>将匹配八进制转义值</em>nm*。</td>
-</tr>
-<tr class="odd">
-<td><strong>\nml</strong></td>
-<td>如果<em>n</em>为八进制数字（0-3），且<em>m和l</em>均为八进制数字（0-7），则匹配八进制转义值<em>nm</em>l。</td>
-</tr>
-<tr class="even">
-<td>***</td>
-<td>匹配<em>n</em>，其中<em>n</em>是一个用四个十六进制数字表示的Unicode字符。例如，0A9匹配版权符号（©）。</td>
-</tr>
-</tbody>
-</table>
-<h4 id="常用正则表达式">常用正则表达式</h4>
-<div class="line-block">                     用户名 | /<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>{3,16}$/ |<br />
---------------------------: | ------------------------------------------------------------ |<br />
-                   <strong>密码</strong> | /<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>{6,18}$/ |<br />
-             <strong>十六进制值</strong> | /^#?([a-f0-9]{6} |<br />
-               <strong>电子邮箱</strong> | /^([a-z0-9_.-]+)@([-z.-]+).([a-z.]{2,6})<span class="math inline">\(/&lt;br/&gt;/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+\)</span>/ |<br />
-                    <strong>URL</strong> | /^(https?://)?([-z.-]+).([a-z.]{2,6})([/.-]<em>)</em>/?$/ |<br />
-              <strong>HTML 标签</strong> | /^&lt;([a-z]+)([^&lt;]+)<em>(?:&gt;(.</em>)&lt;/\1&gt; |<br />
-         <strong>删除代码\注释</strong> | (?&lt;!http:|)//.*$ |<br />
-<strong>Unicode编码中的汉字范围</strong> | /<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>+$/ |</div>
-<h4 id="python-中常用的正则表达式处理函数">Python 中常用的正则表达式处理函数</h4>
-<h5 id="re.match函数">re.match函数：</h5>
-<p>re.match 尝试从字符串的起始位置匹配一个模式，如果不是起始位置匹配成功的话，match()就返回none。</p>
-<p>函数语法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.match(pattern, string, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">参数</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">pattern</td>
-<td style="text-align: left;">匹配的正则表达式</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">要匹配的字符串。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">flags</td>
-<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
-</tr>
-</tbody>
-</table>
-<p>匹配成功re.match方法返回一个匹配的对象，否则返回None。</p>
-<p>我们可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。</p>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">匹配对象方法</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">group(num=0)</td>
-<td style="text-align: left;">匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">groups()</td>
-<td style="text-align: left;">返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。</td>
-</tr>
-</tbody>
-</table>
-<p>实例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line">print(re.match(<span class="string">&#x27;www&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>).span())  <span class="comment"># 在起始位置匹配</span></span><br><span class="line">print(re.match(<span class="string">&#x27;com&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>))         <span class="comment"># 不在起始位置匹配</span></span><br></pre></td></tr></table></figure>
-<p>以上实例输出结果为</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(0, 3)</span><br><span class="line">None</span><br></pre></td></tr></table></figure>
-<h5 id="re.search方法"><strong>re.search方法：</strong></h5>
-<p>re.search 扫描整个字符串并返回第一个成功的匹配。</p>
-<p>函数语法</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.search(pattern, string, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>函数参数说明：</p>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">参数</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">pattern</td>
-<td style="text-align: left;">匹配的正则表达式</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">要匹配的字符串。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">flags</td>
-<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
-</tr>
-</tbody>
-</table>
-<p>匹配成功re.search方法返回一个匹配的对象，否则返回None。</p>
-<p>我们可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。</p>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">匹配对象方法</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">group(num=0)</td>
-<td style="text-align: left;">匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">groups()</td>
-<td style="text-align: left;">返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。</td>
-</tr>
-</tbody>
-</table>
-<p>实例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">print(re.search(<span class="string">&#x27;www&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>).span())  <span class="comment"># 在起始位置匹配</span></span><br><span class="line">print(re.search(<span class="string">&#x27;com&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>).span())         <span class="comment"># 不在起始位置匹配</span></span><br></pre></td></tr></table></figure>
-<p>以上实例运行输出结果为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(0, 3)</span><br><span class="line">(11, 14)</span><br></pre></td></tr></table></figure>
-<h5 id="re.match与re.search的区别">re.match与re.search的区别：</h5>
-<p>re.match 只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回 None，而 re.search 匹配整个字符串，直到找到一个匹配。</p>
-<p>实例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">line = <span class="string">&quot;Cats are smarter than dogs&quot;</span></span><br><span class="line"> </span><br><span class="line">matchObj = re.match( <span class="string">r&#x27;dogs&#x27;</span>, line, re.M|re.I)</span><br><span class="line"><span class="keyword">if</span> matchObj:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;match --&gt; matchObj.group() : &quot;</span>, matchObj.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;No match!!&quot;</span>)</span><br><span class="line"> </span><br><span class="line">matchObj = re.search( <span class="string">r&#x27;dogs&#x27;</span>, line, re.M|re.I)</span><br><span class="line"><span class="keyword">if</span> matchObj:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;search --&gt; matchObj.group() : &quot;</span>, matchObj.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;No match!!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>以上实例运行结果如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">No match!!</span><br><span class="line">search --&gt; matchObj.group() :  dogs</span><br></pre></td></tr></table></figure>
-<h5 id="检索和替换">检索和替换</h5>
-<p>Python 的re模块提供了re.sub用于替换字符串中的匹配项。</p>
-<p>语法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.sub(pattern, repl, string, count=<span class="number">0</span>, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<ul>
-<li>pattern : 正则中的模式字符串。</li>
-<li>repl : 替换的字符串，也可为一个函数。</li>
-<li>string : 要被查找替换的原始字符串。</li>
-<li>count : 模式匹配后替换的最大次数，默认 0 表示替换所有的匹配。</li>
-<li>flags : 编译时用的匹配模式，数字形式。</li>
-</ul>
-<p>前三个为必选参数，后两个为可选参数。</p>
-<p>实例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">实例</span><br><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">phone = <span class="string">&quot;2004-959-559 # 这是一个电话号码&quot;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 删除注释</span></span><br><span class="line">num = re.sub(<span class="string">r&#x27;#.*$&#x27;</span>, <span class="string">&quot;&quot;</span>, phone)</span><br><span class="line"><span class="keyword">print</span> (<span class="string">&quot;电话号码 : &quot;</span>, num)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 移除非数字的内容</span></span><br><span class="line">num = re.sub(<span class="string">r&#x27;\D&#x27;</span>, <span class="string">&quot;&quot;</span>, phone)</span><br><span class="line"><span class="keyword">print</span> (<span class="string">&quot;电话号码 : &quot;</span>, num)</span><br></pre></td></tr></table></figure>
-<p>以上实例执行结果如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">电话号码 :  <span class="number">2004</span><span class="number">-959</span><span class="number">-559</span> </span><br><span class="line">电话号码 :  <span class="number">2004959559</span></span><br></pre></td></tr></table></figure>
-<p>若 repl 参数是一个函数：以下实例中将字符串中的匹配的数字乘于 2</p>
-<p>实例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 将匹配的数字乘于 2</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">double</span>(<span class="params">matched</span>):</span></span><br><span class="line">    value = int(matched.group(<span class="string">&#x27;value&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> str(value * <span class="number">2</span>)</span><br><span class="line"> </span><br><span class="line">s = <span class="string">&#x27;A23G4HFD567&#x27;</span></span><br><span class="line">print(re.sub(<span class="string">&#x27;(?P&lt;value&gt;\d+)&#x27;</span>, double, s))</span><br></pre></td></tr></table></figure>
-<p>执行输出结果为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">A46G8HFD1134</span><br></pre></td></tr></table></figure>
-<h5 id="compile-函数">compile 函数</h5>
-<p>compile 函数用于编译正则表达式，生成一个正则表达式（ Pattern ）对象，供 match() 和 search() 这两个函数使用。</p>
-<p>语法格式为：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.compile(pattern[, flags])</span><br></pre></td></tr></table></figure>
-<ul>
-<li>pattern : 一个字符串形式的正则表达式</li>
-<li>flags 可选，表示匹配模式，比如忽略大小写，多行模式等，具体参数为：</li>
-<li><ul>
-<li><p>re.I 忽略大小写</p></li>
-<li><p>re.L 表示特殊字符集 , ,  , , 依赖于当前环境</p></li>
-<li><p>re.M 多行模式</p></li>
-<li><p>re.S 即为' . '并且包括换行符在内的任意字符（' . '不包括换行符）</p></li>
-<li><p>re.U 表示特殊字符集 , ,  ,  , , 依赖于 Unicode 字符属性数据库</p></li>
-<li><p>re.X 为了增加可读性，忽略空格和' # '后面的注释</p></li>
-</ul></li>
-</ul>
-<p>实例</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt;<span class="keyword">import</span> re</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>pattern = re.compile(<span class="string">r&#x27;\d+&#x27;</span>)                    <span class="comment"># 用于匹配至少一个数字</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = pattern.match(<span class="string">&#x27;one12twothree34four&#x27;</span>)        <span class="comment"># 查找头部，没有匹配</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print( m )</span><br><span class="line"><span class="literal">None</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = pattern.match(<span class="string">&#x27;one12twothree34four&#x27;</span>, <span class="number">2</span>, <span class="number">10</span>) <span class="comment"># 从&#x27;e&#x27;的位置开始匹配，没有匹配</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print( m )</span><br><span class="line"><span class="literal">None</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = pattern.match(<span class="string">&#x27;one12twothree34four&#x27;</span>, <span class="number">3</span>, <span class="number">10</span>) <span class="comment"># 从&#x27;1&#x27;的位置开始匹配，正好匹配</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print( m )                                        <span class="comment"># 返回一个 Match 对象</span></span><br><span class="line">&lt;_sre.SRE_Match object at <span class="number">0x10a42aac0</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">0</span>)   <span class="comment"># 可省略 0</span></span><br><span class="line"><span class="string">&#x27;12&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.start(<span class="number">0</span>)   <span class="comment"># 可省略 0</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.end(<span class="number">0</span>)     <span class="comment"># 可省略 0</span></span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.span(<span class="number">0</span>)    <span class="comment"># 可省略 0</span></span><br><span class="line">(<span class="number">3</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
-<p>在上面，当匹配成功时返回一个 Match 对象，其中：</p>
-<ul>
-<li><code>group([group1, …])</code> 方法用于获得一个或多个分组匹配的字符串，当要获得整个匹配的子串时，可直接使用 <code>group()</code> 或 <code>group(0)</code>；</li>
-<li><code>start([group])</code> 方法用于获取分组匹配的子串在整个字符串中的起始位置（子串第一个字符的索引），参数默认值为 0；</li>
-<li><code>end([group])</code> 方法用于获取分组匹配的子串在整个字符串中的结束位置（子串最后一个字符的索引+1），参数默认值为 0；</li>
-<li><code>span([group])</code> 方法返回 <code>(start(group), end(group))</code>。</li>
-</ul>
-<h5 id="findall函数"><strong>findall函数</strong>：</h5>
-<p>在字符串中找到正则表达式所匹配的所有子串，并返回一个列表，如果没有找到匹配的，则返回空列表。</p>
-<p><strong>注意：</strong> match 和 search 是匹配一次 findall 匹配所有。</p>
-<p>语法格式为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.findall(string[, pos[, endpos]])</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<ul>
-<li><strong>string</strong> 待匹配的字符串。</li>
-<li><strong>pos</strong> 可选参数，指定字符串的起始位置，默认为 0。</li>
-<li><strong>endpos</strong> 可选参数，指定字符串的结束位置，默认为字符串的长度。</li>
-</ul>
-<p>查找字符串中的所有数字：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">pattern = re.compile(<span class="string">r&#x27;\d+&#x27;</span>)   <span class="comment"># 查找数字</span></span><br><span class="line">result1 = pattern.findall(<span class="string">&#x27;runoob 123 google 456&#x27;</span>)</span><br><span class="line">result2 = pattern.findall(<span class="string">&#x27;run88oob123google456&#x27;</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line"> </span><br><span class="line">print(result1)</span><br><span class="line">print(result2)</span><br></pre></td></tr></table></figure>
-<h5 id="re.finditer"><strong>re.finditer</strong></h5>
-<p>和 findall 类似，在字符串中找到正则表达式所匹配的所有子串，并把它们作为一个迭代器返回。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.finditer(pattern, string, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">参数</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">pattern</td>
-<td style="text-align: left;">匹配的正则表达式</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">要匹配的字符串。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">flags</td>
-<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
-</tr>
-</tbody>
-</table>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">it = re.finditer(<span class="string">r&quot;\d+&quot;</span>,<span class="string">&quot;12a32bc43jf3&quot;</span>) </span><br><span class="line"><span class="keyword">for</span> match <span class="keyword">in</span> it: </span><br><span class="line">    <span class="keyword">print</span> (match.group() )</span><br></pre></td></tr></table></figure>
-<p>输出结果</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">12</span> </span><br><span class="line"><span class="number">32</span> </span><br><span class="line"><span class="number">43</span> </span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
-<h5 id="re.split"><strong>re.split</strong></h5>
-<p>split 方法按照能够匹配的子串将字符串分割后返回列表，它的使用形式如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.split(pattern, string[, maxsplit=<span class="number">0</span>, flags=<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">参数</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">pattern</td>
-<td style="text-align: left;">匹配的正则表达式</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">要匹配的字符串。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">maxsplit</td>
-<td style="text-align: left;">分隔次数，maxsplit=1 分隔一次，默认为 0，不限制次数。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">flags</td>
-<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
-</tr>
-</tbody>
-</table>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt;<span class="keyword">import</span> re</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;\W+&#x27;</span>, <span class="string">&#x27;runoob, runoob, runoob.&#x27;</span>)</span><br><span class="line">[<span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;(\W+)&#x27;</span>, <span class="string">&#x27; runoob, runoob, runoob.&#x27;</span>) </span><br><span class="line">[<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;, &#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;, &#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;.&#x27;</span>, <span class="string">&#x27;&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;\W+&#x27;</span>, <span class="string">&#x27; runoob, runoob, runoob.&#x27;</span>, <span class="number">1</span>) </span><br><span class="line">[<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;runoob, runoob, runoob.&#x27;</span>]</span><br><span class="line"> </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;a*&#x27;</span>, <span class="string">&#x27;hello world&#x27;</span>)   <span class="comment"># 对于一个找不到匹配的字符串而言，split 不会对其作出分割</span></span><br><span class="line">[<span class="string">&#x27;hello world&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h5 id="正则表达式对象">正则表达式对象</h5>
-<p><strong>re.RegexObject</strong></p>
-<p>re.compile() 返回 RegexObject 对象。</p>
-<p><strong>re.MatchObject</strong></p>
-<p>group() 返回被 RE 匹配的字符串。</p>
-<ul>
-<li><strong>start()</strong> 返回匹配开始的位置</li>
-<li><strong>end()</strong> 返回匹配结束的位置</li>
-<li><strong>span()</strong> 返回一个元组包含匹配 (开始,结束) 的位置</li>
-</ul>
-<h5 id="正则表达式修饰符---可选标志">正则表达式修饰符 - 可选标志</h5>
-<p>正则表达式可以包含一些可选标志修饰符来控制匹配的模式。修饰符被指定为一个可选的标志。多个标志可以通过按位 OR(|) 它们来指定。如 re.I | re.M 被设置成 I 和 M 标志：</p>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">修饰符</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">re.I</td>
-<td style="text-align: left;">使匹配对大小写不敏感</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">re.L</td>
-<td style="text-align: left;">做本地化识别（locale-aware）匹配</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">re.M</td>
-<td style="text-align: left;">多行匹配，影响 ^ 和 $</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">re.S</td>
-<td style="text-align: left;">使 . 匹配包括换行在内的所有字符</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">re.U</td>
-<td style="text-align: left;">根据Unicode字符集解析字符。这个标志影响 , ,  .</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">re.X</td>
-<td style="text-align: left;">该标志通过给予你更灵活的格式以便你将正则表达式写得更易于理解。</td>
-</tr>
-</tbody>
-</table>
-<h5 id="正则表达式模式">正则表达式模式</h5>
-<p>模式字符串使用特殊的语法来表示一个正则表达式：</p>
-<p>字母和数字表示他们自身。一个正则表达式模式中的字母和数字匹配同样的字符串。</p>
-<p>多数字母和数字前加一个反斜杠时会拥有不同的含义。</p>
-<p>标点符号只有被转义时才匹配自身，否则它们表示特殊的含义。</p>
-<p>反斜杠本身需要使用反斜杠转义。</p>
-<p>由于正则表达式通常都包含反斜杠，所以你最好使用原始字符串来表示它们。模式元素(如 <strong>r'</strong>，等价于 <strong>\t</strong> )匹配相应的特殊字符。</p>
-<p>下表列出了正则表达式模式语法中的特殊元素。如果你使用模式的同时提供了可选的标志参数，某些模式元素的含义会改变。</p>
-<table>
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 83%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">模式</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">^</td>
-<td style="text-align: left;">匹配字符串的开头</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">$</td>
-<td style="text-align: left;">匹配字符串的末尾。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">.</td>
-<td style="text-align: left;">匹配任意字符，除了换行符，当re.DOTALL标记被指定时，则可以匹配包括换行符的任意字符。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">[...]</td>
-<td style="text-align: left;">用来表示一组字符,单独列出：[amk] 匹配 'a'，'m'或'k'</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">[^...]</td>
-<td style="text-align: left;">不在[]中的字符：[^abc] 匹配除了a,b,c之外的字符。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">re*</td>
-<td style="text-align: left;">匹配0个或多个的表达式。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">re+</td>
-<td style="text-align: left;">匹配1个或多个的表达式。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">re?</td>
-<td style="text-align: left;">匹配0个或1个由前面的正则表达式定义的片段，非贪婪方式</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">re{ n}</td>
-<td style="text-align: left;">匹配n个前面表达式。例如，"o{2}"不能匹配"Bob"中的"o"，但是能匹配"food"中的两个o。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">re{ n,}</td>
-<td style="text-align: left;">精确匹配n个前面表达式。例如，"o{2,}"不能匹配"Bob"中的"o"，但能匹配"foooood"中的所有o。"o{1,}"等价于"o+"。"o{0,}"则等价于"o*"。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">re{ n, m}</td>
-<td style="text-align: left;">匹配 n 到 m 次由前面的正则表达式定义的片段，贪婪方式</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">a| b</td>
-<td style="text-align: left;">匹配a或b</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">(re)</td>
-<td style="text-align: left;">匹配括号内的表达式，也表示一个组</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">(?imx)</td>
-<td style="text-align: left;">正则表达式包含三种可选标志：i, m, 或 x 。只影响括号中的区域。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">(?-imx)</td>
-<td style="text-align: left;">正则表达式关闭 i, m, 或 x 可选标志。只影响括号中的区域。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">(?: re)</td>
-<td style="text-align: left;">类似 (...), 但是不表示一个组</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">(?imx: re)</td>
-<td style="text-align: left;">在括号中使用i, m, 或 x 可选标志</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">(?-imx: re)</td>
-<td style="text-align: left;">在括号中不使用i, m, 或 x 可选标志</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">(?#...)</td>
-<td style="text-align: left;">注释.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">(?= re)</td>
-<td style="text-align: left;">前向肯定界定符。如果所含正则表达式，以 ... 表示，在当前位置成功匹配时成功，否则失败。但一旦所含表达式已经尝试，匹配引擎根本没有提高；模式的剩余部分还要尝试界定符的右边。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">(?! re)</td>
-<td style="text-align: left;">前向否定界定符。与肯定界定符相反；当所含表达式不能在字符串当前位置匹配时成功。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">(?&gt; re)</td>
-<td style="text-align: left;">匹配的独立模式，省去回溯。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配数字字母下划线</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配非数字字母下划线</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配任意空白字符，等价于 [。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配任意非空字符</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"> 匹配任意数字，等价于 [0-9]。</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配任意非数字</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配字符串开始</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配字符串结束，如果是存在换行，只匹配到换行前的结束字符串。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配字符串结束</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"> 匹配最后匹配完成的位置。</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"> 匹配一个单词边界，也就是指单词和空格间的位置。例如， 'er 可以匹配"never" 中的 'er'，但不能匹配 "verb" 中的 'er'。</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配非单词边界。'er' 能匹配 "verb" 中的 'er'，但不能匹配 "never" 中的 'er'。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">,  等。</td>
-<td style="text-align: left;">匹配一个换行符。匹配一个制表符, 等</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">\1...\9</td>
-<td style="text-align: left;">匹配第n个分组的内容。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">\10</td>
-<td style="text-align: left;">匹配第n个分组的内容，如果它经匹配。否则指的是八进制字符码的表达式。</td>
-</tr>
-</tbody>
-</table>
-<h5 id="正则表达式实例">正则表达式实例</h5>
-<h6 id="字符匹配">字符匹配</h6>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">实例</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">python</td>
-<td style="text-align: left;">匹配 "python".</td>
-</tr>
-</tbody>
-</table>
-<h6 id="字符类">字符类</h6>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">实例</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">[Pp]ython</td>
-<td style="text-align: left;">匹配 "Python" 或 "python"</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">rub[ye]</td>
-<td style="text-align: left;">匹配 "ruby" 或 "rube"</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">[aeiou]</td>
-<td style="text-align: left;">匹配中括号内的任意一个字母</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">[0-9]</td>
-<td style="text-align: left;">匹配任何数字。类似于 [0123456789]</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">[a-z]</td>
-<td style="text-align: left;">匹配任何小写字母</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">[A-Z]</td>
-<td style="text-align: left;">匹配任何大写字母</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">[a-zA-Z0-9]</td>
-<td style="text-align: left;">匹配任何字母及数字</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">[^aeiou]</td>
-<td style="text-align: left;">除了aeiou字母以外的所有字符</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">[^0-9]</td>
-<td style="text-align: left;">匹配除了数字外的字符</td>
-</tr>
-</tbody>
-</table>
-<h6 id="特殊字符类">特殊字符类</h6>
-<table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">实例</th>
-<th style="text-align: left;">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">.</td>
-<td style="text-align: left;">匹配除 "" 之外的任何单个字符。要匹配包括 '' 在内的任何字符，请使用象 '[.]' 的模式。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"> 匹配一个数字字符。等价于 [0-9]。</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配一个非数字字符。等价于 [^0-9]。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配任何空白字符，包括空格、制表符、换页符等等。等价于 [ 。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配任何非空白字符。等价于 [^ 。</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配包括下划线的任何单词字符。等价于'[A-Za-z0-9_]'。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">匹配任何非单词字符。等价于 '[^A-Za-z0-9_]'。</td>
-</tr>
-</tbody>
-</table>
-<section class="footnotes" role="doc-endnotes">
-<hr />
-<ol>
-<li id="fn1" role="doc-endnote"><p>a-z0-9_-<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>a-z0-9_-<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>E80-FFF<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>正则表达式</tag>
       </tags>
   </entry>
   <entry>
@@ -4149,6 +3299,22 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu18.04更换镜像源</title>
+    <url>/p/How-to-change-the-mirror-source-on-Ubuntu-1804/</url>
+    <content><![CDATA[<h4 id="ubuntu18.04更换镜像源">Ubuntu18.04更换镜像源</h4>
+<h5 id="备份原有镜像源">1.备份原有镜像源</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/apt/sources.list /etc/apt/sourses.list.bak</span><br></pre></td></tr></table></figure>
+<h5 id="修改etcaptsources.list文件">2.修改/etc/apt/sources.list文件</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/apt/sources.list</span><br><span class="line"><span class="comment">#中科大源</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#阿里云源</span></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#清华源</span></span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#香港中文科技大学源</span></span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br></pre></td></tr></table></figure>
+<h5 id="其他相关命令">3.其他相关命令</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update  更新源</span><br><span class="line">sudo apt-get install package 安装包</span><br><span class="line">sudo apt-get remove package 删除包</span><br><span class="line">sudo apt-cache search package 搜索软件包</span><br><span class="line">sudo apt-cache show package  获取包的相关信息，如说明、大小、版本等</span><br><span class="line">sudo apt-get install package --reinstall  重新安装包</span><br><span class="line">sudo apt-get -f install  修复安装</span><br><span class="line">sudo apt-get remove package --purge 删除包，包括配置文件等</span><br><span class="line">sudo apt-get build-dep package 安装相关的编译环境</span><br><span class="line">sudo apt-get upgrade 更新已安装的包</span><br><span class="line">sudo apt-get dist-upgrade 升级系统</span><br><span class="line">sudo apt-cache depends package 了解使用该包依赖那些包</span><br><span class="line">sudo apt-cache rdepends package 查看该包被哪些包依赖</span><br><span class="line">sudo apt-get <span class="built_in">source</span> package  下载该包的源代码</span><br><span class="line">sudo apt-get clean &amp;&amp; sudo apt-get autoclean 清理无用的包</span><br><span class="line">sudo apt-get check 检查是否有损坏的依赖</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Ubuntu18.04</tag>
+        <tag>镜像源</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu安装nodejs并更改npm镜像源</title>
     <url>/p/How-to-install-nodejs-and-change-npm-mirror-source-on-Ubuntu/</url>
     <content><![CDATA[<h4 id="ubuntu安装nodejs并更改npm镜像源">Ubuntu安装nodejs并更改npm镜像源</h4>
@@ -4179,22 +3345,6 @@ y=x^2e^x
       <tags>
         <tag>Linux运维</tag>
         <tag>nodejs</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu18.04更换镜像源</title>
-    <url>/p/How-to-change-the-mirror-source-on-Ubuntu-1804/</url>
-    <content><![CDATA[<h4 id="ubuntu18.04更换镜像源">Ubuntu18.04更换镜像源</h4>
-<h5 id="备份原有镜像源">1.备份原有镜像源</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/apt/sources.list /etc/apt/sourses.list.bak</span><br></pre></td></tr></table></figure>
-<h5 id="修改etcaptsources.list文件">2.修改/etc/apt/sources.list文件</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/apt/sources.list</span><br><span class="line"><span class="comment">#中科大源</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#阿里云源</span></span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#清华源</span></span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line"></span><br><span class="line"><span class="comment">#香港中文科技大学源</span></span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-security main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-updates main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-proposed main restricted universe </span><br><span class="line">deb-src http://ftp.cuhk.edu.hk/pub/Linux/ubuntu/ bionic-backports main restricted universe </span><br></pre></td></tr></table></figure>
-<h5 id="其他相关命令">3.其他相关命令</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update  更新源</span><br><span class="line">sudo apt-get install package 安装包</span><br><span class="line">sudo apt-get remove package 删除包</span><br><span class="line">sudo apt-cache search package 搜索软件包</span><br><span class="line">sudo apt-cache show package  获取包的相关信息，如说明、大小、版本等</span><br><span class="line">sudo apt-get install package --reinstall  重新安装包</span><br><span class="line">sudo apt-get -f install  修复安装</span><br><span class="line">sudo apt-get remove package --purge 删除包，包括配置文件等</span><br><span class="line">sudo apt-get build-dep package 安装相关的编译环境</span><br><span class="line">sudo apt-get upgrade 更新已安装的包</span><br><span class="line">sudo apt-get dist-upgrade 升级系统</span><br><span class="line">sudo apt-cache depends package 了解使用该包依赖那些包</span><br><span class="line">sudo apt-cache rdepends package 查看该包被哪些包依赖</span><br><span class="line">sudo apt-get <span class="built_in">source</span> package  下载该包的源代码</span><br><span class="line">sudo apt-get clean &amp;&amp; sudo apt-get autoclean 清理无用的包</span><br><span class="line">sudo apt-get check 检查是否有损坏的依赖</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Ubuntu18.04</tag>
-        <tag>镜像源</tag>
       </tags>
   </entry>
   <entry>
@@ -5188,6 +4338,713 @@ y=x^2e^x
       <tags>
         <tag>linux</tag>
         <tag>jdk</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python中正则表达式用法</title>
+    <url>/p/regular-expression-usage-in-python/</url>
+    <content><![CDATA[<h4 id="正则表达式全集">正则表达式全集</h4>
+<a id="more"></a>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>字符</th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>\</td>
+<td>将下一个字符标记为一个特殊字符、或一个原义字符、或一个向后引用、或一个八进制转义符。例如，“<code>n</code>”匹配字符“<code>n</code>”。“<code>\n</code>”匹配一个换行符。串行“<code>\\</code>”匹配“<code>\</code>”而“<code>\(</code>”则匹配“<code>(</code>”。</td>
+</tr>
+<tr class="even">
+<td><strong>^</strong></td>
+<td>匹配输入字符串的开始位置。如果设置了RegExp对象的Multiline属性，^也匹配“<code>\n</code>”或“<code>\r</code>”之后的位置。</td>
+</tr>
+<tr class="odd">
+<td>**<span class="math inline">\(** | 匹配输入字符串的结束位置。如果设置了RegExp对象的Multiline属性，\)</span>也匹配“<code>\n</code>”或“<code>\r</code>”之前的位置。</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>*****</td>
+<td>匹配前面的子表达式零次或多次。例如，zo<em>能匹配“<code>z</code>”以及“<code>zoo</code>”。</em>等价于{0,}。</td>
+</tr>
+<tr class="odd">
+<td><strong>+</strong></td>
+<td>匹配前面的子表达式一次或多次。例如，“<code>zo+</code>”能匹配“<code>zo</code>”以及“<code>zoo</code>”，但不能匹配“<code>z</code>”。+等价于{1,}。</td>
+</tr>
+<tr class="even">
+<td><strong>?</strong></td>
+<td>匹配前面的子表达式零次或一次。例如，“<code>do(es)?</code>”可以匹配“<code>does</code>”或“<code>does</code>”中的“<code>do</code>”。?等价于{0,1}。</td>
+</tr>
+<tr class="odd">
+<td><strong>{n}</strong></td>
+<td><em>n</em>是一个非负整数。匹配确定的<em>n</em>次。例如，“<code>o&#123;2&#125;</code>”不能匹配“<code>Bob</code>”中的“<code>o</code>”，但是能匹配“<code>food</code>”中的两个o。</td>
+</tr>
+<tr class="even">
+<td><strong>{n,}</strong></td>
+<td><em>n</em>是一个非负整数。至少匹配<em>n</em>次。例如，“<code>o&#123;2,&#125;</code>”不能匹配“<code>Bob</code>”中的“<code>o</code>”，但能匹配“<code>foooood</code>”中的所有o。“<code>o&#123;1,&#125;</code>”等价于“<code>o+</code>”。“<code>o&#123;0,&#125;</code>”则等价于“<code>o*</code>”。</td>
+</tr>
+<tr class="odd">
+<td><strong>{n,m}</strong></td>
+<td><em>m</em>和<em>n</em>均为非负整数，其中<em>n</em>&lt;=<em>m</em>。最少匹配<em>n</em>次且最多匹配<em>m</em>次。例如，“<code>o&#123;1,3&#125;</code>”将匹配“<code>fooooood</code>”中的前三个o。“<code>o&#123;0,1&#125;</code>”等价于“<code>o?</code>”。请注意在逗号和两个数之间不能有空格。</td>
+</tr>
+<tr class="even">
+<td><strong>?</strong></td>
+<td>当该字符紧跟在任何一个其他限制符（<em>,+,?，{</em>n<em>}，{</em>n<em>,}，{</em>n<em>,</em>m*}）后面时，匹配模式是非贪婪的。非贪婪模式尽可能少的匹配所搜索的字符串，而默认的贪婪模式则尽可能多的匹配所搜索的字符串。例如，对于字符串“<code>oooo</code>”，“<code>o+?</code>”将匹配单个“<code>o</code>”，而“<code>o+</code>”将匹配所有“<code>o</code>”。</td>
+</tr>
+<tr class="odd">
+<td><strong>.</strong></td>
+<td>匹配除“<code>\</code><em><code>n</code></em>”之外的任何单个字符。要匹配包括“<code>\</code><em><code>n</code></em>”在内的任何字符，请使用像“<code>(. | | **(pattern)**    | 匹配pattern并获取这一匹配。所获取的匹配可以从产生的Matches集合得到，在VBScript中使用SubMatches集合，在JScript中则使用$0…$9属性。要匹配圆括号字符，请使用“</code>(<code>”或“</code>)<code>”。 | | **(?:pattern)**  | 匹配pattern但不获取匹配结果，也就是说这是一个非获取匹配，不进行存储供以后使用。 | | **(?=pattern)**  | 正向肯定预查，在任何匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。 | | **(?!pattern)**  | 正向否定预查，在任何不匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。 | | **(?&lt;=pattern)** | 反向肯定预查，与正向肯定预查类拟，只是方向相反。             | | **(?&lt;!pattern)** | 反向否定预查，与正向否定预查类拟，只是方向相反。             | | **x\|y**         | 匹配x或y                                                     | | **[xyz]**        | 字符集合。匹配所包含的任意一个字符。                         | | **[^xyz]**       | 负值字符集合。匹配未包含的任意字符。                         | | **[a-z]**        | 字符范围。匹配指定范围内的任意字符。                         | | **[^a-z]**       | 负值字符范围。匹配任何不在指定范围内的任意字符。             | | **\b**           | 匹配一个单词边界，也就是指单词和空格间的位置。例如，“</code>er”可以匹配“<code>never</code>”中的“<code>er</code>”，但不能匹配“<code>verb</code>”中的“<code>er</code>”。</td>
+</tr>
+<tr class="even">
+<td>***</td>
+<td>匹配非单词边界。“<code>er\B</code>”能匹配“<code>verb</code>”中的“<code>er</code>”，但不能匹配“<code>never</code>”中的“<code>er</code>”。</td>
+</tr>
+<tr class="odd">
+<td>***</td>
+<td>匹配由x指明的控制字符。例如，-M或回车符。x的值必须为A-Z或a-z之一。否则，将c视为一个原义的“<code>c</code>”字符。</td>
+</tr>
+<tr class="even">
+<td>**</td>
+<td>匹配一个数字字符。等价于[0-9]。</td>
+</tr>
+<tr class="odd">
+<td>***</td>
+<td>匹配一个非数字字符。等价于[^0-9]。</td>
+</tr>
+<tr class="even">
+<td>**</td>
+<td>匹配一个换页符。等价于0c和。</td>
+</tr>
+<tr class="odd">
+<td>***</td>
+<td>匹配一个换行符。等价于0a和。</td>
+</tr>
+<tr class="even">
+<td>**</td>
+<td>匹配一个回车符。等价于0d和。</td>
+</tr>
+<tr class="odd">
+<td>***</td>
+<td>匹配任何空白字符，包括空格、制表符、换页符等等。等价于[ 。</td>
+</tr>
+<tr class="even">
+<td>***</td>
+<td>匹配任何非空白字符。等价于[ 。</td>
+</tr>
+<tr class="odd">
+<td>**</td>
+<td>匹配一个制表符。等价于09和。</td>
+</tr>
+<tr class="even">
+<td>**</td>
+<td>匹配一个垂直制表符。等价于0b和。</td>
+</tr>
+<tr class="odd">
+<td>***</td>
+<td>匹配包括下划线的任何单词字符。等价于“<code>[A-Za-z0-9_]</code>”。</td>
+</tr>
+<tr class="even">
+<td>***</td>
+<td>匹配任何非单词字符。等价于“<code>[^A-Za-z0-9_]</code>”。</td>
+</tr>
+<tr class="odd">
+<td>***</td>
+<td>匹配<em>n</em>，其中<em>n</em>为十六进制转义值。十六进制转义值必须为确定的两个数字长。例如，“<code>\x41</code>”匹配“<code>A</code>”。“<code>\x041</code>”则等价于“<code>\x04&amp;1</code>”。正则表达式中可以使用ASCII编码。.</td>
+</tr>
+<tr class="even">
+<td><strong>\num</strong></td>
+<td>匹配<em>num</em>，其中<em>num</em>是一个正整数。对所获取的匹配的引用。例如，“<code>(.)\1</code>”匹配两个连续的相同字符。</td>
+</tr>
+<tr class="odd">
+<td><strong>\n</strong></td>
+<td>标识一个八进制转义值或一个向后引用。如果*n<em>之前至少</em>n<em>个获取的子表达式，则</em>n<em>为向后引用。否则，如果</em>n<em>为八进制数字（0-7），则</em>n为一个八进制转义值。</td>
+</tr>
+<tr class="even">
+<td><strong>\nm</strong></td>
+<td>标识一个八进制转义值或一个向后引用。如果*nm<em>之前至少有</em>nm<em>个获得子表达式，则</em>nm<em>为向后引用。如果*nm</em>之前至少有<em>n</em>个获取，则<em>n</em>为一个后跟文字<em>m</em>的向后引用。如果前面的条件都不满足，若<em>n</em>和<em>m</em>均为八进制数字（0-7），则*nm<em>将匹配八进制转义值</em>nm*。</td>
+</tr>
+<tr class="odd">
+<td><strong>\nml</strong></td>
+<td>如果<em>n</em>为八进制数字（0-3），且<em>m和l</em>均为八进制数字（0-7），则匹配八进制转义值<em>nm</em>l。</td>
+</tr>
+<tr class="even">
+<td>***</td>
+<td>匹配<em>n</em>，其中<em>n</em>是一个用四个十六进制数字表示的Unicode字符。例如，0A9匹配版权符号（©）。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="常用正则表达式">常用正则表达式</h4>
+<div class="line-block">                     用户名 | /<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>{3,16}$/ |<br />
+--------------------------: | ------------------------------------------------------------ |<br />
+                   <strong>密码</strong> | /<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>{6,18}$/ |<br />
+             <strong>十六进制值</strong> | /^#?([a-f0-9]{6} |<br />
+               <strong>电子邮箱</strong> | /^([a-z0-9_.-]+)@([-z.-]+).([a-z.]{2,6})<span class="math inline">\(/&lt;br/&gt;/^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+\)</span>/ |<br />
+                    <strong>URL</strong> | /^(https?://)?([-z.-]+).([a-z.]{2,6})([/.-]<em>)</em>/?$/ |<br />
+              <strong>HTML 标签</strong> | /^&lt;([a-z]+)([^&lt;]+)<em>(?:&gt;(.</em>)&lt;/\1&gt; |<br />
+         <strong>删除代码\注释</strong> | (?&lt;!http:|)//.*$ |<br />
+<strong>Unicode编码中的汉字范围</strong> | /<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>+$/ |</div>
+<h4 id="python-中常用的正则表达式处理函数">Python 中常用的正则表达式处理函数</h4>
+<h5 id="re.match函数">re.match函数：</h5>
+<p>re.match 尝试从字符串的起始位置匹配一个模式，如果不是起始位置匹配成功的话，match()就返回none。</p>
+<p>函数语法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.match(pattern, string, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">参数</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">pattern</td>
+<td style="text-align: left;">匹配的正则表达式</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">要匹配的字符串。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">flags</td>
+<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
+</tr>
+</tbody>
+</table>
+<p>匹配成功re.match方法返回一个匹配的对象，否则返回None。</p>
+<p>我们可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">匹配对象方法</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">group(num=0)</td>
+<td style="text-align: left;">匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">groups()</td>
+<td style="text-align: left;">返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。</td>
+</tr>
+</tbody>
+</table>
+<p>实例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line">print(re.match(<span class="string">&#x27;www&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>).span())  <span class="comment"># 在起始位置匹配</span></span><br><span class="line">print(re.match(<span class="string">&#x27;com&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>))         <span class="comment"># 不在起始位置匹配</span></span><br></pre></td></tr></table></figure>
+<p>以上实例输出结果为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(0, 3)</span><br><span class="line">None</span><br></pre></td></tr></table></figure>
+<h5 id="re.search方法"><strong>re.search方法：</strong></h5>
+<p>re.search 扫描整个字符串并返回第一个成功的匹配。</p>
+<p>函数语法</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.search(pattern, string, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>函数参数说明：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">参数</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">pattern</td>
+<td style="text-align: left;">匹配的正则表达式</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">要匹配的字符串。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">flags</td>
+<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
+</tr>
+</tbody>
+</table>
+<p>匹配成功re.search方法返回一个匹配的对象，否则返回None。</p>
+<p>我们可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">匹配对象方法</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">group(num=0)</td>
+<td style="text-align: left;">匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">groups()</td>
+<td style="text-align: left;">返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。</td>
+</tr>
+</tbody>
+</table>
+<p>实例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">print(re.search(<span class="string">&#x27;www&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>).span())  <span class="comment"># 在起始位置匹配</span></span><br><span class="line">print(re.search(<span class="string">&#x27;com&#x27;</span>, <span class="string">&#x27;www.runoob.com&#x27;</span>).span())         <span class="comment"># 不在起始位置匹配</span></span><br></pre></td></tr></table></figure>
+<p>以上实例运行输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(0, 3)</span><br><span class="line">(11, 14)</span><br></pre></td></tr></table></figure>
+<h5 id="re.match与re.search的区别">re.match与re.search的区别：</h5>
+<p>re.match 只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回 None，而 re.search 匹配整个字符串，直到找到一个匹配。</p>
+<p>实例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">line = <span class="string">&quot;Cats are smarter than dogs&quot;</span></span><br><span class="line"> </span><br><span class="line">matchObj = re.match( <span class="string">r&#x27;dogs&#x27;</span>, line, re.M|re.I)</span><br><span class="line"><span class="keyword">if</span> matchObj:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;match --&gt; matchObj.group() : &quot;</span>, matchObj.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;No match!!&quot;</span>)</span><br><span class="line"> </span><br><span class="line">matchObj = re.search( <span class="string">r&#x27;dogs&#x27;</span>, line, re.M|re.I)</span><br><span class="line"><span class="keyword">if</span> matchObj:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;search --&gt; matchObj.group() : &quot;</span>, matchObj.group())</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">   <span class="keyword">print</span> (<span class="string">&quot;No match!!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>以上实例运行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">No match!!</span><br><span class="line">search --&gt; matchObj.group() :  dogs</span><br></pre></td></tr></table></figure>
+<h5 id="检索和替换">检索和替换</h5>
+<p>Python 的re模块提供了re.sub用于替换字符串中的匹配项。</p>
+<p>语法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.sub(pattern, repl, string, count=<span class="number">0</span>, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<ul>
+<li>pattern : 正则中的模式字符串。</li>
+<li>repl : 替换的字符串，也可为一个函数。</li>
+<li>string : 要被查找替换的原始字符串。</li>
+<li>count : 模式匹配后替换的最大次数，默认 0 表示替换所有的匹配。</li>
+<li>flags : 编译时用的匹配模式，数字形式。</li>
+</ul>
+<p>前三个为必选参数，后两个为可选参数。</p>
+<p>实例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">实例</span><br><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">phone = <span class="string">&quot;2004-959-559 # 这是一个电话号码&quot;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 删除注释</span></span><br><span class="line">num = re.sub(<span class="string">r&#x27;#.*$&#x27;</span>, <span class="string">&quot;&quot;</span>, phone)</span><br><span class="line"><span class="keyword">print</span> (<span class="string">&quot;电话号码 : &quot;</span>, num)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 移除非数字的内容</span></span><br><span class="line">num = re.sub(<span class="string">r&#x27;\D&#x27;</span>, <span class="string">&quot;&quot;</span>, phone)</span><br><span class="line"><span class="keyword">print</span> (<span class="string">&quot;电话号码 : &quot;</span>, num)</span><br></pre></td></tr></table></figure>
+<p>以上实例执行结果如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">电话号码 :  <span class="number">2004</span><span class="number">-959</span><span class="number">-559</span> </span><br><span class="line">电话号码 :  <span class="number">2004959559</span></span><br></pre></td></tr></table></figure>
+<p>若 repl 参数是一个函数：以下实例中将字符串中的匹配的数字乘于 2</p>
+<p>实例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 将匹配的数字乘于 2</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">double</span>(<span class="params">matched</span>):</span></span><br><span class="line">    value = int(matched.group(<span class="string">&#x27;value&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> str(value * <span class="number">2</span>)</span><br><span class="line"> </span><br><span class="line">s = <span class="string">&#x27;A23G4HFD567&#x27;</span></span><br><span class="line">print(re.sub(<span class="string">&#x27;(?P&lt;value&gt;\d+)&#x27;</span>, double, s))</span><br></pre></td></tr></table></figure>
+<p>执行输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">A46G8HFD1134</span><br></pre></td></tr></table></figure>
+<h5 id="compile-函数">compile 函数</h5>
+<p>compile 函数用于编译正则表达式，生成一个正则表达式（ Pattern ）对象，供 match() 和 search() 这两个函数使用。</p>
+<p>语法格式为：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.compile(pattern[, flags])</span><br></pre></td></tr></table></figure>
+<ul>
+<li>pattern : 一个字符串形式的正则表达式</li>
+<li>flags 可选，表示匹配模式，比如忽略大小写，多行模式等，具体参数为：</li>
+<li><ul>
+<li><p>re.I 忽略大小写</p></li>
+<li><p>re.L 表示特殊字符集 , ,  , , 依赖于当前环境</p></li>
+<li><p>re.M 多行模式</p></li>
+<li><p>re.S 即为' . '并且包括换行符在内的任意字符（' . '不包括换行符）</p></li>
+<li><p>re.U 表示特殊字符集 , ,  ,  , , 依赖于 Unicode 字符属性数据库</p></li>
+<li><p>re.X 为了增加可读性，忽略空格和' # '后面的注释</p></li>
+</ul></li>
+</ul>
+<p>实例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt;<span class="keyword">import</span> re</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>pattern = re.compile(<span class="string">r&#x27;\d+&#x27;</span>)                    <span class="comment"># 用于匹配至少一个数字</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = pattern.match(<span class="string">&#x27;one12twothree34four&#x27;</span>)        <span class="comment"># 查找头部，没有匹配</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print( m )</span><br><span class="line"><span class="literal">None</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = pattern.match(<span class="string">&#x27;one12twothree34four&#x27;</span>, <span class="number">2</span>, <span class="number">10</span>) <span class="comment"># 从&#x27;e&#x27;的位置开始匹配，没有匹配</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print( m )</span><br><span class="line"><span class="literal">None</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = pattern.match(<span class="string">&#x27;one12twothree34four&#x27;</span>, <span class="number">3</span>, <span class="number">10</span>) <span class="comment"># 从&#x27;1&#x27;的位置开始匹配，正好匹配</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print( m )                                        <span class="comment"># 返回一个 Match 对象</span></span><br><span class="line">&lt;_sre.SRE_Match object at <span class="number">0x10a42aac0</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.group(<span class="number">0</span>)   <span class="comment"># 可省略 0</span></span><br><span class="line"><span class="string">&#x27;12&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.start(<span class="number">0</span>)   <span class="comment"># 可省略 0</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.end(<span class="number">0</span>)     <span class="comment"># 可省略 0</span></span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m.span(<span class="number">0</span>)    <span class="comment"># 可省略 0</span></span><br><span class="line">(<span class="number">3</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<p>在上面，当匹配成功时返回一个 Match 对象，其中：</p>
+<ul>
+<li><code>group([group1, …])</code> 方法用于获得一个或多个分组匹配的字符串，当要获得整个匹配的子串时，可直接使用 <code>group()</code> 或 <code>group(0)</code>；</li>
+<li><code>start([group])</code> 方法用于获取分组匹配的子串在整个字符串中的起始位置（子串第一个字符的索引），参数默认值为 0；</li>
+<li><code>end([group])</code> 方法用于获取分组匹配的子串在整个字符串中的结束位置（子串最后一个字符的索引+1），参数默认值为 0；</li>
+<li><code>span([group])</code> 方法返回 <code>(start(group), end(group))</code>。</li>
+</ul>
+<h5 id="findall函数"><strong>findall函数</strong>：</h5>
+<p>在字符串中找到正则表达式所匹配的所有子串，并返回一个列表，如果没有找到匹配的，则返回空列表。</p>
+<p><strong>注意：</strong> match 和 search 是匹配一次 findall 匹配所有。</p>
+<p>语法格式为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">re.findall(string[, pos[, endpos]])</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<ul>
+<li><strong>string</strong> 待匹配的字符串。</li>
+<li><strong>pos</strong> 可选参数，指定字符串的起始位置，默认为 0。</li>
+<li><strong>endpos</strong> 可选参数，指定字符串的结束位置，默认为字符串的长度。</li>
+</ul>
+<p>查找字符串中的所有数字：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">pattern = re.compile(<span class="string">r&#x27;\d+&#x27;</span>)   <span class="comment"># 查找数字</span></span><br><span class="line">result1 = pattern.findall(<span class="string">&#x27;runoob 123 google 456&#x27;</span>)</span><br><span class="line">result2 = pattern.findall(<span class="string">&#x27;run88oob123google456&#x27;</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line"> </span><br><span class="line">print(result1)</span><br><span class="line">print(result2)</span><br></pre></td></tr></table></figure>
+<h5 id="re.finditer"><strong>re.finditer</strong></h5>
+<p>和 findall 类似，在字符串中找到正则表达式所匹配的所有子串，并把它们作为一个迭代器返回。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.finditer(pattern, string, flags=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">参数</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">pattern</td>
+<td style="text-align: left;">匹配的正则表达式</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">要匹配的字符串。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">flags</td>
+<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"> </span><br><span class="line">it = re.finditer(<span class="string">r&quot;\d+&quot;</span>,<span class="string">&quot;12a32bc43jf3&quot;</span>) </span><br><span class="line"><span class="keyword">for</span> match <span class="keyword">in</span> it: </span><br><span class="line">    <span class="keyword">print</span> (match.group() )</span><br></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">12</span> </span><br><span class="line"><span class="number">32</span> </span><br><span class="line"><span class="number">43</span> </span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+<h5 id="re.split"><strong>re.split</strong></h5>
+<p>split 方法按照能够匹配的子串将字符串分割后返回列表，它的使用形式如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">re.split(pattern, string[, maxsplit=<span class="number">0</span>, flags=<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">参数</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">pattern</td>
+<td style="text-align: left;">匹配的正则表达式</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">要匹配的字符串。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">maxsplit</td>
+<td style="text-align: left;">分隔次数，maxsplit=1 分隔一次，默认为 0，不限制次数。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">flags</td>
+<td style="text-align: left;">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：<a href="https://www.runoob.com/python3/python3-reg-expressions.html#flags">正则表达式修饰符 - 可选标志</a></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt;<span class="keyword">import</span> re</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;\W+&#x27;</span>, <span class="string">&#x27;runoob, runoob, runoob.&#x27;</span>)</span><br><span class="line">[<span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;(\W+)&#x27;</span>, <span class="string">&#x27; runoob, runoob, runoob.&#x27;</span>) </span><br><span class="line">[<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;, &#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;, &#x27;</span>, <span class="string">&#x27;runoob&#x27;</span>, <span class="string">&#x27;.&#x27;</span>, <span class="string">&#x27;&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;\W+&#x27;</span>, <span class="string">&#x27; runoob, runoob, runoob.&#x27;</span>, <span class="number">1</span>) </span><br><span class="line">[<span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;runoob, runoob, runoob.&#x27;</span>]</span><br><span class="line"> </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re.split(<span class="string">&#x27;a*&#x27;</span>, <span class="string">&#x27;hello world&#x27;</span>)   <span class="comment"># 对于一个找不到匹配的字符串而言，split 不会对其作出分割</span></span><br><span class="line">[<span class="string">&#x27;hello world&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<h5 id="正则表达式对象">正则表达式对象</h5>
+<p><strong>re.RegexObject</strong></p>
+<p>re.compile() 返回 RegexObject 对象。</p>
+<p><strong>re.MatchObject</strong></p>
+<p>group() 返回被 RE 匹配的字符串。</p>
+<ul>
+<li><strong>start()</strong> 返回匹配开始的位置</li>
+<li><strong>end()</strong> 返回匹配结束的位置</li>
+<li><strong>span()</strong> 返回一个元组包含匹配 (开始,结束) 的位置</li>
+</ul>
+<h5 id="正则表达式修饰符---可选标志">正则表达式修饰符 - 可选标志</h5>
+<p>正则表达式可以包含一些可选标志修饰符来控制匹配的模式。修饰符被指定为一个可选的标志。多个标志可以通过按位 OR(|) 它们来指定。如 re.I | re.M 被设置成 I 和 M 标志：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">修饰符</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">re.I</td>
+<td style="text-align: left;">使匹配对大小写不敏感</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">re.L</td>
+<td style="text-align: left;">做本地化识别（locale-aware）匹配</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">re.M</td>
+<td style="text-align: left;">多行匹配，影响 ^ 和 $</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">re.S</td>
+<td style="text-align: left;">使 . 匹配包括换行在内的所有字符</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">re.U</td>
+<td style="text-align: left;">根据Unicode字符集解析字符。这个标志影响 , ,  .</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">re.X</td>
+<td style="text-align: left;">该标志通过给予你更灵活的格式以便你将正则表达式写得更易于理解。</td>
+</tr>
+</tbody>
+</table>
+<h5 id="正则表达式模式">正则表达式模式</h5>
+<p>模式字符串使用特殊的语法来表示一个正则表达式：</p>
+<p>字母和数字表示他们自身。一个正则表达式模式中的字母和数字匹配同样的字符串。</p>
+<p>多数字母和数字前加一个反斜杠时会拥有不同的含义。</p>
+<p>标点符号只有被转义时才匹配自身，否则它们表示特殊的含义。</p>
+<p>反斜杠本身需要使用反斜杠转义。</p>
+<p>由于正则表达式通常都包含反斜杠，所以你最好使用原始字符串来表示它们。模式元素(如 <strong>r'</strong>，等价于 <strong>\t</strong> )匹配相应的特殊字符。</p>
+<p>下表列出了正则表达式模式语法中的特殊元素。如果你使用模式的同时提供了可选的标志参数，某些模式元素的含义会改变。</p>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 83%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">模式</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">^</td>
+<td style="text-align: left;">匹配字符串的开头</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">$</td>
+<td style="text-align: left;">匹配字符串的末尾。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.</td>
+<td style="text-align: left;">匹配任意字符，除了换行符，当re.DOTALL标记被指定时，则可以匹配包括换行符的任意字符。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[...]</td>
+<td style="text-align: left;">用来表示一组字符,单独列出：[amk] 匹配 'a'，'m'或'k'</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[^...]</td>
+<td style="text-align: left;">不在[]中的字符：[^abc] 匹配除了a,b,c之外的字符。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">re*</td>
+<td style="text-align: left;">匹配0个或多个的表达式。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">re+</td>
+<td style="text-align: left;">匹配1个或多个的表达式。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">re?</td>
+<td style="text-align: left;">匹配0个或1个由前面的正则表达式定义的片段，非贪婪方式</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">re{ n}</td>
+<td style="text-align: left;">匹配n个前面表达式。例如，"o{2}"不能匹配"Bob"中的"o"，但是能匹配"food"中的两个o。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">re{ n,}</td>
+<td style="text-align: left;">精确匹配n个前面表达式。例如，"o{2,}"不能匹配"Bob"中的"o"，但能匹配"foooood"中的所有o。"o{1,}"等价于"o+"。"o{0,}"则等价于"o*"。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">re{ n, m}</td>
+<td style="text-align: left;">匹配 n 到 m 次由前面的正则表达式定义的片段，贪婪方式</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">a| b</td>
+<td style="text-align: left;">匹配a或b</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(re)</td>
+<td style="text-align: left;">匹配括号内的表达式，也表示一个组</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(?imx)</td>
+<td style="text-align: left;">正则表达式包含三种可选标志：i, m, 或 x 。只影响括号中的区域。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(?-imx)</td>
+<td style="text-align: left;">正则表达式关闭 i, m, 或 x 可选标志。只影响括号中的区域。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(?: re)</td>
+<td style="text-align: left;">类似 (...), 但是不表示一个组</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(?imx: re)</td>
+<td style="text-align: left;">在括号中使用i, m, 或 x 可选标志</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(?-imx: re)</td>
+<td style="text-align: left;">在括号中不使用i, m, 或 x 可选标志</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(?#...)</td>
+<td style="text-align: left;">注释.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(?= re)</td>
+<td style="text-align: left;">前向肯定界定符。如果所含正则表达式，以 ... 表示，在当前位置成功匹配时成功，否则失败。但一旦所含表达式已经尝试，匹配引擎根本没有提高；模式的剩余部分还要尝试界定符的右边。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">(?! re)</td>
+<td style="text-align: left;">前向否定界定符。与肯定界定符相反；当所含表达式不能在字符串当前位置匹配时成功。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(?&gt; re)</td>
+<td style="text-align: left;">匹配的独立模式，省去回溯。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配数字字母下划线</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配非数字字母下划线</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配任意空白字符，等价于 [。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配任意非空字符</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"> 匹配任意数字，等价于 [0-9]。</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配任意非数字</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配字符串开始</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配字符串结束，如果是存在换行，只匹配到换行前的结束字符串。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配字符串结束</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"> 匹配最后匹配完成的位置。</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"> 匹配一个单词边界，也就是指单词和空格间的位置。例如， 'er 可以匹配"never" 中的 'er'，但不能匹配 "verb" 中的 'er'。</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配非单词边界。'er' 能匹配 "verb" 中的 'er'，但不能匹配 "never" 中的 'er'。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">,  等。</td>
+<td style="text-align: left;">匹配一个换行符。匹配一个制表符, 等</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">\1...\9</td>
+<td style="text-align: left;">匹配第n个分组的内容。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">\10</td>
+<td style="text-align: left;">匹配第n个分组的内容，如果它经匹配。否则指的是八进制字符码的表达式。</td>
+</tr>
+</tbody>
+</table>
+<h5 id="正则表达式实例">正则表达式实例</h5>
+<h6 id="字符匹配">字符匹配</h6>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">实例</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">python</td>
+<td style="text-align: left;">匹配 "python".</td>
+</tr>
+</tbody>
+</table>
+<h6 id="字符类">字符类</h6>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">实例</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">[Pp]ython</td>
+<td style="text-align: left;">匹配 "Python" 或 "python"</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rub[ye]</td>
+<td style="text-align: left;">匹配 "ruby" 或 "rube"</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[aeiou]</td>
+<td style="text-align: left;">匹配中括号内的任意一个字母</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[0-9]</td>
+<td style="text-align: left;">匹配任何数字。类似于 [0123456789]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[a-z]</td>
+<td style="text-align: left;">匹配任何小写字母</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[A-Z]</td>
+<td style="text-align: left;">匹配任何大写字母</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[a-zA-Z0-9]</td>
+<td style="text-align: left;">匹配任何字母及数字</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[^aeiou]</td>
+<td style="text-align: left;">除了aeiou字母以外的所有字符</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[^0-9]</td>
+<td style="text-align: left;">匹配除了数字外的字符</td>
+</tr>
+</tbody>
+</table>
+<h6 id="特殊字符类">特殊字符类</h6>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">实例</th>
+<th style="text-align: left;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.</td>
+<td style="text-align: left;">匹配除 "" 之外的任何单个字符。要匹配包括 '' 在内的任何字符，请使用象 '[.]' 的模式。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"> 匹配一个数字字符。等价于 [0-9]。</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配一个非数字字符。等价于 [^0-9]。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配任何空白字符，包括空格、制表符、换页符等等。等价于 [ 。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配任何非空白字符。等价于 [^ 。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配包括下划线的任何单词字符。等价于'[A-Za-z0-9_]'。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">匹配任何非单词字符。等价于 '[^A-Za-z0-9_]'。</td>
+</tr>
+</tbody>
+</table>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>a-z0-9_-<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>a-z0-9_-<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>E80-FFF<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>正则表达式</tag>
       </tags>
   </entry>
   <entry>
@@ -7045,6 +6902,149 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>Pandas学习小记(一)</title>
+    <url>/p/Pandas-learning-notes-01/</url>
+    <content><![CDATA[<p>Pandas是什么？</p>
+<a id="more"></a>
+<p>Pandas是一个强大的分析结构化数据的工具集；它的使用基础是Numpy（提供高性能的矩阵运算）；用于数据挖掘和数据分析，同时也提供数据清洗功能。</p>
+<h3 id="安装pandas">安装Pandas</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pandas -i http://mirrors.aliyun.com/pypi/simple/</span><br></pre></td></tr></table></figure>
+<h3 id="pandas简介">Pandas简介</h3>
+<p>Pandas 适用于处理以下类型的数据：</p>
+<ul>
+<li>与 SQL 或 Excel 表类似的，含异构列的表格数据;</li>
+<li>有序和无序（非固定频率）的时间序列数据;</li>
+<li>带行列标签的矩阵数据，包括同构或异构型数据;</li>
+<li>任意其它形式的观测、统计数据集, 数据转入 Pandas 数据结构时不必事先标记。</li>
+</ul>
+<p>Pandas 的主要数据结构是 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series">Series</a>（一维数据）与 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a>（二维数据），这两种数据结构足以<strong>处理金融、统计、社会科学、工程</strong>等领域里的大多数典型用例。对于 R 用户，DataFrame 提供了比 R 语言 data.frame 更丰富的功能。Pandas 基于 <a href="https://www.numpy.org/">NumPy</a> 开发，可以与其它第三方科学计算支持库完美集成。</p>
+<p>Pandas 就像一把万能瑞士军刀，下面仅列出了它的部分优势 ：</p>
+<ul>
+<li>处理浮点与非浮点数据里的<strong>缺失数据</strong>，表示为 <code>NaN</code>；</li>
+<li>大小可变：<strong>插入或删除</strong> DataFrame 等多维对象的列；</li>
+<li>自动、显式<strong>数据对齐</strong>：显式地将对象与一组标签对齐，也可以忽略标签，在 Series、DataFrame 计算时自动与数据对齐；</li>
+<li>强大、灵活的<strong>分组</strong>（group by）功能：<strong>拆分-应用-组合</strong>数据集，聚合、转换数据；</li>
+<li>把 Python 和 NumPy 数据结构里不规则、不同索引的数据<strong>轻松</strong>地转换为 DataFrame 对象；</li>
+<li>基于智能标签，对大型数据集进行<strong>切片</strong>、<strong>花式索引</strong>、<strong>子集分解</strong>等操作；</li>
+<li>直观地<strong>合并（merge）</strong>、<strong>连接（join）</strong>数据集；</li>
+<li>灵活地<strong>重塑（reshape）</strong>、<strong>透视（pivot）</strong>数据集；</li>
+<li><strong>轴</strong>支持结构化标签：一个刻度支持多个标签；</li>
+<li>成熟的 IO 工具：读取<strong>文本文件</strong>（CSV 等支持分隔符的文件）、Excel 文件、数据库等来源的数据，利用超快的 <strong>HDF5</strong> 格式保存 / 加载数据；</li>
+<li><strong>时间序列</strong>：支持日期范围生成、频率转换、移动窗口统计、移动窗口线性回归、日期位移等时间序列功能。</li>
+</ul>
+<p>这些功能主要是为了解决其它编程语言、科研环境的痛点。处理数据一般分为几个阶段：<strong>数据整理与清洗、数据分析与建模、数据可视化与制表</strong>，Pandas 是处理数据的理想工具。</p>
+<p>其它说明：</p>
+<ul>
+<li>Pandas 速度<strong>很快</strong>。Pandas 的很多底层算法都用 <a href="https://cython.org/">Cython</a> 优化过。然而，为了保持通用性，必然要牺牲一些性能，如果专注某一功能，完全可以开发出比 Pandas 更快的专用工具。</li>
+<li>Pandas 是 <a href="https://www.statsmodels.org/stable/index.html">statsmodels</a> 的依赖项，因此，Pandas 也是 Python 中统计计算生态系统的重要组成部分。</li>
+<li>Pandas 已广泛应用于金融领域</li>
+</ul>
+<h3 id="pandas中的数据结构">Pandas中的数据结构</h3>
+<table>
+<thead>
+<tr class="header">
+<th>维数</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Series</td>
+<td>带标签的一维同构数组</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>DataFrame</td>
+<td>带标签的，大小可变的，二维异构表格</td>
+</tr>
+</tbody>
+</table>
+<h3 id="为什么有多个数据结构">为什么有多个数据结构？</h3>
+<p>Pandas 数据结构就像是低维数据的容器。比如，DataFrame 是 Series 的容器，Series 则是标量的容器。使用这种方式，可以在容器中以字典的形式插入或删除对象。</p>
+<p>此外，通用 API 函数的默认操作要顾及时间序列与截面数据集的方向。多维数组存储二维或三维数据时，编写函数要注意数据集的方向，这对用户来说是一种负担；如果不考虑 C 或 Fortran 中连续性对性能的影响，一般情况下，不同的轴在程序里其实没有什么区别。Pandas 里，轴的概念主要是为了给数据赋予更直观的语义，即用“更恰当”的方式表示数据集的方向。这样做可以让用户编写数据转换函数时，少费点脑子。</p>
+<p>处理 DataFrame 等表格数据时，<strong>index</strong>（行）或 <strong>columns</strong>（列）比 <strong>axis 0</strong> 和 <strong>axis 1</strong> 更直观。用这种方式迭代 DataFrame 的列，代码更易读易懂：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> df.columns:</span><br><span class="line">    series = df[col]</span><br><span class="line">    <span class="comment"># do something with series</span></span><br></pre></td></tr></table></figure>
+<h3 id="大小可变与数据复制"><a href="https://www.pypandas.cn/docs/getting_started/overview.html#大小可变与数据复制">大小可变与数据复制</a></h3>
+<p>Pandas 所有数据结构的值都是可变的，但数据结构的大小并非都是可变的，比如，Series 的长度不可改变，但 DataFrame 里就可以插入列。</p>
+<p>Pandas 里，绝大多数方法都不改变原始的输入数据，而是复制数据，生成新的对象。 一般来说，原始输入数据<strong>不变</strong>更稳妥。</p>
+<h3 id="十分钟入门pandas"><a href="https://www.pypandas.cn/docs/getting_started/10min.html#%E5%8D%81%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8-pandas">十分钟入门Pandas</a></h3>
+<p>导入：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
+<h4 id="生成对象">生成对象</h4>
+<p>使用值列表生成Series</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">3</span>]: s = pd.Series([<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, np.nan, <span class="number">6</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: s</span><br><span class="line">Out[<span class="number">4</span>]: </span><br><span class="line"><span class="number">0</span>    <span class="number">1.0</span></span><br><span class="line"><span class="number">1</span>    <span class="number">3.0</span></span><br><span class="line"><span class="number">2</span>    <span class="number">5.0</span></span><br><span class="line"><span class="number">3</span>    NaN</span><br><span class="line"><span class="number">4</span>    <span class="number">6.0</span></span><br><span class="line"><span class="number">5</span>    <span class="number">8.0</span></span><br><span class="line">dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用含日期时间索引与标签的Numpy数组生成DataFrame</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">5</span>]: dates = pd.date_range(<span class="string">&#x27;20130101&#x27;</span>, periods=<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: dates</span><br><span class="line">Out[<span class="number">6</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: df = pd.DataFrame(np.random.randn(<span class="number">6</span>, <span class="number">4</span>), index=dates, columns=list(<span class="string">&#x27;ABCD&#x27;</span>))</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: df</span><br><span class="line">Out[<span class="number">8</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p>用Series字典对象生成DataFrame</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">In [9]: df2 &#x3D; pd.DataFrame(&#123;&#39;A&#39;: 1.,</span><br><span class="line">   ...:                     &#39;B&#39;: pd.Timestamp(&#39;20130102&#39;),</span><br><span class="line">   ...:                     &#39;C&#39;: pd.Series(1, index&#x3D;list(range(4)), dtype&#x3D;&#39;float32&#39;),</span><br><span class="line">   ...:                     &#39;D&#39;: np.array([3] * 4, dtype&#x3D;&#39;int32&#39;),</span><br><span class="line">   ...:                     &#39;E&#39;: pd.Categorical([&quot;test&quot;, &quot;train&quot;, &quot;test&quot;, &quot;train&quot;]),</span><br><span class="line">   ...:                     &#39;F&#39;: &#39;foo&#39;&#125;)</span><br><span class="line">   ...: </span><br><span class="line"></span><br><span class="line">In [10]: df2</span><br><span class="line">Out[10]: </span><br><span class="line">     A          B    C  D      E    F</span><br><span class="line">0  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">1  1.0 2013-01-02  1.0  3  train  foo</span><br><span class="line">2  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">3  1.0 2013-01-02  1.0  3  train  foo</span><br></pre></td></tr></table></figure>
+<p>DataFrame的列有不同的数据类型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">11</span>]: df2.dtypes</span><br><span class="line">Out[<span class="number">11</span>]: </span><br><span class="line">A           float64</span><br><span class="line">B    datetime64[ns]</span><br><span class="line">C           float32</span><br><span class="line">D             int32</span><br><span class="line">E          category</span><br><span class="line">F            object</span><br><span class="line">dtype: object</span><br></pre></td></tr></table></figure>
+<p>IPython支持 tab 键自动补全列名与公共属性。下面是部分可自动补全的属性：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">12</span>]: df2.&lt;TAB&gt;  <span class="comment"># noqa: E225, E999</span></span><br><span class="line">df2.A                  df2.bool</span><br><span class="line">df2.abs                df2.boxplot</span><br><span class="line">df2.add                df2.C</span><br><span class="line">df2.add_prefix         df2.clip</span><br><span class="line">df2.add_suffix         df2.clip_lower</span><br><span class="line">df2.align              df2.clip_upper</span><br><span class="line">df2.all                df2.columns</span><br><span class="line">df2.any                df2.combine</span><br><span class="line">df2.append             df2.combine_first</span><br><span class="line">df2.apply              df2.compound</span><br><span class="line">df2.applymap           df2.consolidate</span><br><span class="line">df2.D</span><br></pre></td></tr></table></figure>
+<p>列 A、B、C、D 和 E 都可以自动补全；为简洁起见，此处只显示了部分属性。</p>
+<h4 id="查看数据">查看数据</h4>
+<p>下列代码说明了如何查看DataFrame头部和尾部的数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">13</span>]: df.head()</span><br><span class="line">Out[<span class="number">13</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: df.tail(<span class="number">3</span>) <span class="comment">#后三行	</span></span><br><span class="line">Out[<span class="number">14</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p>显示索引与列名：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">15</span>]: df.index</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: df.columns</span><br><span class="line">Out[<span class="number">16</span>]: Index([<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>], dtype=<span class="string">&#x27;object&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 输出底层数据的 NumPy 对象。注意，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 的列由多种数据类型组成时，该操作耗费系统资源较大，这也是 Pandas 和 NumPy 的本质区别：<strong>NumPy 数组只有一种数据类型，DataFrame 每列的数据类型各不相同</strong>。调用 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 时，Pandas 查找支持 DataFrame 里所有数据类型的 NumPy 数据类型。还有一种数据类型是 <code>object</code>，可以把 DataFrame 列里的值强制转换为 Python 对象。</p>
+<p>下面的 <code>df</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 里的值都是浮点数，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的操作会很快，而且不复制数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">17</span>]: df.to_numpy()</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">array([[ <span class="number">0.4691</span>, <span class="number">-0.2829</span>, <span class="number">-1.5091</span>, <span class="number">-1.1356</span>],</span><br><span class="line">       [ <span class="number">1.2121</span>, <span class="number">-0.1732</span>,  <span class="number">0.1192</span>, <span class="number">-1.0442</span>],</span><br><span class="line">       [<span class="number">-0.8618</span>, <span class="number">-2.1046</span>, <span class="number">-0.4949</span>,  <span class="number">1.0718</span>],</span><br><span class="line">       [ <span class="number">0.7216</span>, <span class="number">-0.7068</span>, <span class="number">-1.0396</span>,  <span class="number">0.2719</span>],</span><br><span class="line">       [<span class="number">-0.425</span> ,  <span class="number">0.567</span> ,  <span class="number">0.2762</span>, <span class="number">-1.0874</span>],</span><br><span class="line">       [<span class="number">-0.6737</span>,  <span class="number">0.1136</span>, <span class="number">-1.4784</span>,  <span class="number">0.525</span> ]])</span><br></pre></td></tr></table></figure>
+<p><code>df2</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 包含了多种类型，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 操作就会耗费较多资源。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">18</span>]: df2.to_numpy()</span><br><span class="line">Out[<span class="number">18</span>]: </span><br><span class="line">array([[<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>]], dtype=object)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提醒：<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的输出不包含行索引和列标签。</p>
+</blockquote>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.describe.html#pandas.DataFrame.describe">describe()</a> 可以快速查看数据的统计摘要：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">19</span>]: df.describe()</span><br><span class="line">Out[<span class="number">19</span>]: </span><br><span class="line">              A         B         C         D</span><br><span class="line">count  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span></span><br><span class="line">mean   <span class="number">0.073711</span> <span class="number">-0.431125</span> <span class="number">-0.687758</span> <span class="number">-0.233103</span></span><br><span class="line">std    <span class="number">0.843157</span>  <span class="number">0.922818</span>  <span class="number">0.779887</span>  <span class="number">0.973118</span></span><br><span class="line">min   <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">25</span>%   <span class="number">-0.611510</span> <span class="number">-0.600794</span> <span class="number">-1.368714</span> <span class="number">-1.076610</span></span><br><span class="line"><span class="number">50</span>%    <span class="number">0.022070</span> <span class="number">-0.228039</span> <span class="number">-0.767252</span> <span class="number">-0.386188</span></span><br><span class="line"><span class="number">75</span>%    <span class="number">0.658444</span>  <span class="number">0.041933</span> <span class="number">-0.034326</span>  <span class="number">0.461706</span></span><br><span class="line">max    <span class="number">1.212112</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
+<p>转置数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">20</span>]: df.T</span><br><span class="line">Out[<span class="number">20</span>]: </span><br><span class="line">   <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">2013</span><span class="number">-01</span><span class="number">-06</span></span><br><span class="line">A    <span class="number">0.469112</span>    <span class="number">1.212112</span>   <span class="number">-0.861849</span>    <span class="number">0.721555</span>   <span class="number">-0.424972</span>   <span class="number">-0.673690</span></span><br><span class="line">B   <span class="number">-0.282863</span>   <span class="number">-0.173215</span>   <span class="number">-2.104569</span>   <span class="number">-0.706771</span>    <span class="number">0.567020</span>    <span class="number">0.113648</span></span><br><span class="line">C   <span class="number">-1.509059</span>    <span class="number">0.119209</span>   <span class="number">-0.494929</span>   <span class="number">-1.039575</span>    <span class="number">0.276232</span>   <span class="number">-1.478427</span></span><br><span class="line">D   <span class="number">-1.135632</span>   <span class="number">-1.044236</span>    <span class="number">1.071804</span>    <span class="number">0.271860</span>   <span class="number">-1.087401</span>    <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p><strong>按轴排序：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">21</span>]: df.sort_index(axis=<span class="number">1</span>, ascending=<span class="literal">False</span>)</span><br><span class="line">Out[<span class="number">21</span>]: </span><br><span class="line">                   D         C         B         A</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-1.135632</span> <span class="number">-1.509059</span> <span class="number">-0.282863</span>  <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-1.044236</span>  <span class="number">0.119209</span> <span class="number">-0.173215</span>  <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>  <span class="number">1.071804</span> <span class="number">-0.494929</span> <span class="number">-2.104569</span> <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.271860</span> <span class="number">-1.039575</span> <span class="number">-0.706771</span>  <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-1.087401</span>  <span class="number">0.276232</span>  <span class="number">0.567020</span> <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.524988</span> <span class="number">-1.478427</span>  <span class="number">0.113648</span> <span class="number">-0.673690</span></span><br></pre></td></tr></table></figure>
+<p>按值排序：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">22</span>]: df.sort_values(by=<span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">Out[<span class="number">22</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span>  <span class="number">0.524988</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> <span class="number">-1.087401</span></span><br></pre></td></tr></table></figure>
+<h4 id="选择">选择</h4>
+<p>获取数据</p>
+<p>选择单列，产生<code>Series</code>，与<code>df.A</code>等效：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">23</span>]: df[<span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">23</span>]: </span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>    <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>    <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span>   <span class="number">-0.861849</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>    <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>   <span class="number">-0.424972</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>   <span class="number">-0.673690</span></span><br><span class="line">Freq: D, Name: A, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用[]切片行：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">24</span>]: df[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">24</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span> <span class="number">-1.135632</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: df[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>]</span><br><span class="line">Out[<span class="number">25</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span>  <span class="number">0.271860</span></span><br></pre></td></tr></table></figure>
+<h4 id="按标签选择">按标签选择</h4>
+<p>用标签提取一行数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">26</span>]: df.loc[dates[<span class="number">0</span>]]</span><br><span class="line">Out[<span class="number">26</span>]: </span><br><span class="line">A    <span class="number">0.469112</span></span><br><span class="line">B   <span class="number">-0.282863</span></span><br><span class="line">C   <span class="number">-1.509059</span></span><br><span class="line">D   <span class="number">-1.135632</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用标签选择多列数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">27</span>]: df.loc[:, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">27</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span>  <span class="number">0.469112</span> <span class="number">-0.282863</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.673690</span>  <span class="number">0.113648</span></span><br></pre></td></tr></table></figure>
+<p>用标签切片，包含行与列结束点：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">28</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">28</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br></pre></td></tr></table></figure>
+<p>返回对象降维：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">29</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">29</span>]: </span><br><span class="line">A    <span class="number">1.212112</span></span><br><span class="line">B   <span class="number">-0.173215</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>提取标量：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">30</span>]: df.loc[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">30</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
+<p>快速访问标量，与上述方法等效。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">31</span>]: df.at[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">31</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
+<h4 id="按位置选择">按位置选择</h4>
+<p>选择第三行的数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">32</span>]: df.iloc[<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">32</span>]: </span><br><span class="line">A    <span class="number">0.721555</span></span><br><span class="line">B   <span class="number">-0.706771</span></span><br><span class="line">C   <span class="number">-1.039575</span></span><br><span class="line">D    <span class="number">0.271860</span></span><br><span class="line">Name: <span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>类似于Numpy/Python，用整数切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">33</span>]: df.iloc[<span class="number">3</span>:<span class="number">5</span>, <span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">Out[<span class="number">33</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span>  <span class="number">0.721555</span> <span class="number">-0.706771</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.567020</span></span><br></pre></td></tr></table></figure>
+<p>类似于Numpy/Python，用整数列表按位置切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">34</span>]: df.iloc[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>], [<span class="number">0</span>, <span class="number">2</span>]]</span><br><span class="line">Out[<span class="number">34</span>]: </span><br><span class="line">                   A         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.424972</span>  <span class="number">0.276232</span></span><br></pre></td></tr></table></figure>
+<p>显式整行切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">35</span>]: df.iloc[<span class="number">1</span>:<span class="number">3</span>, :]</span><br><span class="line">Out[<span class="number">35</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span>  <span class="number">1.212112</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span> <span class="number">-1.044236</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-0.861849</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
+<p>显式整列切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">36</span>]: df.iloc[:, <span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">36</span>]: </span><br><span class="line">                   B         C</span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-01</span> <span class="number">-0.282863</span> <span class="number">-1.509059</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-02</span> <span class="number">-0.173215</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-03</span> <span class="number">-2.104569</span> <span class="number">-0.494929</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-04</span> <span class="number">-0.706771</span> <span class="number">-1.039575</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-05</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span></span><br><span class="line"><span class="number">2013</span><span class="number">-01</span><span class="number">-06</span>  <span class="number">0.113648</span> <span class="number">-1.478427</span></span><br></pre></td></tr></table></figure>
+<p>显示提取值：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">37</span>]: df.iloc[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">37</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
+<p>快速访问标量，与上述方法等效：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">38</span>]: df.iat[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">38</span>]: <span class="number">-0.17321464905330858</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>PandasPandas</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣题目类型之回溯法（一）</title>
     <url>/p/back-tracking-one/</url>
     <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
@@ -7431,30 +7431,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 </blockquote>
 <p>​ 需注意的是，现实问题种我们常面临很大的假设空间，但学习过程是基于有限样本训练集进行的，因此，可能有多个假设与训练集一致，即存在一个<strong>与训练集一致的"假设集合"</strong>，我们称之为<strong>"版本空间"(version space).</strong>例如，在西瓜问题中，与表1.1训练集所对应的版本空间如图1.2所示.</p>
 <p><img src="image-20200806203152041.png"/></p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念03</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-03/</url>
-    <content><![CDATA[<p>机器学习中的归纳偏好。</p>
-<a id="more"></a>
-<h4 id="归纳偏好">归纳偏好</h4>
-<p>通过学习得到的模型对应了假设空间的一个假设，于是，上文中的西瓜版本空间给我们带来了一个麻烦：现在有三个与训练集一致的假设，但与他们对应的模型在面临新样本的时候，却会产生不同的输出。例如，对色泽=青绿；根蒂=蜷缩；敲声=沉闷这个新收来的瓜，如果我们采用的是“好瓜《=》（色泽=*）^（敲声=*)”。那么会把新瓜判断为好瓜，而如果采用了另外两个假设，则判断的结果将不是好瓜，那么，应该采用哪一个模型（或假设）呢？</p>
-<p>​ 若仅有上表中训练样本，则无法断定上述三个假设哪一个“更好”。然而，对于一个具体的学习算法而言，他必须要产生一个模型。这时，学习算法本身的“偏好”就会起到关键的作用。例如，若我们的算法喜欢尽可能特殊的模型，则他会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=浊响)”；但若我们的算法喜欢“尽可能一般”的模型，并且由于某种原因它更相信“根蒂”，则它会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=*)”，机器学习算法在学习过程中对某种类型假设的偏好，称为“归纳偏好”(inductive bias)，或称为“偏好”。</p>
-<blockquote>
-<p>尽可能特殊即“适用情况尽可能少”；尽可能一般即“使用情况尽可能多”。</p>
-<p>对“根蒂”还是对“敲声”更重视，看起来和属性选择，亦称为“特征选择”(feature selection)有关，但需注意的是，机器学习中的特征选择仍是基于对训练样本的模型的分析进行的，而在此处我们并非基于特征选择做出对根蒂的重视；这里对“根蒂”的信赖可视为基于某种领域的知识而产生的归纳偏好关于特征选择方面的内容可以参加后续的更新。</p>
-</blockquote>
-<p>任何一个有效的机器学习算法未必有其归纳偏好，否则它将被假设空间中看似在训练集上“等效”的假设所迷惑，而无法产生确定的学习结果。可以想象，如果没有偏好，我们的西瓜学习算法产生的模型每次在进行预测时随机抽选训练集上的等效假设，那么对这个新瓜--------------学得模型时而告诉我们他是好的，时而告诉我们他是不好的，这样的学习结果显然没有意义。</p>
-<p>归纳偏好的作用在图1.3这个回归学习图示中可能更直观，这里的每个训练样本是图中的一个点(x,y)，要学得一个与训练集一致的模型，相当于找到一条穿过所有训练样本点的曲线。显然，对有限个样本点组成的训练集，存在着很多条曲线与其一致，我们的学习算法必须有某种偏好，才能产出它认为"正确"的模型。例如，若认为相似的样本应有相似的输出(例如，在各种属性上都很像的西瓜，成熟程度应该比较接近)，则对应的学习算法可能偏好图1.3中比较“平滑”的曲线<span class="math inline">\(A\)</span>而不是比较“崎岖”的曲线<span class="math inline">\(B\)</span>.</p>
-<p>归纳偏好可看作学习算法自身在一个可能很庞大的假设空间中对假设进行选择的启发式或"价值观".那么，有没有一般性的原则来引导算法确立“正确的”偏好呢？<strong>“奥卡姆剃刀”（Occam's razor)</strong>是一种常用的、自然科学研究中最基本的原则，即<strong>“若有若干个假设与观察一致，则选最简单的那个”</strong>.如果采用这个原则，并且假设我们认为“更平滑”意味着“更简单”(例如曲线A更容易描述，其方程式是<span class="math inline">\(y = -x_2+6x+1\)</span>，而曲线<span class="math inline">\(B\)</span>则要复杂得多)，则在图1.3中我们会自然地偏好“平滑”的曲线<span class="math inline">\(A\)</span>.</p>
-<p>然而，奥卡姆剃刀并非唯一可行的原则，退一步说，即便假定我们是奥卡姆剃刀的铁杆拥簇，也需注意到，奥卡姆剃刀本身存在不同的诠释，使用奥卡姆剃刀原则并不平凡。例如对我们已经很熟悉的西瓜问题来说，“假设1：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)”和“假设2：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=*)”这两个假设，哪一个更“简单”呢？这个问题并不简单，需要借助其他机制才能解决.</p>
-<p>事实上，归纳偏好对应了学习算法本身所作出的关于"什么样的模型更好"的假设.在具体的实现问题中，这个假设是否成立，即算法的归纳偏好是否与问题匹配，大多数时候直接决定了算法能否取得好的性能.</p>
-<p>继续回头看图1.3，假设学习算法<span class="math inline">\(\mathcal{L}\)</span></p>
-<p><strong>未完待续.....</strong></p>
 ]]></content>
       <tags>
         <tag>机器学习</tag>
@@ -8213,6 +8189,30 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>机器学习基本概念03</title>
+    <url>/p/Basic-Concepts-of-Machine-Learning-03/</url>
+    <content><![CDATA[<p>机器学习中的归纳偏好。</p>
+<a id="more"></a>
+<h4 id="归纳偏好">归纳偏好</h4>
+<p>通过学习得到的模型对应了假设空间的一个假设，于是，上文中的西瓜版本空间给我们带来了一个麻烦：现在有三个与训练集一致的假设，但与他们对应的模型在面临新样本的时候，却会产生不同的输出。例如，对色泽=青绿；根蒂=蜷缩；敲声=沉闷这个新收来的瓜，如果我们采用的是“好瓜《=》（色泽=*）^（敲声=*)”。那么会把新瓜判断为好瓜，而如果采用了另外两个假设，则判断的结果将不是好瓜，那么，应该采用哪一个模型（或假设）呢？</p>
+<p>​ 若仅有上表中训练样本，则无法断定上述三个假设哪一个“更好”。然而，对于一个具体的学习算法而言，他必须要产生一个模型。这时，学习算法本身的“偏好”就会起到关键的作用。例如，若我们的算法喜欢尽可能特殊的模型，则他会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=浊响)”；但若我们的算法喜欢“尽可能一般”的模型，并且由于某种原因它更相信“根蒂”，则它会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=*)”，机器学习算法在学习过程中对某种类型假设的偏好，称为“归纳偏好”(inductive bias)，或称为“偏好”。</p>
+<blockquote>
+<p>尽可能特殊即“适用情况尽可能少”；尽可能一般即“使用情况尽可能多”。</p>
+<p>对“根蒂”还是对“敲声”更重视，看起来和属性选择，亦称为“特征选择”(feature selection)有关，但需注意的是，机器学习中的特征选择仍是基于对训练样本的模型的分析进行的，而在此处我们并非基于特征选择做出对根蒂的重视；这里对“根蒂”的信赖可视为基于某种领域的知识而产生的归纳偏好关于特征选择方面的内容可以参加后续的更新。</p>
+</blockquote>
+<p>任何一个有效的机器学习算法未必有其归纳偏好，否则它将被假设空间中看似在训练集上“等效”的假设所迷惑，而无法产生确定的学习结果。可以想象，如果没有偏好，我们的西瓜学习算法产生的模型每次在进行预测时随机抽选训练集上的等效假设，那么对这个新瓜--------------学得模型时而告诉我们他是好的，时而告诉我们他是不好的，这样的学习结果显然没有意义。</p>
+<p>归纳偏好的作用在图1.3这个回归学习图示中可能更直观，这里的每个训练样本是图中的一个点(x,y)，要学得一个与训练集一致的模型，相当于找到一条穿过所有训练样本点的曲线。显然，对有限个样本点组成的训练集，存在着很多条曲线与其一致，我们的学习算法必须有某种偏好，才能产出它认为"正确"的模型。例如，若认为相似的样本应有相似的输出(例如，在各种属性上都很像的西瓜，成熟程度应该比较接近)，则对应的学习算法可能偏好图1.3中比较“平滑”的曲线<span class="math inline">\(A\)</span>而不是比较“崎岖”的曲线<span class="math inline">\(B\)</span>.</p>
+<p>归纳偏好可看作学习算法自身在一个可能很庞大的假设空间中对假设进行选择的启发式或"价值观".那么，有没有一般性的原则来引导算法确立“正确的”偏好呢？<strong>“奥卡姆剃刀”（Occam's razor)</strong>是一种常用的、自然科学研究中最基本的原则，即<strong>“若有若干个假设与观察一致，则选最简单的那个”</strong>.如果采用这个原则，并且假设我们认为“更平滑”意味着“更简单”(例如曲线A更容易描述，其方程式是<span class="math inline">\(y = -x_2+6x+1\)</span>，而曲线<span class="math inline">\(B\)</span>则要复杂得多)，则在图1.3中我们会自然地偏好“平滑”的曲线<span class="math inline">\(A\)</span>.</p>
+<p>然而，奥卡姆剃刀并非唯一可行的原则，退一步说，即便假定我们是奥卡姆剃刀的铁杆拥簇，也需注意到，奥卡姆剃刀本身存在不同的诠释，使用奥卡姆剃刀原则并不平凡。例如对我们已经很熟悉的西瓜问题来说，“假设1：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)”和“假设2：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=*)”这两个假设，哪一个更“简单”呢？这个问题并不简单，需要借助其他机制才能解决.</p>
+<p>事实上，归纳偏好对应了学习算法本身所作出的关于"什么样的模型更好"的假设.在具体的实现问题中，这个假设是否成立，即算法的归纳偏好是否与问题匹配，大多数时候直接决定了算法能否取得好的性能.</p>
+<p>继续回头看图1.3，假设学习算法<span class="math inline">\(\mathcal{L}\)</span></p>
+<p><strong>未完待续.....</strong></p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
 </search>
