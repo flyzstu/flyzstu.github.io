@@ -5576,88 +5576,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用acme.sh快速申请ssl证书</title>
-    <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
-    <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
-<p><strong>转载自：<a href="https://github.com/acmesh-official/acme.sh/wiki/说明">https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E</a></strong></p>
-<a id="more"></a>
-<p>主要步骤:</p>
-<ol type="1">
-<li>安装 <strong>acme.sh</strong></li>
-<li>生成证书</li>
-<li>copy 证书到 nginx/apache 或者其他服务</li>
-<li>更新证书</li>
-<li>更新 <strong>acme.sh</strong></li>
-<li>出错怎么办, 如何调试</li>
-</ol>
-<p>下面详细介绍.</p>
-<h4 id="安装-acme.sh">安装 <strong>acme.sh</strong></h4>
-<p>安装很简单, 一个命令： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl  https:&#x2F;&#x2F;get.acme.sh | sh</span><br></pre></td></tr></table></figure></p>
-<p>普通用户和 root 用户都可以安装使用. 安装过程进行了以下几步:</p>
-<ol type="1">
-<li>把 acme.sh 安装到你的 <strong>home</strong> 目录下:</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">~&#x2F;.acme.sh&#x2F;</span><br></pre></td></tr></table></figure>
-<p>并创建 一个 bash 的 alias, 方便你的使用: <code>alias acme.sh=~/.acme.sh/acme.sh</code></p>
-<p>2). 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.</p>
-<p>更高级的安装选项请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-install</p>
-<p><strong>安装过程不会污染已有的系统任何功能和文件</strong>, 所有的修改都限制在安装目录中: <code>~/.acme.sh/</code></p>
-<h4 id="生成证书">生成证书</h4>
-<p><strong>acme.sh</strong> 实现了 <strong>acme</strong> 协议支持的所有验证协议. 一般有两种方式验证: http 和 dns 验证.</p>
-<h5 id="http-方式需要在你的网站根目录下放置一个文件-来验证你的域名所有权完成验证.-然后就可以生成证书了.">http 方式需要在你的网站根目录下放置一个文件, 来验证你的域名所有权,完成验证. 然后就可以生成证书了.</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  -d mydomain.com -d www.mydomain.com  --webroot  &#x2F;home&#x2F;wwwroot&#x2F;mydomain.com&#x2F;</span><br></pre></td></tr></table></figure>
-<p>只需要指定域名, 并指定域名所在的网站根目录. <strong>acme.sh</strong> 会全自动的生成验证文件, 并放到网站的根目录, 然后自动完成验证. 最后会聪明的删除验证文件. 整个过程没有任何副作用.</p>
-<p>如果你用的 <strong>apache</strong>服务器, <strong>acme.sh</strong> 还可以智能的从 <strong>apache</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --apache</span><br></pre></td></tr></table></figure></p>
-<p>如果你用的 <strong>nginx</strong>服务器, 或者反代, <strong>acme.sh</strong> 还可以智能的从 <strong>nginx</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --nginx</span><br></pre></td></tr></table></figure></p>
-<p><strong>注意, 无论是 apache 还是 nginx 模式, acme.sh在完成验证之后, 会恢复到之前的状态, 都不会私自更改你本身的配置. 好处是你不用担心配置被搞坏, 也有一个缺点, 你需要自己配置 ssl 的配置, 否则只能成功生成证书, 你的网站还是无法访问https. 但是为了安全, 你还是自己手动改配置吧.</strong></p>
-<p>如果你还没有运行任何 web 服务, <strong>80</strong> 端口是空闲的, 那么 <strong>acme.sh</strong> 还能假装自己是一个webserver, 临时听在<strong>80</strong> 端口, 完成验证:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue -d mydomain.com   --standalone</span><br></pre></td></tr></table></figure>
-<p>更高级的用法请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-issue-a-cert</p>
-<h5 id="手动-dns-方式-手动在域名上添加一条-txt-解析记录-验证域名所有权.">手动 dns 方式, 手动在域名上添加一条 txt 解析记录, 验证域名所有权.</h5>
-<p>这种方式的好处是, 你不需要任何服务器, 不需要任何公网 ip, 只需要 dns 的解析记录即可完成验证. 坏处是，如果不同时配置 Automatic DNS API，使用这种方式 acme.sh 将无法自动更新证书，每次都需要手动再次重新解析验证域名所有权。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  --dns   -d mydomain.com</span><br></pre></td></tr></table></figure>
-<p>然后, <strong>acme.sh</strong> 会生成相应的解析记录显示出来, 你只需要在你的域名管理面板中添加这条 txt 记录即可.</p>
-<p>等待解析完成之后, 重新生成证书: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --renew   -d mydomain.com</span><br></pre></td></tr></table></figure> 注意第二次这里用的是 <code>--renew</code></p>
-<p>dns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.</p>
-<p><strong>acme.sh</strong> 目前支持 cloudflare, dnspod, cloudxns, godaddy 以及 ovh 等数十种解析商的自动集成.</p>
-<p>以 dnspod 为例, 你需要先登录到 dnspod 账号, 生成你的 api id 和 api key, 都是免费的. 然后: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export DP_Id&#x3D;&quot;1234&quot;</span><br><span class="line"></span><br><span class="line">export DP_Key&#x3D;&quot;sADDsdasdgdsf&quot;</span><br><span class="line"></span><br><span class="line">acme.sh   --issue   --dns dns_dp   -d aa.com  -d www.aa.com</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
-<p>证书就会自动生成了. 这里给出的 api id 和 api key 会被自动记录下来, 将来你在使用 dnspod api 的时候, 就不需要再次指定了. 直接生成就好了:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue   -d  mydomain2.com   --dns  dns_dp</span><br></pre></td></tr></table></figure>
-<p>更详细的 api 用法: https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md</p>
-<h4 id="copy安装-证书">copy/安装 证书</h4>
-<p>前面证书生成以后, 接下来需要把证书 copy 到真正需要用它的地方.</p>
-<p>注意, 默认生成的证书都放在安装目录下: <code>~/.acme.sh/</code>, 请不要直接使用此目录下的文件, 例如: 不要直接让 nginx/apache 的配置文件使用这下面的文件. 这里面的文件都是内部使用, 而且目录结构可能会变化.</p>
-<p>正确的使用方法是使用 <code>--installcert</code> 命令,并指定目标位置, 然后证书文件会被copy到相应的位置, 例如: ##### Apache example: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--cert-file      &#x2F;path&#x2F;to&#x2F;certfile&#x2F;in&#x2F;apache&#x2F;cert.pem  \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;apache&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;certfile&#x2F;apache&#x2F;fullchain.pem \</span><br><span class="line">--reloadcmd     &quot;service apache2 force-reload&quot;</span><br></pre></td></tr></table></figure></p>
-<h5 id="nginx-example">Nginx example:</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;nginx&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;nginx&#x2F;cert.pem \</span><br><span class="line">--reloadcmd     &quot;service nginx force-reload&quot;</span><br></pre></td></tr></table></figure>
-<p>(一个小提醒, 这里用的是 <code>service nginx force-reload</code>, 不是 <code>service nginx reload</code>, 据测试, <code>reload</code> 并不会重新加载证书, 所以用的 <code>force-reload</code>)</p>
-<p>Nginx 的配置 <code>ssl_certificate</code> 使用 <code>/etc/nginx/ssl/fullchain.cer</code> ，而非 <code>/etc/nginx/ssl/&lt;domain&gt;.cer</code> ，否则 <a href="https://www.ssllabs.com/ssltest/">SSL Labs</a> 的测试会报 <code>Chain issues Incomplete</code> 错误。</p>
-<p><code>--installcert</code>命令可以携带很多参数, 来指定目标文件. 并且可以指定 reloadcmd, 当证书更新以后, reloadcmd会被自动调用,让服务器生效.</p>
-<p>详细参数请参考: https://github.com/Neilpang/acme.sh#3-install-the-issued-cert-to-apachenginx-etc</p>
-<p>值得注意的是, 这里指定的所有参数都会被自动记录下来, 并在将来证书自动更新以后, 被再次自动调用.</p>
-<h4 id="更新证书">更新证书</h4>
-<p>目前证书在 60 天以后会自动更新, 你无需任何操作. 今后有可能会缩短这个时间, 不过都是自动的, 你不用关心.</p>
-<h4 id="更新-acme.sh">更新 acme.sh</h4>
-<p>目前由于 acme 协议和 letsencrypt CA 都在频繁的更新, 因此 acme.sh 也经常更新以保持同步.</p>
-<p>升级 acme.sh 到最新版 : <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade</span><br></pre></td></tr></table></figure></p>
-<p>如果你不想手动升级, 可以开启自动升级:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --upgrade  --auto-upgrade</span><br></pre></td></tr></table></figure>
-<p>之后, acme.sh 就会自动保持更新了.</p>
-<p>你也可以随时关闭自动更新:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade  --auto-upgrade  0</span><br></pre></td></tr></table></figure>
-<h4 id="调试">调试</h4>
-<p>如果出错, 请添加 debug log：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug </span><br></pre></td></tr></table></figure>
-<p>或者： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug  2</span><br></pre></td></tr></table></figure></p>
-<p>请参考： https://github.com/Neilpang/acme.sh/wiki/How-to-debug-acme.sh</p>
-<p>最后, 本文并非完全的使用说明, 还有很多高级的功能, 更高级的用法请参看其他 wiki 页面.</p>
-<p>https://github.com/Neilpang/acme.sh/wiki</p>
-]]></content>
-      <tags>
-        <tag>证书</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</title>
     <url>/p/use-wrap-unlock-ipv6/</url>
     <content><![CDATA[<p><strong>摘要：</strong>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</p>
@@ -6820,6 +6738,88 @@ y=x^2e^x
       <tags>
         <tag>leetcode</tag>
         <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用acme.sh快速申请ssl证书</title>
+    <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
+    <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
+<p><strong>转载自：<a href="https://github.com/acmesh-official/acme.sh/wiki/说明">https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E</a></strong></p>
+<a id="more"></a>
+<p>主要步骤:</p>
+<ol type="1">
+<li>安装 <strong>acme.sh</strong></li>
+<li>生成证书</li>
+<li>copy 证书到 nginx/apache 或者其他服务</li>
+<li>更新证书</li>
+<li>更新 <strong>acme.sh</strong></li>
+<li>出错怎么办, 如何调试</li>
+</ol>
+<p>下面详细介绍.</p>
+<h4 id="安装-acme.sh">安装 <strong>acme.sh</strong></h4>
+<p>安装很简单, 一个命令： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl  https:&#x2F;&#x2F;get.acme.sh | sh</span><br></pre></td></tr></table></figure></p>
+<p>普通用户和 root 用户都可以安装使用. 安装过程进行了以下几步:</p>
+<ol type="1">
+<li>把 acme.sh 安装到你的 <strong>home</strong> 目录下:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">~&#x2F;.acme.sh&#x2F;</span><br></pre></td></tr></table></figure>
+<p>并创建 一个 bash 的 alias, 方便你的使用: <code>alias acme.sh=~/.acme.sh/acme.sh</code></p>
+<p>2). 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.</p>
+<p>更高级的安装选项请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-install</p>
+<p><strong>安装过程不会污染已有的系统任何功能和文件</strong>, 所有的修改都限制在安装目录中: <code>~/.acme.sh/</code></p>
+<h4 id="生成证书">生成证书</h4>
+<p><strong>acme.sh</strong> 实现了 <strong>acme</strong> 协议支持的所有验证协议. 一般有两种方式验证: http 和 dns 验证.</p>
+<h5 id="http-方式需要在你的网站根目录下放置一个文件-来验证你的域名所有权完成验证.-然后就可以生成证书了.">http 方式需要在你的网站根目录下放置一个文件, 来验证你的域名所有权,完成验证. 然后就可以生成证书了.</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  -d mydomain.com -d www.mydomain.com  --webroot  &#x2F;home&#x2F;wwwroot&#x2F;mydomain.com&#x2F;</span><br></pre></td></tr></table></figure>
+<p>只需要指定域名, 并指定域名所在的网站根目录. <strong>acme.sh</strong> 会全自动的生成验证文件, 并放到网站的根目录, 然后自动完成验证. 最后会聪明的删除验证文件. 整个过程没有任何副作用.</p>
+<p>如果你用的 <strong>apache</strong>服务器, <strong>acme.sh</strong> 还可以智能的从 <strong>apache</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --apache</span><br></pre></td></tr></table></figure></p>
+<p>如果你用的 <strong>nginx</strong>服务器, 或者反代, <strong>acme.sh</strong> 还可以智能的从 <strong>nginx</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --nginx</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意, 无论是 apache 还是 nginx 模式, acme.sh在完成验证之后, 会恢复到之前的状态, 都不会私自更改你本身的配置. 好处是你不用担心配置被搞坏, 也有一个缺点, 你需要自己配置 ssl 的配置, 否则只能成功生成证书, 你的网站还是无法访问https. 但是为了安全, 你还是自己手动改配置吧.</strong></p>
+<p>如果你还没有运行任何 web 服务, <strong>80</strong> 端口是空闲的, 那么 <strong>acme.sh</strong> 还能假装自己是一个webserver, 临时听在<strong>80</strong> 端口, 完成验证:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue -d mydomain.com   --standalone</span><br></pre></td></tr></table></figure>
+<p>更高级的用法请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-issue-a-cert</p>
+<h5 id="手动-dns-方式-手动在域名上添加一条-txt-解析记录-验证域名所有权.">手动 dns 方式, 手动在域名上添加一条 txt 解析记录, 验证域名所有权.</h5>
+<p>这种方式的好处是, 你不需要任何服务器, 不需要任何公网 ip, 只需要 dns 的解析记录即可完成验证. 坏处是，如果不同时配置 Automatic DNS API，使用这种方式 acme.sh 将无法自动更新证书，每次都需要手动再次重新解析验证域名所有权。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  --dns   -d mydomain.com</span><br></pre></td></tr></table></figure>
+<p>然后, <strong>acme.sh</strong> 会生成相应的解析记录显示出来, 你只需要在你的域名管理面板中添加这条 txt 记录即可.</p>
+<p>等待解析完成之后, 重新生成证书: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --renew   -d mydomain.com</span><br></pre></td></tr></table></figure> 注意第二次这里用的是 <code>--renew</code></p>
+<p>dns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.</p>
+<p><strong>acme.sh</strong> 目前支持 cloudflare, dnspod, cloudxns, godaddy 以及 ovh 等数十种解析商的自动集成.</p>
+<p>以 dnspod 为例, 你需要先登录到 dnspod 账号, 生成你的 api id 和 api key, 都是免费的. 然后: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export DP_Id&#x3D;&quot;1234&quot;</span><br><span class="line"></span><br><span class="line">export DP_Key&#x3D;&quot;sADDsdasdgdsf&quot;</span><br><span class="line"></span><br><span class="line">acme.sh   --issue   --dns dns_dp   -d aa.com  -d www.aa.com</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>证书就会自动生成了. 这里给出的 api id 和 api key 会被自动记录下来, 将来你在使用 dnspod api 的时候, 就不需要再次指定了. 直接生成就好了:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue   -d  mydomain2.com   --dns  dns_dp</span><br></pre></td></tr></table></figure>
+<p>更详细的 api 用法: https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md</p>
+<h4 id="copy安装-证书">copy/安装 证书</h4>
+<p>前面证书生成以后, 接下来需要把证书 copy 到真正需要用它的地方.</p>
+<p>注意, 默认生成的证书都放在安装目录下: <code>~/.acme.sh/</code>, 请不要直接使用此目录下的文件, 例如: 不要直接让 nginx/apache 的配置文件使用这下面的文件. 这里面的文件都是内部使用, 而且目录结构可能会变化.</p>
+<p>正确的使用方法是使用 <code>--installcert</code> 命令,并指定目标位置, 然后证书文件会被copy到相应的位置, 例如: ##### Apache example: <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--cert-file      &#x2F;path&#x2F;to&#x2F;certfile&#x2F;in&#x2F;apache&#x2F;cert.pem  \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;apache&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;certfile&#x2F;apache&#x2F;fullchain.pem \</span><br><span class="line">--reloadcmd     &quot;service apache2 force-reload&quot;</span><br></pre></td></tr></table></figure></p>
+<h5 id="nginx-example">Nginx example:</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--key-file       &#x2F;path&#x2F;to&#x2F;keyfile&#x2F;in&#x2F;nginx&#x2F;key.pem  \</span><br><span class="line">--fullchain-file &#x2F;path&#x2F;to&#x2F;fullchain&#x2F;nginx&#x2F;cert.pem \</span><br><span class="line">--reloadcmd     &quot;service nginx force-reload&quot;</span><br></pre></td></tr></table></figure>
+<p>(一个小提醒, 这里用的是 <code>service nginx force-reload</code>, 不是 <code>service nginx reload</code>, 据测试, <code>reload</code> 并不会重新加载证书, 所以用的 <code>force-reload</code>)</p>
+<p>Nginx 的配置 <code>ssl_certificate</code> 使用 <code>/etc/nginx/ssl/fullchain.cer</code> ，而非 <code>/etc/nginx/ssl/&lt;domain&gt;.cer</code> ，否则 <a href="https://www.ssllabs.com/ssltest/">SSL Labs</a> 的测试会报 <code>Chain issues Incomplete</code> 错误。</p>
+<p><code>--installcert</code>命令可以携带很多参数, 来指定目标文件. 并且可以指定 reloadcmd, 当证书更新以后, reloadcmd会被自动调用,让服务器生效.</p>
+<p>详细参数请参考: https://github.com/Neilpang/acme.sh#3-install-the-issued-cert-to-apachenginx-etc</p>
+<p>值得注意的是, 这里指定的所有参数都会被自动记录下来, 并在将来证书自动更新以后, 被再次自动调用.</p>
+<h4 id="更新证书">更新证书</h4>
+<p>目前证书在 60 天以后会自动更新, 你无需任何操作. 今后有可能会缩短这个时间, 不过都是自动的, 你不用关心.</p>
+<h4 id="更新-acme.sh">更新 acme.sh</h4>
+<p>目前由于 acme 协议和 letsencrypt CA 都在频繁的更新, 因此 acme.sh 也经常更新以保持同步.</p>
+<p>升级 acme.sh 到最新版 : <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade</span><br></pre></td></tr></table></figure></p>
+<p>如果你不想手动升级, 可以开启自动升级:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --upgrade  --auto-upgrade</span><br></pre></td></tr></table></figure>
+<p>之后, acme.sh 就会自动保持更新了.</p>
+<p>你也可以随时关闭自动更新:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade  --auto-upgrade  0</span><br></pre></td></tr></table></figure>
+<h4 id="调试">调试</h4>
+<p>如果出错, 请添加 debug log：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug </span><br></pre></td></tr></table></figure>
+<p>或者： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug  2</span><br></pre></td></tr></table></figure></p>
+<p>请参考： https://github.com/Neilpang/acme.sh/wiki/How-to-debug-acme.sh</p>
+<p>最后, 本文并非完全的使用说明, 还有很多高级的功能, 更高级的用法请参看其他 wiki 页面.</p>
+<p>https://github.com/Neilpang/acme.sh/wiki</p>
+]]></content>
+      <tags>
+        <tag>证书</tag>
       </tags>
   </entry>
   <entry>
