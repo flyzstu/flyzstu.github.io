@@ -8040,6 +8040,74 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
+    <title>离线安装docker</title>
+    <url>/p/offline-install-docker-offline/</url>
+    <content><![CDATA[<p>最近在部署项目，甲方的部署环境有可能内网环境，而我们现在的项目是部署在docker中的，所以需要记录一下如何离线安装docker。这里的步骤对于其他需要离线安装的deb包也是适用的。</p>
+<p>关键字：<strong>docker，离线安装</strong></p>
+<a id="more"></a>
+<h2 id="下载docker相关的依赖包">下载docker相关的依赖包</h2>
+<p>首先需要一台能上外网的机器，下载和docker相关的依赖。</p>
+<ol type="1">
+<li>安装必要工具，这里把相关依赖都下载下来</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -yd</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>安装GPG证书，这里以aliyun的为例</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<p>ps：一般发行版都有curl了，所以不用安装，实在没有也可以导出相关的deb包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install --reinstall curl -yd</span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>写入软件源信息</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo add-apt-repository <span class="string">&quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu <span class="subst">$(lsb_release -cs)</span> stable&quot;</span></span><br></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>更新并导出Docker-CE相关的安装包</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get -y update</span><br><span class="line">sudo apt-get  install docker-ce -yd</span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li>导出生成索引文件的安装包</li>
+</ol>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dpkg-dev -yd</span><br></pre></td></tr></table></figure></p>
+<ol start="6" type="1">
+<li>将docker相关的依赖包转移到U盘或者其他文件夹，准备下一步安装</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo tar zcvf docker.tar.gz docker <span class="comment"># 压缩</span></span><br><span class="line">sudo tar zxvf docker.tar.gz		  <span class="comment"># 解压</span></span><br></pre></td></tr></table></figure>
+<h2 id="在需要离线安装的主机上操作">在需要离线安装的主机上操作</h2>
+<p>这里有两者方案，第一种方案是使用<code>dpkg</code>进行安装，命令比较简单：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/docker</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
+<p>第二种方案，就是使用apt安装。需要首先创建apt本地仓库</p>
+<ol type="1">
+<li>离线安装dpkg-dev</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/dpkg-deb</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>利用上一步生成的docker安装包，建立deb包的依赖关系</li>
+</ol>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 777 -R /your-path</span><br><span class="line">sudo touch /your-path/docker/Packages.gz</span><br><span class="line">sudo dpkg-scanpackages docker /dev/null  | gzip &gt; /your-path/docker/Packages.gz</span><br></pre></td></tr></table></figure></p>
+<ol start="3" type="1">
+<li>将所有下载的文件和生成的gz文件拷贝到离线的ubuntu机器上，将<code>/etc/apt/sources.list</code>原有内容注释掉，新增：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb file:/your-path /docker</span><br></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>更新apt索引，这里设置允许不安全的仓库</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update --allow-insecure-repositories</span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li>安装docker-ce</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install docker-ce -y</span><br></pre></td></tr></table></figure>
+<ol start="6" type="1">
+<li>查看是否安装成功</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo docker info</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220408123754001.png" /></p>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>线性回归中的基函数</title>
     <url>/p/a-basis-function-in-linear-regression/</url>
     <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
@@ -8134,74 +8202,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       <tags>
         <tag>MT7621</tag>
         <tag>OpenWRT</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>离线安装docker</title>
-    <url>/p/offline-install-docker-offline/</url>
-    <content><![CDATA[<p>最近在部署项目，甲方的部署环境有可能内网环境，而我们现在的项目是部署在docker中的，所以需要记录一下如何离线安装docker。这里的步骤对于其他需要离线安装的deb包也是适用的。</p>
-<p>关键字：<strong>docker，离线安装</strong></p>
-<a id="more"></a>
-<h2 id="下载docker相关的依赖包">下载docker相关的依赖包</h2>
-<p>首先需要一台能上外网的机器，下载和docker相关的依赖。</p>
-<ol type="1">
-<li>安装必要工具，这里把相关依赖都下载下来</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -yd</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>安装GPG证书，这里以aliyun的为例</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure>
-<p>ps：一般发行版都有curl了，所以不用安装，实在没有也可以导出相关的deb包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install --reinstall curl -yd</span><br></pre></td></tr></table></figure>
-<ol start="3" type="1">
-<li>写入软件源信息</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo add-apt-repository <span class="string">&quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu <span class="subst">$(lsb_release -cs)</span> stable&quot;</span></span><br></pre></td></tr></table></figure>
-<ol start="4" type="1">
-<li>更新并导出Docker-CE相关的安装包</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get -y update</span><br><span class="line">sudo apt-get  install docker-ce -yd</span><br></pre></td></tr></table></figure>
-<ol start="5" type="1">
-<li>导出生成索引文件的安装包</li>
-</ol>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dpkg-dev -yd</span><br></pre></td></tr></table></figure></p>
-<ol start="6" type="1">
-<li>将docker相关的依赖包转移到U盘或者其他文件夹，准备下一步安装</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo tar zcvf docker.tar.gz docker <span class="comment"># 压缩</span></span><br><span class="line">sudo tar zxvf docker.tar.gz		  <span class="comment"># 解压</span></span><br></pre></td></tr></table></figure>
-<h2 id="在需要离线安装的主机上操作">在需要离线安装的主机上操作</h2>
-<p>这里有两者方案，第一种方案是使用<code>dpkg</code>进行安装，命令比较简单：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/docker</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
-<p>第二种方案，就是使用apt安装。需要首先创建apt本地仓库</p>
-<ol type="1">
-<li>离线安装dpkg-dev</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/dpkg-deb</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>利用上一步生成的docker安装包，建立deb包的依赖关系</li>
-</ol>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 777 -R /your-path</span><br><span class="line">sudo touch /your-path/docker/Packages.gz</span><br><span class="line">sudo dpkg-scanpackages docker /dev/null  | gzip &gt; /your-path/docker/Packages.gz</span><br></pre></td></tr></table></figure></p>
-<ol start="3" type="1">
-<li>将所有下载的文件和生成的gz文件拷贝到离线的ubuntu机器上，将<code>/etc/apt/sources.list</code>原有内容注释掉，新增：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb file:/your-path /docker</span><br></pre></td></tr></table></figure>
-<ol start="4" type="1">
-<li>更新apt索引，这里设置允许不安全的仓库</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update --allow-insecure-repositories</span><br></pre></td></tr></table></figure>
-<ol start="5" type="1">
-<li>安装docker-ce</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install docker-ce -y</span><br></pre></td></tr></table></figure>
-<ol start="6" type="1">
-<li>查看是否安装成功</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo docker info</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220408123754001.png" /></p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
