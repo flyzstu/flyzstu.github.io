@@ -592,21 +592,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang中的生产者消费者模型</title>
-    <url>/p/producer-consumer-model-in-golang/</url>
-    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
-<p><strong>关键词</strong>：生产者消费者模型，golang</p>
-<a id="more"></a>
-<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
-<h2 id="简易生产者模型">简易生产者模型</h2>
-<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go语言中的切片、Map和Channel</title>
     <url>/p/slice-map-and-channel-in-golang/</url>
     <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
@@ -630,6 +615,21 @@
 <li>主函数最后要执行<code>wg.Wait()</code>，阻塞直到子协程</li>
 </ol>
 <p>退出。</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中的生产者消费者模型</title>
+    <url>/p/producer-consumer-model-in-golang/</url>
+    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
+<p><strong>关键词</strong>：生产者消费者模型，golang</p>
+<a id="more"></a>
+<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
+<h2 id="简易生产者模型">简易生产者模型</h2>
+<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -2501,23 +2501,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python3中decode和encode的区别</title>
-    <url>/p/how-to-use-requests-in-python/</url>
-    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
-<a id="more"></a>
-<h3 id="decode和encode的区别">decode和encode的区别</h3>
-<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
-<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
-<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>decode</tag>
-        <tag>encode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python3中的正则表达式</title>
     <url>/p/how-to-use-re-in-python/</url>
     <content><![CDATA[<p>摘要：这个模块提供了正则表达式匹配操作。模式和被搜索的字符串既可以是unicode字符串(str类型)，也可以是8位字节串。但是两者不能混用。当进行替换操作时，替换字符串的类型也必须与所用的模式和搜索的字符串类型一致。</p>
@@ -2719,6 +2702,38 @@ y=x^2e^x
 </tr>
 </tbody>
 </table>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python中的map函数</title>
+    <url>/p/how-map-functions-works-in-Python/</url>
+    <content><![CDATA[<p>Python内建了map()函数。</p>
+<a id="more"></a>
+<p>Python内建了map()函数。</p>
+<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
+<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
+<p>下面来看Python代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
+<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
+<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
+<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
+<blockquote>
+<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
+</blockquote>
+<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
+<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
+<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
+<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>只需要一行代码。</p>
 ]]></content>
       <tags>
         <tag>Python</tag>
@@ -3429,38 +3444,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>正则表达式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python中的map函数</title>
-    <url>/p/how-map-functions-works-in-Python/</url>
-    <content><![CDATA[<p>Python内建了map()函数。</p>
-<a id="more"></a>
-<p>Python内建了map()函数。</p>
-<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
-<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
-<p>下面来看Python代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
-<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
-<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
-<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
-<blockquote>
-<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
-</blockquote>
-<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
-<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
-<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
-<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
-<p>只需要一行代码。</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4937,6 +4920,23 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python3中decode和encode的区别</title>
+    <url>/p/how-to-use-requests-in-python/</url>
+    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
+<a id="more"></a>
+<h3 id="decode和encode的区别">decode和encode的区别</h3>
+<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
+<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
+<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>decode</tag>
+        <tag>encode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kafaka学习笔记之快速入门</title>
     <url>/p/introduction-to-kafaka-study-notes-02/</url>
     <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
@@ -5245,6 +5245,27 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>ssh-genkey参数</title>
+    <url>/p/ssh-genkey/</url>
+    <content><![CDATA[<p>什么是ssh-genkey？</p>
+<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
+<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
+<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
+<a id="more"></a>
+<h2 id="常用命令">常用命令</h2>
+<h3 id="生成密钥对">生成密钥对</h3>
+<p>默认生成 2048 位 RSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<p>生成 4096 位 RSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
+<p>生成 521 位 ECDSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ssh-genkey</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>selenium常用方法</title>
     <url>/p/Selenium-positioning-method/</url>
     <content><![CDATA[<p>Selenium 是一个综合性的项目，为web浏览器的自动化提供了各种工具和依赖包。本文主要介绍的是 selenium的常用方法。</p>
@@ -5304,27 +5325,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ssh-genkey参数</title>
-    <url>/p/ssh-genkey/</url>
-    <content><![CDATA[<p>什么是ssh-genkey？</p>
-<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
-<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
-<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
-<a id="more"></a>
-<h2 id="常用命令">常用命令</h2>
-<h3 id="生成密钥对">生成密钥对</h3>
-<p>默认生成 2048 位 RSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
-<p>生成 4096 位 RSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
-<p>生成 521 位 ECDSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ssh-genkey</tag>
       </tags>
   </entry>
   <entry>
@@ -5658,6 +5658,28 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>使用jsdelivrCDN加速github文件</title>
+    <url>/p/Use-jsdelivrCDN-to-accelerate-github-files/</url>
+    <content><![CDATA[<p>jsDelivr 是国外的一家优秀的公共 CDN 服务提供商，也是首个「打通中国大陆（网宿公司运营）与海外的免费 CDN 服务」。</p>
+<p><strong>更新：</strong>jsDelivr新增使用政策已经于8月15日生效。根据最新的使用政策，<strong>滥用服务及其资源或将jsDelivr用作通用文件或媒体托管服务，账户将会被BAN。</strong></p>
+<p>如果将Github+jsDelivr作为图床使用的话是算违规！！！ 相关链接：https://www.jsdelivr.com/terms/acceptable-use-policy-jsdelivr-net</p>
+<a id="more"></a>
+<h3 id="jsdelivr-配置">jsDelivr 配置</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;wf09&#x2F;upload@master&#x2F;1.png</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>gh</code> 表示来自 Github 的仓库</li>
+<li><code>wf09/upload</code> 指的是用户名/仓库名</li>
+<li><code>master</code> 仓库的分支</li>
+<li><code>1.png</code>仓库下的具体文件</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>github</tag>
+        <tag>jsdelivrCDN</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</title>
     <url>/p/use-wrap-unlock-ipv6/</url>
     <content><![CDATA[<p><strong>摘要：</strong>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</p>
@@ -5761,96 +5783,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用jsdelivrCDN加速github文件</title>
-    <url>/p/Use-jsdelivrCDN-to-accelerate-github-files/</url>
-    <content><![CDATA[<p>jsDelivr 是国外的一家优秀的公共 CDN 服务提供商，也是首个「打通中国大陆（网宿公司运营）与海外的免费 CDN 服务」。</p>
-<p><strong>更新：</strong>jsDelivr新增使用政策已经于8月15日生效。根据最新的使用政策，<strong>滥用服务及其资源或将jsDelivr用作通用文件或媒体托管服务，账户将会被BAN。</strong></p>
-<p>如果将Github+jsDelivr作为图床使用的话是算违规！！！ 相关链接：https://www.jsdelivr.com/terms/acceptable-use-policy-jsdelivr-net</p>
-<a id="more"></a>
-<h3 id="jsdelivr-配置">jsDelivr 配置</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;wf09&#x2F;upload@master&#x2F;1.png</span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>gh</code> 表示来自 Github 的仓库</li>
-<li><code>wf09/upload</code> 指的是用户名/仓库名</li>
-<li><code>master</code> 仓库的分支</li>
-<li><code>1.png</code>仓库下的具体文件</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>github</tag>
-        <tag>jsdelivrCDN</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用pip离线安装PyTorch-gpu</title>
-    <url>/p/Use-pip-to-install-the-GPU-version-of-PyTorch-offline/</url>
-    <content><![CDATA[<p>废话不多说，上教程。</p>
-<a id="more"></a>
-<h4 id="查看linux预装的python3版本">1.查看Linux预装的Python3版本</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@wf09:~<span class="comment"># python3 -V</span></span><br><span class="line">Python 3.6.9</span><br></pre></td></tr></table></figure>
-<h4 id="下载对应的pytorch版本">2.下载对应的Pytorch版本</h4>
-<p>https://download.pytorch.org/whl/torch_stable.html</p>
-<p><img src="使用pip离线安装PyTorch-gpu/3.png" /></p>
-<p>Python版本是3.6.9，下载的版本是<code>cpu/torch-1.4.0%2Bcpu-cp36-cp36m-linux_x86_64.whl</code></p>
-<h4 id="安装pip3">3.安装pip3</h4>
-<h5 id="linux">3.1 Linux</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install python3-pip</span><br></pre></td></tr></table></figure>
-<p><strong>tips：</strong>由于apt源自带的pip版本过低，可以执行如下命令升级pip。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<p>升级完pip以后，pip就相当于pip3了。</p>
-<h5 id="win">3.2 Win</h5>
-<p>安装完Python后默认安装pip，执行命令升级pip即可</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<h4 id="离线安装pytorch">4.离线安装Pytorch</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install --no-index --find-links=torch-1.4.0+cpu-cp36-cp36m-linux_x86_64.whl torch</span><br></pre></td></tr></table></figure>
-<h4 id="windows10卸载pytorch-cpu版本并安装gpu版本">5.windows10卸载Pytorch-cpu版本并安装GPU版本</h4>
-<h5 id="卸载cpu版">5.1 卸载cpu版</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip uninstall torch   		<span class="comment">#卸载torch</span></span><br><span class="line">pip uninstall torchvison    <span class="comment">#卸载torchvison</span></span><br></pre></td></tr></table></figure>
-<h5 id="安装cuda">5.2 安装CUDA</h5>
-<p><img src="使用pip离线安装PyTorch-gpu/image-20200315143756001.png" /></p>
-<p>https://developer.nvidia.com/cuda-toolkit-archive</p>
-<p>笔者使用的<code>Win10</code>，附上离线安装版链接：</p>
-<p><del>http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_441.22_win10.exe</del></p>
-<h6 id="tips最新版本的cuda10.2现在还无法被pytorch支持安装10.1版本的即可">Tips：最新版本的CUDA(10.2)现在还无法被Pytorch支持，安装10.1版本的即可。</h6>
-<p>http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_426.00_win10.exe</p>
-<p>下载完毕，双击打开即可。</p>
-<p><img src="使用pip离线安装PyTorch-gpu/image-20200315145247036.png" /></p>
-<p>点击OK选择下一步。</p>
-<p><img src="使用pip离线安装PyTorch-gpu/image-20200315145432177.png" /></p>
-<p>等待进度条达到100%，会自动打开安装程序。</p>
-<p><img src="使用pip离线安装PyTorch-gpu/image-20200315150124951.png" /></p>
-<p>选择自定义，然后全部选中，期间会升级本机的<strong>显卡驱动</strong>。</p>
-<h6 id="tips升级显卡驱动是很重要的一步不升级到最新版本无法正确安装cuda"><strong>Tips：</strong>升级显卡驱动是很重要的一步，不升级到最新版本无法正确安装<strong>CUDA</strong></h6>
-<p><img src="使用pip离线安装PyTorch-gpu/image-20200315150240356.png" /></p>
-<p>等待安装完毕。</p>
-<h5 id="安装cudnn">5.3 安装cuDNN</h5>
-<p><strong>相比标准的cuda，它在一些常用的神经网络操作上进行了性能的优化，比如卷积，pooling，归一化，以及激活层等等。</strong></p>
-<p>下载过程中需要注册 <strong>NVIDIA account</strong>。</p>
-<p>下载完毕后执行解压：会生成<code>cuda/include、cuda/lib、cuda/bin</code>三个目录；</p>
-<p>然后分别将<code>cuda/include、cuda/lib、cuda/bin</code>三个目录中的内容拷贝到<code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1</code>对应的<code>include、lib、bin</code>目录下即可。</p>
-<h5 id="安装pytorch-gpu版本"><strong>5.4安装Pytorch-GPU版本</strong></h5>
-<p>下载Pytorch-CUDA版本的whl文件，用于离线安装。</p>
-<p>https://download.pytorch.org/whl/torch_stable.html</p>
-<p><img src="使用pip离线安装PyTorch-gpu/image-20200315151856974.png" /></p>
-<p>其中，<strong>cu101</strong>代表CUDA版本是10.1，<strong>cp37</strong>代表CPython version 3.7（指的是C语言实现的Python，就是原汁原味的Python。除了CPython以外，还有用Java实现的Jython，用.NET实现的IronPython，使Python方便地和Java程序、.NET程序集成。另外还有一些实验性的Python解释器比如PyPy），<strong>win</strong>代表Windows操作系统，<strong>amd64</strong>代表64位CPU平台。</p>
-<p>使用<strong>管理员权限</strong>打开<code>Anaconda Prompt (Anaconda3)</code>cmd窗口，输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install 下载路径\torch-1.4.0-cp37-cp37m-win_amd64.whl</span><br></pre></td></tr></table></figure>
-<p>等待安装完毕。</p>
-<p>使用相同的操作安装 <code>torchvision</code>，其中包含流行的数据集。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install 下载路径\torchvision-0.5.0-cp37-cp37m-win_amd64.whl</span><br></pre></td></tr></table></figure>
-<p>至此<strong>Pytoch-GPU</strong>版已经全部安装完毕。</p>
-<p><strong>5.5 测试是否安装成功</strong></p>
-<p><img src="使用pip离线安装PyTorch-gpu/image-20200315153854134.png" /></p>
-<p>打开cmd窗口，输入<strong>python</strong>进入<strong>python环境</strong>。依次输入：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">torch.cuda.is_available()</span><br><span class="line"><span class="comment"># True</span></span><br></pre></td></tr></table></figure>
-<p>输出为<strong>True</strong>，安装完毕。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用密钥登陆linux服务器</title>
     <url>/p/login-linux-with-ssh-key/</url>
     <content><![CDATA[<p>为什么使用ssh-key登录服务器？因为这种方法更安全，可以确保我们的服务器不被hack。</p>
@@ -5926,6 +5858,74 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>pip</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用pip离线安装PyTorch-gpu</title>
+    <url>/p/Use-pip-to-install-the-GPU-version-of-PyTorch-offline/</url>
+    <content><![CDATA[<p>废话不多说，上教程。</p>
+<a id="more"></a>
+<h4 id="查看linux预装的python3版本">1.查看Linux预装的Python3版本</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@wf09:~<span class="comment"># python3 -V</span></span><br><span class="line">Python 3.6.9</span><br></pre></td></tr></table></figure>
+<h4 id="下载对应的pytorch版本">2.下载对应的Pytorch版本</h4>
+<p>https://download.pytorch.org/whl/torch_stable.html</p>
+<p><img src="使用pip离线安装PyTorch-gpu/3.png" /></p>
+<p>Python版本是3.6.9，下载的版本是<code>cpu/torch-1.4.0%2Bcpu-cp36-cp36m-linux_x86_64.whl</code></p>
+<h4 id="安装pip3">3.安装pip3</h4>
+<h5 id="linux">3.1 Linux</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install python3-pip</span><br></pre></td></tr></table></figure>
+<p><strong>tips：</strong>由于apt源自带的pip版本过低，可以执行如下命令升级pip。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
+<p>升级完pip以后，pip就相当于pip3了。</p>
+<h5 id="win">3.2 Win</h5>
+<p>安装完Python后默认安装pip，执行命令升级pip即可</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
+<h4 id="离线安装pytorch">4.离线安装Pytorch</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install --no-index --find-links=torch-1.4.0+cpu-cp36-cp36m-linux_x86_64.whl torch</span><br></pre></td></tr></table></figure>
+<h4 id="windows10卸载pytorch-cpu版本并安装gpu版本">5.windows10卸载Pytorch-cpu版本并安装GPU版本</h4>
+<h5 id="卸载cpu版">5.1 卸载cpu版</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip uninstall torch   		<span class="comment">#卸载torch</span></span><br><span class="line">pip uninstall torchvison    <span class="comment">#卸载torchvison</span></span><br></pre></td></tr></table></figure>
+<h5 id="安装cuda">5.2 安装CUDA</h5>
+<p><img src="使用pip离线安装PyTorch-gpu/image-20200315143756001.png" /></p>
+<p>https://developer.nvidia.com/cuda-toolkit-archive</p>
+<p>笔者使用的<code>Win10</code>，附上离线安装版链接：</p>
+<p><del>http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_441.22_win10.exe</del></p>
+<h6 id="tips最新版本的cuda10.2现在还无法被pytorch支持安装10.1版本的即可">Tips：最新版本的CUDA(10.2)现在还无法被Pytorch支持，安装10.1版本的即可。</h6>
+<p>http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_426.00_win10.exe</p>
+<p>下载完毕，双击打开即可。</p>
+<p><img src="使用pip离线安装PyTorch-gpu/image-20200315145247036.png" /></p>
+<p>点击OK选择下一步。</p>
+<p><img src="使用pip离线安装PyTorch-gpu/image-20200315145432177.png" /></p>
+<p>等待进度条达到100%，会自动打开安装程序。</p>
+<p><img src="使用pip离线安装PyTorch-gpu/image-20200315150124951.png" /></p>
+<p>选择自定义，然后全部选中，期间会升级本机的<strong>显卡驱动</strong>。</p>
+<h6 id="tips升级显卡驱动是很重要的一步不升级到最新版本无法正确安装cuda"><strong>Tips：</strong>升级显卡驱动是很重要的一步，不升级到最新版本无法正确安装<strong>CUDA</strong></h6>
+<p><img src="使用pip离线安装PyTorch-gpu/image-20200315150240356.png" /></p>
+<p>等待安装完毕。</p>
+<h5 id="安装cudnn">5.3 安装cuDNN</h5>
+<p><strong>相比标准的cuda，它在一些常用的神经网络操作上进行了性能的优化，比如卷积，pooling，归一化，以及激活层等等。</strong></p>
+<p>下载过程中需要注册 <strong>NVIDIA account</strong>。</p>
+<p>下载完毕后执行解压：会生成<code>cuda/include、cuda/lib、cuda/bin</code>三个目录；</p>
+<p>然后分别将<code>cuda/include、cuda/lib、cuda/bin</code>三个目录中的内容拷贝到<code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1</code>对应的<code>include、lib、bin</code>目录下即可。</p>
+<h5 id="安装pytorch-gpu版本"><strong>5.4安装Pytorch-GPU版本</strong></h5>
+<p>下载Pytorch-CUDA版本的whl文件，用于离线安装。</p>
+<p>https://download.pytorch.org/whl/torch_stable.html</p>
+<p><img src="使用pip离线安装PyTorch-gpu/image-20200315151856974.png" /></p>
+<p>其中，<strong>cu101</strong>代表CUDA版本是10.1，<strong>cp37</strong>代表CPython version 3.7（指的是C语言实现的Python，就是原汁原味的Python。除了CPython以外，还有用Java实现的Jython，用.NET实现的IronPython，使Python方便地和Java程序、.NET程序集成。另外还有一些实验性的Python解释器比如PyPy），<strong>win</strong>代表Windows操作系统，<strong>amd64</strong>代表64位CPU平台。</p>
+<p>使用<strong>管理员权限</strong>打开<code>Anaconda Prompt (Anaconda3)</code>cmd窗口，输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install 下载路径\torch-1.4.0-cp37-cp37m-win_amd64.whl</span><br></pre></td></tr></table></figure>
+<p>等待安装完毕。</p>
+<p>使用相同的操作安装 <code>torchvision</code>，其中包含流行的数据集。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install 下载路径\torchvision-0.5.0-cp37-cp37m-win_amd64.whl</span><br></pre></td></tr></table></figure>
+<p>至此<strong>Pytoch-GPU</strong>版已经全部安装完毕。</p>
+<p><strong>5.5 测试是否安装成功</strong></p>
+<p><img src="使用pip离线安装PyTorch-gpu/image-20200315153854134.png" /></p>
+<p>打开cmd窗口，输入<strong>python</strong>进入<strong>python环境</strong>。依次输入：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">torch.cuda.is_available()</span><br><span class="line"><span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+<p>输出为<strong>True</strong>，安装完毕。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -7125,63 +7125,6 @@ t≥times[i],&amp; i=N-1
       </tags>
   </entry>
   <entry>
-    <title>力扣每日一题之课程表Ⅲ</title>
-    <url>/p/course-schedule-iii/</url>
-    <content><![CDATA[<p>这里有<code>n</code>门不同的在线课程，按<code>1</code>到<code>n</code>编号。给你一个数组<code>courses</code>，其中<code>courses[i] = [durationi, lastDayi]</code>表示第<code>i</code>门课将会持续上<code>durationi</code>天课，并且必须不晚于<code>lastDayi</code>的时候完成。</p>
-<p>你的学期从第一天开始，且不能同时修读两门及两门以上的课程。</p>
-<p>返回你最多可以修读的课程数目。</p>
-<a id="more"></a>
-<p><strong>示例1：</strong></p>
-<p>输入：<code>courses = [[100, 200], [200, 1300], [1000, 1250], [2000, 3200]]</code> 输出：<code>3</code> 解释： 这里一共有 4 门课程，但是你最多可以修 3 门： 首先，修第 1 门课，耗费 100 天，在第 100 天完成，在第 101 天开始下门课。 第二，修第 3 门课，耗费 1000 天，在第 1100 天完成，在第 1101 天开始下门课程。 第三，修第 2 门课，耗时 200 天，在第 1300 天完成。 第 4 门课现在不能修，因为将会在第 3300 天完成它，这已经超出了关闭日期。</p>
-<p><strong>示例2：</strong></p>
-<p>输入：<code>courses = [[1, 2]]</code> 输出：<code>1</code></p>
-<p><strong>示例3：</strong></p>
-<p>输入：<code>courses = [[3, 2],[4,3]]</code> 输出：<code>0</code></p>
-<h2 id="方法一优先队列贪心">方法一：优先队列+贪心</h2>
-<p><strong>思路</strong></p>
-<p>对于两门课<span class="math inline">\((t1, d1)\)</span>和<span class="math inline">\((t2, d2)\)</span>，如果后者关闭的时间较晚，即<span class="math inline">\(d1 \le d2\)</span>，那先学习前者，再学习后者，总是最优的。这是因为：</p>
-<ul>
-<li><p>假设最开始学习的时间点为<span class="math inline">\(x\)</span>，如果先学习前者，再学习后者，那么需要满足： <span class="math display">\[
-\begin{cases}
-x+t_1 \le d_1 \\
-x+t_1+t_2\le d_2 \\
-\end{cases}
-\]</span></p></li>
-<li><p>如果先学习后者，再学习前者，那么需要满足：</p></li>
-</ul>
-<p><span class="math display">\[
-\begin{cases}
-x+t_2 \le d_2 \\
-x+t_1+t_2\le d_1 \\
-\end{cases}
-\]</span></p>
-<p>如果 <span class="math inline">\(x+t_1+t_2 \le d_1\)</span>成立，由于<span class="math inline">\(d_1 \le d_2\)</span>，那么<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>同时成立。这说明，如果能【先学习后者，再学习前者】那么一定能【先学习前者，再学习后者】。如果<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>成立，则不能推出<span class="math inline">\(x+t_2+t_1 \le d_1\)</span>成立。<strong>虽然能【先学习前者，再学习后者】，但不能【先学习后者，再学习前者】。</strong></p>
-<p>因此，我们可以将所有的课程按照关闭时间<span class="math inline">\(d\)</span>进行升序排序，再依次挑选课程并按照顺序进行学习。</p>
-<p>在遍历的过程中，假设我们当前遍历到了第<span class="math inline">\(i\)</span>门课<span class="math inline">\((t_i, d_i)\)</span>，而在前<span class="math inline">\(i-1\)</span>门课程中我们选择了<span class="math inline">\(k\)</span>门课<span class="math inline">\((t_{x1}, d_{x1}),(t_{x2}, d_{x2}), ... ,(t_{xk}, d_{xk})\)</span>，满足<span class="math inline">\(x_1&lt;x_2&lt; \cdots x_k\)</span>，那么有： <span class="math display">\[
-\begin{cases}
-t_{x1} \le d_{x1} \\
-t_{x1}+t_{x2} \le d_{x2} \\
-\cdots \\
-t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
-\end{cases}
-\]</span> 如果上述选择方案是前<span class="math inline">\(i-1\)</span>门课程的【最优方案】：即不存在能选择<span class="math inline">\(k+1\)</span>门课程的方法，也不存在能选择<span class="math inline">\(k\)</span>门课程，且总时长更短的方案，那么我们可以基于该方案与第<span class="math inline">\(i\)</span>门课程<span class="math inline">\((t_i, d_i)\)</span>，构造出前<span class="math inline">\(i\)</span>门课程的最优方案：</p>
-<p><img src="image-20211214221952979.png" /></p>
-<p>这样一来，当我们遍历完所有的<span class="math inline">\(n\)</span>门课程后，就可以得到最终答案。</p>
-<p><strong>算法</strong></p>
-<p>我们需要一个数据结构支持【取出<span class="math inline">\(t\)</span>值最大的那门课程】，因此我们可以使用优先队列。</p>
-<p>依次遍历每一门课程，当遍历到<span class="math inline">\((t_i, d_i)\)</span>时：</p>
-<ul>
-<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和小于等于<span class="math inline">\(d_i\)</span>，那么我们就把<span class="math inline">\(t_i\)</span>加入优先队列中；</li>
-<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和大于<span class="math inline">\(d_i\)</span>，那么我们找到优先队列的最大元素<span class="math inline">\(t_{xj}\)</span>。如果<span class="math inline">\(t_{xj} &gt; t_{i}\)</span>，则将它移出优先队列，并把<span class="math inline">\(t_i\)</span>加入优先队列中。</li>
-</ul>
-<p>在遍历完成之后，优先队列中包含的元素个数即为答案。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">scheduleCourse</span><span class="params">(courses [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    sort.Slice(courses, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> courses[i][<span class="number">1</span>] &lt; courses[j][<span class="number">1</span>]</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    h := &amp;Heap&#123;&#125;</span><br><span class="line">    total := <span class="number">0</span> <span class="comment">// 优先队列中所有课程的总时间</span></span><br><span class="line">    <span class="keyword">for</span> _, course := <span class="keyword">range</span> courses &#123;</span><br><span class="line">        <span class="keyword">if</span> t := course[<span class="number">0</span>]; total+t &lt;= course[<span class="number">1</span>] &#123;</span><br><span class="line">            total += t</span><br><span class="line">            heap.Push(h, t)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> h.Len() &gt; <span class="number">0</span> &amp;&amp; t &lt; h.IntSlice[<span class="number">0</span>] &#123;</span><br><span class="line">            total += t - h.IntSlice[<span class="number">0</span>]</span><br><span class="line">            h.IntSlice[<span class="number">0</span>] = t</span><br><span class="line">            heap.Fix(h, <span class="number">0</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h.Len()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Heap <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h Heap)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> h.IntSlice[i] &gt; h.IntSlice[j]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    h.IntSlice = <span class="built_in">append</span>(h.IntSlice, x.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := h.IntSlice</span><br><span class="line">    x := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    h.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣每日一题之适龄的朋友</title>
     <url>/p/friends-of-appropriate-ages/</url>
     <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
@@ -7294,26 +7237,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之移除链表元素</title>
-    <url>/p/remove-linked-list-elements/</url>
-    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="removelinked-list.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
-<p><img src="image-20220207150257390.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -8205,132 +8128,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
-    <title>记一次重装系统</title>
-    <url>/p/an-experience-of-reinstalling-win10/</url>
-    <content><![CDATA[<p>本文主要介绍了如何使用U盘进行重装系统，主要面向电脑小白用户。</p>
-<p><strong>关键字</strong>：重装win10，电脑重装</p>
-<a id="more"></a>
-<p><strong><font color="red">对重装系统过程有疑问的小伙伴可以通过站内方式联系我！切勿自己胡乱操作以免造成数据损失！</font></strong></p>
-<p><strong>下载链接有时间和流量限制，不定期开放！若链接过期请自行寻找下载链接！</strong></p>
-<h3 id="准备工作">准备工作</h3>
-<ol type="1">
-<li>大于<strong>8G</strong>的U盘</li>
-<li>微PE</li>
-<li>Windows 10 1909原版系统镜像</li>
-</ol>
-<h3 id="制作启动盘">制作启动盘</h3>
-<p>制作系统盘期间需要格式化U盘，如有需要请先备份U盘的文件。</p>
-<h4 id="打开微pe工具箱">打开微PE工具箱</h4>
-<h4 id="选择其他安装方式">选择其他安装方式</h4>
-<p>注意不要点击<strong>立即安装进系统</strong></p>
-<h4 id="选择安装pe进u盘">选择安装PE进U盘</h4>
-<p>注意待写入U盘<strong>盘符、容量</strong>是不是正确，安装方法默认即可。</p>
-<h4 id="等待安装完毕">等待安装完毕</h4>
-<p>稍后片刻，安装速度视U盘写入速度决定，建议安装过程中<strong>不要操作电脑</strong>。</p>
-<h4 id="检查启动盘是否制作成功">检查启动盘是否制作成功</h4>
-<p>安装完毕后，打开<strong>此电脑</strong>，如果发现多了两个盘符，则视为完整成功。</p>
-<p>如果没有发现多余的盘符，重新插拔U盘后再尝试查看。</p>
-<h4 id="将下载的镜像复制进u盘">将下载的镜像复制进U盘</h4>
-<p>切记切记！复制文件的速度视U盘读写速度决定，请耐心等待。</p>
-<h3 id="切换到windows-pe">切换到Windows PE</h3>
-<p>将U盘插入电脑并重启电脑，切换到Windows PE系统。</p>
-<p>大多数的电脑都提供了启动选项菜单，开机的时候按住对应的快捷键即可进入启动选择界面。</p>
-<p>重启时，电脑亮屏后立马按下对应的快捷键。</p>
-<p>如果电脑键盘还有Fn键，且重启过程单独按下<strong>快捷键</strong>无效，那么可以尝试按下<strong>Fn键+快捷键</strong>，反复尝试几次。</p>
-<h4 id="选择u盘启动">选择U盘启动</h4>
-<p>使用键盘的上下进行选择，然后敲回车。这里以<strong>Shinelon</strong>笔记本为例。这款笔记本的启动项选择的快捷键是<strong>F7</strong>.</p>
-<p>不同品牌的笔记本启动项选择的界面可能不同，但都<strong>大同小异</strong>。</p>
-<p>选择<strong>已经写入好PE</strong>的U盘，如下图所示.</p>
-<h4 id="进入pe系统">进入PE系统</h4>
-<p>如果上述操作没有问题，会出现一个<strong>Windows Boot Mananger</strong>的选择界面，选择第一项即可。</p>
-<p>进入PE以后的界面，如下图所示。</p>
-<h4 id="进行磁盘分区">进行磁盘分区</h4>
-<p><strong><em>注意：如果不需要改变磁盘分区的大小，只想格式化原有的系统盘并安装全新的系统，此步可以跳过！直接跳转到下一步安装全新系统！强烈建议小白跳过此步！</em></strong></p>
-<p>打开上图所示的<strong>分区助手</strong>，找到你要安装的磁盘，如下图所示。</p>
-<p><em>操作到这里要注意：</em></p>
-<ol type="1">
-<li>如果你的电脑只有一个磁盘，继续操作会丢失<strong>全部硬盘</strong>的数据！切记切记！</li>
-<li>如果你的电脑和我一样有多个磁盘，请选中你要安装系统的磁盘。继续操作会丢失<strong>以前系统盘</strong>的数据！</li>
-</ol>
-<p>进行<strong>磁盘分区</strong>是为了便于磁盘管理，和磁盘的个数无关。</p>
-<ol type="1">
-<li>如果你的电脑只有一个磁盘，接下来进行的<strong>快捷分区操作</strong>你可以选择<u>多分出几个分区</u>，重装完毕后打开此电脑，你选了几个分区就会看到有几个盘。</li>
-<li>如果你的电脑和我一样有多个磁盘，建议将要安装系统的磁盘<u>全部分成一个区</u>，这样后期不会因为C盘容量较小而影响系统正常运行。具体参照以下步骤。</li>
-</ol>
-<p>注意，如果你的电脑有多个磁盘，请不要选错。分区数目视个人情况决定，多磁盘建议<strong>一个分区</strong>。磁盘的类型请选择<strong>GPT</strong>，注意勾选<strong>重建MBR</strong>、<strong>创建ESP和MSR分区</strong>。如果你的系统盘是<strong>固态硬盘</strong>，请<strong>勾选分区对其到4096扇区</strong>。</p>
-<p>一般来说，如果你的电脑有多个磁盘，那么一个是<strong>传统的机械硬盘</strong>，一个是固态硬盘。固态硬盘的读写速度要比机械硬盘的读写速度要快得多。所以一般将固态硬盘安装成系统盘。</p>
-<p>点击开始执行，进行系统分区。</p>
-<p><strong><em>执行过程中请勿操作电脑！否则有可能对磁盘造成不可逆的损害！等待执行完毕。</em></strong></p>
-<p>执行完毕后的新磁盘，如下图所示：</p>
-<p>可以看到，磁盘已经被清空，且只有一个<strong>系统</strong>分区。</p>
-<h4 id="还原系统镜像">还原系统镜像</h4>
-<p>此步是重装系统的核心步骤，主要就是将全新的系统还原到系统盘中。</p>
-<p>打开PE系统桌面的<strong>CGI备份还原</strong>，如图所示：</p>
-<p>选择<strong>还原分区</strong>，一般来说，分区会默认选择好。通过<strong>盘符</strong>、<strong>可用空间</strong>和<strong>卷标</strong>来判断是不是系统盘。</p>
-<p>镜像文件选择已经移动到U盘里的ISO文件，并选择<u>Windows 10 Pro</u> 即 <u>Windows10专业版</u> 的镜像。</p>
-<p>点击执行，选中<strong>不保留目标分区的文件</strong>。最后点击确定。</p>
-<p><strong><em>等待执行完毕，进度条大概会走三次，执行过程中请勿操作电脑！</em></strong></p>
-<p>执行完毕后，请自行重启。点击<strong>开始</strong> ==&gt; <strong>重启</strong>。电脑黑屏以后可以将U盘拔出，以免下次启动再进入U盘的PE系统。</p>
-<h4 id="进入新系统">进入新系统</h4>
-<p>重启过程可能比较慢。请耐心等待。</p>
-<p>海内存知己，天涯若比邻。无为在歧路，儿女共沾巾。</p>
-<p>出自唐代诗人王勃《送杜少府之任蜀州》</p>
-<p>接下来是设置区域。默认帮你选好中国。</p>
-<p>然后是设置网络。这里推荐设置，连接网络以后Win 10 可以帮你安装<strong>硬件设备的驱动</strong>。<strong>没有硬件驱动的电脑显卡，声卡，以及其他设备可能无法正常工作。</strong>由于个人网络原因这里选择不连接。</p>
-<p>再次推荐你连接到网络。</p>
-<p>接受许可协议。不接受无法继续安装23333</p>
-<p>设置用户名。这里推荐设置英文的用户名，以免安装一些软件时出现一些莫名其妙的问题。</p>
-<p>接下来是设置密码。可以留空。</p>
-<p>选择隐私设置。</p>
-<p>继续下一步。</p>
-<p>设置微软个人助理小娜。</p>
-<p>耐心等待。这是最后一步了。</p>
-<p>即将完成。</p>
-<p>熟悉的Windows 窗口又回来了！</p>
-<p>至此，系统安装已经完成。后续还有<strong>激活系统，安装office办公软件</strong>等其他操作。</p>
-<h3 id="后续操作">后续操作</h3>
-<h4 id="激活系统">激活系统</h4>
-<p>激活软件</p>
-<p>打开激活软件，需要<strong>连接网络</strong>。点击<strong>数字激活</strong>。稍后片刻提示激活成功。</p>
-<p>接下来是还原<strong>此电脑，控制面板等一系列图标</strong></p>
-<p>单机<strong>桌面</strong> ==&gt; <strong>个性化</strong>，找到<strong>主题</strong>。</p>
-<p>下拉菜单，选择桌面光标设置</p>
-<p>根据需要找回桌面图标。</p>
-<p>回到<strong>桌面</strong>，右击<strong>此电脑</strong>，找到<strong>属性</strong>。</p>
-<p>这里提示，此电脑已激活。此项激活是永久激活。</p>
-<p>激活系统的步骤到此结束。</p>
-<h4 id="安装office-2019-办公软件">安装office 2019 办公软件</h4>
-<h5 id="下载镜像">下载镜像</h5>
-<p>下载地址：<a href="https://ftp.fly97.cn/file/proplus2019retail.img">点此下载</a></p>
-<h5 id="安装office">安装office</h5>
-<p>右键下载好的镜像，选择<strong>装载</strong>。</p>
-<p>打开<strong>此电脑</strong>，此时会发现已经多出来一个<strong>DVD驱动器</strong>，如图所示。</p>
-<p>双击打开，点击<strong>setup.exe</strong>，开始安装。</p>
-<p>注意：如果不想安装office的全部组件，只想安装诸如<strong>word、excel、powerpoint</strong>等核心组件，请参考以下步骤：</p>
-<h6 id="下载辅助安装软件">下载辅助安装软件</h6>
-<p>Office Tool v7.6：<a href="https://ftp.fly97.cn/file/Office-Tool-v7.6.zip">点击下载</a></p>
-<h6 id="双击运行">双击运行</h6>
-<p>该软件无需安装，双击打开即可。</p>
-<h6 id="开始部署office">开始部署office</h6>
-<p>点击部署，进入部署选择菜单</p>
-<p>选择<strong>已经挂载好的DVD驱动器</strong>，打开<strong>Office ==&gt; Data</strong>文件夹，选中<strong>v64</strong>，点击打开。</p>
-<p>架构选择<strong>x64</strong>，安装方式为离线安装，安装模块为office部署工具。根据自身需要安装所需要的office应用程序。这里以<strong>Excel、PowerPoint和Word</strong>为例。最后点击开始部署。</p>
-<h5 id="等待安装完毕-1">等待安装完毕</h5>
-<p>耐心等待即可。</p>
-<h5 id="安装完毕">安装完毕</h5>
-<h5 id="使用kms密钥管理服务激活office">使用KMS密钥管理服务激活office</h5>
-<p>打开上文提到的辅助安装工具，进入激活选择菜单。</p>
-<p>许可证管理选项中，选择<strong>Office 2019 Volume</strong>，点击安装许可证。<strong><em>出现产品密钥安装成功则已安装完毕。</em></strong></p>
-<p>KMS管理选项中，输入<strong>windows.kms.app</strong>，检测KMS可用性。</p>
-<p>右侧出现<strong>successful</strong>则说明这个kms服务器是可用的。</p>
-<p>点击激活，最后出现<strong>产品激活成功</strong>。到此激活完毕。</p>
-<p>使用密钥管理服务激活office，每次激活成功以后可以使用180天，180天以后自动重新激活，只要<strong>KMS激活服务器</strong>还在生效就可以一直续期。可以实现<strong>永久激活</strong>。</p>
-]]></content>
-      <tags>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>零基础入门ROS(一)</title>
     <url>/p/ros-tutorial-01/</url>
     <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
@@ -8512,6 +8309,209 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之移除链表元素</title>
+    <url>/p/remove-linked-list-elements/</url>
+    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="removelinked-list.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
+<p><img src="image-20220207150257390.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣每日一题之课程表Ⅲ</title>
+    <url>/p/course-schedule-iii/</url>
+    <content><![CDATA[<p>这里有<code>n</code>门不同的在线课程，按<code>1</code>到<code>n</code>编号。给你一个数组<code>courses</code>，其中<code>courses[i] = [durationi, lastDayi]</code>表示第<code>i</code>门课将会持续上<code>durationi</code>天课，并且必须不晚于<code>lastDayi</code>的时候完成。</p>
+<p>你的学期从第一天开始，且不能同时修读两门及两门以上的课程。</p>
+<p>返回你最多可以修读的课程数目。</p>
+<a id="more"></a>
+<p><strong>示例1：</strong></p>
+<p>输入：<code>courses = [[100, 200], [200, 1300], [1000, 1250], [2000, 3200]]</code> 输出：<code>3</code> 解释： 这里一共有 4 门课程，但是你最多可以修 3 门： 首先，修第 1 门课，耗费 100 天，在第 100 天完成，在第 101 天开始下门课。 第二，修第 3 门课，耗费 1000 天，在第 1100 天完成，在第 1101 天开始下门课程。 第三，修第 2 门课，耗时 200 天，在第 1300 天完成。 第 4 门课现在不能修，因为将会在第 3300 天完成它，这已经超出了关闭日期。</p>
+<p><strong>示例2：</strong></p>
+<p>输入：<code>courses = [[1, 2]]</code> 输出：<code>1</code></p>
+<p><strong>示例3：</strong></p>
+<p>输入：<code>courses = [[3, 2],[4,3]]</code> 输出：<code>0</code></p>
+<h2 id="方法一优先队列贪心">方法一：优先队列+贪心</h2>
+<p><strong>思路</strong></p>
+<p>对于两门课<span class="math inline">\((t1, d1)\)</span>和<span class="math inline">\((t2, d2)\)</span>，如果后者关闭的时间较晚，即<span class="math inline">\(d1 \le d2\)</span>，那先学习前者，再学习后者，总是最优的。这是因为：</p>
+<ul>
+<li><p>假设最开始学习的时间点为<span class="math inline">\(x\)</span>，如果先学习前者，再学习后者，那么需要满足： <span class="math display">\[
+\begin{cases}
+x+t_1 \le d_1 \\
+x+t_1+t_2\le d_2 \\
+\end{cases}
+\]</span></p></li>
+<li><p>如果先学习后者，再学习前者，那么需要满足：</p></li>
+</ul>
+<p><span class="math display">\[
+\begin{cases}
+x+t_2 \le d_2 \\
+x+t_1+t_2\le d_1 \\
+\end{cases}
+\]</span></p>
+<p>如果 <span class="math inline">\(x+t_1+t_2 \le d_1\)</span>成立，由于<span class="math inline">\(d_1 \le d_2\)</span>，那么<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>同时成立。这说明，如果能【先学习后者，再学习前者】那么一定能【先学习前者，再学习后者】。如果<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>成立，则不能推出<span class="math inline">\(x+t_2+t_1 \le d_1\)</span>成立。<strong>虽然能【先学习前者，再学习后者】，但不能【先学习后者，再学习前者】。</strong></p>
+<p>因此，我们可以将所有的课程按照关闭时间<span class="math inline">\(d\)</span>进行升序排序，再依次挑选课程并按照顺序进行学习。</p>
+<p>在遍历的过程中，假设我们当前遍历到了第<span class="math inline">\(i\)</span>门课<span class="math inline">\((t_i, d_i)\)</span>，而在前<span class="math inline">\(i-1\)</span>门课程中我们选择了<span class="math inline">\(k\)</span>门课<span class="math inline">\((t_{x1}, d_{x1}),(t_{x2}, d_{x2}), ... ,(t_{xk}, d_{xk})\)</span>，满足<span class="math inline">\(x_1&lt;x_2&lt; \cdots x_k\)</span>，那么有： <span class="math display">\[
+\begin{cases}
+t_{x1} \le d_{x1} \\
+t_{x1}+t_{x2} \le d_{x2} \\
+\cdots \\
+t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
+\end{cases}
+\]</span> 如果上述选择方案是前<span class="math inline">\(i-1\)</span>门课程的【最优方案】：即不存在能选择<span class="math inline">\(k+1\)</span>门课程的方法，也不存在能选择<span class="math inline">\(k\)</span>门课程，且总时长更短的方案，那么我们可以基于该方案与第<span class="math inline">\(i\)</span>门课程<span class="math inline">\((t_i, d_i)\)</span>，构造出前<span class="math inline">\(i\)</span>门课程的最优方案：</p>
+<p><img src="image-20211214221952979.png" /></p>
+<p>这样一来，当我们遍历完所有的<span class="math inline">\(n\)</span>门课程后，就可以得到最终答案。</p>
+<p><strong>算法</strong></p>
+<p>我们需要一个数据结构支持【取出<span class="math inline">\(t\)</span>值最大的那门课程】，因此我们可以使用优先队列。</p>
+<p>依次遍历每一门课程，当遍历到<span class="math inline">\((t_i, d_i)\)</span>时：</p>
+<ul>
+<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和小于等于<span class="math inline">\(d_i\)</span>，那么我们就把<span class="math inline">\(t_i\)</span>加入优先队列中；</li>
+<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和大于<span class="math inline">\(d_i\)</span>，那么我们找到优先队列的最大元素<span class="math inline">\(t_{xj}\)</span>。如果<span class="math inline">\(t_{xj} &gt; t_{i}\)</span>，则将它移出优先队列，并把<span class="math inline">\(t_i\)</span>加入优先队列中。</li>
+</ul>
+<p>在遍历完成之后，优先队列中包含的元素个数即为答案。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">scheduleCourse</span><span class="params">(courses [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    sort.Slice(courses, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> courses[i][<span class="number">1</span>] &lt; courses[j][<span class="number">1</span>]</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    h := &amp;Heap&#123;&#125;</span><br><span class="line">    total := <span class="number">0</span> <span class="comment">// 优先队列中所有课程的总时间</span></span><br><span class="line">    <span class="keyword">for</span> _, course := <span class="keyword">range</span> courses &#123;</span><br><span class="line">        <span class="keyword">if</span> t := course[<span class="number">0</span>]; total+t &lt;= course[<span class="number">1</span>] &#123;</span><br><span class="line">            total += t</span><br><span class="line">            heap.Push(h, t)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> h.Len() &gt; <span class="number">0</span> &amp;&amp; t &lt; h.IntSlice[<span class="number">0</span>] &#123;</span><br><span class="line">            total += t - h.IntSlice[<span class="number">0</span>]</span><br><span class="line">            h.IntSlice[<span class="number">0</span>] = t</span><br><span class="line">            heap.Fix(h, <span class="number">0</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h.Len()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Heap <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h Heap)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> h.IntSlice[i] &gt; h.IntSlice[j]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    h.IntSlice = <span class="built_in">append</span>(h.IntSlice, x.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := h.IntSlice</span><br><span class="line">    x := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    h.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记一次重装系统</title>
+    <url>/p/an-experience-of-reinstalling-win10/</url>
+    <content><![CDATA[<p>本文主要介绍了如何使用U盘进行重装系统，主要面向电脑小白用户。</p>
+<p><strong>关键字</strong>：重装win10，电脑重装</p>
+<a id="more"></a>
+<p><strong><font color="red">对重装系统过程有疑问的小伙伴可以通过站内方式联系我！切勿自己胡乱操作以免造成数据损失！</font></strong></p>
+<p><strong>下载链接有时间和流量限制，不定期开放！若链接过期请自行寻找下载链接！</strong></p>
+<h3 id="准备工作">准备工作</h3>
+<ol type="1">
+<li>大于<strong>8G</strong>的U盘</li>
+<li>微PE</li>
+<li>Windows 10 1909原版系统镜像</li>
+</ol>
+<h3 id="制作启动盘">制作启动盘</h3>
+<p>制作系统盘期间需要格式化U盘，如有需要请先备份U盘的文件。</p>
+<h4 id="打开微pe工具箱">打开微PE工具箱</h4>
+<h4 id="选择其他安装方式">选择其他安装方式</h4>
+<p>注意不要点击<strong>立即安装进系统</strong></p>
+<h4 id="选择安装pe进u盘">选择安装PE进U盘</h4>
+<p>注意待写入U盘<strong>盘符、容量</strong>是不是正确，安装方法默认即可。</p>
+<h4 id="等待安装完毕">等待安装完毕</h4>
+<p>稍后片刻，安装速度视U盘写入速度决定，建议安装过程中<strong>不要操作电脑</strong>。</p>
+<h4 id="检查启动盘是否制作成功">检查启动盘是否制作成功</h4>
+<p>安装完毕后，打开<strong>此电脑</strong>，如果发现多了两个盘符，则视为完整成功。</p>
+<p>如果没有发现多余的盘符，重新插拔U盘后再尝试查看。</p>
+<h4 id="将下载的镜像复制进u盘">将下载的镜像复制进U盘</h4>
+<p>切记切记！复制文件的速度视U盘读写速度决定，请耐心等待。</p>
+<h3 id="切换到windows-pe">切换到Windows PE</h3>
+<p>将U盘插入电脑并重启电脑，切换到Windows PE系统。</p>
+<p>大多数的电脑都提供了启动选项菜单，开机的时候按住对应的快捷键即可进入启动选择界面。</p>
+<p>重启时，电脑亮屏后立马按下对应的快捷键。</p>
+<p>如果电脑键盘还有Fn键，且重启过程单独按下<strong>快捷键</strong>无效，那么可以尝试按下<strong>Fn键+快捷键</strong>，反复尝试几次。</p>
+<h4 id="选择u盘启动">选择U盘启动</h4>
+<p>使用键盘的上下进行选择，然后敲回车。这里以<strong>Shinelon</strong>笔记本为例。这款笔记本的启动项选择的快捷键是<strong>F7</strong>.</p>
+<p>不同品牌的笔记本启动项选择的界面可能不同，但都<strong>大同小异</strong>。</p>
+<p>选择<strong>已经写入好PE</strong>的U盘，如下图所示.</p>
+<h4 id="进入pe系统">进入PE系统</h4>
+<p>如果上述操作没有问题，会出现一个<strong>Windows Boot Mananger</strong>的选择界面，选择第一项即可。</p>
+<p>进入PE以后的界面，如下图所示。</p>
+<h4 id="进行磁盘分区">进行磁盘分区</h4>
+<p><strong><em>注意：如果不需要改变磁盘分区的大小，只想格式化原有的系统盘并安装全新的系统，此步可以跳过！直接跳转到下一步安装全新系统！强烈建议小白跳过此步！</em></strong></p>
+<p>打开上图所示的<strong>分区助手</strong>，找到你要安装的磁盘，如下图所示。</p>
+<p><em>操作到这里要注意：</em></p>
+<ol type="1">
+<li>如果你的电脑只有一个磁盘，继续操作会丢失<strong>全部硬盘</strong>的数据！切记切记！</li>
+<li>如果你的电脑和我一样有多个磁盘，请选中你要安装系统的磁盘。继续操作会丢失<strong>以前系统盘</strong>的数据！</li>
+</ol>
+<p>进行<strong>磁盘分区</strong>是为了便于磁盘管理，和磁盘的个数无关。</p>
+<ol type="1">
+<li>如果你的电脑只有一个磁盘，接下来进行的<strong>快捷分区操作</strong>你可以选择<u>多分出几个分区</u>，重装完毕后打开此电脑，你选了几个分区就会看到有几个盘。</li>
+<li>如果你的电脑和我一样有多个磁盘，建议将要安装系统的磁盘<u>全部分成一个区</u>，这样后期不会因为C盘容量较小而影响系统正常运行。具体参照以下步骤。</li>
+</ol>
+<p>注意，如果你的电脑有多个磁盘，请不要选错。分区数目视个人情况决定，多磁盘建议<strong>一个分区</strong>。磁盘的类型请选择<strong>GPT</strong>，注意勾选<strong>重建MBR</strong>、<strong>创建ESP和MSR分区</strong>。如果你的系统盘是<strong>固态硬盘</strong>，请<strong>勾选分区对其到4096扇区</strong>。</p>
+<p>一般来说，如果你的电脑有多个磁盘，那么一个是<strong>传统的机械硬盘</strong>，一个是固态硬盘。固态硬盘的读写速度要比机械硬盘的读写速度要快得多。所以一般将固态硬盘安装成系统盘。</p>
+<p>点击开始执行，进行系统分区。</p>
+<p><strong><em>执行过程中请勿操作电脑！否则有可能对磁盘造成不可逆的损害！等待执行完毕。</em></strong></p>
+<p>执行完毕后的新磁盘，如下图所示：</p>
+<p>可以看到，磁盘已经被清空，且只有一个<strong>系统</strong>分区。</p>
+<h4 id="还原系统镜像">还原系统镜像</h4>
+<p>此步是重装系统的核心步骤，主要就是将全新的系统还原到系统盘中。</p>
+<p>打开PE系统桌面的<strong>CGI备份还原</strong>，如图所示：</p>
+<p>选择<strong>还原分区</strong>，一般来说，分区会默认选择好。通过<strong>盘符</strong>、<strong>可用空间</strong>和<strong>卷标</strong>来判断是不是系统盘。</p>
+<p>镜像文件选择已经移动到U盘里的ISO文件，并选择<u>Windows 10 Pro</u> 即 <u>Windows10专业版</u> 的镜像。</p>
+<p>点击执行，选中<strong>不保留目标分区的文件</strong>。最后点击确定。</p>
+<p><strong><em>等待执行完毕，进度条大概会走三次，执行过程中请勿操作电脑！</em></strong></p>
+<p>执行完毕后，请自行重启。点击<strong>开始</strong> ==&gt; <strong>重启</strong>。电脑黑屏以后可以将U盘拔出，以免下次启动再进入U盘的PE系统。</p>
+<h4 id="进入新系统">进入新系统</h4>
+<p>重启过程可能比较慢。请耐心等待。</p>
+<p>海内存知己，天涯若比邻。无为在歧路，儿女共沾巾。</p>
+<p>出自唐代诗人王勃《送杜少府之任蜀州》</p>
+<p>接下来是设置区域。默认帮你选好中国。</p>
+<p>然后是设置网络。这里推荐设置，连接网络以后Win 10 可以帮你安装<strong>硬件设备的驱动</strong>。<strong>没有硬件驱动的电脑显卡，声卡，以及其他设备可能无法正常工作。</strong>由于个人网络原因这里选择不连接。</p>
+<p>再次推荐你连接到网络。</p>
+<p>接受许可协议。不接受无法继续安装23333</p>
+<p>设置用户名。这里推荐设置英文的用户名，以免安装一些软件时出现一些莫名其妙的问题。</p>
+<p>接下来是设置密码。可以留空。</p>
+<p>选择隐私设置。</p>
+<p>继续下一步。</p>
+<p>设置微软个人助理小娜。</p>
+<p>耐心等待。这是最后一步了。</p>
+<p>即将完成。</p>
+<p>熟悉的Windows 窗口又回来了！</p>
+<p>至此，系统安装已经完成。后续还有<strong>激活系统，安装office办公软件</strong>等其他操作。</p>
+<h3 id="后续操作">后续操作</h3>
+<h4 id="激活系统">激活系统</h4>
+<p>激活软件</p>
+<p>打开激活软件，需要<strong>连接网络</strong>。点击<strong>数字激活</strong>。稍后片刻提示激活成功。</p>
+<p>接下来是还原<strong>此电脑，控制面板等一系列图标</strong></p>
+<p>单机<strong>桌面</strong> ==&gt; <strong>个性化</strong>，找到<strong>主题</strong>。</p>
+<p>下拉菜单，选择桌面光标设置</p>
+<p>根据需要找回桌面图标。</p>
+<p>回到<strong>桌面</strong>，右击<strong>此电脑</strong>，找到<strong>属性</strong>。</p>
+<p>这里提示，此电脑已激活。此项激活是永久激活。</p>
+<p>激活系统的步骤到此结束。</p>
+<h4 id="安装office-2019-办公软件">安装office 2019 办公软件</h4>
+<h5 id="下载镜像">下载镜像</h5>
+<p>下载地址：<a href="https://ftp.fly97.cn/file/proplus2019retail.img">点此下载</a></p>
+<h5 id="安装office">安装office</h5>
+<p>右键下载好的镜像，选择<strong>装载</strong>。</p>
+<p>打开<strong>此电脑</strong>，此时会发现已经多出来一个<strong>DVD驱动器</strong>，如图所示。</p>
+<p>双击打开，点击<strong>setup.exe</strong>，开始安装。</p>
+<p>注意：如果不想安装office的全部组件，只想安装诸如<strong>word、excel、powerpoint</strong>等核心组件，请参考以下步骤：</p>
+<h6 id="下载辅助安装软件">下载辅助安装软件</h6>
+<p>Office Tool v7.6：<a href="https://ftp.fly97.cn/file/Office-Tool-v7.6.zip">点击下载</a></p>
+<h6 id="双击运行">双击运行</h6>
+<p>该软件无需安装，双击打开即可。</p>
+<h6 id="开始部署office">开始部署office</h6>
+<p>点击部署，进入部署选择菜单</p>
+<p>选择<strong>已经挂载好的DVD驱动器</strong>，打开<strong>Office ==&gt; Data</strong>文件夹，选中<strong>v64</strong>，点击打开。</p>
+<p>架构选择<strong>x64</strong>，安装方式为离线安装，安装模块为office部署工具。根据自身需要安装所需要的office应用程序。这里以<strong>Excel、PowerPoint和Word</strong>为例。最后点击开始部署。</p>
+<h5 id="等待安装完毕-1">等待安装完毕</h5>
+<p>耐心等待即可。</p>
+<h5 id="安装完毕">安装完毕</h5>
+<h5 id="使用kms密钥管理服务激活office">使用KMS密钥管理服务激活office</h5>
+<p>打开上文提到的辅助安装工具，进入激活选择菜单。</p>
+<p>许可证管理选项中，选择<strong>Office 2019 Volume</strong>，点击安装许可证。<strong><em>出现产品密钥安装成功则已安装完毕。</em></strong></p>
+<p>KMS管理选项中，输入<strong>windows.kms.app</strong>，检测KMS可用性。</p>
+<p>右侧出现<strong>successful</strong>则说明这个kms服务器是可用的。</p>
+<p>点击激活，最后出现<strong>产品激活成功</strong>。到此激活完毕。</p>
+<p>使用密钥管理服务激活office，每次激活成功以后可以使用180天，180天以后自动重新激活，只要<strong>KMS激活服务器</strong>还在生效就可以一直续期。可以实现<strong>永久激活</strong>。</p>
+]]></content>
+      <tags>
+        <tag>教程</tag>
       </tags>
   </entry>
 </search>
