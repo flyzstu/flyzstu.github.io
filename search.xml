@@ -183,6 +183,95 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker安装MySQL5.7</title>
+    <url>/p/install-mysql5.7-in-docker/</url>
+    <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
+<a id="more"></a>
+<p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
+<h3 id="安装docker">安装docker</h3>
+<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
+<h3 id="安装mysql容器">安装MySQL容器</h3>
+<p>以官方的MySQL5.7为例：<a href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
+<p>首先确保docker服务已经正常启动：</p>
+<p>linux执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
+<p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
+<h4 id="拉取镜像">拉取镜像</h4>
+<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
+<h4 id="运行容器">运行容器</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
+<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
+<li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
+<ul>
+<li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
+</ul></li>
+</ul>
+<h3 id="设置mysql容器">设置MySQL容器</h3>
+<h4 id="配置文件">配置文件</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysql]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4</span><br></pre></td></tr></table></figure>
+<h4 id="允许外网访问">允许外网访问</h4>
+<p>先进入容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql-5.7 /bin/bash</span><br></pre></td></tr></table></figure>
+<p>输入密码，连接mysql</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+<p>修改表项</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#39;%&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<p>查看修改后的结果</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT USER,HOST FROM mysql.user;</span><br></pre></td></tr></table></figure>
+<p>结果如下所示，说明修改成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT USER,HOST FROM mysql.user;</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| USER          | HOST      |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| root          | %         |</span><br><span class="line">| mysql.session | localhost |</span><br><span class="line">| mysql.sys     | localhost |</span><br><span class="line">| root          | localhost |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">4 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="导出表结构和表数据">导出表结构和表数据</h4>
+<ol type="1">
+<li><p>导出整个数据库结构和数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456 database &gt; dump.sql</span><br></pre></td></tr></table></figure></li>
+<li><p>导出单个数据表结构和数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456  database table &gt; dump.sql</span><br></pre></td></tr></table></figure></li>
+<li><p>导出整个数据库结构（不包含数据）</p></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456  -d database &gt; dump.sql</span><br></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>导出单个数据表结构（不包含数据）</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456  -d database table &gt; dump.sql</span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li>导入sql文件</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p123456 &lt; dump.sql</span><br></pre></td></tr></table></figure>
+<h4 id="设置日志路径">设置日志路径</h4>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 错误日志</span></span><br><span class="line"><span class="attr">log_error</span> = /var/log/mysql/error.log</span><br><span class="line"><span class="comment"># 查询日志</span></span><br><span class="line"><span class="attr">general_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span> = /var/log/mysql/general.log</span><br><span class="line"><span class="comment"># 慢查询日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">slow_query_log_file</span> = /var/log/mysql/slow.log</span><br><span class="line"><span class="comment"># 同步写binlog</span></span><br><span class="line"><span class="attr">log_bin_index</span> = /var/log/mysql/bin</span><br><span class="line"><span class="attr">max_binlog_size</span> = <span class="number">4</span>M</span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用docker-compose.yml">使用docker-compose.yml</h3>
+<p>废话不多说直接上干货</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=ff143253-f1dd-266f-2a4b-cdb747c31150</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/conf:/etc/mysql/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/sql:/root/sql</span></span><br></pre></td></tr></table></figure>
+<h3 id="后记">后记</h3>
+<h4 id="权限问题">权限问题</h4>
+<p>由于一些原因需要把mysql容器中的日志映射出来，但是在操作的时候遇到了以下问题：</p>
+<p><img src="image-20220315193804894.png" /></p>
+<p>根据一些“高人博客”的指点，在Dockerfile做了以下修改：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> mysql:<span class="number">5</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown -R mysql:mysql /var/<span class="built_in">log</span>/mysql</span></span><br></pre></td></tr></table></figure>
+<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code> 目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
+<p>仍旧失败，经过一翻查找，发现了原因，这里就不贴原文了，大致意思是：</p>
+<p><strong>容器中的<code>/var/log/mysql</code>这个目录一旦被映射到宿主机，Dockerfile中的命令就对它失去了作用</strong></p>
+<p>问题的根本原因在于，容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，所有才会出现<strong><code>Permission denied</code></strong>.</p>
+<p>换一个思路，既然容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，那么找一个有权限的文件写不就好了吗？</p>
+<p>于是将日志文件夹设置为<code>/tmp/mysqlog</code>不就可以正常读写了吗？<code>/tmp</code>目录下应该所有用户都有相关权限吧。</p>
+<p>一顿操作以后，又发现了问题：</p>
+<p><strong>映射出来的文件，我本地用户竟然无法读写！！竟然需要root用户才可以读写！</strong></p>
+<p>经过查找，发现了问题所在：</p>
+<p><strong>mysql容器运行的用户是mysql，uid是999，而本地创建的默认用户uid是1000。换句话说，映射出来的文件的所有者不是你，是容器中的uid为999的用户！！</strong></p>
+<h4 id="解决方案">解决方案</h4>
+<p>将映射文件夹的所有者修改为999（uid），所在用户组修改为1000（uid），用户组也可以更改为当前目录下的用户名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R 999:1000 *</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker打包镜像文件</title>
     <url>/p/export-docker-images-to-file/</url>
     <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
@@ -518,92 +607,32 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker安装MySQL5.7</title>
-    <url>/p/install-mysql5.7-in-docker/</url>
-    <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
+    <title>Go语言中的切片、Map和Channel</title>
+    <url>/p/slice-map-and-channel-in-golang/</url>
+    <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
+<p><strong>关键词</strong>：golang</p>
 <a id="more"></a>
-<p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
-<h3 id="安装docker">安装docker</h3>
-<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
-<h3 id="安装mysql容器">安装MySQL容器</h3>
-<p>以官方的MySQL5.7为例：<a href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
-<p>首先确保docker服务已经正常启动：</p>
-<p>linux执行：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
-<p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
-<h4 id="拉取镜像">拉取镜像</h4>
-<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
-<h4 id="运行容器">运行容器</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
-<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
-<li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
-<ul>
-<li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
-</ul></li>
-</ul>
-<h3 id="设置mysql容器">设置MySQL容器</h3>
-<h4 id="配置文件">配置文件</h4>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysql]</span></span><br><span class="line"><span class="attr">default-character-set</span>=utf8mb4</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4</span><br></pre></td></tr></table></figure>
-<h4 id="允许外网访问">允许外网访问</h4>
-<p>先进入容器</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -ti mysql-5.7 /bin/bash</span><br></pre></td></tr></table></figure>
-<p>输入密码，连接mysql</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
-<p>修改表项</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set host&#x3D;&#39;%&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-<p>查看修改后的结果</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT USER,HOST FROM mysql.user;</span><br></pre></td></tr></table></figure>
-<p>结果如下所示，说明修改成功</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT USER,HOST FROM mysql.user;</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| USER          | HOST      |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">| root          | %         |</span><br><span class="line">| mysql.session | localhost |</span><br><span class="line">| mysql.sys     | localhost |</span><br><span class="line">| root          | localhost |</span><br><span class="line">+---------------+-----------+</span><br><span class="line">4 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
-<h4 id="导出表结构和表数据">导出表结构和表数据</h4>
+<h2 id="切片">切片</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(testArray []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(testArray); i++ &#123;</span><br><span class="line">		testArray[i] += <span class="number">1</span> <span class="comment">// 函数内部修改切片</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nums := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line">	test(nums)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在函数内部修改了切片，函数外部访问修改也会生效。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go run <span class="string">&quot;testSlice.go&quot;</span></span><br><span class="line">nums: [1 2 3]</span><br><span class="line">nums: [2 3 4]</span><br></pre></td></tr></table></figure>
+<h2 id="map">Map</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(testMap <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> k, _ := <span class="keyword">range</span> testMap &#123;</span><br><span class="line">		testMap[k] = <span class="string">&quot;change it&quot;</span> <span class="comment">//函数内部修改map</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nums := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">		<span class="number">1</span>: <span class="string">&quot;one&quot;</span>,</span><br><span class="line">		<span class="number">2</span>: <span class="string">&quot;two&quot;</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line">	test(nums)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数内部修改了map，外部访问修改也生效。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go run <span class="string">&quot;testMap.go&quot;</span></span><br><span class="line">nums: map[1:one 2:two]</span><br><span class="line">nums: map[1:change it 2:change it]</span><br></pre></td></tr></table></figure>
+<h2 id="通道">通道</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testChannel</span><span class="params">(cint <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		cint &lt;- i</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">close</span>(cint)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> cint = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> testChannel(cint)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> cint &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;i: %v\n&quot;</span>, i)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数<code>testChannel</code>修改<code>channel</code>，主函数访问修改也生效。</p>
+<p>其中wg是一个计数器（同步等待组）：</p>
 <ol type="1">
-<li><p>导出整个数据库结构和数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456 database &gt; dump.sql</span><br></pre></td></tr></table></figure></li>
-<li><p>导出单个数据表结构和数据</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456  database table &gt; dump.sql</span><br></pre></td></tr></table></figure></li>
-<li><p>导出整个数据库结构（不包含数据）</p></li>
+<li>主函数在执行协程之前，向计数器传入协程的数量：<code>wg.Add(1)</code>；</li>
+<li>子函数（协程）在执行完毕以后，执行<code>wg.Done()</code>来给计数器<code>-1</code>；</li>
+<li>主函数最后要执行<code>wg.Wait()</code>，阻塞直到子协程</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456  -d database &gt; dump.sql</span><br></pre></td></tr></table></figure>
-<ol start="4" type="1">
-<li>导出单个数据表结构（不包含数据）</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysqldump -h localhost -uroot -p123456  -d database table &gt; dump.sql</span><br></pre></td></tr></table></figure>
-<ol start="5" type="1">
-<li>导入sql文件</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p123456 &lt; dump.sql</span><br></pre></td></tr></table></figure>
-<h4 id="设置日志路径">设置日志路径</h4>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="comment"># 错误日志</span></span><br><span class="line"><span class="attr">log_error</span> = /var/log/mysql/error.log</span><br><span class="line"><span class="comment"># 查询日志</span></span><br><span class="line"><span class="attr">general_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">general_log_file</span> = /var/log/mysql/general.log</span><br><span class="line"><span class="comment"># 慢查询日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="number">1</span></span><br><span class="line"><span class="attr">slow_query_log_file</span> = /var/log/mysql/slow.log</span><br><span class="line"><span class="comment"># 同步写binlog</span></span><br><span class="line"><span class="attr">log_bin_index</span> = /var/log/mysql/bin</span><br><span class="line"><span class="attr">max_binlog_size</span> = <span class="number">4</span>M</span><br><span class="line"><span class="attr">sync_binlog</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用docker-compose.yml">使用docker-compose.yml</h3>
-<p>废话不多说直接上干货</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;3306:3306&quot;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=ff143253-f1dd-266f-2a4b-cdb747c31150</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/conf:/etc/mysql/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mysql/sql:/root/sql</span></span><br></pre></td></tr></table></figure>
-<h3 id="后记">后记</h3>
-<h4 id="权限问题">权限问题</h4>
-<p>由于一些原因需要把mysql容器中的日志映射出来，但是在操作的时候遇到了以下问题：</p>
-<p><img src="image-20220315193804894.png" /></p>
-<p>根据一些“高人博客”的指点，在Dockerfile做了以下修改：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> mysql:<span class="number">5</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown -R mysql:mysql /var/<span class="built_in">log</span>/mysql</span></span><br></pre></td></tr></table></figure>
-<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code> 目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
-<p>仍旧失败，经过一翻查找，发现了原因，这里就不贴原文了，大致意思是：</p>
-<p><strong>容器中的<code>/var/log/mysql</code>这个目录一旦被映射到宿主机，Dockerfile中的命令就对它失去了作用</strong></p>
-<p>问题的根本原因在于，容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，所有才会出现<strong><code>Permission denied</code></strong>.</p>
-<p>换一个思路，既然容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，那么找一个有权限的文件写不就好了吗？</p>
-<p>于是将日志文件夹设置为<code>/tmp/mysqlog</code>不就可以正常读写了吗？<code>/tmp</code>目录下应该所有用户都有相关权限吧。</p>
-<p>一顿操作以后，又发现了问题：</p>
-<p><strong>映射出来的文件，我本地用户竟然无法读写！！竟然需要root用户才可以读写！</strong></p>
-<p>经过查找，发现了问题所在：</p>
-<p><strong>mysql容器运行的用户是mysql，uid是999，而本地创建的默认用户uid是1000。换句话说，映射出来的文件的所有者不是你，是容器中的uid为999的用户！！</strong></p>
-<h4 id="解决方案">解决方案</h4>
-<p>将映射文件夹的所有者修改为999（uid），所在用户组修改为1000（uid），用户组也可以更改为当前目录下的用户名。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chown -R 999:1000 *</span><br></pre></td></tr></table></figure>
+<p>退出。</p>
 ]]></content>
       <tags>
-        <tag>docker</tag>
-        <tag>mysql</tag>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -5878,35 +5907,6 @@ y=x^2e^x
         <tag>linux</tag>
         <tag>ssh</tag>
         <tag>key</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go语言中的切片、Map和Channel</title>
-    <url>/p/slice-map-and-channel-in-golang/</url>
-    <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
-<p><strong>关键词</strong>：golang</p>
-<a id="more"></a>
-<h2 id="切片">切片</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(testArray []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(testArray); i++ &#123;</span><br><span class="line">		testArray[i] += <span class="number">1</span> <span class="comment">// 函数内部修改切片</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nums := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line">	test(nums)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在函数内部修改了切片，函数外部访问修改也会生效。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go run <span class="string">&quot;testSlice.go&quot;</span></span><br><span class="line">nums: [1 2 3]</span><br><span class="line">nums: [2 3 4]</span><br></pre></td></tr></table></figure>
-<h2 id="map">Map</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(testMap <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> k, _ := <span class="keyword">range</span> testMap &#123;</span><br><span class="line">		testMap[k] = <span class="string">&quot;change it&quot;</span> <span class="comment">//函数内部修改map</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nums := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">		<span class="number">1</span>: <span class="string">&quot;one&quot;</span>,</span><br><span class="line">		<span class="number">2</span>: <span class="string">&quot;two&quot;</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line">	test(nums)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;nums: %v\n&quot;</span>, nums)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>函数内部修改了map，外部访问修改也生效。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go run <span class="string">&quot;testMap.go&quot;</span></span><br><span class="line">nums: map[1:one 2:two]</span><br><span class="line">nums: map[1:change it 2:change it]</span><br></pre></td></tr></table></figure>
-<h2 id="通道">通道</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testChannel</span><span class="params">(cint <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		cint &lt;- i</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">close</span>(cint)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> cint = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1</span>)</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> testChannel(cint)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">range</span> cint &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;i: %v\n&quot;</span>, i)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>函数<code>testChannel</code>修改<code>channel</code>，主函数访问修改也生效。</p>
-<p>其中wg是一个计数器（同步等待组）：</p>
-<ol type="1">
-<li>主函数在执行协程之前，向计数器传入协程的数量：<code>wg.Add(1)</code>；</li>
-<li>子函数（协程）在执行完毕以后，执行<code>wg.Done()</code>来给计数器<code>-1</code>；</li>
-<li>主函数最后要执行<code>wg.Wait()</code>，阻塞直到子协程</li>
-</ol>
-<p>退出。</p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
