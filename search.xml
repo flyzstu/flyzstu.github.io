@@ -713,6 +713,62 @@
       </tags>
   </entry>
   <entry>
+    <title>Jenkins和持续集成</title>
+    <url>/p/jenkins-and-CI/</url>
+    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
+<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
+<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
+<p>关键词：<strong>jenkins，持续集成</strong></p>
+<a id="more"></a>
+<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
+<p>持续集成，Continuous Integration，简称CI。</p>
+<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
+<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
+<h3 id="持续集成的特点">持续集成的特点</h3>
+<ul>
+<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
+<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
+<li><p>需要代码托管工具支持</p></li>
+</ul>
+<h3 id="持续集成的作用">持续集成的作用</h3>
+<ul>
+<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
+<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
+</ul>
+<h2 id="如何实现持续集成">如何实现持续集成？</h2>
+<h3 id="jenkins介绍">Jenkins介绍</h3>
+<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
+<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
+<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
+<ul>
+<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
+<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
+<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
+<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
+</ul>
+<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
+<h3 id="jenkins特点">Jenkins特点</h3>
+<ul>
+<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
+<li><p>易配置：提供友好的GUI配置界面；</p></li>
+<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
+<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
+<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
+<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
+<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
+<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
+<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
+</ul>
+<h3 id="其他集成工具">其他集成工具</h3>
+<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
+<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
+]]></content>
+      <tags>
+        <tag>jenkins</tag>
+        <tag>CI/CD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Jetson Xavier 开发实录</title>
     <url>/p/How-to-use-Jetson-Xavier/</url>
     <content><![CDATA[<p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
@@ -878,62 +934,6 @@
       <tags>
         <tag>Jetson</tag>
         <tag>NVIDIA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Jenkins和持续集成</title>
-    <url>/p/jenkins-and-CI/</url>
-    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
-<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
-<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
-<p>关键词：<strong>jenkins，持续集成</strong></p>
-<a id="more"></a>
-<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
-<p>持续集成，Continuous Integration，简称CI。</p>
-<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
-<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
-<h3 id="持续集成的特点">持续集成的特点</h3>
-<ul>
-<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
-<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
-<li><p>需要代码托管工具支持</p></li>
-</ul>
-<h3 id="持续集成的作用">持续集成的作用</h3>
-<ul>
-<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
-<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
-</ul>
-<h2 id="如何实现持续集成">如何实现持续集成？</h2>
-<h3 id="jenkins介绍">Jenkins介绍</h3>
-<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
-<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
-<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
-<ul>
-<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
-<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
-<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
-<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
-</ul>
-<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
-<h3 id="jenkins特点">Jenkins特点</h3>
-<ul>
-<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
-<li><p>易配置：提供友好的GUI配置界面；</p></li>
-<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
-<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
-<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
-<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
-<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
-<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
-<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
-</ul>
-<h3 id="其他集成工具">其他集成工具</h3>
-<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
-<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
-]]></content>
-      <tags>
-        <tag>jenkins</tag>
-        <tag>CI/CD</tag>
       </tags>
   </entry>
   <entry>
@@ -2177,6 +2177,30 @@
       </tags>
   </entry>
   <entry>
+    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
+    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>不说废话，直接上教程。</p>
+<a id="more"></a>
+<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
+<h6 id="介绍">介绍</h6>
+<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
+<h6 id="区别1">区别1</h6>
+<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
+<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
+<h5 id="区别2">区别2</h5>
+<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
+<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
+<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyQt5教程</title>
     <url>/p/PyQt5-Chinese-tutorial/</url>
     <content><![CDATA[<p>学习PyQt的基本功能。</p>
@@ -2288,30 +2312,6 @@
 ]]></content>
       <tags>
         <tag>PyQt5</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
-    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>不说废话，直接上教程。</p>
-<a id="more"></a>
-<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
-<h6 id="介绍">介绍</h6>
-<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
-<h6 id="区别1">区别1</h6>
-<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
-<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
-<h5 id="区别2">区别2</h5>
-<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
-<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
-<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -2537,6 +2537,51 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python中__getattr__等的用法</title>
+    <url>/p/usage-of-getattr-and-else-in-Python/</url>
+    <content><![CDATA[<p>在使用Python的过程中可能遇到以下几个函数：</p>
+<ul>
+<li><code>getattr</code></li>
+<li><code>__getattr__</code></li>
+<li><code>__getattribute__</code></li>
+<li><code>__get__</code></li>
+</ul>
+<p>如何区别他们，如何在编程中正确使用他们呢？</p>
+<a id="more"></a>
+<h3 id="getattr">getattr</h3>
+<p><code>getattr (object, name[, default])</code>是Python的内置函数之一，它的作用是获取对象的属性。</p>
+<ul>
+<li>object 对象</li>
+<li>name 属性名</li>
+<li>default 当属性不存在时，返回的默认值</li>
+</ul>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, x</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.x = x</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Foo(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.x</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;bar&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;bar&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="getattr-_">_ <strong>getattr _ </strong></h3>
+<p><code>object. __getattr__(self, name)</code>是一个对象方法，如果找不到对象的属性时会调用这个方法。</p>
+<p>这个方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
+<p>注意，如果通过正常机制能找到对象属性的话，不会调用<code>__getattr__</code>方法。</p>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, bamf</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.bamf = bamf</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> <span class="string">&#x27;Frob does not have `&#123;&#125;` attribute.&#x27;</span>.format(str(name))</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob(<span class="string">&quot;bamf&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bar</span><br><span class="line"><span class="string">&#x27;Frob does not have `bar` attribute.&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line"><span class="string">&#x27;bamf&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="getattribute-__-__">____ getattribute __ __</h3>
+<p>当访问 某个对象的属性时，会无条件的调用这个方法。这个方法只适用于新式类。 新式类就是集成自object或者type的类。</p>
+<p>如果类还同时定义了<code>__getattr__()</code>方法，则不会调用<code>__getattr__()</code>方法，除非在<code>__getattribute__()</code>方法中显示调用<code>__getattr__()</code>或者抛出了<code>AttributeError</code>。</p>
+<p>该方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
+<p>为了避免在方法中出现无限递归的情况，应该总是使用基类的方法来获取属性：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>object.__getattribute__(self, name).</span><br></pre></td></tr></table></figure>
+<p>语法：<code>object. __getattribute__(self, name)</code></p>
+<p><strong>示例</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>(<span class="params">object</span>):</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattribute__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">print</span> <span class="string">&quot;getting `&#123;&#125;`&quot;</span>.format(str(name))</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> object.__getattribute__(self, name)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf = <span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line">getting `bamf`</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="get-__">____ __ get __</h3>
+<p><code>__get__()</code>方法是描述符方法之一。描述符用于将访问对象属性转变成调用描述符方法。</p>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span>(<span class="params">self, obj, objtype</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;get value=%s&quot;</span> % self.val </span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span>(<span class="params">self, obj, val</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;set value=%s&quot;</span> % val</span><br><span class="line">        self.val = val</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stu</span>(<span class="params">object</span>):</span></span><br><span class="line">    age = Descriptor()</span><br><span class="line"></span><br><span class="line">stu = Stu()</span><br><span class="line">stu.age = <span class="number">12</span>    <span class="comment"># set value=12</span></span><br><span class="line"><span class="keyword">print</span> stu.age   <span class="comment"># get value=12</span></span><br><span class="line">                <span class="comment"># 12</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python中pickle模块的使用</title>
     <url>/p/use-of-pickle-module-in-python/</url>
     <content><![CDATA[<p>废话不多说，直接上代码。</p>
@@ -2626,51 +2671,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>requests</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python中__getattr__等的用法</title>
-    <url>/p/usage-of-getattr-and-else-in-Python/</url>
-    <content><![CDATA[<p>在使用Python的过程中可能遇到以下几个函数：</p>
-<ul>
-<li><code>getattr</code></li>
-<li><code>__getattr__</code></li>
-<li><code>__getattribute__</code></li>
-<li><code>__get__</code></li>
-</ul>
-<p>如何区别他们，如何在编程中正确使用他们呢？</p>
-<a id="more"></a>
-<h3 id="getattr">getattr</h3>
-<p><code>getattr (object, name[, default])</code>是Python的内置函数之一，它的作用是获取对象的属性。</p>
-<ul>
-<li>object 对象</li>
-<li>name 属性名</li>
-<li>default 当属性不存在时，返回的默认值</li>
-</ul>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, x</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.x = x</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Foo(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.x</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(f, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;bar&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;bar&#x27;</span></span><br></pre></td></tr></table></figure>
-<h3 id="getattr-_">_ <strong>getattr _ </strong></h3>
-<p><code>object. __getattr__(self, name)</code>是一个对象方法，如果找不到对象的属性时会调用这个方法。</p>
-<p>这个方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
-<p>注意，如果通过正常机制能找到对象属性的话，不会调用<code>__getattr__</code>方法。</p>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, bamf</span>):</span></span><br><span class="line"><span class="meta">... </span>        self.bamf = bamf</span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattr__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> <span class="string">&#x27;Frob does not have `&#123;&#125;` attribute.&#x27;</span>.format(str(name))</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob(<span class="string">&quot;bamf&quot;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bar</span><br><span class="line"><span class="string">&#x27;Frob does not have `bar` attribute.&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line"><span class="string">&#x27;bamf&#x27;</span></span><br></pre></td></tr></table></figure>
-<h3 id="getattribute-__-__">____ getattribute __ __</h3>
-<p>当访问 某个对象的属性时，会无条件的调用这个方法。这个方法只适用于新式类。 新式类就是集成自object或者type的类。</p>
-<p>如果类还同时定义了<code>__getattr__()</code>方法，则不会调用<code>__getattr__()</code>方法，除非在<code>__getattribute__()</code>方法中显示调用<code>__getattr__()</code>或者抛出了<code>AttributeError</code>。</p>
-<p>该方法应该返回属性值或者抛出<code>AttributeError</code>异常。</p>
-<p>为了避免在方法中出现无限递归的情况，应该总是使用基类的方法来获取属性：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>object.__getattribute__(self, name).</span><br></pre></td></tr></table></figure>
-<p>语法：<code>object. __getattribute__(self, name)</code></p>
-<p><strong>示例</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="class"><span class="keyword">class</span> <span class="title">Frob</span>(<span class="params">object</span>):</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">__getattribute__</span>(<span class="params">self, name</span>):</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">print</span> <span class="string">&quot;getting `&#123;&#125;`&quot;</span>.format(str(name))</span><br><span class="line"><span class="meta">... </span>        <span class="keyword">return</span> object.__getattribute__(self, name)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f = Frob()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf = <span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f.bamf</span><br><span class="line">getting `bamf`</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
-<h3 id="get-__">____ __ get __</h3>
-<p><code>__get__()</code>方法是描述符方法之一。描述符用于将访问对象属性转变成调用描述符方法。</p>
-<p>示例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Descriptor</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span>(<span class="params">self, obj, objtype</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;get value=%s&quot;</span> % self.val </span><br><span class="line">        <span class="keyword">return</span> self.val</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span>(<span class="params">self, obj, val</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;set value=%s&quot;</span> % val</span><br><span class="line">        self.val = val</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stu</span>(<span class="params">object</span>):</span></span><br><span class="line">    age = Descriptor()</span><br><span class="line"></span><br><span class="line">stu = Stu()</span><br><span class="line">stu.age = <span class="number">12</span>    <span class="comment"># set value=12</span></span><br><span class="line"><span class="keyword">print</span> stu.age   <span class="comment"># get value=12</span></span><br><span class="line">                <span class="comment"># 12</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4567,45 +4567,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>docker安装jenkins</title>
-    <url>/p/install-jenkins-in-docker/</url>
-    <content><![CDATA[<p>关键词：docker，jenkins</p>
-<p>为什么要用docker？这个不在赘述。</p>
-<p>最近要求部署的项目要求是内外网隔离的，代码跑起来估计要安装各种依赖，想想就头大。。。</p>
-<p>现在考虑的是可以通过部署docker私有仓库，拉取镜像，跑容器。</p>
-<p>为啥还需要jenkins呢，因为项目还没有开发完毕，但是交付的日期还有不到10天了。。。</p>
-<a id="more"></a>
-<h3 id="安装">安装</h3>
-<p>官方教程：https://www.jenkins.io/doc/book/installing/linux/</p>
-<p>建议参考英文，看不懂的可以用谷歌翻译。</p>
-<p>官网给出方法的是通过<code>docker:dind</code>镜像运行另外一个部署了docker daemon的容器（区别于宿主机），然后通过<code>docker-workflow</code>方式使用，这样就实现了<strong>宿主机和构建环境</strong>的隔离，但是这样有点麻烦。。。于是就采用了之前文章中说过的<strong>docker in docker 的用法</strong>。</p>
-<h4 id="直接使用docker-compose安装">直接使用docker-compose安装</h4>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-        <tag>jenkins</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang中迭代channel和array</title>
-    <url>/p/how-to-iterate-channel-and-arrry-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍如何在golang中迭代channel和array。</p>
-<a id="more"></a>
-<h2 id="range循环切片">range循环切片</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> key, index := <span class="keyword">range</span> []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125; &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;key = %d, index = %d\n&quot;</span>, key, index)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="range循环channel">range循环channel</h2>
-<p>当channel关闭时<strong>自动退出循环</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> c := <span class="keyword">range</span> ch1 &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;c: %v\n&quot;</span>, c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="通道取值">通道取值</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  data1, ok := &lt;-ch1</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  data2, ok := &lt;-ch2</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;data1: %v, data2: %v\n&quot;</span>, data1, data2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="select多路复用">select多路复用</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> data := &lt;-ch1:</span><br><span class="line">    &#123;</span><br><span class="line">      fmt.Printf(<span class="string">&quot;data: %v\n&quot;</span>, data)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ch2:</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker in docker</title>
     <url>/p/docker-in-docker/</url>
     <content><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
@@ -4665,6 +4626,45 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker安装jenkins</title>
+    <url>/p/install-jenkins-in-docker/</url>
+    <content><![CDATA[<p>关键词：docker，jenkins</p>
+<p>为什么要用docker？这个不在赘述。</p>
+<p>最近要求部署的项目要求是内外网隔离的，代码跑起来估计要安装各种依赖，想想就头大。。。</p>
+<p>现在考虑的是可以通过部署docker私有仓库，拉取镜像，跑容器。</p>
+<p>为啥还需要jenkins呢，因为项目还没有开发完毕，但是交付的日期还有不到10天了。。。</p>
+<a id="more"></a>
+<h3 id="安装">安装</h3>
+<p>官方教程：https://www.jenkins.io/doc/book/installing/linux/</p>
+<p>建议参考英文，看不懂的可以用谷歌翻译。</p>
+<p>官网给出方法的是通过<code>docker:dind</code>镜像运行另外一个部署了docker daemon的容器（区别于宿主机），然后通过<code>docker-workflow</code>方式使用，这样就实现了<strong>宿主机和构建环境</strong>的隔离，但是这样有点麻烦。。。于是就采用了之前文章中说过的<strong>docker in docker 的用法</strong>。</p>
+<h4 id="直接使用docker-compose安装">直接使用docker-compose安装</h4>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>jenkins</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中迭代channel和array</title>
+    <url>/p/how-to-iterate-channel-and-arrry-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍如何在golang中迭代channel和array。</p>
+<a id="more"></a>
+<h2 id="range循环切片">range循环切片</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> key, index := <span class="keyword">range</span> []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125; &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;key = %d, index = %d\n&quot;</span>, key, index)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="range循环channel">range循环channel</h2>
+<p>当channel关闭时<strong>自动退出循环</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> c := <span class="keyword">range</span> ch1 &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;c: %v\n&quot;</span>, c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="通道取值">通道取值</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  data1, ok := &lt;-ch1</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  data2, ok := &lt;-ch2</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;data1: %v, data2: %v\n&quot;</span>, data1, data2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="select多路复用">select多路复用</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> data := &lt;-ch1:</span><br><span class="line">    &#123;</span><br><span class="line">      fmt.Printf(<span class="string">&quot;data: %v\n&quot;</span>, data)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ch2:</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
