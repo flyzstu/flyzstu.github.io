@@ -224,28 +224,6 @@
   </entry>
   
   <entry>
-    <title>Docker in docker</title>
-    <link href="https://fly97.cn/p/docker-in-docker/"/>
-    <id>https://fly97.cn/p/docker-in-docker/</id>
-    <published>2022-04-06T06:57:00.000Z</published>
-    <updated>2022-04-06T06:57:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p><p>有人可能会问了，为啥要这么麻烦，直接裸机跑容器不就完了吗？</p><p>读完这篇文章，你应该会有所了解。</p><p>关键字：<strong>docker in docker</strong></p><a id="more"></a><h2 id="docker-in-dockerdind">docker in docker(dind)</h2><p>有时需要在容器里面执行docker命令，比如在<strong>jenkins 容器内运行 docker 命令执行构建镜像</strong>等。</p><p>事实上，docker是支持嵌套的。但是直接在docker容器里面安装docker有点臃肿。</p><p>更好的方法是：容器里面仅仅部署docker-cli（作为客户端），实际执行交给宿主机内的 docker-engine（服务端）</p><h2 id="两种方式">两种方式</h2><p>一种方式是，通过宿主机的<code>docker.sock</code>文件，将宿主机docker服务端的socket文件挂载到容器内，同时将docker二进制文件挂载到容器内，这样，容器内就不需要安装docker程序。当容器内使用docker命令时，实际上调用的是宿主机的docker daemon和docker命令。也就是说，容器内并未真正运行docker server，但是能通过宿主机执行docker任务，从而实现轻量级docker in docker。这种情况下，真正执行docker命令的是跑在宿主机上的docker-engine，<strong>并不是真正的docker in docker</strong>。但是这种情况速度较快，然后存在一定的安全问题。<strong>不过，这种情况就是我们所需要的呀！！</strong></p><p>还有一种方式是，启动一个<code>docker:dind</code> 容器A，再启动一个docker容器B，容器B指定DOCKER_HOST为A容器内的docker daemon。</p><h3 id="使用宿主机的socket文件">使用宿主机的socket文件</h3><p>本想着挂载宿主机的<code>docker.sock</code>文件和docker二进制文件到容器即可实现<code>dind</code>，无奈默认情况下<code>docker.sock</code>文件是经过tls证书加密的，而在默认情况下加密的根证书却没有找到，通过宿主机执行<code>docker info</code>命令会提示以下错误：</p><p><img src="image-20220406163343550.png" /></p><p>翻阅资料知道<code>docker daemon</code>可以通过暴露tcp端口实现通信，而默认情况<strong>不是加密的</strong>，于是这个路就通了！！</p><h3 id="通过暴露宿主机的tcp端口实现通信">通过暴露宿主机的tcp端口实现通信</h3><ol type="1"><li>查看宿主机<code>docker</code>服务单元文件地址</li></ol><p><img src="image-20220406163920282.png" /></p><ol start="2" type="1"><li>修改宿主机<code>docker</code>服务单元文件</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /lib/systemd/system/docker.service</span><br></pre></td></tr></table></figure><p>安全起见，指定IP地址为局域网内网地址即可。</p><p><img src="image-20220406164257539.png" /></p><ol start="3" type="1"><li>重载服务单元文件</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br></pre></td></tr></table></figure><ol start="4" type="1"><li>重启服务</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart docker.service</span><br></pre></td></tr></table></figure><ol start="5" type="1"><li>设置容器环境实现和宿主机<code>docker daemon</code>通信</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">&#x27;3&#x27;</span></span><br><span class="line">services:</span><br><span class="line">  jenkins:</span><br><span class="line">    container_name: jenkins</span><br><span class="line">    image: ubuntu</span><br><span class="line">    environment:</span><br><span class="line">      - DOCKER_HOST=tcp://192.168.15.118:2375</span><br><span class="line">    volumes:</span><br><span class="line">      - /var/lib/docker:/var/lib/docker</span><br><span class="line">      - /usr/bin/docker:/usr/bin/docker</span><br><span class="line">      - /usr/<span class="built_in">local</span>/bin/docker-compose:/usr/<span class="built_in">local</span>/bin/docker-compose</span><br><span class="line">    <span class="built_in">command</span>: [<span class="string">&quot;docker&quot;</span>, <span class="string">&quot;info&quot;</span>]</span><br></pre></td></tr></table></figure><ol start="6" type="1"><li>测试</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure><p><img src="image-20220406165727628.png" /></p><p>通过上述方法，即可实现<strong>在jenkins容器中操作docker容器啦</strong></p><h2 id="后记">后记</h2><p>本来是想通过上述第一种方式来实现<strong>jenkins容器中操作docker容器</strong>，但是发现这种方法有点问题：</p><ul><li>容器内使用的是实际上宿主机的<code>docker daemon</code>，因此挂载路径时，实际上挂上去的是<strong>宿主机的目录</strong>。而不是<strong>jenkins容器</strong>内的文件！！因此如果要使用上面第一种dind的方式，那么每次部署的时候都需要<strong>重新打包镜像</strong>！！而不是<strong>挂载目录</strong>！！！</li><li>如果采用了上面的方案实现了dind，那么怎么监听部署没部署成功呢？看来又要写相应脚本判断了。<ul><li>更新：不用脚本，不用脚本，直接<code>docker inspect</code>即可获得容器的状态！！！</li></ul></li></ul>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。&lt;/p&gt;
-&lt;p&gt;有人可能会问了，为啥要这么麻烦，直接裸机跑容器不就完了吗？&lt;/p&gt;
-&lt;p&gt;读完这篇文章，你应该会有所了解。&lt;/p&gt;
-&lt;p&gt;关键字：&lt;strong&gt;docker in docker&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="docker" scheme="https://fly97.cn/tags/docker/"/>
-    
-  </entry>
-  
-  <entry>
     <title>docker安装jenkins</title>
     <link href="https://fly97.cn/p/install-jenkins-in-docker/"/>
     <id>https://fly97.cn/p/install-jenkins-in-docker/</id>
@@ -267,6 +245,28 @@
     <category term="docker" scheme="https://fly97.cn/tags/docker/"/>
     
     <category term="jenkins" scheme="https://fly97.cn/tags/jenkins/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Docker in docker</title>
+    <link href="https://fly97.cn/p/docker-in-docker/"/>
+    <id>https://fly97.cn/p/docker-in-docker/</id>
+    <published>2022-04-06T06:57:00.000Z</published>
+    <updated>2022-04-06T06:57:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p><p>有人可能会问了，为啥要这么麻烦，直接裸机跑容器不就完了吗？</p><p>读完这篇文章，你应该会有所了解。</p><p>关键字：<strong>docker in docker</strong></p><a id="more"></a><h2 id="docker-in-dockerdind">docker in docker(dind)</h2><p>有时需要在容器里面执行docker命令，比如在<strong>jenkins 容器内运行 docker 命令执行构建镜像</strong>等。</p><p>事实上，docker是支持嵌套的。但是直接在docker容器里面安装docker有点臃肿。</p><p>更好的方法是：容器里面仅仅部署docker-cli（作为客户端），实际执行交给宿主机内的 docker-engine（服务端）</p><h2 id="两种方式">两种方式</h2><p>一种方式是，通过宿主机的<code>docker.sock</code>文件，将宿主机docker服务端的socket文件挂载到容器内，同时将docker二进制文件挂载到容器内，这样，容器内就不需要安装docker程序。当容器内使用docker命令时，实际上调用的是宿主机的docker daemon和docker命令。也就是说，容器内并未真正运行docker server，但是能通过宿主机执行docker任务，从而实现轻量级docker in docker。这种情况下，真正执行docker命令的是跑在宿主机上的docker-engine，<strong>并不是真正的docker in docker</strong>。但是这种情况速度较快，然后存在一定的安全问题。<strong>不过，这种情况就是我们所需要的呀！！</strong></p><p>还有一种方式是，启动一个<code>docker:dind</code> 容器A，再启动一个docker容器B，容器B指定DOCKER_HOST为A容器内的docker daemon。</p><h3 id="使用宿主机的socket文件">使用宿主机的socket文件</h3><p>本想着挂载宿主机的<code>docker.sock</code>文件和docker二进制文件到容器即可实现<code>dind</code>，无奈默认情况下<code>docker.sock</code>文件是经过tls证书加密的，而在默认情况下加密的根证书却没有找到，通过宿主机执行<code>docker info</code>命令会提示以下错误：</p><p><img src="image-20220406163343550.png" /></p><p>翻阅资料知道<code>docker daemon</code>可以通过暴露tcp端口实现通信，而默认情况<strong>不是加密的</strong>，于是这个路就通了！！</p><h3 id="通过暴露宿主机的tcp端口实现通信">通过暴露宿主机的tcp端口实现通信</h3><ol type="1"><li>查看宿主机<code>docker</code>服务单元文件地址</li></ol><p><img src="image-20220406163920282.png" /></p><ol start="2" type="1"><li>修改宿主机<code>docker</code>服务单元文件</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /lib/systemd/system/docker.service</span><br></pre></td></tr></table></figure><p>安全起见，指定IP地址为局域网内网地址即可。</p><p><img src="image-20220406164257539.png" /></p><ol start="3" type="1"><li>重载服务单元文件</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br></pre></td></tr></table></figure><ol start="4" type="1"><li>重启服务</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart docker.service</span><br></pre></td></tr></table></figure><ol start="5" type="1"><li>设置容器环境实现和宿主机<code>docker daemon</code>通信</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">&#x27;3&#x27;</span></span><br><span class="line">services:</span><br><span class="line">  jenkins:</span><br><span class="line">    container_name: jenkins</span><br><span class="line">    image: ubuntu</span><br><span class="line">    environment:</span><br><span class="line">      - DOCKER_HOST=tcp://192.168.15.118:2375</span><br><span class="line">    volumes:</span><br><span class="line">      - /var/lib/docker:/var/lib/docker</span><br><span class="line">      - /usr/bin/docker:/usr/bin/docker</span><br><span class="line">      - /usr/<span class="built_in">local</span>/bin/docker-compose:/usr/<span class="built_in">local</span>/bin/docker-compose</span><br><span class="line">    <span class="built_in">command</span>: [<span class="string">&quot;docker&quot;</span>, <span class="string">&quot;info&quot;</span>]</span><br></pre></td></tr></table></figure><ol start="6" type="1"><li>测试</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure><p><img src="image-20220406165727628.png" /></p><p>通过上述方法，即可实现<strong>在jenkins容器中操作docker容器啦</strong></p><h2 id="后记">后记</h2><p>本来是想通过上述第一种方式来实现<strong>jenkins容器中操作docker容器</strong>，但是发现这种方法有点问题：</p><ul><li>容器内使用的是实际上宿主机的<code>docker daemon</code>，因此挂载路径时，实际上挂上去的是<strong>宿主机的目录</strong>。而不是<strong>jenkins容器</strong>内的文件！！因此如果要使用上面第一种dind的方式，那么每次部署的时候都需要<strong>重新打包镜像</strong>！！而不是<strong>挂载目录</strong>！！！</li><li>如果采用了上面的方案实现了dind，那么怎么监听部署没部署成功呢？看来又要写相应脚本判断了。<ul><li>更新：不用脚本，不用脚本，直接<code>docker inspect</code>即可获得容器的状态！！！</li></ul></li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。&lt;/p&gt;
+&lt;p&gt;有人可能会问了，为啥要这么麻烦，直接裸机跑容器不就完了吗？&lt;/p&gt;
+&lt;p&gt;读完这篇文章，你应该会有所了解。&lt;/p&gt;
+&lt;p&gt;关键字：&lt;strong&gt;docker in docker&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="docker" scheme="https://fly97.cn/tags/docker/"/>
     
   </entry>
   
