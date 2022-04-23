@@ -2034,120 +2034,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PyQt5教程</title>
-    <url>/p/PyQt5-Chinese-tutorial/</url>
-    <content><![CDATA[<p>学习PyQt的基本功能。</p>
-<a id="more"></a>
-<h3 id="例1-简单的窗口">例1 简单的窗口</h3>
-<p>这个简单的小例子展示的是一个小窗口。但是我们可以在这个小窗口上面很多事情，改变大小，最大化，最小化等。这需要很多代码能实现。这在很多应用中很常见，没必要每次都要重写这一部分代码，Qt已经提供了这些功能。PyQt5是一个高级的工具集合，相比使用低级的工具，能省略上百行代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    </span><br><span class="line">    w = QWidget()</span><br><span class="line">    w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">    w.move(<span class="number">300</span>, <span class="number">300</span>)</span><br><span class="line">    w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br><span class="line">    w.show()</span><br><span class="line">    </span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>运行上面的代码，能展示出一个小窗口。</p>
-<p>分步讲解：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br></pre></td></tr></table></figure>
-<p>这里引入了PyQt5.QtWidgets这个模块，这个模块包含了基本的组件。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">app &#x3D; QApplication(sys.argv)</span><br></pre></td></tr></table></figure>
-<p>每个PyQt5应用都必须创建这样的一个应用对象。sys.argv是一组命令行参数的列表。<strong>Python可以在shell里运行，这个参数提供了对脚本控制的功能。</strong></p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">w &#x3D; QWidget()</span><br></pre></td></tr></table></figure>
-<p>QWidget控件是一个用户界面的<strong>基本控件</strong>，它提供了基本的应用构造器。默认情况下，构造器是没有父级的，<strong>没有父级的构造器被称为窗口(window)。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br></pre></td></tr></table></figure>
-<p>resize()方法能改变控件的大小，这里的意思是窗口宽250px，高150px.</p>
-<hr />
-<p>move()是修改控件位置的方法，它把控件放置到屏幕坐标的(300, 300)的位置。<strong>屏幕坐标系的原点是屏幕的左上角。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>我们给这个窗口添加了一个标题，标题在标题栏展示。<strong>虽然这看起来是一句废话，但是后面还有各种栏，还是要重点说一下。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.show()</span><br></pre></td></tr></table></figure>
-<p>show()能让控件在桌面上显示出来。控件在内存里创建，调用这个函数才能在操作系统上显示出来。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>最后，我们进入了应用的主循环中，事件处理器这个时候开始工作。主循环从窗口上接收事件，并把事件派发到应用控件里。当调用<code>exit()</code>方法或直接销毁主控件时，主循环就会结束。<code>sys.exit()</code>方法能确保主循环安全退出。外部环境会收到主控件如何结束的信息。</p>
-<p><code>exec_()</code>之所以有个下划线，是因为<code>exec</code>是Python的一个关键字。</p>
-<p>程序预览：</p>
-<h3 id="例2-带窗口图标">例2 带窗口图标</h3>
-<p>窗口图标通常是显示一个窗口的左上角，标题栏的最左边。下面的例子就是怎么用PyQt5创建一个这样的窗口。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QIcon</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">220</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Icon&#x27;</span>)</span><br><span class="line">        self.setWindowIcon(Qicon(<span class="string">&#x27;web.png&#x27;</span>))</span><br><span class="line">        </span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>此处用到了Python面向对象编程：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">	super().__init__()</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-<p>面向对象编程最重要的三个部分是类(class)、数据和方法。<code>class Example:</code>创建了一个类的调用，这个类继承自<code>QWidget</code>类。调用了两个构造器，一个是这个类本身的，一个是这个类继承的。super()构造器方法返回父级的对象。<code>_\_init__()</code>方法是构造器的一个方法。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">self.initUI()</span><br></pre></td></tr></table></figure>
-<p>使用<code>initUI()</code>方法创建一个GUI。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 自己准备一个web.png</span><br><span class="line">self.setGeometry(300, 300, 300, 220)</span><br><span class="line">self.setWindowTitle(&#39;Icon&#39;)</span><br><span class="line">self.setWindowIcon(QIcon(&#39;web.png&#39;))</span><br></pre></td></tr></table></figure>
-<p>上面的三个方法都继承自<code>QWidget</code>类。<code>setGeometry()</code>有三个作用：把窗口放到屏幕上并设置窗口大小。参数分别代表屏幕坐标的x、y和窗口大小的宽、高。也就是说这个方法是<code>resize()</code>和<code>move()</code>的合体。最后一个方法是添加了图标。也创建了一个<code>QIcon</code>对象，然后接受一个路径作为参数显示图标。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(ex.exec_())</span><br></pre></td></tr></table></figure>
-<h3 id="例3-提示框">例3 提示框</h3>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QToolTip, QPushButton, QApplication)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QFont</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br><span class="line">        </span><br><span class="line">        self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">        btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        btn.resize(btn.sizeHint())</span><br><span class="line">        btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Tooltips&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>在这个例子中, 我们为应用创建了一个提示框.</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
-<p>这个静态方法设置了提示框的字体。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; wighet&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>调用<code>setToolTip()</code>创建提示框可以使用<strong>富文本格式</strong>的内容。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>创建一个按钮，并且为按钮添加了一个提示框。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn.resize(btn.sizeHint())</span><br><span class="line">btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br></pre></td></tr></table></figure>
-<p>调整按钮大小, 并且让按钮在屏幕上显示出来，sizeHint()方法提供了一个默认的按钮大小。</p>
-<h3 id="例4-关闭窗口">例4 关闭窗口</h3>
-<p>关闭窗口最直观的方式就是点击标题栏的叉叉，在这个例子里，我们展示的是如何用程序关闭一个窗口。这里我们将接触到一点<strong>信号(signal)和槽(slots)</strong>的知识。</p>
-<p>本例使用的是<code>QPushButton</code>组件类。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QPushButton(string text, QWidget parent &#x3D; None)</span><br></pre></td></tr></table></figure>
-<p>text参数是想要显示的按钮名称，parent参数是放在按钮上的组件，在我们的例子里，这个参数是QWidget。应用中的组件都是经过一层层的继承来的。在这个层里，大部分的组件都有自己的父级，没有父级的组件被称为<strong>顶级窗口</strong>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QPushButton, QApplication</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QCoreApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        self.initUI()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        qbtn = QPushButton(<span class="string">&#x27;Quit&#x27;</span>, self)</span><br><span class="line">        qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br><span class="line">        qbtn.resize(qbtn.sizeHint())</span><br><span class="line">        qbtn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line"></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">500</span>, <span class="number">250</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Quit button&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>上述代码创建了一个点击之后就推出窗口的按钮。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from PyQt5.QtCore import QCoreApplication</span><br></pre></td></tr></table></figure>
-<p>程序需要<code>QtCore</code>对象。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn &#x3D; QPushButton(&#39;Quit&#39;, self)</span><br></pre></td></tr></table></figure>
-<p>创建一个<code>QPushButton</code>按钮。第一个参数是按钮的文本，第二个参数是按钮的父级组件，这个例子中，父级组件就是我们创建的继承自<code>QWidget</code>的<code>Example</code>类。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br></pre></td></tr></table></figure>
-<p>创建了<strong>信号(singal)和槽(slot)</strong>的连接。点击按钮之后，信号会被捕捉并给出既定的反应。<code>QCoreApplication</code>包含了时间的主循环，它能添加和删除所有的事件。<code>instance()</code>创建了一个它的实例。<code>QCoreApplication</code>是在<code>QApplication</code>里创建的。点击事件和能终止进程并推出应用的quit函数绑定在了一起。在发送者和接收者之间建立了通讯，发送者就是按钮，接收者就是应用对象。</p>
-<p>点击一下<code>Quit</code>，程序就会自动退出。</p>
-<h3 id="例5-消息盒子">例5 消息盒子</h3>
-<p>默认情况下，我们点击标题栏的x按钮，QWidget就会关闭。但是有时候，我们需要修改这个默认行为。例如，我们打开的是一个文件编辑器，并且做了一些修改，这个时候就需要在关闭按钮的时候让用户进一步确认操作。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QMessageBox, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        </span><br><span class="line">        self.initUI()</span><br><span class="line">        </span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.setWidnowTitle(<span class="string">&#x27;Message box&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closeEvent</span>(<span class="params">self, event</span>) -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">       </span><br><span class="line">    	reply = QMessageBox.question(self, <span class="string">&#x27;Message&#x27;</span>, <span class="string">&quot;Are you sure to quit?&quot;</span>, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br><span class="line">        <span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">            event.accept()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            event.ignore()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>如果关闭<code>QWidget</code>，就会产生一个<code>QCloseEvent</code>，并且把它传入到<code>closeEvent</code>函数的event参数中。改变控件的默认行为，就是替换掉默认的事件处理。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">reply &#x3D; QMessageBox.question(self, &#39;Message&#39;,&quot;Are you sure to quit?&quot;, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br></pre></td></tr></table></figure>
-<p>上述代码创建了一个消息框，上面有两个按钮：<code>Yes</code>和<code>No</code>。第一个字符串显示在消息框的标题，第二个字符串显示在对话框，第三个参数是消息框的两个按钮，最后一个参数是默认按钮，这个按钮是默选中的。返回值在变量<code>reply</code>里。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">	event.accept()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	event.ignore()</span><br></pre></td></tr></table></figure>
-<p>这里判断返回值，如果点击的是Yes按钮，就关闭组件和应用，否则就忽略关闭事件。</p>
-<p>程序预览：</p>
-<p>例6 窗口居中</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QDestopWidget, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        </span><br><span class="line">        self.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.center()</span><br><span class="line">        </span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Center&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span>(<span class="params">self</span>):</span></span><br><span class="line">        qr = self.frameGeometry()</span><br><span class="line">        cp = QDesktopWidget().availableGeometry().center()</span><br><span class="line">        qr.moveCenter(cp)</span><br><span class="line">        self.move(qr.topLeft())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    </span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<hr />
-<p><code>QtGui.QDesktopWidget</code>提供了用户的桌面信息，包括屏幕的大小。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.center()</span><br></pre></td></tr></table></figure>
-<p>这个方法调用下面实现对话框居中的方法。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qr &#x3D; self.frameGeometry()</span><br></pre></td></tr></table></figure>
-<p>获得主窗口所在的框架。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cp = QDesktopWidget().availableGeometry().center()</span><br></pre></td></tr></table></figure>
-<p>获得显示器的分辨率，然后得到屏幕中心点的位置。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qr.moveCenter(cp)</span><br></pre></td></tr></table></figure>
-<p>然后把主窗口框架中心点位置放置到屏幕的中心位置。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.move(qr.topLeft())</span><br></pre></td></tr></table></figure>
-<p>然后通过move函数把主窗口的左上角移动到其框架的左上角，这样就把窗口居中了。</p>
-<p>程序预览：</p>
-]]></content>
-      <tags>
-        <tag>PyQt5</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Pandas学习小记(一)</title>
     <url>/p/Pandas-learning-notes-01/</url>
     <content><![CDATA[<p>Pandas是什么？</p>
@@ -2291,28 +2177,117 @@
       </tags>
   </entry>
   <entry>
-    <title>PyTorch中的Tensor</title>
-    <url>/p/Tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
+    <title>PyQt5教程</title>
+    <url>/p/PyQt5-Chinese-tutorial/</url>
+    <content><![CDATA[<p>学习PyQt的基本功能。</p>
 <a id="more"></a>
-<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
-<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
-<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
-<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
-<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
+<h3 id="例1-简单的窗口">例1 简单的窗口</h3>
+<p>这个简单的小例子展示的是一个小窗口。但是我们可以在这个小窗口上面很多事情，改变大小，最大化，最小化等。这需要很多代码能实现。这在很多应用中很常见，没必要每次都要重写这一部分代码，Qt已经提供了这些功能。PyQt5是一个高级的工具集合，相比使用低级的工具，能省略上百行代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    </span><br><span class="line">    w = QWidget()</span><br><span class="line">    w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">    w.move(<span class="number">300</span>, <span class="number">300</span>)</span><br><span class="line">    w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br><span class="line">    w.show()</span><br><span class="line">    </span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>运行上面的代码，能展示出一个小窗口。</p>
+<p>分步讲解：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br></pre></td></tr></table></figure>
+<p>这里引入了PyQt5.QtWidgets这个模块，这个模块包含了基本的组件。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">app &#x3D; QApplication(sys.argv)</span><br></pre></td></tr></table></figure>
+<p>每个PyQt5应用都必须创建这样的一个应用对象。sys.argv是一组命令行参数的列表。<strong>Python可以在shell里运行，这个参数提供了对脚本控制的功能。</strong></p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">w &#x3D; QWidget()</span><br></pre></td></tr></table></figure>
+<p>QWidget控件是一个用户界面的<strong>基本控件</strong>，它提供了基本的应用构造器。默认情况下，构造器是没有父级的，<strong>没有父级的构造器被称为窗口(window)。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br></pre></td></tr></table></figure>
+<p>resize()方法能改变控件的大小，这里的意思是窗口宽250px，高150px.</p>
+<hr />
+<p>move()是修改控件位置的方法，它把控件放置到屏幕坐标的(300, 300)的位置。<strong>屏幕坐标系的原点是屏幕的左上角。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>我们给这个窗口添加了一个标题，标题在标题栏展示。<strong>虽然这看起来是一句废话，但是后面还有各种栏，还是要重点说一下。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.show()</span><br></pre></td></tr></table></figure>
+<p>show()能让控件在桌面上显示出来。控件在内存里创建，调用这个函数才能在操作系统上显示出来。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>最后，我们进入了应用的主循环中，事件处理器这个时候开始工作。主循环从窗口上接收事件，并把事件派发到应用控件里。当调用<code>exit()</code>方法或直接销毁主控件时，主循环就会结束。<code>sys.exit()</code>方法能确保主循环安全退出。外部环境会收到主控件如何结束的信息。</p>
+<p><code>exec_()</code>之所以有个下划线，是因为<code>exec</code>是Python的一个关键字。</p>
+<p>程序预览：</p>
+<h3 id="例2-带窗口图标">例2 带窗口图标</h3>
+<p>窗口图标通常是显示一个窗口的左上角，标题栏的最左边。下面的例子就是怎么用PyQt5创建一个这样的窗口。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QIcon</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">220</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Icon&#x27;</span>)</span><br><span class="line">        self.setWindowIcon(Qicon(<span class="string">&#x27;web.png&#x27;</span>))</span><br><span class="line">        </span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>此处用到了Python面向对象编程：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">	super().__init__()</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>面向对象编程最重要的三个部分是类(class)、数据和方法。<code>class Example:</code>创建了一个类的调用，这个类继承自<code>QWidget</code>类。调用了两个构造器，一个是这个类本身的，一个是这个类继承的。super()构造器方法返回父级的对象。<code>_\_init__()</code>方法是构造器的一个方法。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">self.initUI()</span><br></pre></td></tr></table></figure>
+<p>使用<code>initUI()</code>方法创建一个GUI。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 自己准备一个web.png</span><br><span class="line">self.setGeometry(300, 300, 300, 220)</span><br><span class="line">self.setWindowTitle(&#39;Icon&#39;)</span><br><span class="line">self.setWindowIcon(QIcon(&#39;web.png&#39;))</span><br></pre></td></tr></table></figure>
+<p>上面的三个方法都继承自<code>QWidget</code>类。<code>setGeometry()</code>有三个作用：把窗口放到屏幕上并设置窗口大小。参数分别代表屏幕坐标的x、y和窗口大小的宽、高。也就是说这个方法是<code>resize()</code>和<code>move()</code>的合体。最后一个方法是添加了图标。也创建了一个<code>QIcon</code>对象，然后接受一个路径作为参数显示图标。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(ex.exec_())</span><br></pre></td></tr></table></figure>
+<h3 id="例3-提示框">例3 提示框</h3>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QToolTip, QPushButton, QApplication)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QFont</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br><span class="line">        </span><br><span class="line">        self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">        btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        btn.resize(btn.sizeHint())</span><br><span class="line">        btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Tooltips&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>在这个例子中, 我们为应用创建了一个提示框.</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
+<p>这个静态方法设置了提示框的字体。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; wighet&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>调用<code>setToolTip()</code>创建提示框可以使用<strong>富文本格式</strong>的内容。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>创建一个按钮，并且为按钮添加了一个提示框。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn.resize(btn.sizeHint())</span><br><span class="line">btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br></pre></td></tr></table></figure>
+<p>调整按钮大小, 并且让按钮在屏幕上显示出来，sizeHint()方法提供了一个默认的按钮大小。</p>
+<h3 id="例4-关闭窗口">例4 关闭窗口</h3>
+<p>关闭窗口最直观的方式就是点击标题栏的叉叉，在这个例子里，我们展示的是如何用程序关闭一个窗口。这里我们将接触到一点<strong>信号(signal)和槽(slots)</strong>的知识。</p>
+<p>本例使用的是<code>QPushButton</code>组件类。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QPushButton(string text, QWidget parent &#x3D; None)</span><br></pre></td></tr></table></figure>
+<p>text参数是想要显示的按钮名称，parent参数是放在按钮上的组件，在我们的例子里，这个参数是QWidget。应用中的组件都是经过一层层的继承来的。在这个层里，大部分的组件都有自己的父级，没有父级的组件被称为<strong>顶级窗口</strong>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QPushButton, QApplication</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QCoreApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        self.initUI()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        qbtn = QPushButton(<span class="string">&#x27;Quit&#x27;</span>, self)</span><br><span class="line">        qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br><span class="line">        qbtn.resize(qbtn.sizeHint())</span><br><span class="line">        qbtn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line"></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">500</span>, <span class="number">250</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Quit button&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>上述代码创建了一个点击之后就推出窗口的按钮。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from PyQt5.QtCore import QCoreApplication</span><br></pre></td></tr></table></figure>
+<p>程序需要<code>QtCore</code>对象。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn &#x3D; QPushButton(&#39;Quit&#39;, self)</span><br></pre></td></tr></table></figure>
+<p>创建一个<code>QPushButton</code>按钮。第一个参数是按钮的文本，第二个参数是按钮的父级组件，这个例子中，父级组件就是我们创建的继承自<code>QWidget</code>的<code>Example</code>类。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br></pre></td></tr></table></figure>
+<p>创建了<strong>信号(singal)和槽(slot)</strong>的连接。点击按钮之后，信号会被捕捉并给出既定的反应。<code>QCoreApplication</code>包含了时间的主循环，它能添加和删除所有的事件。<code>instance()</code>创建了一个它的实例。<code>QCoreApplication</code>是在<code>QApplication</code>里创建的。点击事件和能终止进程并推出应用的quit函数绑定在了一起。在发送者和接收者之间建立了通讯，发送者就是按钮，接收者就是应用对象。</p>
+<p>点击一下<code>Quit</code>，程序就会自动退出。</p>
+<h3 id="例5-消息盒子">例5 消息盒子</h3>
+<p>默认情况下，我们点击标题栏的x按钮，QWidget就会关闭。但是有时候，我们需要修改这个默认行为。例如，我们打开的是一个文件编辑器，并且做了一些修改，这个时候就需要在关闭按钮的时候让用户进一步确认操作。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QMessageBox, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        </span><br><span class="line">        self.initUI()</span><br><span class="line">        </span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.setWidnowTitle(<span class="string">&#x27;Message box&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closeEvent</span>(<span class="params">self, event</span>) -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">       </span><br><span class="line">    	reply = QMessageBox.question(self, <span class="string">&#x27;Message&#x27;</span>, <span class="string">&quot;Are you sure to quit?&quot;</span>, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br><span class="line">        <span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">            event.accept()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            event.ignore()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>如果关闭<code>QWidget</code>，就会产生一个<code>QCloseEvent</code>，并且把它传入到<code>closeEvent</code>函数的event参数中。改变控件的默认行为，就是替换掉默认的事件处理。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">reply &#x3D; QMessageBox.question(self, &#39;Message&#39;,&quot;Are you sure to quit?&quot;, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br></pre></td></tr></table></figure>
+<p>上述代码创建了一个消息框，上面有两个按钮：<code>Yes</code>和<code>No</code>。第一个字符串显示在消息框的标题，第二个字符串显示在对话框，第三个参数是消息框的两个按钮，最后一个参数是默认按钮，这个按钮是默选中的。返回值在变量<code>reply</code>里。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">	event.accept()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	event.ignore()</span><br></pre></td></tr></table></figure>
+<p>这里判断返回值，如果点击的是Yes按钮，就关闭组件和应用，否则就忽略关闭事件。</p>
+<p>程序预览：</p>
+<p>例6 窗口居中</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QDestopWidget, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        </span><br><span class="line">        self.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.center()</span><br><span class="line">        </span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Center&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span>(<span class="params">self</span>):</span></span><br><span class="line">        qr = self.frameGeometry()</span><br><span class="line">        cp = QDesktopWidget().availableGeometry().center()</span><br><span class="line">        qr.moveCenter(cp)</span><br><span class="line">        self.move(qr.topLeft())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    </span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<hr />
+<p><code>QtGui.QDesktopWidget</code>提供了用户的桌面信息，包括屏幕的大小。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.center()</span><br></pre></td></tr></table></figure>
+<p>这个方法调用下面实现对话框居中的方法。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qr &#x3D; self.frameGeometry()</span><br></pre></td></tr></table></figure>
+<p>获得主窗口所在的框架。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cp = QDesktopWidget().availableGeometry().center()</span><br></pre></td></tr></table></figure>
+<p>获得显示器的分辨率，然后得到屏幕中心点的位置。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qr.moveCenter(cp)</span><br></pre></td></tr></table></figure>
+<p>然后把主窗口框架中心点位置放置到屏幕的中心位置。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.move(qr.topLeft())</span><br></pre></td></tr></table></figure>
+<p>然后通过move函数把主窗口的左上角移动到其框架的左上角，这样就把窗口居中了。</p>
+<p>程序预览：</p>
 ]]></content>
       <tags>
-        <tag>PyTorch</tag>
+        <tag>PyQt5</tag>
       </tags>
   </entry>
   <entry>
@@ -2390,6 +2365,31 @@
       </tags>
   </entry>
   <entry>
+    <title>PyTorch中的Tensor</title>
+    <url>/p/Tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
+<a id="more"></a>
+<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
+<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
+<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
+<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyTorch中的损失函数和优化器</title>
     <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
     <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
@@ -2404,23 +2404,6 @@
       <tags>
         <tag>PyTorch</tag>
         <tag>计算图</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python3中decode和encode的区别</title>
-    <url>/p/how-to-use-requests-in-python/</url>
-    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
-<a id="more"></a>
-<h3 id="decode和encode的区别">decode和encode的区别</h3>
-<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
-<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
-<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>decode</tag>
-        <tag>encode</tag>
       </tags>
   </entry>
   <entry>
@@ -2515,6 +2498,23 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python3中decode和encode的区别</title>
+    <url>/p/how-to-use-requests-in-python/</url>
+    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
+<a id="more"></a>
+<h3 id="decode和encode的区别">decode和encode的区别</h3>
+<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
+<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
+<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>decode</tag>
+        <tag>encode</tag>
       </tags>
   </entry>
   <entry>
