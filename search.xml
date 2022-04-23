@@ -3904,84 +3904,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>ROS系统学习小记(二)</title>
-    <url>/p/ROS-system-learning-notes-02/</url>
-    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
-<p><strong>关键词：</strong>ROS</p>
-<a id="more"></a>
-<h3 id="ros试用练习">ROS试用练习</h3>
-<h4 id="ros文件系统">ROS文件系统</h4>
-<p>我们通过命令行工具来浏览ROS的文件系统。</p>
-<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
-<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
-<p>你将要获得以下信息：</p>
-<p><img src="image-20201019194410801.png" /></p>
-<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
-<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
-<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
-<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
-<p><img src="image-20201019195209283.png" /></p>
-<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
-<p>将获得以下新路径：</p>
-<p><img src="image-20201019195406492.png" /></p>
-<h4 id="创建工作空间">创建工作空间</h4>
-<p>我们会在工作空间完成本书使用的所有代码。</p>
-<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
-<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
-<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
-<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
-<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
-<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
-<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
-<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
-<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
-<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
-<p>如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
-<p>这些依赖项主要包括以下几个：</p>
-<ul>
-<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
-<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
-</ul>
-<p>如果所有步骤一切顺利，结果如下图所示：</p>
-<p><img src="image-20201019202650647.png" /></p>
-<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
-<ul>
-<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
-<li>rospack find TEST：此命令用于查看依赖关系。</li>
-<li>rosls TEST：此命令用于查看内容</li>
-<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
-</ul>
-<h4 id="编译ros功能包">编译ROS功能包</h4>
-<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
-<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
-<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
-<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
-<p><img src="image-20201019204443411.png" /></p>
-<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
-<p>如果编译单个工具包，可以使用如下格式的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4143,6 +4065,84 @@ y=x^2e^x
 <p>查看里面的代码</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
 <p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack find</strong> 命令也可以用于查找元功能包。</p>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ROS系统学习小记(二)</title>
+    <url>/p/ROS-system-learning-notes-02/</url>
+    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
+<p><strong>关键词：</strong>ROS</p>
+<a id="more"></a>
+<h3 id="ros试用练习">ROS试用练习</h3>
+<h4 id="ros文件系统">ROS文件系统</h4>
+<p>我们通过命令行工具来浏览ROS的文件系统。</p>
+<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
+<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
+<p>你将要获得以下信息：</p>
+<p><img src="image-20201019194410801.png" /></p>
+<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
+<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
+<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
+<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
+<p><img src="image-20201019195209283.png" /></p>
+<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
+<p>将获得以下新路径：</p>
+<p><img src="image-20201019195406492.png" /></p>
+<h4 id="创建工作空间">创建工作空间</h4>
+<p>我们会在工作空间完成本书使用的所有代码。</p>
+<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
+<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
+<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
+<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
+<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
+<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
+<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
+<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
+<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
+<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
+<p>如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
+<p>这些依赖项主要包括以下几个：</p>
+<ul>
+<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
+<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
+</ul>
+<p>如果所有步骤一切顺利，结果如下图所示：</p>
+<p><img src="image-20201019202650647.png" /></p>
+<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
+<ul>
+<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
+<li>rospack find TEST：此命令用于查看依赖关系。</li>
+<li>rosls TEST：此命令用于查看内容</li>
+<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
+</ul>
+<h4 id="编译ros功能包">编译ROS功能包</h4>
+<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
+<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
+<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
+<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
+<p><img src="image-20201019204443411.png" /></p>
+<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
+<p>如果编译单个工具包，可以使用如下格式的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ROS</tag>
