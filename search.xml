@@ -1519,35 +1519,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang LogAgent 项目实战（三）</title>
-    <url>/p/LogAgent-project-action-in-golang-3/</url>
-    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
-<p><strong>关键词：日志收集项目</strong></p>
-<a id="more"></a>
-<h2 id="架构图">架构图</h2>
-<p><img src="image-20211130214306450.png" /></p>
-<h3 id="logagent工作流程">LogAgent工作流程</h3>
-<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="往kafka里写日志">往Kafka里写日志</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
-<h4 id="tail介绍">tail介绍</h4>
-<h3 id="第一版程序">第一版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
-<p><img src="image-20211201205643407.png" /></p>
-<p>设计包的入口函数时，要考虑上面的设计模式。</p>
-<h3 id="第二版程序">第二版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
-<p>读取配置文件版本的logAgent</p>
-<h4 id="go-ini库的使用">go-ini库的使用</h4>
-<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>golang LogAgent 项目实战（一）</title>
     <url>/p/LogAgent-project-action-in-golang-1/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1594,6 +1565,35 @@
 <li>Kafka和zookeeper的使用</li>
 <li>etcd的使用</li>
 </ul>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang LogAgent 项目实战（三）</title>
+    <url>/p/LogAgent-project-action-in-golang-3/</url>
+    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
+<p><strong>关键词：日志收集项目</strong></p>
+<a id="more"></a>
+<h2 id="架构图">架构图</h2>
+<p><img src="image-20211130214306450.png" /></p>
+<h3 id="logagent工作流程">LogAgent工作流程</h3>
+<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="往kafka里写日志">往Kafka里写日志</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
+<h4 id="tail介绍">tail介绍</h4>
+<h3 id="第一版程序">第一版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
+<p><img src="image-20211201205643407.png" /></p>
+<p>设计包的入口函数时，要考虑上面的设计模式。</p>
+<h3 id="第二版程序">第二版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
+<p>读取配置文件版本的logAgent</p>
+<h4 id="go-ini库的使用">go-ini库的使用</h4>
+<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -2407,6 +2407,23 @@
       </tags>
   </entry>
   <entry>
+    <title>Python3中decode和encode的区别</title>
+    <url>/p/how-to-use-requests-in-python/</url>
+    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
+<a id="more"></a>
+<h3 id="decode和encode的区别">decode和encode的区别</h3>
+<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
+<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
+<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>decode</tag>
+        <tag>encode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyTorch中的自动求导机制和计算图</title>
     <url>/p/automatic-derivation-mechanism-and-calculation-graph-in-PyTorch/</url>
     <content><![CDATA[<p>本文介绍了 PyTorch 的自动求导机制和计算图。</p>
@@ -2498,23 +2515,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python3中decode和encode的区别</title>
-    <url>/p/how-to-use-requests-in-python/</url>
-    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
-<a id="more"></a>
-<h3 id="decode和encode的区别">decode和encode的区别</h3>
-<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
-<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
-<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>decode</tag>
-        <tag>encode</tag>
       </tags>
   </entry>
   <entry>
@@ -7564,6 +7564,27 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>数值分析第一章作业</title>
+    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，数值分析</p>
+<a id="more"></a>
+<p><img src="image-20201013093358782.png" /></p>
+<p><img src="image-20201013102937713.png" /></p>
+<p><img src="image-20201013104909315.png" /></p>
+<p><img src="image-20201013104922645.png" /></p>
+<p><img src="image-20201013104953613.png" /></p>
+<p><img src="image-20201013110136891.png" /></p>
+<p><img src="image-20201013110806596.png" /> <span class="math display">\[
+2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
+\]</span></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>搭建hexo并推送到GitHub Pages</title>
     <url>/p/build-a-hexo-blog-and-push-to-GitHub-Pages/</url>
     <content><![CDATA[<p>之前因为重装系统丢掉了已经搭建好的Hexo博客配置文件。经过这件事以后我深刻地记住了备份的重要性。趁着刚刚搭建完博客，于是写一篇文章水一下！</p>
@@ -7624,27 +7645,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       <tags>
         <tag>git</tag>
         <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数值分析第一章作业</title>
-    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，数值分析</p>
-<a id="more"></a>
-<p><img src="image-20201013093358782.png" /></p>
-<p><img src="image-20201013102937713.png" /></p>
-<p><img src="image-20201013104909315.png" /></p>
-<p><img src="image-20201013104922645.png" /></p>
-<p><img src="image-20201013104953613.png" /></p>
-<p><img src="image-20201013110136891.png" /></p>
-<p><img src="image-20201013110806596.png" /> <span class="math display">\[
-2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
-\]</span></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
