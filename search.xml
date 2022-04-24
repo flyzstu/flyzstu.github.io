@@ -592,6 +592,21 @@
       </tags>
   </entry>
   <entry>
+    <title>golang中的生产者消费者模型</title>
+    <url>/p/producer-consumer-model-in-golang/</url>
+    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
+<p><strong>关键词</strong>：生产者消费者模型，golang</p>
+<a id="more"></a>
+<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
+<h2 id="简易生产者模型">简易生产者模型</h2>
+<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go语言中的切片、Map和Channel</title>
     <url>/p/slice-map-and-channel-in-golang/</url>
     <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
@@ -615,21 +630,6 @@
 <li>主函数最后要执行<code>wg.Wait()</code>，阻塞直到子协程</li>
 </ol>
 <p>退出。</p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang中的生产者消费者模型</title>
-    <url>/p/producer-consumer-model-in-golang/</url>
-    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
-<p><strong>关键词</strong>：生产者消费者模型，golang</p>
-<a id="more"></a>
-<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
-<h2 id="简易生产者模型">简易生产者模型</h2>
-<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -2365,23 +2365,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PyTorch中的损失函数和优化器</title>
-    <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
-    <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
-<p><strong>关键字</strong>：PyTorch，损失函数，优化器</p>
-<a id="more"></a>
-<h2 id="损失函数">损失函数</h2>
-<p>一般来说，PyTorch的损失函数有两种形式：函数形式和模块形式。前者调用的是torch.nn.funtional库中的函数，通过传入神经网络预测值和目标值来计算损失函数，后者是torch.nn库里的模块，通过新建一个模块的实例，然后通过调用模块的方法来计算最终的损失函数。</p>
-<p>由于训练数据一般以<strong>迷你批次</strong>的形式输入神经网络，最后预测的只也是以迷你批次的形式输出的，而损失函数最后的输出结果应该是一个标量张量，因此，对于迷你批次的化简一般有两种方法，一般是对迷你批次的损失函数求和，第二种是对迷你批次的损失函数u求平均。一般来说，也是默认和最常见的情形，最后输出的损失函数是迷你批次损失函数的平均。</p>
-<p>神经网络处理的预测问题主要分为<strong>回归问题和分类问题</strong>。对于回归问题，一般情况下使用的是<code>torch.nn.MSELoss</code>模块，即平方损失函数。通过创建这个模块的实例（一般使用默认参数，即在类的构造函数中不传入任何参数，这样会输出迷你批次的平均；如果要输出迷你批次的每个损失函数，可以指定参数<code>reduction='none'</code>；如果要输出迷你批次的损失函数，可以指定参数<code>reduction='sum'</code>.在实例中传入神经网络预测的值和目标值，能够计算得到最终的损失函数。具体的代码可以参考：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mse = t.nn.MSELoss()  <span class="comment">#初始化平方损失模块</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t1</span></span><br><span class="line">t2 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t2</span></span><br><span class="line">mse(t1, t2) <span class="comment"># 计算张量t1和t2之间的平方损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.9193, grad_fn=&lt;MeanBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">bse = t.nn.BCELoss() <span class="comment"># 初始化二分类交叉损失函数</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#随机生成张量t1</span></span><br><span class="line">t1s = t.sigmoid(t1) <span class="comment"># 对张量求sigmoid函数, 转换为(0, 1)之间的概率</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">5</span>,)).float() <span class="comment">#随机生成0, 1整数序列, 并转换为浮点数</span></span><br><span class="line">bse(t1s, t2) <span class="comment">#计算二分类的交叉熵</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">bce_logits = t.nn.BCEWithLogitsLoss() <span class="comment">#初始化交叉熵对数损失函数</span></span><br><span class="line">bce_logits(t1, t2) <span class="comment">#计算二分类的交叉熵 (和前面结果一样)</span></span><br><span class="line"><span class="comment"># 这是因为, BCEWithLogitsLoss会先让输入经过sigmoid函数, 变成概率分布的形式, 再计算二分类交叉熵.</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyWithLogitsBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">N = <span class="number">10</span> <span class="comment"># 定义分类数目</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, N, requires_grad=<span class="literal">True</span>) <span class="comment">#随机产生预测张量</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, N, (<span class="number">5</span>, ))            <span class="comment">#随机产生目标张量</span></span><br><span class="line">t1s = t.nn.functional.log_softmax(t1, <span class="number">-1</span>) <span class="comment"># 计算预测张量的LogSoftmax</span></span><br><span class="line">nll = t.nn.NLLLoss() <span class="comment">#定义NLL损失函数</span></span><br><span class="line">nll(t1s, t2) <span class="comment">#计算损失函数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">ce = t.nn.CrossEntropyLoss() <span class="comment">#定义交叉熵损失函数</span></span><br><span class="line">ce(t1, t2) <span class="comment"># 和前面计算结果相同</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-        <tag>计算图</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PyTorch中的Tensor</title>
     <url>/p/Tensor-in-PyTorch/</url>
     <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
@@ -2404,6 +2387,23 @@
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyTorch中的损失函数和优化器</title>
+    <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
+    <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
+<p><strong>关键字</strong>：PyTorch，损失函数，优化器</p>
+<a id="more"></a>
+<h2 id="损失函数">损失函数</h2>
+<p>一般来说，PyTorch的损失函数有两种形式：函数形式和模块形式。前者调用的是torch.nn.funtional库中的函数，通过传入神经网络预测值和目标值来计算损失函数，后者是torch.nn库里的模块，通过新建一个模块的实例，然后通过调用模块的方法来计算最终的损失函数。</p>
+<p>由于训练数据一般以<strong>迷你批次</strong>的形式输入神经网络，最后预测的只也是以迷你批次的形式输出的，而损失函数最后的输出结果应该是一个标量张量，因此，对于迷你批次的化简一般有两种方法，一般是对迷你批次的损失函数求和，第二种是对迷你批次的损失函数u求平均。一般来说，也是默认和最常见的情形，最后输出的损失函数是迷你批次损失函数的平均。</p>
+<p>神经网络处理的预测问题主要分为<strong>回归问题和分类问题</strong>。对于回归问题，一般情况下使用的是<code>torch.nn.MSELoss</code>模块，即平方损失函数。通过创建这个模块的实例（一般使用默认参数，即在类的构造函数中不传入任何参数，这样会输出迷你批次的平均；如果要输出迷你批次的每个损失函数，可以指定参数<code>reduction='none'</code>；如果要输出迷你批次的损失函数，可以指定参数<code>reduction='sum'</code>.在实例中传入神经网络预测的值和目标值，能够计算得到最终的损失函数。具体的代码可以参考：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mse = t.nn.MSELoss()  <span class="comment">#初始化平方损失模块</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t1</span></span><br><span class="line">t2 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t2</span></span><br><span class="line">mse(t1, t2) <span class="comment"># 计算张量t1和t2之间的平方损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.9193, grad_fn=&lt;MeanBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">bse = t.nn.BCELoss() <span class="comment"># 初始化二分类交叉损失函数</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#随机生成张量t1</span></span><br><span class="line">t1s = t.sigmoid(t1) <span class="comment"># 对张量求sigmoid函数, 转换为(0, 1)之间的概率</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">5</span>,)).float() <span class="comment">#随机生成0, 1整数序列, 并转换为浮点数</span></span><br><span class="line">bse(t1s, t2) <span class="comment">#计算二分类的交叉熵</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">bce_logits = t.nn.BCEWithLogitsLoss() <span class="comment">#初始化交叉熵对数损失函数</span></span><br><span class="line">bce_logits(t1, t2) <span class="comment">#计算二分类的交叉熵 (和前面结果一样)</span></span><br><span class="line"><span class="comment"># 这是因为, BCEWithLogitsLoss会先让输入经过sigmoid函数, 变成概率分布的形式, 再计算二分类交叉熵.</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyWithLogitsBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">N = <span class="number">10</span> <span class="comment"># 定义分类数目</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, N, requires_grad=<span class="literal">True</span>) <span class="comment">#随机产生预测张量</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, N, (<span class="number">5</span>, ))            <span class="comment">#随机产生目标张量</span></span><br><span class="line">t1s = t.nn.functional.log_softmax(t1, <span class="number">-1</span>) <span class="comment"># 计算预测张量的LogSoftmax</span></span><br><span class="line">nll = t.nn.NLLLoss() <span class="comment">#定义NLL损失函数</span></span><br><span class="line">nll(t1s, t2) <span class="comment">#计算损失函数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">ce = t.nn.CrossEntropyLoss() <span class="comment">#定义交叉熵损失函数</span></span><br><span class="line">ce(t1, t2) <span class="comment"># 和前面计算结果相同</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+        <tag>计算图</tag>
       </tags>
   </entry>
   <entry>
@@ -3510,17 +3510,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python升级pip</title>
-    <url>/p/how-to-upgrade%20pip-in-python/</url>
-    <content><![CDATA[<p>安装pip：<code>apt install python3-pip</code></p>
-<p>升级pip：<code>python -m pip install --upgrade pip</code></p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>pip</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python多线程的应用</title>
     <url>/p/how-to-use-python-multithreading/</url>
     <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
@@ -3565,6 +3554,17 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python升级pip</title>
+    <url>/p/how-to-upgrade%20pip-in-python/</url>
+    <content><![CDATA[<p>安装pip：<code>apt install python3-pip</code></p>
+<p>升级pip：<code>python -m pip install --upgrade pip</code></p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>pip</tag>
       </tags>
   </entry>
   <entry>
@@ -6206,151 +6206,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>初探Docker(二)</title>
-    <url>/p/docker-tutorial-02/</url>
-    <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
-<p><strong>摘要：什么是 Dockerfile？</strong></p>
-<p>Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。</p>
-<p><strong>关键词：</strong>Dockerfile</p>
-<a id="more"></a>
-<h3 id="使用-dockerfile-定制镜像">使用 Dockerfile 定制镜像</h3>
-<h4 id="定制一个ubuntu镜像">定制一个ubuntu镜像</h4>
-<p>在一个空目录下，新建一个名为 Dockerfile 文件，并在文件内添加以下内容：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;这是一个本地构建的ubuntu:18.04镜像&#x27;</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="from-和-run-指令的作用">FROM 和 RUN 指令的作用</h4>
-<p><strong>FROM</strong>：定制的镜像都是基于 FROM 的镜像，这里的 <strong>ubuntu:18.04</strong>就是定制需要的基础镜像。后续的操作都是基于 ubuntu。</p>
-<p><strong>RUN</strong>：用于执行后面跟着的命令行命令。有以下两种格式：</p>
-<p>Shell格式</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> &lt;命令行命令&gt;</span></span><br><span class="line"><span class="comment"># &lt;命令行命令&gt; 等同于，在终端操作的 shell 命令。</span></span><br></pre></td></tr></table></figure>
-<p>Exec 格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> [<span class="string">&quot;可执行文件&quot;</span>, <span class="string">&quot;参数1&quot;</span>, <span class="string">&quot;参数2&quot;</span>]</span></span><br><span class="line"><span class="comment"># 例如：</span></span><br><span class="line"><span class="comment"># RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于 RUN ./test.php dev offline</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意</strong>：Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。</p>
-<p>​ 例如：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span></span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
-<p>​ 以上执行会创建 3 层镜像。可简化为以下格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget \</span></span><br><span class="line"><span class="bash">    &amp;&amp; wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span> \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
-<p>以 <strong>&amp;&amp;</strong> 符号连接命令，这样执行后，只会创建 1 层镜像。</p>
-<h4 id="开始构建镜像">开始构建镜像</h4>
-<p>切换到<code>Dockerfile</code> 文件的存放目录，执行以下命令，开始构建对象。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
-<p>以上示例，通过目录下的 Dockerfile 构建一个 <code>ubuntu:latest（镜像名称:镜像标签）</code>。</p>
-<p><strong>注：最后的 . 代表本次执行的上下文路径，下一节会介绍。</strong></p>
-<p><img src="image-20200718201119692.png" /></p>
-<p>以上说明已经构建成功。</p>
-<h4 id="上下文路径">上下文路径</h4>
-<p>上面提到 <strong>.</strong> 是上下文路径，那么什么是上下文路径呢？</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
-<p>上下文路径，是指 docker 在构建镜像，有时候想要使用到本机的文件（比如复制），docker build 命令得知这个路径后，会将路径下的所有内容打包。</p>
-<blockquote>
-<p>由于 docker 的运行模式是 C/S。我们本机是 C，docker 引擎是 S。实际的构建过程是在 docker 引擎下完成的，所以这个时候无法用到我们本机的文件。这就需要把我们本机的指定目录下的文件一起打包提供给 docker 引擎使用。</p>
-</blockquote>
-<p>如果未说明最后一个参数，那么默认上下文路径就是 Dockerfile 所在的位置。</p>
-<p><strong>注意：上下文路径下不要放无用的文件，因为会一起打包发送给 docker 引擎，如果文件过多会造成过程缓慢。</strong></p>
-<h3 id="指令详解">指令详解</h3>
-<h4 id="copy">COPY</h4>
-<p>复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径1&gt;...  &lt;目标路径&gt;</span><br><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] [<span class="string">&quot;&lt;源路径1&gt;&quot;</span>,...  <span class="string">&quot;&lt;目标路径&gt;&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>[--chown=:]</strong>：可选参数，用户改变复制到容器内文件的拥有者和属组。</p>
-<p><strong><源路径></strong>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">COPY</span><span class="bash"> hom* /mydir/</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> hom?.txt /mydir/</span></span><br></pre></td></tr></table></figure>
-<p><strong><目标路径></strong>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。</p>
-<h4 id="add">ADD</h4>
-<p>ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：</p>
-<ul>
-<li>ADD 的优点：在执行 <strong><源文件></strong> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <strong><目标路径></strong>。</li>
-<li>ADD 的缺点：在不解压的前提下，无法复制 tar 压缩文件。会令镜像构建缓存失效，从而可能会令镜像构建变得比较缓慢。具体是否使用，可以根据是否需要自动解压来决定。</li>
-</ul>
-<h4 id="cmd">CMD</h4>
-<p>类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:</p>
-<ul>
-<li>CMD 在docker run 时运行。</li>
-<li>RUN 是在 docker build 时运行。</li>
-</ul>
-<p><strong>作用</strong>：为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD 指令指定的程序可被 docker run 命令行参数中指定要运行的程序所覆盖。</p>
-<p><strong>注意：如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。</strong></p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> &lt;shell 命令&gt; </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;可执行文件或命令&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...] </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]  <span class="comment"># 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数</span></span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>推荐使用第二种格式，执行过程比较明确。第一种格式实际上在运行的过程中也会自动转换成第二种格式运行，并且默认可执行文件是 sh。</p>
-</blockquote>
-<h4 id="entrypoint">ENTRYPOINT</h4>
-<p>类似于 CMD 指令，但其不会被 <code>docker run</code> 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。</p>
-<p>但是, 如果运行 <code>docker run</code> 时使用了 <code>--entrypoint</code> 选项，此选项的参数可当作要运行的程序覆盖 ENTRYPOINT 指令指定的程序。</p>
-<p><strong>优点</strong>：在执行 <code>docker run</code> 的时候可以指定 ENTRYPOINT 运行所需的参数。</p>
-<p><strong>注意</strong>：如果 Dockerfile 中如果存在多个 ENTRYPOINT 指令，仅最后一个生效。</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">&quot;&lt;executeable&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]</span></span><br></pre></td></tr></table></figure>
-<p>可以搭配 CMD 命令使用：一般是变参才会使用 CMD ，这里的 CMD 等于是在给 ENTRYPOINT 传参，以下示例会提到。</p>
-<p>示例：</p>
-<p>假设已通过 Dockerfile 构建了 <strong>nginx:test</strong> 镜像：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM nginx</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;nginx&quot;, &quot;-c&quot;] # 定参</span><br><span class="line">CMD [&quot;&#x2F;etc&#x2F;nginx&#x2F;nginx.conf&quot;] # 变参 </span><br></pre></td></tr></table></figure>
-<p>1、不传参运行</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
-<p>容器内会默认运行以下命令，启动主进程。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-<p>2、传参运行</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span> -c /etc/nginx/new.conf</span></span><br></pre></td></tr></table></figure>
-<p>容器内会默认运行以下命令，启动主进程(/etc/nginx/new.conf:假设容器内已有此文件)</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/new.conf</span><br></pre></td></tr></table></figure>
-<h4 id="env">ENV</h4>
-<p>设置环境变量，定义了环境变量，那么在后续的指令中，就可以使用这个环境变量。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> &lt;key&gt; &lt;value&gt;</span><br><span class="line"><span class="keyword">ENV</span> &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</span><br></pre></td></tr></table></figure>
-<p>以下示例设置 NODE_VERSION = 7.2.0 ， 在后续的指令中可以通过 $NODE_VERSION 引用：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> NODE_VERSION <span class="number">7.2</span>.<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/node-v<span class="variable">$NODE_VERSION</span>-linux-x64.tar.xz&quot;</span> \</span></span><br><span class="line"><span class="bash">  &amp;&amp; curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/SHASUMS256.txt.asc&quot;</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="arg">ARG</h4>
-<p>构建参数，与 ENV 作用一致。不过作用域不一样。ARG 设置的环境变量仅对 Dockerfile 内有效，也就是说只有 <code>docker build</code> 的过程中有效，构建好的镜像内不存在此环境变量。</p>
-<p>构建命令 <code>docker build</code> 中可以用 <code>--build-arg &lt;参数名&gt;=&lt;值&gt;</code> 来覆盖。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ARG</span> &lt;参数名&gt;[=&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
-<h4 id="volume">VOLUME</h4>
-<p>定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。</p>
-<p>作用：</p>
-<ul>
-<li>避免重要的数据，因容器重启而丢失，这是非常致命的。</li>
-<li>避免容器不断变大。</li>
-</ul>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">VOLUME</span><span class="bash"> [<span class="string">&quot;&lt;路径1&gt;&quot;</span>, <span class="string">&quot;&lt;路径2&gt;&quot;</span>...]</span></span><br><span class="line"><span class="keyword">VOLUME</span><span class="bash"> &lt;路径&gt;</span></span><br></pre></td></tr></table></figure>
-<p>在启动容器 docker run 的时候，我们可以通过 -v 参数修改挂载点。</p>
-<p><strong>注意：</strong></p>
-<ol type="1">
-<li>通过<code>docker run</code>命令的<code>-v</code>标识创建的挂载点只能对创建的容器有效。</li>
-<li>通过 Dockerfile 的 VOLUME 指令可以在镜像中创建挂载点，这样只要通过该镜像创建的容器都有了挂载点。</li>
-<li>通过 VOLUME 指令创建的挂载点，无法指定主机上对应的目录，是自动生成的。</li>
-<li><code>docker run</code>中使用 <code>--volumes-from</code>标记的镜像可以共享<strong>匿名数据卷</strong>。镜像可以是同一个镜像，也可以是不同镜像。</li>
-</ol>
-<h4 id="expose">EXPOSE</h4>
-<p>暴露容器的端口。</p>
-<p>作用：</p>
-<ul>
-<li>帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。</li>
-<li>在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 的端口。</li>
-</ul>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">EXPOSE</span> &lt;端口<span class="number">1</span>&gt; [&lt;端口<span class="number">2</span>&gt;...]</span><br></pre></td></tr></table></figure>
-<h4 id="workdir">WORKDIR</h4>
-<p>指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。</p>
-<p>docker build 构建镜像过程中的，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> &lt;工作目录路径&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="user">USER</h4>
-<p>用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。</p>
-<p>格式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br></pre></td></tr></table></figure>
-<h4 id="healthcheck">HEALTHCHECK</h4>
-<p>用于指定某个程序或者指令来监控 docker 容器服务的运行状态。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt;：设置检查容器健康状况的命令</span></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> NONE：如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt; : 这边 CMD 后面跟随的命令使用，可以参考 CMD 的用法。</span></span><br></pre></td></tr></table></figure>
-<h4 id="onbuild">ONBUILD</h4>
-<p>用于延迟构建命令的执行。简单的说，就是 Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这是执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ONBUILD</span> &lt;其它指令&gt;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探docker(三)</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -6619,6 +6474,151 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>heroku</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探Docker(二)</title>
+    <url>/p/docker-tutorial-02/</url>
+    <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
+<p><strong>摘要：什么是 Dockerfile？</strong></p>
+<p>Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。</p>
+<p><strong>关键词：</strong>Dockerfile</p>
+<a id="more"></a>
+<h3 id="使用-dockerfile-定制镜像">使用 Dockerfile 定制镜像</h3>
+<h4 id="定制一个ubuntu镜像">定制一个ubuntu镜像</h4>
+<p>在一个空目录下，新建一个名为 Dockerfile 文件，并在文件内添加以下内容：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;这是一个本地构建的ubuntu:18.04镜像&#x27;</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="from-和-run-指令的作用">FROM 和 RUN 指令的作用</h4>
+<p><strong>FROM</strong>：定制的镜像都是基于 FROM 的镜像，这里的 <strong>ubuntu:18.04</strong>就是定制需要的基础镜像。后续的操作都是基于 ubuntu。</p>
+<p><strong>RUN</strong>：用于执行后面跟着的命令行命令。有以下两种格式：</p>
+<p>Shell格式</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> &lt;命令行命令&gt;</span></span><br><span class="line"><span class="comment"># &lt;命令行命令&gt; 等同于，在终端操作的 shell 命令。</span></span><br></pre></td></tr></table></figure>
+<p>Exec 格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> [<span class="string">&quot;可执行文件&quot;</span>, <span class="string">&quot;参数1&quot;</span>, <span class="string">&quot;参数2&quot;</span>]</span></span><br><span class="line"><span class="comment"># 例如：</span></span><br><span class="line"><span class="comment"># RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于 RUN ./test.php dev offline</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。</p>
+<p>​ 例如：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span></span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>​ 以上执行会创建 3 层镜像。可简化为以下格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget \</span></span><br><span class="line"><span class="bash">    &amp;&amp; wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span> \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>以 <strong>&amp;&amp;</strong> 符号连接命令，这样执行后，只会创建 1 层镜像。</p>
+<h4 id="开始构建镜像">开始构建镜像</h4>
+<p>切换到<code>Dockerfile</code> 文件的存放目录，执行以下命令，开始构建对象。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
+<p>以上示例，通过目录下的 Dockerfile 构建一个 <code>ubuntu:latest（镜像名称:镜像标签）</code>。</p>
+<p><strong>注：最后的 . 代表本次执行的上下文路径，下一节会介绍。</strong></p>
+<p><img src="image-20200718201119692.png" /></p>
+<p>以上说明已经构建成功。</p>
+<h4 id="上下文路径">上下文路径</h4>
+<p>上面提到 <strong>.</strong> 是上下文路径，那么什么是上下文路径呢？</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
+<p>上下文路径，是指 docker 在构建镜像，有时候想要使用到本机的文件（比如复制），docker build 命令得知这个路径后，会将路径下的所有内容打包。</p>
+<blockquote>
+<p>由于 docker 的运行模式是 C/S。我们本机是 C，docker 引擎是 S。实际的构建过程是在 docker 引擎下完成的，所以这个时候无法用到我们本机的文件。这就需要把我们本机的指定目录下的文件一起打包提供给 docker 引擎使用。</p>
+</blockquote>
+<p>如果未说明最后一个参数，那么默认上下文路径就是 Dockerfile 所在的位置。</p>
+<p><strong>注意：上下文路径下不要放无用的文件，因为会一起打包发送给 docker 引擎，如果文件过多会造成过程缓慢。</strong></p>
+<h3 id="指令详解">指令详解</h3>
+<h4 id="copy">COPY</h4>
+<p>复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径1&gt;...  &lt;目标路径&gt;</span><br><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] [<span class="string">&quot;&lt;源路径1&gt;&quot;</span>,...  <span class="string">&quot;&lt;目标路径&gt;&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>[--chown=:]</strong>：可选参数，用户改变复制到容器内文件的拥有者和属组。</p>
+<p><strong><源路径></strong>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">COPY</span><span class="bash"> hom* /mydir/</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> hom?.txt /mydir/</span></span><br></pre></td></tr></table></figure>
+<p><strong><目标路径></strong>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。</p>
+<h4 id="add">ADD</h4>
+<p>ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：</p>
+<ul>
+<li>ADD 的优点：在执行 <strong><源文件></strong> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <strong><目标路径></strong>。</li>
+<li>ADD 的缺点：在不解压的前提下，无法复制 tar 压缩文件。会令镜像构建缓存失效，从而可能会令镜像构建变得比较缓慢。具体是否使用，可以根据是否需要自动解压来决定。</li>
+</ul>
+<h4 id="cmd">CMD</h4>
+<p>类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:</p>
+<ul>
+<li>CMD 在docker run 时运行。</li>
+<li>RUN 是在 docker build 时运行。</li>
+</ul>
+<p><strong>作用</strong>：为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD 指令指定的程序可被 docker run 命令行参数中指定要运行的程序所覆盖。</p>
+<p><strong>注意：如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。</strong></p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> &lt;shell 命令&gt; </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;可执行文件或命令&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...] </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]  <span class="comment"># 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>推荐使用第二种格式，执行过程比较明确。第一种格式实际上在运行的过程中也会自动转换成第二种格式运行，并且默认可执行文件是 sh。</p>
+</blockquote>
+<h4 id="entrypoint">ENTRYPOINT</h4>
+<p>类似于 CMD 指令，但其不会被 <code>docker run</code> 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。</p>
+<p>但是, 如果运行 <code>docker run</code> 时使用了 <code>--entrypoint</code> 选项，此选项的参数可当作要运行的程序覆盖 ENTRYPOINT 指令指定的程序。</p>
+<p><strong>优点</strong>：在执行 <code>docker run</code> 的时候可以指定 ENTRYPOINT 运行所需的参数。</p>
+<p><strong>注意</strong>：如果 Dockerfile 中如果存在多个 ENTRYPOINT 指令，仅最后一个生效。</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">&quot;&lt;executeable&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]</span></span><br></pre></td></tr></table></figure>
+<p>可以搭配 CMD 命令使用：一般是变参才会使用 CMD ，这里的 CMD 等于是在给 ENTRYPOINT 传参，以下示例会提到。</p>
+<p>示例：</p>
+<p>假设已通过 Dockerfile 构建了 <strong>nginx:test</strong> 镜像：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM nginx</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;nginx&quot;, &quot;-c&quot;] # 定参</span><br><span class="line">CMD [&quot;&#x2F;etc&#x2F;nginx&#x2F;nginx.conf&quot;] # 变参 </span><br></pre></td></tr></table></figure>
+<p>1、不传参运行</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
+<p>容器内会默认运行以下命令，启动主进程。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>2、传参运行</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span> -c /etc/nginx/new.conf</span></span><br></pre></td></tr></table></figure>
+<p>容器内会默认运行以下命令，启动主进程(/etc/nginx/new.conf:假设容器内已有此文件)</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/new.conf</span><br></pre></td></tr></table></figure>
+<h4 id="env">ENV</h4>
+<p>设置环境变量，定义了环境变量，那么在后续的指令中，就可以使用这个环境变量。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> &lt;key&gt; &lt;value&gt;</span><br><span class="line"><span class="keyword">ENV</span> &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</span><br></pre></td></tr></table></figure>
+<p>以下示例设置 NODE_VERSION = 7.2.0 ， 在后续的指令中可以通过 $NODE_VERSION 引用：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> NODE_VERSION <span class="number">7.2</span>.<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/node-v<span class="variable">$NODE_VERSION</span>-linux-x64.tar.xz&quot;</span> \</span></span><br><span class="line"><span class="bash">  &amp;&amp; curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/SHASUMS256.txt.asc&quot;</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="arg">ARG</h4>
+<p>构建参数，与 ENV 作用一致。不过作用域不一样。ARG 设置的环境变量仅对 Dockerfile 内有效，也就是说只有 <code>docker build</code> 的过程中有效，构建好的镜像内不存在此环境变量。</p>
+<p>构建命令 <code>docker build</code> 中可以用 <code>--build-arg &lt;参数名&gt;=&lt;值&gt;</code> 来覆盖。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ARG</span> &lt;参数名&gt;[=&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
+<h4 id="volume">VOLUME</h4>
+<p>定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。</p>
+<p>作用：</p>
+<ul>
+<li>避免重要的数据，因容器重启而丢失，这是非常致命的。</li>
+<li>避免容器不断变大。</li>
+</ul>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">VOLUME</span><span class="bash"> [<span class="string">&quot;&lt;路径1&gt;&quot;</span>, <span class="string">&quot;&lt;路径2&gt;&quot;</span>...]</span></span><br><span class="line"><span class="keyword">VOLUME</span><span class="bash"> &lt;路径&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在启动容器 docker run 的时候，我们可以通过 -v 参数修改挂载点。</p>
+<p><strong>注意：</strong></p>
+<ol type="1">
+<li>通过<code>docker run</code>命令的<code>-v</code>标识创建的挂载点只能对创建的容器有效。</li>
+<li>通过 Dockerfile 的 VOLUME 指令可以在镜像中创建挂载点，这样只要通过该镜像创建的容器都有了挂载点。</li>
+<li>通过 VOLUME 指令创建的挂载点，无法指定主机上对应的目录，是自动生成的。</li>
+<li><code>docker run</code>中使用 <code>--volumes-from</code>标记的镜像可以共享<strong>匿名数据卷</strong>。镜像可以是同一个镜像，也可以是不同镜像。</li>
+</ol>
+<h4 id="expose">EXPOSE</h4>
+<p>暴露容器的端口。</p>
+<p>作用：</p>
+<ul>
+<li>帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。</li>
+<li>在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 的端口。</li>
+</ul>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">EXPOSE</span> &lt;端口<span class="number">1</span>&gt; [&lt;端口<span class="number">2</span>&gt;...]</span><br></pre></td></tr></table></figure>
+<h4 id="workdir">WORKDIR</h4>
+<p>指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。</p>
+<p>docker build 构建镜像过程中的，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> &lt;工作目录路径&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="user">USER</h4>
+<p>用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。</p>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br></pre></td></tr></table></figure>
+<h4 id="healthcheck">HEALTHCHECK</h4>
+<p>用于指定某个程序或者指令来监控 docker 容器服务的运行状态。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt;：设置检查容器健康状况的命令</span></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> NONE：如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt; : 这边 CMD 后面跟随的命令使用，可以参考 CMD 的用法。</span></span><br></pre></td></tr></table></figure>
+<h4 id="onbuild">ONBUILD</h4>
+<p>用于延迟构建命令的执行。简单的说，就是 Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这是执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ONBUILD</span> &lt;其它指令&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
@@ -7361,39 +7361,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>奥卡姆剃刀和没有免费的午餐定理</title>
-    <url>/p/Occam&#39;s-razor-and-no-free-lunch-theorem/</url>
-    <content><![CDATA[<p>本文原载于<a href="https://imlogm.github.io/">https://imlogm.github.io</a>，转载请注明出处！</p>
-<p><strong>摘要</strong>：“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理。由于名字有点怪，所以初学者可能在理解上陷入误区。本文试图用简洁易懂的方式解释这两个原则和定理，并告诉大家它们的名字是怎么来的。</p>
-<p><strong>关键字</strong>：机器学习, 奥卡姆剃刀, 没有免费的午餐</p>
-<a id="more"></a>
-<p>“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理，很多书都会提到它们来提升逼格。不过，烦就烦在它们的名字取的有些不好理解，初学者望文生义就容易错误理解。其实，了解了它们名字的由来，这两个原则和定理是很容易想明白的，也不用去纠结如何证明它们，因为它们更接近哲学思想，而不是你会在实际项目中用到的公式。</p>
-<h4 id="奥卡姆剃刀occams-razor">奥卡姆剃刀（Occam’s razor）</h4>
-<p>“奥卡姆剃刀”其实并不是机器学习领域产生的定理，事实上，它是哲学领域的一个思想。这个思想说起来也很简单，7个字，<code>“简单的是最好的”</code>。</p>
-<p>相信大家不难理解这个哲学思想，比如在数学领域，大多数数学家认为“好的公式应当是简洁明了的”，就是“奥卡姆剃刀”的体现。</p>
-<p>这个思想我能理解，但为什么叫这么奇怪的名字？容易想到，“奥卡姆”是提出这个思想的人的名字；至于为什么叫“剃刀”是因为这个思想的提出，对封建旧思想来说是把锋利的剃刀，狠狠地剃除教会的旧思想。（具体是如何剃除旧思想的就不展开了）</p>
-<p>那这个思想是怎么应用在机器学习领域的呢？用下图就可以概括：</p>
-<p><img src="overfit.png" style="zoom:80%;" align="center"/></p>
-<p>了解机器学习的同学不难看出，上图表示的是过拟合问题，不了解的同学也不必担心，可以把上图想象成用曲线拟合几个点。</p>
-<p>那么问题来了，上图中，哪种拟合方式是比较好的呢？相信大多数人都会选择左小图的拟合方式。机器学习领域也通常认为左小图是比较好的，原因就是“奥卡姆剃刀”的思想，“简单的是最好的”。</p>
-<p>有些敢于挑战权威的同学可能会反驳，“怎么证明图1左小图是更简单的呢？我可以认为右小图更简单”。是的，这个问题周志华的西瓜书中也有提到，其实是没有办法说明哪种更简单。这也是哲学问题的通病，难以联系到实际中，往往会有多种解读。</p>
-<p>不过我们不用去纠结怎样才算“简单”，只要明白这个词是什么意思就可以了。</p>
-<p>可能还会有同学反驳，“我同意左小图是简单的，但万一实际情况中右小图才是更符合结果的拟合方式呢？”。这个想法也是对的，我们无法证明实际情况一定是左小图的拟合方式最好。这也就是下面“没有免费的午餐”定理要说明的。</p>
-<h4 id="没有免费的午餐定理no-free-lunch-nfl">“没有免费的午餐”定理（no free lunch, NFL）</h4>
-<p>这个定理的名字乍一看很唬人，也有很多初学者因为这个名字陷入了误区。我们可以先把名字放在一边，先看定理的内容。</p>
-<p>这个定理证明起来很复杂，一长串的数学公式，但说明白其实只要一句话，<code>“没有一种机器学习算法是适用于所有情况的”</code>。</p>
-<p>这也符合我们的直觉。举个例子吧，比如上图，假设上图的左小图是机器算法A给出的拟合曲线，上图的右小图是机器算法B给出的拟合曲线。我们就一定能说机器算法A比机器算法B更好吗？或者说左小图的拟合曲线一定比右小图更符合实际情况吗？都不能。“没有免费的午餐”定理证明了对于所有机器学习问题，机器算法A更好与机器算法B更好的概率是一样的。<code>更一般地说，对于所有机器学习问题，任何一种算法（包括瞎猜）的期望效果都是一样的</code>。</p>
-<p>那我们还学个啥？既然任何算法的期望效果和瞎猜一样，我们为什么还要学？</p>
-<p>注意，这个定理有个前提：“对于所有机器学习问题，且所有问题同等重要”。而我们实际情况不是这样，我们在实际中往往更关心的是一个特定的机器学习问题，对于特定的问题，特定的机器学习算法效果自然比瞎猜更好。还是上图的例子，虽然“没有免费的午餐”定理告诉我们：我们不能预计到底是左小图拟合更好还是右小图拟合更好，但聪明的你一定能想到：是好是坏，代入到具体问题中检验一下不就知道了。</p>
-<p>这个定理本质上就是告诉我们不要奢望能找到一种算法对所有问题都适用。这么说来，这个定理其实有点废话，因为我们面对的总是一个特定的问题，而不是所有问题。</p>
-<p>但是这个定理其实揭示了一个哲学思想，“有得必有失”，某一个机器学习算法在某个领域好用，在另外一个领域就有可能不好用，瞎猜在一些情况下不好用，但在某个特定的问题上会很好用。就像能量守恒定理，这里的能量增加，另外一边的能量就会减少。天上掉馅饼被你捡到了，这个时刻你很幸运，但是之后你就会倒霉。</p>
-<p>理解了上面一段话，也就明白了这个定理为什么取这么奇怪的名字。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>安装Chromium浏览器并解决缺少 Google API 密钥问题</title>
     <url>/p/how-to-install-Chromium-and-solve-the-problem/</url>
     <content><![CDATA[<p><strong>Chromium</strong>是<a href="https://zh.wikipedia.org/wiki/Google">Google</a>为发展浏览器<a href="https://zh.wikipedia.org/wiki/Google_Chrome">Google Chrome</a>而开启的免费开源软件项目。Chromium的用户界面极简。Google期望使浏览器“在认知和物理上都让人感觉轻巧，快速”。（英语：feel lightweight (cognitively and physically) and fast.</p>
@@ -7475,6 +7442,39 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>奥卡姆剃刀和没有免费的午餐定理</title>
+    <url>/p/Occam&#39;s-razor-and-no-free-lunch-theorem/</url>
+    <content><![CDATA[<p>本文原载于<a href="https://imlogm.github.io/">https://imlogm.github.io</a>，转载请注明出处！</p>
+<p><strong>摘要</strong>：“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理。由于名字有点怪，所以初学者可能在理解上陷入误区。本文试图用简洁易懂的方式解释这两个原则和定理，并告诉大家它们的名字是怎么来的。</p>
+<p><strong>关键字</strong>：机器学习, 奥卡姆剃刀, 没有免费的午餐</p>
+<a id="more"></a>
+<p>“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理，很多书都会提到它们来提升逼格。不过，烦就烦在它们的名字取的有些不好理解，初学者望文生义就容易错误理解。其实，了解了它们名字的由来，这两个原则和定理是很容易想明白的，也不用去纠结如何证明它们，因为它们更接近哲学思想，而不是你会在实际项目中用到的公式。</p>
+<h4 id="奥卡姆剃刀occams-razor">奥卡姆剃刀（Occam’s razor）</h4>
+<p>“奥卡姆剃刀”其实并不是机器学习领域产生的定理，事实上，它是哲学领域的一个思想。这个思想说起来也很简单，7个字，<code>“简单的是最好的”</code>。</p>
+<p>相信大家不难理解这个哲学思想，比如在数学领域，大多数数学家认为“好的公式应当是简洁明了的”，就是“奥卡姆剃刀”的体现。</p>
+<p>这个思想我能理解，但为什么叫这么奇怪的名字？容易想到，“奥卡姆”是提出这个思想的人的名字；至于为什么叫“剃刀”是因为这个思想的提出，对封建旧思想来说是把锋利的剃刀，狠狠地剃除教会的旧思想。（具体是如何剃除旧思想的就不展开了）</p>
+<p>那这个思想是怎么应用在机器学习领域的呢？用下图就可以概括：</p>
+<p><img src="overfit.png" style="zoom:80%;" align="center"/></p>
+<p>了解机器学习的同学不难看出，上图表示的是过拟合问题，不了解的同学也不必担心，可以把上图想象成用曲线拟合几个点。</p>
+<p>那么问题来了，上图中，哪种拟合方式是比较好的呢？相信大多数人都会选择左小图的拟合方式。机器学习领域也通常认为左小图是比较好的，原因就是“奥卡姆剃刀”的思想，“简单的是最好的”。</p>
+<p>有些敢于挑战权威的同学可能会反驳，“怎么证明图1左小图是更简单的呢？我可以认为右小图更简单”。是的，这个问题周志华的西瓜书中也有提到，其实是没有办法说明哪种更简单。这也是哲学问题的通病，难以联系到实际中，往往会有多种解读。</p>
+<p>不过我们不用去纠结怎样才算“简单”，只要明白这个词是什么意思就可以了。</p>
+<p>可能还会有同学反驳，“我同意左小图是简单的，但万一实际情况中右小图才是更符合结果的拟合方式呢？”。这个想法也是对的，我们无法证明实际情况一定是左小图的拟合方式最好。这也就是下面“没有免费的午餐”定理要说明的。</p>
+<h4 id="没有免费的午餐定理no-free-lunch-nfl">“没有免费的午餐”定理（no free lunch, NFL）</h4>
+<p>这个定理的名字乍一看很唬人，也有很多初学者因为这个名字陷入了误区。我们可以先把名字放在一边，先看定理的内容。</p>
+<p>这个定理证明起来很复杂，一长串的数学公式，但说明白其实只要一句话，<code>“没有一种机器学习算法是适用于所有情况的”</code>。</p>
+<p>这也符合我们的直觉。举个例子吧，比如上图，假设上图的左小图是机器算法A给出的拟合曲线，上图的右小图是机器算法B给出的拟合曲线。我们就一定能说机器算法A比机器算法B更好吗？或者说左小图的拟合曲线一定比右小图更符合实际情况吗？都不能。“没有免费的午餐”定理证明了对于所有机器学习问题，机器算法A更好与机器算法B更好的概率是一样的。<code>更一般地说，对于所有机器学习问题，任何一种算法（包括瞎猜）的期望效果都是一样的</code>。</p>
+<p>那我们还学个啥？既然任何算法的期望效果和瞎猜一样，我们为什么还要学？</p>
+<p>注意，这个定理有个前提：“对于所有机器学习问题，且所有问题同等重要”。而我们实际情况不是这样，我们在实际中往往更关心的是一个特定的机器学习问题，对于特定的问题，特定的机器学习算法效果自然比瞎猜更好。还是上图的例子，虽然“没有免费的午餐”定理告诉我们：我们不能预计到底是左小图拟合更好还是右小图拟合更好，但聪明的你一定能想到：是好是坏，代入到具体问题中检验一下不就知道了。</p>
+<p>这个定理本质上就是告诉我们不要奢望能找到一种算法对所有问题都适用。这么说来，这个定理其实有点废话，因为我们面对的总是一个特定的问题，而不是所有问题。</p>
+<p>但是这个定理其实揭示了一个哲学思想，“有得必有失”，某一个机器学习算法在某个领域好用，在另外一个领域就有可能不好用，瞎猜在一些情况下不好用，但在某个特定的问题上会很好用。就像能量守恒定理，这里的能量增加，另外一边的能量就会减少。天上掉馅饼被你捡到了，这个时刻你很幸运，但是之后你就会倒霉。</p>
+<p>理解了上面一段话，也就明白了这个定理为什么取这么奇怪的名字。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
