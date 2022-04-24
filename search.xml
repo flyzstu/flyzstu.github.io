@@ -592,21 +592,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang中的生产者消费者模型</title>
-    <url>/p/producer-consumer-model-in-golang/</url>
-    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
-<p><strong>关键词</strong>：生产者消费者模型，golang</p>
-<a id="more"></a>
-<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
-<h2 id="简易生产者模型">简易生产者模型</h2>
-<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go语言中的切片、Map和Channel</title>
     <url>/p/slice-map-and-channel-in-golang/</url>
     <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
@@ -630,6 +615,21 @@
 <li>主函数最后要执行<code>wg.Wait()</code>，阻塞直到子协程</li>
 </ol>
 <p>退出。</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中的生产者消费者模型</title>
+    <url>/p/producer-consumer-model-in-golang/</url>
+    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
+<p><strong>关键词</strong>：生产者消费者模型，golang</p>
+<a id="more"></a>
+<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
+<h2 id="简易生产者模型">简易生产者模型</h2>
+<p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="keyword">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>, results <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -2365,6 +2365,23 @@
       </tags>
   </entry>
   <entry>
+    <title>PyTorch中的损失函数和优化器</title>
+    <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
+    <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
+<p><strong>关键字</strong>：PyTorch，损失函数，优化器</p>
+<a id="more"></a>
+<h2 id="损失函数">损失函数</h2>
+<p>一般来说，PyTorch的损失函数有两种形式：函数形式和模块形式。前者调用的是torch.nn.funtional库中的函数，通过传入神经网络预测值和目标值来计算损失函数，后者是torch.nn库里的模块，通过新建一个模块的实例，然后通过调用模块的方法来计算最终的损失函数。</p>
+<p>由于训练数据一般以<strong>迷你批次</strong>的形式输入神经网络，最后预测的只也是以迷你批次的形式输出的，而损失函数最后的输出结果应该是一个标量张量，因此，对于迷你批次的化简一般有两种方法，一般是对迷你批次的损失函数求和，第二种是对迷你批次的损失函数u求平均。一般来说，也是默认和最常见的情形，最后输出的损失函数是迷你批次损失函数的平均。</p>
+<p>神经网络处理的预测问题主要分为<strong>回归问题和分类问题</strong>。对于回归问题，一般情况下使用的是<code>torch.nn.MSELoss</code>模块，即平方损失函数。通过创建这个模块的实例（一般使用默认参数，即在类的构造函数中不传入任何参数，这样会输出迷你批次的平均；如果要输出迷你批次的每个损失函数，可以指定参数<code>reduction='none'</code>；如果要输出迷你批次的损失函数，可以指定参数<code>reduction='sum'</code>.在实例中传入神经网络预测的值和目标值，能够计算得到最终的损失函数。具体的代码可以参考：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mse = t.nn.MSELoss()  <span class="comment">#初始化平方损失模块</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t1</span></span><br><span class="line">t2 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t2</span></span><br><span class="line">mse(t1, t2) <span class="comment"># 计算张量t1和t2之间的平方损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.9193, grad_fn=&lt;MeanBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">bse = t.nn.BCELoss() <span class="comment"># 初始化二分类交叉损失函数</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#随机生成张量t1</span></span><br><span class="line">t1s = t.sigmoid(t1) <span class="comment"># 对张量求sigmoid函数, 转换为(0, 1)之间的概率</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">5</span>,)).float() <span class="comment">#随机生成0, 1整数序列, 并转换为浮点数</span></span><br><span class="line">bse(t1s, t2) <span class="comment">#计算二分类的交叉熵</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">bce_logits = t.nn.BCEWithLogitsLoss() <span class="comment">#初始化交叉熵对数损失函数</span></span><br><span class="line">bce_logits(t1, t2) <span class="comment">#计算二分类的交叉熵 (和前面结果一样)</span></span><br><span class="line"><span class="comment"># 这是因为, BCEWithLogitsLoss会先让输入经过sigmoid函数, 变成概率分布的形式, 再计算二分类交叉熵.</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyWithLogitsBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">N = <span class="number">10</span> <span class="comment"># 定义分类数目</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, N, requires_grad=<span class="literal">True</span>) <span class="comment">#随机产生预测张量</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, N, (<span class="number">5</span>, ))            <span class="comment">#随机产生目标张量</span></span><br><span class="line">t1s = t.nn.functional.log_softmax(t1, <span class="number">-1</span>) <span class="comment"># 计算预测张量的LogSoftmax</span></span><br><span class="line">nll = t.nn.NLLLoss() <span class="comment">#定义NLL损失函数</span></span><br><span class="line">nll(t1s, t2) <span class="comment">#计算损失函数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">ce = t.nn.CrossEntropyLoss() <span class="comment">#定义交叉熵损失函数</span></span><br><span class="line">ce(t1, t2) <span class="comment"># 和前面计算结果相同</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+        <tag>计算图</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyTorch中的Tensor</title>
     <url>/p/Tensor-in-PyTorch/</url>
     <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
@@ -2387,23 +2404,6 @@
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch中的损失函数和优化器</title>
-    <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
-    <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
-<p><strong>关键字</strong>：PyTorch，损失函数，优化器</p>
-<a id="more"></a>
-<h2 id="损失函数">损失函数</h2>
-<p>一般来说，PyTorch的损失函数有两种形式：函数形式和模块形式。前者调用的是torch.nn.funtional库中的函数，通过传入神经网络预测值和目标值来计算损失函数，后者是torch.nn库里的模块，通过新建一个模块的实例，然后通过调用模块的方法来计算最终的损失函数。</p>
-<p>由于训练数据一般以<strong>迷你批次</strong>的形式输入神经网络，最后预测的只也是以迷你批次的形式输出的，而损失函数最后的输出结果应该是一个标量张量，因此，对于迷你批次的化简一般有两种方法，一般是对迷你批次的损失函数求和，第二种是对迷你批次的损失函数u求平均。一般来说，也是默认和最常见的情形，最后输出的损失函数是迷你批次损失函数的平均。</p>
-<p>神经网络处理的预测问题主要分为<strong>回归问题和分类问题</strong>。对于回归问题，一般情况下使用的是<code>torch.nn.MSELoss</code>模块，即平方损失函数。通过创建这个模块的实例（一般使用默认参数，即在类的构造函数中不传入任何参数，这样会输出迷你批次的平均；如果要输出迷你批次的每个损失函数，可以指定参数<code>reduction='none'</code>；如果要输出迷你批次的损失函数，可以指定参数<code>reduction='sum'</code>.在实例中传入神经网络预测的值和目标值，能够计算得到最终的损失函数。具体的代码可以参考：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mse = t.nn.MSELoss()  <span class="comment">#初始化平方损失模块</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t1</span></span><br><span class="line">t2 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t2</span></span><br><span class="line">mse(t1, t2) <span class="comment"># 计算张量t1和t2之间的平方损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.9193, grad_fn=&lt;MeanBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">bse = t.nn.BCELoss() <span class="comment"># 初始化二分类交叉损失函数</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#随机生成张量t1</span></span><br><span class="line">t1s = t.sigmoid(t1) <span class="comment"># 对张量求sigmoid函数, 转换为(0, 1)之间的概率</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">5</span>,)).float() <span class="comment">#随机生成0, 1整数序列, 并转换为浮点数</span></span><br><span class="line">bse(t1s, t2) <span class="comment">#计算二分类的交叉熵</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">bce_logits = t.nn.BCEWithLogitsLoss() <span class="comment">#初始化交叉熵对数损失函数</span></span><br><span class="line">bce_logits(t1, t2) <span class="comment">#计算二分类的交叉熵 (和前面结果一样)</span></span><br><span class="line"><span class="comment"># 这是因为, BCEWithLogitsLoss会先让输入经过sigmoid函数, 变成概率分布的形式, 再计算二分类交叉熵.</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyWithLogitsBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">N = <span class="number">10</span> <span class="comment"># 定义分类数目</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, N, requires_grad=<span class="literal">True</span>) <span class="comment">#随机产生预测张量</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, N, (<span class="number">5</span>, ))            <span class="comment">#随机产生目标张量</span></span><br><span class="line">t1s = t.nn.functional.log_softmax(t1, <span class="number">-1</span>) <span class="comment"># 计算预测张量的LogSoftmax</span></span><br><span class="line">nll = t.nn.NLLLoss() <span class="comment">#定义NLL损失函数</span></span><br><span class="line">nll(t1s, t2) <span class="comment">#计算损失函数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">ce = t.nn.CrossEntropyLoss() <span class="comment">#定义交叉熵损失函数</span></span><br><span class="line">ce(t1, t2) <span class="comment"># 和前面计算结果相同</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-        <tag>计算图</tag>
       </tags>
   </entry>
   <entry>
@@ -6351,54 +6351,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>初探httprouter</title>
-    <url>/p/httprouter-tutorial-01/</url>
-    <content><![CDATA[<p>httprouter 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
-<p>关键词：<strong>httprouter </strong></p>
-<a id="more"></a>
-<p>安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u  <span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br></pre></td></tr></table></figure>
-<p>一个例子作为开始</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, _ httprouter.Params)</span></span> &#123;</span><br><span class="line">	w.Write([]<span class="keyword">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := httprouter.New()</span><br><span class="line">	router.GET(<span class="string">&quot;/hi&quot;</span>, HelloWorld)</span><br><span class="line">	log.Fatal(http.ListenAndServe(<span class="string">&quot;:80&quot;</span>, router))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的代码中，HelloWorld是一个<code>handle httprouter.Handle</code>类型，需要传入三个参数，三个参数的作用以后说。该<code>handle</code>在main函数忠被注册到<code>/hi</code>路径上。运行代码会得到一下效果。</p>
-<p><img src="初探httprouter/image-20220416101901309.png" /></p>
-<p>HTTP Method</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">GET</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;GET&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">HEAD</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;HEAD&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">OPTIONS</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;OPTIONS&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">POST</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;POST&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">PUT</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PUT&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">PATCH</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PATCH&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">DELETE</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;DELETE&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>路由匹配</p>
-<p>net/http的路由匹配</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//	/api,可以访问到</span></span><br><span class="line"><span class="comment">//	/api/,不可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//	/api,可以</span></span><br><span class="line"><span class="comment">//	/api/,也可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api/&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>httprouter的路由匹配</p>
-<p>两者路由命名捕获方式：（是路由命名不是路由参数）</p>
-<ul>
-<li><p><code>:name</code>的捕获方式是匹配内容直到下一个斜线或者路径的结尾</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /blog/:category/:post  </span><br><span class="line">router.GET(<span class="string">&quot;/blog/:category/:post&quot;</span>, Hello) //category/post可以看成是一个变量</span><br><span class="line">	</span><br><span class="line">当请求路径为：</span><br><span class="line">/blog/go/request-routers            match: category=<span class="string">&quot;go&quot;</span>, post=<span class="string">&quot;request-routers&quot;</span></span><br><span class="line">/blog/go/request-routers/           no match, but the router would redirect</span><br><span class="line">/blog/go/                           no match</span><br><span class="line">/blog/go/request-routers/comments   no match</span><br></pre></td></tr></table></figure></li>
-<li><p><code>*name</code>的方式是从指定位置开始（包含前缀"/"）匹配到结尾</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /files/*filepath</span><br><span class="line">router.GET(<span class="string">&quot;/files/*filepath&quot;</span>, Hello) //filepath可以看成是一个变量</span><br><span class="line"></span><br><span class="line">当请求路径为：</span><br><span class="line">/files/                             match: filepath=<span class="string">&quot;/&quot;</span></span><br><span class="line">/files/LICENSE                      match: filepath=<span class="string">&quot;/LICENSE&quot;</span></span><br><span class="line">/files/templates/article.html       match: filepath=<span class="string">&quot;/templates/article.html&quot;</span></span><br><span class="line">/files                              no match, but the router would redirect</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>获取路由命名的参数</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    name := ps.ByName(<span class="string">&quot;who&quot;</span>) <span class="comment">//获取who对应的参数</span></span><br><span class="line">    name := ps[<span class="number">0</span>].Value      <span class="comment">//直接通过Value检索</span></span><br><span class="line">	w.Write([]<span class="keyword">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line">router.GET(<span class="string">&quot;/hi/:who&quot;</span>, HelloWorld)</span><br></pre></td></tr></table></figure>
-<p>httprouter重定向</p>
-<p>​ 如果请求的URL路径包含或者不包含尾随斜线时，但在注册的路径上包含了或没有包含"/"的目标上定义了handler，但是会进行301重定向。简单地说，<strong>不管URL是否带尾随斜线，只要注册路径不存在，但在去掉尾随斜线或加上尾随斜线的路径上定义了handler，就会自动重定向。</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span> *<span class="title">Router</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Router&#123;</span><br><span class="line">		<span class="comment">//是否启用自动重定向</span></span><br><span class="line">        RedirectTrailingSlash:  <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 设置为true时回尝试修复路径, 第一个多余的路径会被删除. 之后, 路由器对已清理的路径进行不区分大小写的查找. 如果可以找到此路由的句柄，则路由器将重定向到正确的路径</span></span><br><span class="line">        RedirectFixedPath:      <span class="literal">true</span>,</span><br><span class="line">        HandleMethodNotAllowed: <span class="literal">true</span>,</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//如果启用，则路由器会自动回复OPTIONS请求</span></span><br><span class="line">        HandleOPTIONS:          <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>下面有几种会重定向的情况</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">注册路径：/blog/:category/:post</span><br><span class="line">请求URL路径：/blog/go/request-routers/</span><br><span class="line"></span><br><span class="line">注册路径：/blog/:category</span><br><span class="line">请求URL路径：/blog/go</span><br><span class="line"></span><br><span class="line">注册路径：/files/*filepath</span><br><span class="line">请求URL路径：/files</span><br></pre></td></tr></table></figure>
-<p>httprouter lookup</p>
-<p>Lookup根据<code>method+path</code>检索对应的Handle，以及<code>Params</code>，并可以通过第三个返回值判断是否会进行重定向。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">Lookup</span><span class="params">(method, path <span class="keyword">string</span>)</span> <span class="params">(Handle, Params, <span class="keyword">bool</span>)</span></span></span><br></pre></td></tr></table></figure>
-<p>httprouter获取请求相关的信息</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">	err := r.ParseForm() <span class="comment">// 解析表单必须</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		w.WriteHeader(http.StatusBadGateway)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Who: %v\n&quot;</span>, ps.ByName(<span class="string">&quot;who&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Method: %v\n&quot;</span>, r.Method)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Host: %v\n&quot;</span>, r.Host)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;UserAgent: %v\n&quot;</span>, r.UserAgent())</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.PostForm: %v\n&quot;</span>, r.PostForm)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.Form: %v\n&quot;</span>, r.Form)</span><br><span class="line">	fmt.Println(<span class="string">&quot;========OK=======&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>其中PostForm获取<code>x-www-form-urlencoded</code>发送的表单，Form获取明文发送如http://127.0.0.1/hi/xxx?user=xxx如user=xxx的信息。</p>
-<p>http返回信息</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    w.WriteHeader(http.statusOK)</span><br><span class="line">    status, err := w.Write([]<span class="keyword">byte</span>&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err := <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    w.Header() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>第一行返回http请求状态码</p>
-<p>第二行返回Body，通常是返回一个json</p>
-<p>第三行是返回Header，格式是map</p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探docker(三)</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -6581,6 +6533,54 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探httprouter</title>
+    <url>/p/httprouter-tutorial-01/</url>
+    <content><![CDATA[<p>httprouter 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
+<p>关键词：<strong>httprouter </strong></p>
+<a id="more"></a>
+<p>安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u  <span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br></pre></td></tr></table></figure>
+<p>一个例子作为开始</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, _ httprouter.Params)</span></span> &#123;</span><br><span class="line">	w.Write([]<span class="keyword">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := httprouter.New()</span><br><span class="line">	router.GET(<span class="string">&quot;/hi&quot;</span>, HelloWorld)</span><br><span class="line">	log.Fatal(http.ListenAndServe(<span class="string">&quot;:80&quot;</span>, router))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码中，HelloWorld是一个<code>handle httprouter.Handle</code>类型，需要传入三个参数，三个参数的作用以后说。该<code>handle</code>在main函数忠被注册到<code>/hi</code>路径上。运行代码会得到一下效果。</p>
+<p><img src="初探httprouter/image-20220416101901309.png" /></p>
+<p>HTTP Method</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">GET</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;GET&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">HEAD</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;HEAD&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">OPTIONS</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;OPTIONS&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">POST</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;POST&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">PUT</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PUT&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">PATCH</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PATCH&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">DELETE</span><span class="params">(path <span class="keyword">string</span>, handle Handle)</span></span> &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;DELETE&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>路由匹配</p>
+<p>net/http的路由匹配</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//	/api,可以访问到</span></span><br><span class="line"><span class="comment">//	/api/,不可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//	/api,可以</span></span><br><span class="line"><span class="comment">//	/api/,也可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api/&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>httprouter的路由匹配</p>
+<p>两者路由命名捕获方式：（是路由命名不是路由参数）</p>
+<ul>
+<li><p><code>:name</code>的捕获方式是匹配内容直到下一个斜线或者路径的结尾</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /blog/:category/:post  </span><br><span class="line">router.GET(<span class="string">&quot;/blog/:category/:post&quot;</span>, Hello) //category/post可以看成是一个变量</span><br><span class="line">	</span><br><span class="line">当请求路径为：</span><br><span class="line">/blog/go/request-routers            match: category=<span class="string">&quot;go&quot;</span>, post=<span class="string">&quot;request-routers&quot;</span></span><br><span class="line">/blog/go/request-routers/           no match, but the router would redirect</span><br><span class="line">/blog/go/                           no match</span><br><span class="line">/blog/go/request-routers/comments   no match</span><br></pre></td></tr></table></figure></li>
+<li><p><code>*name</code>的方式是从指定位置开始（包含前缀"/"）匹配到结尾</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /files/*filepath</span><br><span class="line">router.GET(<span class="string">&quot;/files/*filepath&quot;</span>, Hello) //filepath可以看成是一个变量</span><br><span class="line"></span><br><span class="line">当请求路径为：</span><br><span class="line">/files/                             match: filepath=<span class="string">&quot;/&quot;</span></span><br><span class="line">/files/LICENSE                      match: filepath=<span class="string">&quot;/LICENSE&quot;</span></span><br><span class="line">/files/templates/article.html       match: filepath=<span class="string">&quot;/templates/article.html&quot;</span></span><br><span class="line">/files                              no match, but the router would redirect</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>获取路由命名的参数</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    name := ps.ByName(<span class="string">&quot;who&quot;</span>) <span class="comment">//获取who对应的参数</span></span><br><span class="line">    name := ps[<span class="number">0</span>].Value      <span class="comment">//直接通过Value检索</span></span><br><span class="line">	w.Write([]<span class="keyword">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line">router.GET(<span class="string">&quot;/hi/:who&quot;</span>, HelloWorld)</span><br></pre></td></tr></table></figure>
+<p>httprouter重定向</p>
+<p>​ 如果请求的URL路径包含或者不包含尾随斜线时，但在注册的路径上包含了或没有包含"/"的目标上定义了handler，但是会进行301重定向。简单地说，<strong>不管URL是否带尾随斜线，只要注册路径不存在，但在去掉尾随斜线或加上尾随斜线的路径上定义了handler，就会自动重定向。</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span> *<span class="title">Router</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Router&#123;</span><br><span class="line">		<span class="comment">//是否启用自动重定向</span></span><br><span class="line">        RedirectTrailingSlash:  <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 设置为true时回尝试修复路径, 第一个多余的路径会被删除. 之后, 路由器对已清理的路径进行不区分大小写的查找. 如果可以找到此路由的句柄，则路由器将重定向到正确的路径</span></span><br><span class="line">        RedirectFixedPath:      <span class="literal">true</span>,</span><br><span class="line">        HandleMethodNotAllowed: <span class="literal">true</span>,</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//如果启用，则路由器会自动回复OPTIONS请求</span></span><br><span class="line">        HandleOPTIONS:          <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面有几种会重定向的情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">注册路径：/blog/:category/:post</span><br><span class="line">请求URL路径：/blog/go/request-routers/</span><br><span class="line"></span><br><span class="line">注册路径：/blog/:category</span><br><span class="line">请求URL路径：/blog/go</span><br><span class="line"></span><br><span class="line">注册路径：/files/*filepath</span><br><span class="line">请求URL路径：/files</span><br></pre></td></tr></table></figure>
+<p>httprouter lookup</p>
+<p>Lookup根据<code>method+path</code>检索对应的Handle，以及<code>Params</code>，并可以通过第三个返回值判断是否会进行重定向。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span> <span class="title">Lookup</span><span class="params">(method, path <span class="keyword">string</span>)</span> <span class="params">(Handle, Params, <span class="keyword">bool</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>httprouter获取请求相关的信息</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">	err := r.ParseForm() <span class="comment">// 解析表单必须</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		w.WriteHeader(http.StatusBadGateway)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Who: %v\n&quot;</span>, ps.ByName(<span class="string">&quot;who&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Method: %v\n&quot;</span>, r.Method)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Host: %v\n&quot;</span>, r.Host)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;UserAgent: %v\n&quot;</span>, r.UserAgent())</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.PostForm: %v\n&quot;</span>, r.PostForm)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.Form: %v\n&quot;</span>, r.Form)</span><br><span class="line">	fmt.Println(<span class="string">&quot;========OK=======&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中PostForm获取<code>x-www-form-urlencoded</code>发送的表单，Form获取明文发送如http://127.0.0.1/hi/xxx?user=xxx如user=xxx的信息。</p>
+<p>http返回信息</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    w.WriteHeader(http.statusOK)</span><br><span class="line">    status, err := w.Write([]<span class="keyword">byte</span>&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err := <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    w.Header() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>第一行返回http请求状态码</p>
+<p>第二行返回Body，通常是返回一个json</p>
+<p>第三行是返回Header，格式是map</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -7161,25 +7161,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <url>/p/swap-nodes-in-pairs/</url>
-    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="swap_ex1.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
-<p><img src="image-20220214194056147.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣每日一题之适龄的朋友</title>
     <url>/p/friends-of-appropriate-ages/</url>
     <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
@@ -7216,6 +7197,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <url>/p/swap-nodes-in-pairs/</url>
+    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="swap_ex1.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
+<p><img src="image-20220214194056147.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
