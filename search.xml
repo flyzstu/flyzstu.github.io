@@ -4210,6 +4210,133 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
+    <url>/p/install-and-configure-coturn-in-debian/</url>
+    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
+<p><strong>关键词</strong>：coturn，stun，turn</p>
+<a id="more"></a>
+<p>安装Coturn一般分为两步。</p>
+<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
+<p>第二步是安装Coturn。</p>
+<h2 id="安装libevent">安装libevent</h2>
+<p>相关地址：</p>
+<ul>
+<li>https://github.com/libevent/libevent</li>
+<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
+</ul>
+<p><strong>注意</strong></p>
+<p>libevent与openssl的版本对应关系如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>libevent</th>
+<th>openssl</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2.1.x</td>
+<td>1.1</td>
+</tr>
+<tr class="even">
+<td>2.0.x</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
+<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
+<h3 id="查看openssl版本">查看openssl版本</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
+<p>这里使用2.1.12的版本进行安装。</p>
+<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="安装openssl依赖">安装openssl依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
+<h3 id="编译">编译</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h3 id="打包">打包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211212133649851.png" /></p>
+<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
+<p><img src="image-20211212133609907.png" /></p>
+<h3 id="安装成功">安装成功</h3>
+<p><img src="image-20211212133729426.png" /></p>
+<h2 id="安装coturn">安装Coturn</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
+<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
+<h3 id="turn数据库配置">TURN数据库配置</h3>
+<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
+<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
+<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
+</ul>
+<p><strong>安装sqlite</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
+<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
+<p>需要安装libmysqlclient-dev：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
+<p><strong>查看当前的普通用户</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
+<p><strong>删除普通用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
+<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
+<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
+<p>一些常用的配置：</p>
+<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip&#x3D;172.17.62.224</span><br><span class="line">listening-device&#x3D;eth0</span><br><span class="line"># TURN服务器UDP&#x2F;TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port&#x3D;3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port&#x3D;5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device&#x3D;eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port&#x3D;49152</span><br><span class="line">max-port&#x3D;65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm&#x3D;deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#39;静态&#39; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert&#x3D;&#x2F;root&#x2F;ssl&#x2F;cert.pem </span><br><span class="line">pkey&#x3D;&#x2F;root&#x2F;ssl&#x2F;certs&#x2F;key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
+<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
+<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
+<h3 id="重启服务">重启服务</h3>
+<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
+<h2 id="配置docker">配置docker</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(id -u):$(id -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
+<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
+<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
+<p><img src="image-20211127213711931.png" style="zoom:33%;" /></p>
+<p><img src="image-20211127213631207.png" /></p>
+<p><img src="image-20211127214043008.png" /></p>
+]]></content>
+      <tags>
+        <tag>coturn</tag>
+        <tag>STUN</tag>
+        <tag>TURN</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>crontab定时任务不执行</title>
+    <url>/p/crontab-does-not-work/</url>
+    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
+<p><strong>关键词：crontab定时计划任务不执行</strong></p>
+<a id="more"></a>
+<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
+<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
+<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
+<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
+<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
+<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
+<h5 id="附录linux重定向">附录：linux重定向</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
+<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
+<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
+<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
+]]></content>
+      <tags>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu服务管理</title>
     <url>/p/How-to-manage-services-on-ubuntu/</url>
     <content><![CDATA[<p>Linux 服务管理两种方式service和systemctl的用法</p>
@@ -4437,133 +4564,6 @@ y=x^2e^x
         <tag>ubuntu</tag>
         <tag>service</tag>
         <tag>systemctl</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
-    <url>/p/install-and-configure-coturn-in-debian/</url>
-    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
-<p><strong>关键词</strong>：coturn，stun，turn</p>
-<a id="more"></a>
-<p>安装Coturn一般分为两步。</p>
-<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
-<p>第二步是安装Coturn。</p>
-<h2 id="安装libevent">安装libevent</h2>
-<p>相关地址：</p>
-<ul>
-<li>https://github.com/libevent/libevent</li>
-<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
-</ul>
-<p><strong>注意</strong></p>
-<p>libevent与openssl的版本对应关系如下：</p>
-<table>
-<thead>
-<tr class="header">
-<th>libevent</th>
-<th>openssl</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2.1.x</td>
-<td>1.1</td>
-</tr>
-<tr class="even">
-<td>2.0.x</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
-<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
-<h3 id="查看openssl版本">查看openssl版本</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
-<p>这里使用2.1.12的版本进行安装。</p>
-<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="安装openssl依赖">安装openssl依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
-<h3 id="编译">编译</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
-<h3 id="打包">打包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211212133649851.png" /></p>
-<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
-<p><img src="image-20211212133609907.png" /></p>
-<h3 id="安装成功">安装成功</h3>
-<p><img src="image-20211212133729426.png" /></p>
-<h2 id="安装coturn">安装Coturn</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
-<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
-<h3 id="turn数据库配置">TURN数据库配置</h3>
-<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：</p>
-<ul>
-<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
-<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
-<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
-</ul>
-<p><strong>安装sqlite</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
-<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
-<p>需要安装libmysqlclient-dev：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
-<p><strong>查看当前的普通用户</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
-<p><strong>删除普通用户</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
-<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
-<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
-<p>一些常用的配置：</p>
-<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip&#x3D;172.17.62.224</span><br><span class="line">listening-device&#x3D;eth0</span><br><span class="line"># TURN服务器UDP&#x2F;TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port&#x3D;3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port&#x3D;5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device&#x3D;eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port&#x3D;49152</span><br><span class="line">max-port&#x3D;65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm&#x3D;deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#39;静态&#39; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert&#x3D;&#x2F;root&#x2F;ssl&#x2F;cert.pem </span><br><span class="line">pkey&#x3D;&#x2F;root&#x2F;ssl&#x2F;certs&#x2F;key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
-<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
-<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
-<h3 id="重启服务">重启服务</h3>
-<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
-<h2 id="配置docker">配置docker</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(id -u):$(id -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
-<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
-<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
-<p><img src="image-20211127213711931.png" style="zoom:33%;" /></p>
-<p><img src="image-20211127213631207.png" /></p>
-<p><img src="image-20211127214043008.png" /></p>
-]]></content>
-      <tags>
-        <tag>coturn</tag>
-        <tag>STUN</tag>
-        <tag>TURN</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>crontab定时任务不执行</title>
-    <url>/p/crontab-does-not-work/</url>
-    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
-<p><strong>关键词：crontab定时计划任务不执行</strong></p>
-<a id="more"></a>
-<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
-<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
-<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
-<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
-<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
-<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
-<h5 id="附录linux重定向">附录：linux重定向</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
-<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
-<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
-<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
-]]></content>
-      <tags>
-        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
@@ -5224,6 +5224,27 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>ssh-genkey参数</title>
+    <url>/p/ssh-genkey/</url>
+    <content><![CDATA[<p>什么是ssh-genkey？</p>
+<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
+<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
+<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
+<a id="more"></a>
+<h2 id="常用命令">常用命令</h2>
+<h3 id="生成密钥对">生成密钥对</h3>
+<p>默认生成 2048 位 RSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<p>生成 4096 位 RSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
+<p>生成 521 位 ECDSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ssh-genkey</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>selenium常用方法</title>
     <url>/p/Selenium-positioning-method/</url>
     <content><![CDATA[<p>Selenium 是一个综合性的项目，为web浏览器的自动化提供了各种工具和依赖包。本文主要介绍的是 selenium的常用方法。</p>
@@ -5283,27 +5304,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ssh-genkey参数</title>
-    <url>/p/ssh-genkey/</url>
-    <content><![CDATA[<p>什么是ssh-genkey？</p>
-<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
-<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
-<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
-<a id="more"></a>
-<h2 id="常用命令">常用命令</h2>
-<h3 id="生成密钥对">生成密钥对</h3>
-<p>默认生成 2048 位 RSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
-<p>生成 4096 位 RSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
-<p>生成 521 位 ECDSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ssh-genkey</tag>
       </tags>
   </entry>
   <entry>
@@ -5383,6 +5383,35 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>使用PyTorch进行MNIST识别</title>
+    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
+    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
+<a id="more"></a>
+<h5 id="数据集部分">数据集部分：</h5>
+<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
+<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
+<h5 id="网络定义部分">网络定义部分：</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
+<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
+<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
+<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
+<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
+<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
+<p><strong>详细描述：</strong></p>
+<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
+<h5 id="卷积计算公式">卷积计算公式：</h5>
+<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
+<h5 id="池化计算公式">池化计算公式：</h5>
+<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+        <tag>CNN</tag>
+        <tag>MNIST</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu配置jdk-12环境</title>
     <url>/p/install-jdk12-on-ubuntu2004/</url>
     <content><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p>
@@ -5418,35 +5447,6 @@ y=x^2e^x
       <tags>
         <tag>linux</tag>
         <tag>jdk</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用PyTorch进行MNIST识别</title>
-    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
-    <content><![CDATA[<p>使用PyTorch进行MNIST识别</p>
-<a id="more"></a>
-<h5 id="数据集部分">数据集部分：</h5>
-<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
-<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
-<h5 id="网络定义部分">网络定义部分：</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Net</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
-<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
-<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
-<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
-<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
-<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
-<p><strong>详细描述：</strong></p>
-<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
-<h5 id="卷积计算公式">卷积计算公式：</h5>
-<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
-<h5 id="池化计算公式">池化计算公式：</h5>
-<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-        <tag>CNN</tag>
-        <tag>MNIST</tag>
       </tags>
   </entry>
   <entry>
@@ -6536,6 +6536,44 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>利用heroku实现自动发布博客</title>
+    <url>/p/automate-blog-posting-with-heroku/</url>
+    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
+<p>关键词：<strong>heroku，自动化构建</strong></p>
+<a id="more"></a>
+<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
+<h3 id="安装">安装</h3>
+<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
+<h3 id="登录">登录</h3>
+<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
+<p>如果出现Logged in as 则表示登陆成功。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
+<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
+<p><img src="image-20220409100956279.png" /></p>
+<p>为了简化步骤，这里先使用第一种方式。</p>
+<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
+<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
+<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
+<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
+<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
+<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
+<p><img src="image-20220409125928022.png" /></p>
+<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
+<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
+<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
+<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
+]]></content>
+      <tags>
+        <tag>heroku</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>初探httprouter</title>
     <url>/p/httprouter-tutorial-01/</url>
     <content><![CDATA[<p>httprouter 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
@@ -6581,44 +6619,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>利用heroku实现自动发布博客</title>
-    <url>/p/automate-blog-posting-with-heroku/</url>
-    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
-<p>关键词：<strong>heroku，自动化构建</strong></p>
-<a id="more"></a>
-<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
-<h3 id="安装">安装</h3>
-<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
-<h3 id="登录">登录</h3>
-<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
-<p>如果出现Logged in as 则表示登陆成功。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
-<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
-<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
-<p><img src="image-20220409100956279.png" /></p>
-<p>为了简化步骤，这里先使用第一种方式。</p>
-<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
-<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
-<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
-<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
-<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
-<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
-<p><img src="image-20220409125928022.png" /></p>
-<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
-<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
-<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
-<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
-]]></content>
-      <tags>
-        <tag>heroku</tag>
       </tags>
   </entry>
   <entry>
