@@ -3904,6 +3904,84 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>ROS系统学习小记(二)</title>
+    <url>/p/ROS-system-learning-notes-02/</url>
+    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
+<p><strong>关键词：</strong>ROS</p>
+<a id="more"></a>
+<h3 id="ros试用练习">ROS试用练习</h3>
+<h4 id="ros文件系统">ROS文件系统</h4>
+<p>我们通过命令行工具来浏览ROS的文件系统。</p>
+<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
+<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
+<p>你将要获得以下信息：</p>
+<p><img src="image-20201019194410801.png" /></p>
+<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
+<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
+<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
+<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
+<p><img src="image-20201019195209283.png" /></p>
+<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
+<p>将获得以下新路径：</p>
+<p><img src="image-20201019195406492.png" /></p>
+<h4 id="创建工作空间">创建工作空间</h4>
+<p>我们会在工作空间完成本书使用的所有代码。</p>
+<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
+<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
+<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
+<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
+<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
+<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
+<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
+<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
+<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
+<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
+<p>如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
+<p>这些依赖项主要包括以下几个：</p>
+<ul>
+<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
+<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
+</ul>
+<p>如果所有步骤一切顺利，结果如下图所示：</p>
+<p><img src="image-20201019202650647.png" /></p>
+<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
+<ul>
+<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
+<li>rospack find TEST：此命令用于查看依赖关系。</li>
+<li>rosls TEST：此命令用于查看内容</li>
+<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
+</ul>
+<h4 id="编译ros功能包">编译ROS功能包</h4>
+<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
+<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
+<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
+<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
+<p><img src="image-20201019204443411.png" /></p>
+<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
+<p>如果编译单个工具包，可以使用如下格式的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4065,84 +4143,6 @@ y=x^2e^x
 <p>查看里面的代码</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
 <p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack find</strong> 命令也可以用于查找元功能包。</p>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ROS系统学习小记(二)</title>
-    <url>/p/ROS-system-learning-notes-02/</url>
-    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
-<p><strong>关键词：</strong>ROS</p>
-<a id="more"></a>
-<h3 id="ros试用练习">ROS试用练习</h3>
-<h4 id="ros文件系统">ROS文件系统</h4>
-<p>我们通过命令行工具来浏览ROS的文件系统。</p>
-<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
-<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
-<p>你将要获得以下信息：</p>
-<p><img src="image-20201019194410801.png" /></p>
-<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
-<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
-<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
-<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
-<p><img src="image-20201019195209283.png" /></p>
-<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
-<p>将获得以下新路径：</p>
-<p><img src="image-20201019195406492.png" /></p>
-<h4 id="创建工作空间">创建工作空间</h4>
-<p>我们会在工作空间完成本书使用的所有代码。</p>
-<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
-<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
-<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
-<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
-<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
-<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
-<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
-<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
-<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
-<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
-<p>如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
-<p>这些依赖项主要包括以下几个：</p>
-<ul>
-<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
-<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
-</ul>
-<p>如果所有步骤一切顺利，结果如下图所示：</p>
-<p><img src="image-20201019202650647.png" /></p>
-<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
-<ul>
-<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
-<li>rospack find TEST：此命令用于查看依赖关系。</li>
-<li>rosls TEST：此命令用于查看内容</li>
-<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
-</ul>
-<h4 id="编译ros功能包">编译ROS功能包</h4>
-<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
-<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
-<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
-<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
-<p><img src="image-20201019204443411.png" /></p>
-<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
-<p>如果编译单个工具包，可以使用如下格式的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ROS</tag>
@@ -6095,117 +6095,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>初探docker(一)</title>
-    <url>/p/docker-tutorial-01/</url>
-    <content><![CDATA[<p>本文介绍的是docker的安装及常见命令。</p>
-<p><strong>摘要：</strong><a href="https://www.docker.com/">Docker</a> 是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本。使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松。</p>
-<p><strong>关键词：</strong>Docker</p>
-<a id="more"></a>
-<h3 id="安装docker">安装Docker</h3>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">curl -fsSL get.docker.com -o get-docker.sh</span><br><span class="line"><span class="comment"># sudo sh get-docker.sh --mirror </span></span><br><span class="line">sudo sh get-docker.sh --mirror Aliyun</span><br></pre></td></tr></table></figure>
-<h3 id="启动docker-ce">启动Docker-CE</h3>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
-<h3 id="优雅的删除docker">优雅的删除docker</h3>
-<p>Debian系：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg -l | grep docker</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt remove --purge docker-ce docker-ce-cli</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rm -rf /var/lib/docker</span><br></pre></td></tr></table></figure>
-<h3 id="测试-docker-是否安装正确">测试 Docker 是否安装正确</h3>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run hello-world</span><br><span class="line">以下是输出：</span><br><span class="line">Unable to find image &#x27;hello-world:latest&#x27; locally</span><br><span class="line">latest: Pulling from library/hello-world</span><br><span class="line">d1725b59e92d: Pull complete</span><br><span class="line">Digest: sha256:0add3ace90ecb4adbf7777e9aacf18357296e799f81cabc9fde470971e499788</span><br><span class="line">Status: Downloaded newer image for hello-world:latest</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the &quot;hello-world&quot; image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image which runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, which sent it</span><br><span class="line">    to your terminal.</span><br><span class="line"></span><br><span class="line">To try something more ambitious, you can run an Ubuntu container with:</span><br><span class="line"><span class="meta"> $</span><span class="bash"> docker run -it ubuntu bash</span></span><br><span class="line"></span><br><span class="line">Share images, automate workflows, and more with a free Docker ID:</span><br><span class="line"> https://hub.docker.com/</span><br><span class="line"></span><br><span class="line">For more examples and ideas, visit:</span><br><span class="line"> https://docs.docker.com/get-started/</span><br></pre></td></tr></table></figure>
-<h3 id="获取镜像加速器">获取镜像加速器</h3>
-<p>国内从 Docker Hub 拉取镜像有时会遇到困难，此时可以配置镜像加速器。国内很多云服务商都提供了国内加速器服务，例如：</p>
-<ul>
-<li><p>网易云加速器 <code>https://hub-mirror.c.163.com</code></p></li>
-<li><p>百度云加速器 <code>https://mirror.baidubce.com</code></p></li>
-<li><p><a href="https://cr.console.aliyun.com/cn-hangzhou/mirrors">阿里云加速器(需登录账号获取)</a></p></li>
-<li><p>DaoCloud</p>
-<p>执行以下命令即可：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="linux">Linux</h4>
-<p>对于使用 <a href="https://www.freedesktop.org/wiki/Software/systemd/">systemd</a> 的系统，请在 <code>/etc/docker/daemon.json</code> 中写入如下内容（如果文件不存在请新建该文件）：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://mirror.baidubce.com&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意要保证该文件符合 <strong>json</strong> 规范，否则 Docker 将不能启动。</p>
-</blockquote>
-<p>之后重启服务。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<h4 id="windows-10">Windows 10</h4>
-<p>对于使用 <code>Windows 10</code> 的用户，在任务栏托盘 Docker 图标内右键菜单选择 <code>Settings</code>，打开配置窗口后在左侧导航菜单选择 <code>Docker Engine</code>，在右侧像下边一样编辑 json 文件，之后点击 <code>Apply &amp; Restart</code> 保存后 Docker 就会重启并应用配置的镜像地址了。</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;https://28wgvhgl.mirror.aliyuncs.com&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;insecure-registries&quot;</span>: [],</span><br><span class="line">  <span class="attr">&quot;debug&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">&quot;experimental&quot;</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200718170304988.png" /></p>
-<h3 id="常见docker命令">常见docker命令</h3>
-<h4 id="取回容器">取回容器</h4>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull fly97/v2fly</span><br></pre></td></tr></table></figure>
-<h4 id="运行容器">运行容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run -d --name v2fly -v /etc/caddy:/etc/caddy  -p 443:443 fly97/v2fly</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-v ：启用目录挂载。冒号":"前面的目录是<strong>宿主机目录</strong>，后面的目录是<strong>容器内目录</strong>。</p>
-<p>-p：启用端口映射。</p>
-<p>-d：在后台运行容器并打印容器ID。</p>
-<p>--restart=always：保证每次docker服务重启后容器也自动重启</p>
-<p>--network</p>
-</blockquote>
-<p>​ 如果容器已经启动了而又想设置容器自动启动：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker update --restart=always &lt;CONTAINER ID/CONTAINER NAME&gt;</span><br></pre></td></tr></table></figure>
-<h4 id="进入容器">进入容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it $(docker ps| grep fly97/v2fly | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> /bin/sh</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-i： 交互式操作。</p>
-<p>-t：启用终端运行。</p>
-<p>/bin/sh：打开交互式 Shell</p>
-</blockquote>
-<h4 id="查看当前运行的容器">查看当前运行的容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker ps </span><br></pre></td></tr></table></figure>
-<h4 id="运行容器-1">运行容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker start CONTAINER_NAME</span><br></pre></td></tr></table></figure>
-<h4 id="停止容器">停止容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker stop CONTAINER_NAME</span><br></pre></td></tr></table></figure>
-<h4 id="删除容器">删除容器</h4>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker rm CONTAINER_NAME</span><br></pre></td></tr></table></figure>
-<h4 id="查看镜像">查看镜像</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
-<h4 id="删除镜像">删除镜像</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker rmi IMAGE_ID</span><br></pre></td></tr></table></figure>
-<h4 id="清理镜像">清理镜像</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker image prune</span><br></pre></td></tr></table></figure>
-<h4 id="全部命令">全部命令</h4>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">PS</span> C:\Users\wf09\Desktop\v2fly<span class="literal">-docker</span>&gt; docker -<span class="literal">-help</span></span><br><span class="line"></span><br><span class="line">Usage:  docker [<span class="type">OPTIONS</span>] COMMAND</span><br><span class="line"></span><br><span class="line">A self<span class="literal">-sufficient</span> runtime <span class="keyword">for</span> containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      -<span class="literal">-config</span> string      Location of client config files (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker&quot;</span>)</span><br><span class="line">  <span class="literal">-c</span>, -<span class="literal">-context</span> string     Name of the context to use to connect to the</span><br><span class="line">                           daemon (overrides DOCKER_HOST env var and</span><br><span class="line">                           default context <span class="built_in">set</span> with <span class="string">&quot;docker context use&quot;</span>)</span><br><span class="line">  <span class="literal">-D</span>, -<span class="literal">-debug</span>              Enable debug mode</span><br><span class="line">  <span class="literal">-H</span>, -<span class="literal">-host</span> list          Daemon socket(s) to connect to</span><br><span class="line">  <span class="literal">-l</span>, -<span class="literal">-log</span><span class="literal">-level</span> string   <span class="built_in">Set</span> the logging level</span><br><span class="line">                           (<span class="string">&quot;debug&quot;</span>|<span class="string">&quot;info&quot;</span>|<span class="string">&quot;warn&quot;</span>|<span class="string">&quot;error&quot;</span>|<span class="string">&quot;fatal&quot;</span>)</span><br><span class="line">                           (default <span class="string">&quot;info&quot;</span>)</span><br><span class="line">      -<span class="literal">-tls</span>                Use TLS; implied by -<span class="literal">-tlsverify</span></span><br><span class="line">      -<span class="literal">-tlscacert</span> string   Trust certs signed only by this CA (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\ca.pem&quot;</span>)</span><br><span class="line">      -<span class="literal">-tlscert</span> string     Path to TLS certificate file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\cert.pem&quot;</span>)</span><br><span class="line">      -<span class="literal">-tlskey</span> string      Path to TLS key file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\key.pem&quot;</span>)</span><br><span class="line">      -<span class="literal">-tlsverify</span>          Use TLS and verify the remote</span><br><span class="line">  <span class="literal">-v</span>, -<span class="literal">-version</span>            Print version information and quit</span><br><span class="line"></span><br><span class="line">Management Commands:</span><br><span class="line">  builder     Manage builds</span><br><span class="line">  config      Manage Docker configs</span><br><span class="line">  container   Manage containers</span><br><span class="line">  context     Manage contexts</span><br><span class="line">  image       Manage images</span><br><span class="line">  network     Manage networks</span><br><span class="line">  node        Manage Swarm nodes</span><br><span class="line">  plugin      Manage plugins</span><br><span class="line">  secret      Manage Docker secrets</span><br><span class="line">  service     Manage services</span><br><span class="line">  stack       Manage Docker stacks</span><br><span class="line">  swarm       Manage Swarm</span><br><span class="line">  system      Manage Docker</span><br><span class="line">  trust       Manage trust on Docker images</span><br><span class="line">  volume      Manage volumes</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  attach      Attach local standard input, output, and error streams to a running container</span><br><span class="line">  build       Build an image from a Dockerfile</span><br><span class="line">  commit      Create a new image from a container<span class="string">&#x27;s changes</span></span><br><span class="line"><span class="string">  cp          Copy files/folders between a container and the local filesystem</span></span><br><span class="line"><span class="string">  create      Create a new container</span></span><br><span class="line"><span class="string">  diff        Inspect changes to files or directories on a container&#x27;</span>s filesystem</span><br><span class="line">  events      Get real time events from the server</span><br><span class="line">  exec        Run a command <span class="keyword">in</span> a running container</span><br><span class="line">  export      Export a container<span class="string">&#x27;s filesystem as a tar archive</span></span><br><span class="line"><span class="string">  history     Show the history of an image</span></span><br><span class="line"><span class="string">  images      List images</span></span><br><span class="line"><span class="string">  import      Import the contents from a tarball to create a filesystem image</span></span><br><span class="line"><span class="string">  info        Display system-wide information</span></span><br><span class="line"><span class="string">  inspect     Return low-level information on Docker objects</span></span><br><span class="line"><span class="string">  kill        Kill one or more running containers</span></span><br><span class="line"><span class="string">  load        Load an image from a tar archive or STDIN</span></span><br><span class="line"><span class="string">  login       Log in to a Docker registry</span></span><br><span class="line"><span class="string">  logout      Log out from a Docker registry</span></span><br><span class="line"><span class="string">  logs        Fetch the logs of a container</span></span><br><span class="line"><span class="string">  pause       Pause all processes within one or more containers</span></span><br><span class="line"><span class="string">  port        List port mappings or a specific mapping for the container</span></span><br><span class="line"><span class="string">  ps          List containers</span></span><br><span class="line"><span class="string">  pull        Pull an image or a repository from a registry</span></span><br><span class="line"><span class="string">  push        Push an image or a repository to a registry</span></span><br><span class="line"><span class="string">  rename      Rename a container</span></span><br><span class="line"><span class="string">  restart     Restart one or more containers</span></span><br><span class="line"><span class="string">  rm          Remove one or more containers</span></span><br><span class="line"><span class="string">  rmi         Remove one or more images</span></span><br><span class="line"><span class="string">  run         Run a command in a new container</span></span><br><span class="line"><span class="string">  save        Save one or more images to a tar archive (streamed to STDOUT by default)</span></span><br><span class="line"><span class="string">  search      Search the Docker Hub for images</span></span><br><span class="line"><span class="string">  start       Start one or more stopped containers</span></span><br><span class="line"><span class="string">  stats       Display a live stream of container(s) resource usage statistics</span></span><br><span class="line"><span class="string">  stop        Stop one or more running containers</span></span><br><span class="line"><span class="string">  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE</span></span><br><span class="line"><span class="string">  top         Display the running processes of a container</span></span><br><span class="line"><span class="string">  unpause     Unpause all processes within one or more containers</span></span><br><span class="line"><span class="string">  update      Update configuration of one or more containers</span></span><br><span class="line"><span class="string">  version     Show the Docker version information</span></span><br><span class="line"><span class="string">  wait        Block until one or more containers stop, then print their exit codes</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Run &#x27;</span>docker COMMAND -<span class="literal">-help</span><span class="string">&#x27; for more information on a command.</span></span><br></pre></td></tr></table></figure>
-<h3 id="解决docker使用sudo的问题">解决docker使用sudo的问题</h3>
-<h4 id="创建docker组">创建docker组</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo groupadd docker</span><br></pre></td></tr></table></figure>
-<h4 id="将当前用户加入docker组">将当前用户加入docker组</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo gpasswd -a <span class="variable">$&#123;USER&#125;</span> docker</span><br></pre></td></tr></table></figure>
-<h4 id="重启服务">重启服务</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure>
-<h4 id="刷新docker组成员">刷新docker组成员</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">newgrp - docker</span><br></pre></td></tr></table></figure>
-<h3 id="构建docker镜像时处理configuring-tzdata交互输入">构建Docker镜像时处理'Configuring tzdata'交互输入</h3>
-<p>将tzdata设置为非交互方式</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ENV DEBIAN_FRONTEND=noninteractive</span><br></pre></td></tr></table></figure>
-<h3 id="docker容器内使用dpkg安装chrome浏览器失败">docker容器内使用dpkg安装chrome浏览器失败</h3>
-<p>使用<code>apt</code>离线安装即可，会自动帮你安装依赖</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line">apt install -f ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<h3 id="docker-访问外部-https-的数字证书验证问题">docker 访问外部 https 的数字证书验证问题</h3>
-<ol type="1">
-<li><p>alpine linux</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> apk --no-cache add ca-certificates \</span></span><br><span class="line"><span class="bash">  &amp;&amp; update-ca-certificates</span></span><br></pre></td></tr></table></figure></li>
-<li><p>ubuntu linux</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN apt-get install ca-certificates -y \</span><br><span class="line">  &amp;&amp; update-ca-certificates</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="修改docker时区">修改docker时区</h3>
-<ol type="1">
-<li><p>挂载宿主机时区文件 到容器内<code>/etc/localtime</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">- /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime</span><br></pre></td></tr></table></figure></li>
-<li><p>debian类镜像构建时指定环境变量</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">TZ=<span class="string">&quot;Asia/Shanghai&quot;</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探Docker(二)</title>
     <url>/p/docker-tutorial-02/</url>
     <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
@@ -6345,6 +6234,117 @@ y=x^2e^x
 <p>用于延迟构建命令的执行。简单的说，就是 Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这是执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。</p>
 <p>格式：</p>
 <figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ONBUILD</span> &lt;其它指令&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探docker(一)</title>
+    <url>/p/docker-tutorial-01/</url>
+    <content><![CDATA[<p>本文介绍的是docker的安装及常见命令。</p>
+<p><strong>摘要：</strong><a href="https://www.docker.com/">Docker</a> 是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本。使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松。</p>
+<p><strong>关键词：</strong>Docker</p>
+<a id="more"></a>
+<h3 id="安装docker">安装Docker</h3>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">curl -fsSL get.docker.com -o get-docker.sh</span><br><span class="line"><span class="comment"># sudo sh get-docker.sh --mirror </span></span><br><span class="line">sudo sh get-docker.sh --mirror Aliyun</span><br></pre></td></tr></table></figure>
+<h3 id="启动docker-ce">启动Docker-CE</h3>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+<h3 id="优雅的删除docker">优雅的删除docker</h3>
+<p>Debian系：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg -l | grep docker</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt remove --purge docker-ce docker-ce-cli</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rm -rf /var/lib/docker</span><br></pre></td></tr></table></figure>
+<h3 id="测试-docker-是否安装正确">测试 Docker 是否安装正确</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run hello-world</span><br><span class="line">以下是输出：</span><br><span class="line">Unable to find image &#x27;hello-world:latest&#x27; locally</span><br><span class="line">latest: Pulling from library/hello-world</span><br><span class="line">d1725b59e92d: Pull complete</span><br><span class="line">Digest: sha256:0add3ace90ecb4adbf7777e9aacf18357296e799f81cabc9fde470971e499788</span><br><span class="line">Status: Downloaded newer image for hello-world:latest</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the &quot;hello-world&quot; image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image which runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, which sent it</span><br><span class="line">    to your terminal.</span><br><span class="line"></span><br><span class="line">To try something more ambitious, you can run an Ubuntu container with:</span><br><span class="line"><span class="meta"> $</span><span class="bash"> docker run -it ubuntu bash</span></span><br><span class="line"></span><br><span class="line">Share images, automate workflows, and more with a free Docker ID:</span><br><span class="line"> https://hub.docker.com/</span><br><span class="line"></span><br><span class="line">For more examples and ideas, visit:</span><br><span class="line"> https://docs.docker.com/get-started/</span><br></pre></td></tr></table></figure>
+<h3 id="获取镜像加速器">获取镜像加速器</h3>
+<p>国内从 Docker Hub 拉取镜像有时会遇到困难，此时可以配置镜像加速器。国内很多云服务商都提供了国内加速器服务，例如：</p>
+<ul>
+<li><p>网易云加速器 <code>https://hub-mirror.c.163.com</code></p></li>
+<li><p>百度云加速器 <code>https://mirror.baidubce.com</code></p></li>
+<li><p><a href="https://cr.console.aliyun.com/cn-hangzhou/mirrors">阿里云加速器(需登录账号获取)</a></p></li>
+<li><p>DaoCloud</p>
+<p>执行以下命令即可：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="linux">Linux</h4>
+<p>对于使用 <a href="https://www.freedesktop.org/wiki/Software/systemd/">systemd</a> 的系统，请在 <code>/etc/docker/daemon.json</code> 中写入如下内容（如果文件不存在请新建该文件）：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;https://hub-mirror.c.163.com&quot;</span>,</span><br><span class="line">    <span class="string">&quot;https://mirror.baidubce.com&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意要保证该文件符合 <strong>json</strong> 规范，否则 Docker 将不能启动。</p>
+</blockquote>
+<p>之后重启服务。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h4 id="windows-10">Windows 10</h4>
+<p>对于使用 <code>Windows 10</code> 的用户，在任务栏托盘 Docker 图标内右键菜单选择 <code>Settings</code>，打开配置窗口后在左侧导航菜单选择 <code>Docker Engine</code>，在右侧像下边一样编辑 json 文件，之后点击 <code>Apply &amp; Restart</code> 保存后 Docker 就会重启并应用配置的镜像地址了。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;https://28wgvhgl.mirror.aliyuncs.com&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;insecure-registries&quot;</span>: [],</span><br><span class="line">  <span class="attr">&quot;debug&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">&quot;experimental&quot;</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200718170304988.png" /></p>
+<h3 id="常见docker命令">常见docker命令</h3>
+<h4 id="取回容器">取回容器</h4>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull fly97/v2fly</span><br></pre></td></tr></table></figure>
+<h4 id="运行容器">运行容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run -d --name v2fly -v /etc/caddy:/etc/caddy  -p 443:443 fly97/v2fly</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-v ：启用目录挂载。冒号":"前面的目录是<strong>宿主机目录</strong>，后面的目录是<strong>容器内目录</strong>。</p>
+<p>-p：启用端口映射。</p>
+<p>-d：在后台运行容器并打印容器ID。</p>
+<p>--restart=always：保证每次docker服务重启后容器也自动重启</p>
+<p>--network</p>
+</blockquote>
+<p>​ 如果容器已经启动了而又想设置容器自动启动：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker update --restart=always &lt;CONTAINER ID/CONTAINER NAME&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="进入容器">进入容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it $(docker ps| grep fly97/v2fly | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> /bin/sh</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-i： 交互式操作。</p>
+<p>-t：启用终端运行。</p>
+<p>/bin/sh：打开交互式 Shell</p>
+</blockquote>
+<h4 id="查看当前运行的容器">查看当前运行的容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker ps </span><br></pre></td></tr></table></figure>
+<h4 id="运行容器-1">运行容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker start CONTAINER_NAME</span><br></pre></td></tr></table></figure>
+<h4 id="停止容器">停止容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker stop CONTAINER_NAME</span><br></pre></td></tr></table></figure>
+<h4 id="删除容器">删除容器</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker rm CONTAINER_NAME</span><br></pre></td></tr></table></figure>
+<h4 id="查看镜像">查看镜像</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
+<h4 id="删除镜像">删除镜像</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker rmi IMAGE_ID</span><br></pre></td></tr></table></figure>
+<h4 id="清理镜像">清理镜像</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker image prune</span><br></pre></td></tr></table></figure>
+<h4 id="全部命令">全部命令</h4>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">PS</span> C:\Users\wf09\Desktop\v2fly<span class="literal">-docker</span>&gt; docker -<span class="literal">-help</span></span><br><span class="line"></span><br><span class="line">Usage:  docker [<span class="type">OPTIONS</span>] COMMAND</span><br><span class="line"></span><br><span class="line">A self<span class="literal">-sufficient</span> runtime <span class="keyword">for</span> containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      -<span class="literal">-config</span> string      Location of client config files (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker&quot;</span>)</span><br><span class="line">  <span class="literal">-c</span>, -<span class="literal">-context</span> string     Name of the context to use to connect to the</span><br><span class="line">                           daemon (overrides DOCKER_HOST env var and</span><br><span class="line">                           default context <span class="built_in">set</span> with <span class="string">&quot;docker context use&quot;</span>)</span><br><span class="line">  <span class="literal">-D</span>, -<span class="literal">-debug</span>              Enable debug mode</span><br><span class="line">  <span class="literal">-H</span>, -<span class="literal">-host</span> list          Daemon socket(s) to connect to</span><br><span class="line">  <span class="literal">-l</span>, -<span class="literal">-log</span><span class="literal">-level</span> string   <span class="built_in">Set</span> the logging level</span><br><span class="line">                           (<span class="string">&quot;debug&quot;</span>|<span class="string">&quot;info&quot;</span>|<span class="string">&quot;warn&quot;</span>|<span class="string">&quot;error&quot;</span>|<span class="string">&quot;fatal&quot;</span>)</span><br><span class="line">                           (default <span class="string">&quot;info&quot;</span>)</span><br><span class="line">      -<span class="literal">-tls</span>                Use TLS; implied by -<span class="literal">-tlsverify</span></span><br><span class="line">      -<span class="literal">-tlscacert</span> string   Trust certs signed only by this CA (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\ca.pem&quot;</span>)</span><br><span class="line">      -<span class="literal">-tlscert</span> string     Path to TLS certificate file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\cert.pem&quot;</span>)</span><br><span class="line">      -<span class="literal">-tlskey</span> string      Path to TLS key file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\key.pem&quot;</span>)</span><br><span class="line">      -<span class="literal">-tlsverify</span>          Use TLS and verify the remote</span><br><span class="line">  <span class="literal">-v</span>, -<span class="literal">-version</span>            Print version information and quit</span><br><span class="line"></span><br><span class="line">Management Commands:</span><br><span class="line">  builder     Manage builds</span><br><span class="line">  config      Manage Docker configs</span><br><span class="line">  container   Manage containers</span><br><span class="line">  context     Manage contexts</span><br><span class="line">  image       Manage images</span><br><span class="line">  network     Manage networks</span><br><span class="line">  node        Manage Swarm nodes</span><br><span class="line">  plugin      Manage plugins</span><br><span class="line">  secret      Manage Docker secrets</span><br><span class="line">  service     Manage services</span><br><span class="line">  stack       Manage Docker stacks</span><br><span class="line">  swarm       Manage Swarm</span><br><span class="line">  system      Manage Docker</span><br><span class="line">  trust       Manage trust on Docker images</span><br><span class="line">  volume      Manage volumes</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  attach      Attach local standard input, output, and error streams to a running container</span><br><span class="line">  build       Build an image from a Dockerfile</span><br><span class="line">  commit      Create a new image from a container<span class="string">&#x27;s changes</span></span><br><span class="line"><span class="string">  cp          Copy files/folders between a container and the local filesystem</span></span><br><span class="line"><span class="string">  create      Create a new container</span></span><br><span class="line"><span class="string">  diff        Inspect changes to files or directories on a container&#x27;</span>s filesystem</span><br><span class="line">  events      Get real time events from the server</span><br><span class="line">  exec        Run a command <span class="keyword">in</span> a running container</span><br><span class="line">  export      Export a container<span class="string">&#x27;s filesystem as a tar archive</span></span><br><span class="line"><span class="string">  history     Show the history of an image</span></span><br><span class="line"><span class="string">  images      List images</span></span><br><span class="line"><span class="string">  import      Import the contents from a tarball to create a filesystem image</span></span><br><span class="line"><span class="string">  info        Display system-wide information</span></span><br><span class="line"><span class="string">  inspect     Return low-level information on Docker objects</span></span><br><span class="line"><span class="string">  kill        Kill one or more running containers</span></span><br><span class="line"><span class="string">  load        Load an image from a tar archive or STDIN</span></span><br><span class="line"><span class="string">  login       Log in to a Docker registry</span></span><br><span class="line"><span class="string">  logout      Log out from a Docker registry</span></span><br><span class="line"><span class="string">  logs        Fetch the logs of a container</span></span><br><span class="line"><span class="string">  pause       Pause all processes within one or more containers</span></span><br><span class="line"><span class="string">  port        List port mappings or a specific mapping for the container</span></span><br><span class="line"><span class="string">  ps          List containers</span></span><br><span class="line"><span class="string">  pull        Pull an image or a repository from a registry</span></span><br><span class="line"><span class="string">  push        Push an image or a repository to a registry</span></span><br><span class="line"><span class="string">  rename      Rename a container</span></span><br><span class="line"><span class="string">  restart     Restart one or more containers</span></span><br><span class="line"><span class="string">  rm          Remove one or more containers</span></span><br><span class="line"><span class="string">  rmi         Remove one or more images</span></span><br><span class="line"><span class="string">  run         Run a command in a new container</span></span><br><span class="line"><span class="string">  save        Save one or more images to a tar archive (streamed to STDOUT by default)</span></span><br><span class="line"><span class="string">  search      Search the Docker Hub for images</span></span><br><span class="line"><span class="string">  start       Start one or more stopped containers</span></span><br><span class="line"><span class="string">  stats       Display a live stream of container(s) resource usage statistics</span></span><br><span class="line"><span class="string">  stop        Stop one or more running containers</span></span><br><span class="line"><span class="string">  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE</span></span><br><span class="line"><span class="string">  top         Display the running processes of a container</span></span><br><span class="line"><span class="string">  unpause     Unpause all processes within one or more containers</span></span><br><span class="line"><span class="string">  update      Update configuration of one or more containers</span></span><br><span class="line"><span class="string">  version     Show the Docker version information</span></span><br><span class="line"><span class="string">  wait        Block until one or more containers stop, then print their exit codes</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Run &#x27;</span>docker COMMAND -<span class="literal">-help</span><span class="string">&#x27; for more information on a command.</span></span><br></pre></td></tr></table></figure>
+<h3 id="解决docker使用sudo的问题">解决docker使用sudo的问题</h3>
+<h4 id="创建docker组">创建docker组</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo groupadd docker</span><br></pre></td></tr></table></figure>
+<h4 id="将当前用户加入docker组">将当前用户加入docker组</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo gpasswd -a <span class="variable">$&#123;USER&#125;</span> docker</span><br></pre></td></tr></table></figure>
+<h4 id="重启服务">重启服务</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure>
+<h4 id="刷新docker组成员">刷新docker组成员</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">newgrp - docker</span><br></pre></td></tr></table></figure>
+<h3 id="构建docker镜像时处理configuring-tzdata交互输入">构建Docker镜像时处理'Configuring tzdata'交互输入</h3>
+<p>将tzdata设置为非交互方式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ENV DEBIAN_FRONTEND=noninteractive</span><br></pre></td></tr></table></figure>
+<h3 id="docker容器内使用dpkg安装chrome浏览器失败">docker容器内使用dpkg安装chrome浏览器失败</h3>
+<p>使用<code>apt</code>离线安装即可，会自动帮你安装依赖</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line">apt install -f ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<h3 id="docker-访问外部-https-的数字证书验证问题">docker 访问外部 https 的数字证书验证问题</h3>
+<ol type="1">
+<li><p>alpine linux</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> apk --no-cache add ca-certificates \</span></span><br><span class="line"><span class="bash">  &amp;&amp; update-ca-certificates</span></span><br></pre></td></tr></table></figure></li>
+<li><p>ubuntu linux</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN apt-get install ca-certificates -y \</span><br><span class="line">  &amp;&amp; update-ca-certificates</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="修改docker时区">修改docker时区</h3>
+<ol type="1">
+<li><p>挂载宿主机时区文件 到容器内<code>/etc/localtime</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">- /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime</span><br></pre></td></tr></table></figure></li>
+<li><p>debian类镜像构建时指定环境变量</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">TZ=<span class="string">&quot;Asia/Shanghai&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
 ]]></content>
       <tags>
         <tag>docker</tag>
@@ -7739,34 +7739,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>杭州旅游攻略</title>
-    <url>/p/Travel-in-Hangzhou/</url>
-    <content><![CDATA[<p>学在杭州，玩在杭州！</p>
-<a id="more"></a>
-<h3 id="延安路商业街">延安路商业街</h3>
-<p><img src="image-20210131092627579.png" /></p>
-<h3 id="延安路到法喜寺">延安路到法喜寺</h3>
-<p><img src="image-20210131093545985.png" /></p>
-<p>法喜寺</p>
-<p><img src="image-20210131092418794.png" /></p>
-<h3 id="延安路到河坊街">延安路到河坊街</h3>
-<p><img src="image-20210131093828915.png" /></p>
-<p>河坊街</p>
-<p><img src="image-20210131092531902.png" /></p>
-<h3 id="延安路到北高峰">延安路到北高峰</h3>
-<p><img src="image-20210131093705860.png" /></p>
-<p>延安路</p>
-<p><img src="image-20210131092737922.png" /></p>
-<h3 id="西湖龙井">西湖龙井</h3>
-<p><img src="image-20210131094030362.png" /></p>
-<p><img src="image-20210131092947998.png" /></p>
-]]></content>
-      <tags>
-        <tag>Travel</tag>
-        <tag>Hangzhou</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>梯度下降法</title>
     <url>/p/What&#39;s-the-Gradient-descent/</url>
     <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
@@ -7808,6 +7780,34 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Deep Learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>杭州旅游攻略</title>
+    <url>/p/Travel-in-Hangzhou/</url>
+    <content><![CDATA[<p>学在杭州，玩在杭州！</p>
+<a id="more"></a>
+<h3 id="延安路商业街">延安路商业街</h3>
+<p><img src="image-20210131092627579.png" /></p>
+<h3 id="延安路到法喜寺">延安路到法喜寺</h3>
+<p><img src="image-20210131093545985.png" /></p>
+<p>法喜寺</p>
+<p><img src="image-20210131092418794.png" /></p>
+<h3 id="延安路到河坊街">延安路到河坊街</h3>
+<p><img src="image-20210131093828915.png" /></p>
+<p>河坊街</p>
+<p><img src="image-20210131092531902.png" /></p>
+<h3 id="延安路到北高峰">延安路到北高峰</h3>
+<p><img src="image-20210131093705860.png" /></p>
+<p>延安路</p>
+<p><img src="image-20210131092737922.png" /></p>
+<h3 id="西湖龙井">西湖龙井</h3>
+<p><img src="image-20210131094030362.png" /></p>
+<p><img src="image-20210131092947998.png" /></p>
+]]></content>
+      <tags>
+        <tag>Travel</tag>
+        <tag>Hangzhou</tag>
       </tags>
   </entry>
   <entry>
