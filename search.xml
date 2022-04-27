@@ -3604,6 +3604,71 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python的一些高级用法</title>
+    <url>/p/Some-advanced-usages-of-Python/</url>
+    <content><![CDATA[<p>此文介绍了一些Python的一些常见的高级用法。</p>
+<a id="more"></a>
+<h4 id="format格式化字符串">format格式化字符串</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">t = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime())</span><br></pre></td></tr></table></figure>
+<h5 id="按照位置来填充">按照位置来填充</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918213811743.png" /></p>
+<h6 id="同一个参数可以填充多次">同一个参数可以填充多次</h6>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;0&#125;---&#123;0&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918214059634.png" /></p>
+<h5 id="通过索引来填充">通过索引来填充</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;[0]&#125;&quot;</span>.format(s1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(l1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(t1))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918215314962.png" /></p>
+<p>另外一种写法</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;p[1]&#125;&quot;</span>.format(p=s1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=l1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=t1))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918215656093.png" /></p>
+<h4 id="三元运算符">三元运算符</h4>
+<p>固定格式</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[on_true]  if  [expression]  else [on_false]</span><br></pre></td></tr></table></figure>
+<p>上式表达的语义为：若<strong>表达式expression</strong>的结果为<strong>真</strong>，该式的结果是<strong>[on_true]</strong>；若<strong>表达式expression</strong>的结果为<strong>假</strong>，则该式的结果是<strong>[on_false]</strong></p>
+<p>例子</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br><span class="line">b = <span class="number">2</span></span><br><span class="line">c = a-b <span class="keyword">if</span> a&gt;b <span class="keyword">else</span> a+b</span><br></pre></td></tr></table></figure>
+<p><img src="Python的一些高级用法/image-20200918221607752.png" /></p>
+<h4 id="lambda表达式">Lambda表达式</h4>
+<p>Python使用Lambda表达式创建匿名函数</p>
+<ul>
+<li>Lambda只是一个表达式，函数体比def简单的多</li>
+<li>Lambda的主体是一个表达式，而不是一个代码块，只能在lambda表达式中封装有限的逻辑进去</li>
+<li>Lambda函数拥有自己的名字空间，且不能访问自有参数列表之外或全局名字空间里的参数。</li>
+<li>虽然lamda函数看起来只能写一行，却不等于C或C++的内联函数，后者是调用小函数时不占用内存，从而提升运行效率。</li>
+</ul>
+<p>Lambda表达式语法：<code>lambda argument_list: expression</code></p>
+<p>案例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">summary = <span class="keyword">lambda</span> x,y:x+y</span><br><span class="line">print(<span class="string">&quot;summary=&#123;&#125;&quot;</span>.format(summary(<span class="number">3</span>,<span class="number">4</span>)))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918230330027.png" /></p>
+<p>上述lambda表达式与以下函数等价</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">summary</span>(<span class="params">x, y</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918231354891.png" /></p>
+<h4 id="map函数">map函数</h4>
+<p>map是Python的高级函数，为函数式编程提供便利。</p>
+<p>形式为<code>map(func, *iterables)</code>：第一个参数func是一个函数的名字；第二个参数为一个可迭代对象。map将函数func应用于列表的所有元素。</p>
+<p>在Python3之前，map用于返回一个列表，其中结果列表的每个元素都是应用于列表或元组序列相应元素上的func结果。</p>
+<p>在Python3中，map返回一个迭代器。</p>
+<p>实例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">seq_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</span><br><span class="line">F = list(map(<span class="keyword">lambda</span> x:x*x, seq_list))</span><br><span class="line">print(F)</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200918233144997.png" /></p>
+<p>map可以用于多个列表，列表不必有相同的长度。map会将<code>lambda函数</code>应用于参数列表的元素，即它首先应用于具有第0个索引的元素，然后应用于具有第一个索引的元素，直到第n个索引。</p>
+<p>如果一个列表的元素少于其他元素，当最短列表消耗完时，map结束迭代。</p>
+<p>示例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">b = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br><span class="line">c = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用到多个列表</span></span><br><span class="line">ab = list(map(<span class="keyword">lambda</span> x,y:x + y, a, b))</span><br><span class="line">print(ab)</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200920142041359.png" /></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 若其中一个列表的元素少于其他元素, 当最短列表消耗完时, map停止迭代</span></span><br><span class="line">ac = list(map(<span class="keyword">lambda</span> x,y:x + y, a, c))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200920142144318.png" /></p>
+<h4 id="filter函数">Filter函数</h4>
+<p>filter也是Python的高级函数，为函数式编程提供便利。其作用是对序列中元素进行筛选，最终获得符合条件的序列。其一般形式为<strong>filter(function, iterable)</strong>，函数提供了一种优雅的方式来过滤掉序列中那个的所有元素。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">number = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"><span class="comment"># 找到序列中的偶数</span></span><br><span class="line">double_number = list(filter(<span class="keyword">lambda</span> x:x % <span class="number">2</span> ==<span class="number">0</span>, number))</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200920144322294.png" /></p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python科学计算库Numpy</title>
     <url>/p/an-introduction-to-numpy/</url>
     <content><![CDATA[<p><strong>摘要：</strong>Numpy是一个开源的Python科学计算库，它是Python科学计算库的基础库，许多其他著名的科学计算库如Pandas、Scikit-learn等，都要用的Numpy库的一些功能。</p>
@@ -4475,71 +4540,6 @@ y=x^2e^x
         <tag>coturn</tag>
         <tag>STUN</tag>
         <tag>TURN</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python的一些高级用法</title>
-    <url>/p/Some-advanced-usages-of-Python/</url>
-    <content><![CDATA[<p>此文介绍了一些Python的一些常见的高级用法。</p>
-<a id="more"></a>
-<h4 id="format格式化字符串">format格式化字符串</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">t = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime())</span><br></pre></td></tr></table></figure>
-<h5 id="按照位置来填充">按照位置来填充</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918213811743.png" /></p>
-<h6 id="同一个参数可以填充多次">同一个参数可以填充多次</h6>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;现在时刻:&#123;0&#125;---&#123;0&#125;&quot;</span>.format(t))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918214059634.png" /></p>
-<h5 id="通过索引来填充">通过索引来填充</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;[0]&#125;&quot;</span>.format(s1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(l1))</span><br><span class="line">print(<span class="string">&quot;&#123;0[0]&#125;,&#123;0[1]&#125;&quot;</span>.format(t1))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918215314962.png" /></p>
-<p>另外一种写法</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">s1 = <span class="string">&quot;hello&quot;</span></span><br><span class="line">l1 = [<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>]</span><br><span class="line">t1 = (<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;&#123;p[1]&#125;&quot;</span>.format(p=s1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=l1))</span><br><span class="line">print(<span class="string">&quot;&#123;p[0]&#125;,&#123;p[1]&#125;&quot;</span>.format(p=t1))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918215656093.png" /></p>
-<h4 id="三元运算符">三元运算符</h4>
-<p>固定格式</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[on_true]  if  [expression]  else [on_false]</span><br></pre></td></tr></table></figure>
-<p>上式表达的语义为：若<strong>表达式expression</strong>的结果为<strong>真</strong>，该式的结果是<strong>[on_true]</strong>；若<strong>表达式expression</strong>的结果为<strong>假</strong>，则该式的结果是<strong>[on_false]</strong></p>
-<p>例子</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br><span class="line">b = <span class="number">2</span></span><br><span class="line">c = a-b <span class="keyword">if</span> a&gt;b <span class="keyword">else</span> a+b</span><br></pre></td></tr></table></figure>
-<p><img src="Python的一些高级用法/image-20200918221607752.png" /></p>
-<h4 id="lambda表达式">Lambda表达式</h4>
-<p>Python使用Lambda表达式创建匿名函数</p>
-<ul>
-<li>Lambda只是一个表达式，函数体比def简单的多</li>
-<li>Lambda的主体是一个表达式，而不是一个代码块，只能在lambda表达式中封装有限的逻辑进去</li>
-<li>Lambda函数拥有自己的名字空间，且不能访问自有参数列表之外或全局名字空间里的参数。</li>
-<li>虽然lamda函数看起来只能写一行，却不等于C或C++的内联函数，后者是调用小函数时不占用内存，从而提升运行效率。</li>
-</ul>
-<p>Lambda表达式语法：<code>lambda argument_list: expression</code></p>
-<p>案例</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">summary = <span class="keyword">lambda</span> x,y:x+y</span><br><span class="line">print(<span class="string">&quot;summary=&#123;&#125;&quot;</span>.format(summary(<span class="number">3</span>,<span class="number">4</span>)))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918230330027.png" /></p>
-<p>上述lambda表达式与以下函数等价</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">summary</span>(<span class="params">x, y</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918231354891.png" /></p>
-<h4 id="map函数">map函数</h4>
-<p>map是Python的高级函数，为函数式编程提供便利。</p>
-<p>形式为<code>map(func, *iterables)</code>：第一个参数func是一个函数的名字；第二个参数为一个可迭代对象。map将函数func应用于列表的所有元素。</p>
-<p>在Python3之前，map用于返回一个列表，其中结果列表的每个元素都是应用于列表或元组序列相应元素上的func结果。</p>
-<p>在Python3中，map返回一个迭代器。</p>
-<p>实例</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">seq_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</span><br><span class="line">F = list(map(<span class="keyword">lambda</span> x:x*x, seq_list))</span><br><span class="line">print(F)</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200918233144997.png" /></p>
-<p>map可以用于多个列表，列表不必有相同的长度。map会将<code>lambda函数</code>应用于参数列表的元素，即它首先应用于具有第0个索引的元素，然后应用于具有第一个索引的元素，直到第n个索引。</p>
-<p>如果一个列表的元素少于其他元素，当最短列表消耗完时，map结束迭代。</p>
-<p>示例</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">b = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br><span class="line">c = [<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用到多个列表</span></span><br><span class="line">ab = list(map(<span class="keyword">lambda</span> x,y:x + y, a, b))</span><br><span class="line">print(ab)</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200920142041359.png" /></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 若其中一个列表的元素少于其他元素, 当最短列表消耗完时, map停止迭代</span></span><br><span class="line">ac = list(map(<span class="keyword">lambda</span> x,y:x + y, a, c))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200920142144318.png" /></p>
-<h4 id="filter函数">Filter函数</h4>
-<p>filter也是Python的高级函数，为函数式编程提供便利。其作用是对序列中元素进行筛选，最终获得符合条件的序列。其一般形式为<strong>filter(function, iterable)</strong>，函数提供了一种优雅的方式来过滤掉序列中那个的所有元素。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">number = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br><span class="line"><span class="comment"># 找到序列中的偶数</span></span><br><span class="line">double_number = list(filter(<span class="keyword">lambda</span> x:x % <span class="number">2</span> ==<span class="number">0</span>, number))</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200920144322294.png" /></p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
