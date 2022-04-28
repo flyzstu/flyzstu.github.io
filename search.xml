@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Anacoda3 安装Pytorch小记录</title>
+    <url>/p/Install-Pytorch-using-Anaconda3/</url>
+    <content><![CDATA[<p>话不多说，先上教程。</p>
+<a id="more"></a>
+<h4 id="下载anadoda3安装包">1.下载Anadoda3安装包</h4>
+<ul>
+<li><p>可以选择清华镜像源</p>
+<p>https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-2019.10-Windows-x86_64.exe</p></li>
+</ul>
+<p><img src="image-20191228165427982-16370643305702.png" /></p>
+<ul>
+<li><p>有条件的可以选择官网下载</p>
+<p>https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe</p>
+<p><img src="image-20191228170139071.png" /></p></li>
+</ul>
+<h4 id="双击安装">2.双击安装</h4>
+<p><em>注意：安装时可以选择将Anaconda注册为默认的Python环境</em></p>
+<p>​ <img src="image-20191228170508433.png" style="zoom:67%;" /></p>
+<p>然后一路next就可以了</p>
+<p>安装完成！</p>
+<p><img src="image-20191228170821162.png" /></p>
+<p>接下来到了很重要的环节————</p>
+<h4 id="创建conda虚拟环境">3.创建conda虚拟环境</h4>
+<p>为什么要创建虚拟环境呢？</p>
+<p>Anaconda主要是对python中的各个包进行管理与部署，从而方便用户的使用体验。</p>
+<p>在从github上面下载别人的代码之后，不同的代码往往需要特定的运行环境。比如说有些代码需要在python3.6的环境下运行，有些代码需要在python2.7的环境下运行。</p>
+<p>这个时候，就需要conda出马了</p>
+<h5 id="选择anaconda-prompt-anaconda3以管理员身份运行">选择Anaconda Prompt (Anaconda3)以管理员身份运行</h5>
+<p><img src="image-20191228171544280.png" /></p>
+<h5 id="输入命令">输入命令：</h5>
+<p><code>conda create -n environment_name python=3 numpy  pytorch torchvision cpuonly -c pytorch</code></p>
+<p>注意：以上命令是安装CPU版本的Pytorch</p>
+<h5 id="如需安装gpu版本的pytorch可以去官网查看对应命令">如需安装GPU版本的Pytorch可以去官网查看对应命令</h5>
+<p>https://pytorch.org/get-started/locally/</p>
+<p><img src="image-20191228172220826.png" /></p>
+<h5 id="然后一路敲y直到安装完成">然后一路敲y直到安装完成</h5>
+<p><img src="image-20191228172356834.png" /></p>
+<p>接下来需要切换到刚刚创建好的虚拟环境</p>
+<h5 id="输入命令-1">输入命令：</h5>
+<p><code>conda activate pytorch</code></p>
+<p><img src="image-20191228172503786.png" /></p>
+<h5 id="安装-librosa-音频处理库">安装 librosa 音频处理库</h5>
+<p><code>conda install -c conda-forge librosa</code></p>
+<h4 id="最后一步安装spyder-ide">4.最后一步：安装Spyder IDE</h4>
+<h5 id="输入命令-2">输入命令：</h5>
+<p><code>conda install spyder</code></p>
+<h5 id="没有问题的话输入命令">没有问题的话输入命令：</h5>
+<p><code>spyder</code></p>
+<p>会自动打开spyder4窗口</p>
+<h5 id="如果出现">如果出现</h5>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(pytorch) C:\Windows\system32&gt;spyder</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">204</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">from</span> PySide <span class="keyword">import</span> __version__ <span class="keyword">as</span> PYSIDE_VERSION  <span class="comment"># analysis:ignore</span></span><br><span class="line">ModuleNotFoundError: No module named <span class="string">&#x27;PySide&#x27;</span></span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\Scripts\spyder-script.py&quot;</span>, line <span class="number">10</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    sys.exit(main())</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\start.py&quot;</span>, line <span class="number">201</span>, <span class="keyword">in</span> main</span><br><span class="line">    <span class="keyword">from</span> spyder.app <span class="keyword">import</span> mainwindow</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\mainwindow.py&quot;</span>, line <span class="number">52</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    requirements.check_qt()</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\requirements.py&quot;</span>, line <span class="number">41</span>, <span class="keyword">in</span> check_qt</span><br><span class="line">    <span class="keyword">import</span> qtpy</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">210</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">raise</span> PythonQtError(<span class="string">&#x27;No Qt bindings could be found&#x27;</span>)</span><br><span class="line">qtpy.PythonQtError: No Qt bindings could be found</span><br></pre></td></tr></table></figure>
+<p>说明没有安装 pyqt</p>
+<p>输入命令</p>
+<p><code>conda install pyqt</code></p>
+<p>即可</p>
+<h5 id="至此pytorch安装完成你又可以愉快的机器学习了">至此，pytorch安装完成，你又可以愉快的机器学习了</h5>
+<p>安装完成后，你会发现开始栏多了一个Spyder，从此，可以直接从这里打开你刚刚创建的虚拟环境对应的Spyder~</p>
+<p><img src="image-20191228174316358.png" /></p>
+]]></content>
+      <tags>
+        <tag>Anacoda3</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>安装Anaconda3(一)</title>
     <url>/p/Chapter-01-of-how-to-install-anaconda/</url>
     <content><![CDATA[<p>Python是一种面向对象的解释型计算机程序设计语言，其使用，具有跨平台的特点，可以在Linux、macOS以及Windows系统中搭建环境并使用，其编写的代码在不同平台上运行时，几乎不需要做较大的改动，使用者无不受益于它的便捷性。</p>
@@ -3825,6 +3889,21 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python装饰器abstractmethod</title>
+    <url>/p/how-to-use-python-abstractmethod/</url>
+    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
+<a id="more"></a>
+<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
+<p>将子类<code>get_urls</code>方法注释后无法运行</p>
+<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>abstractmethod</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4858,6 +4937,178 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>kafaka学习笔记之快速入门</title>
+    <url>/p/introduction-to-kafaka-study-notes-02/</url>
+    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
+<p>关键词：<strong>kafaka</strong></p>
+<a id="more"></a>
+<h2 id="安装部署">安装部署</h2>
+<h3 id="docker安装">docker安装</h3>
+<p>这里使用docker的安装方式，这里贴出使用的镜像地址：https://hub.docker.com/r/bitnami/kafka/</p>
+<p>docker安装方式十分简单，这里贴出使用的docker-compose.yml文件：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">zookeeper:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&#x27;bitnami/zookeeper:latest&#x27;</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;2181:2181&#x27;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ALLOW_ANONYMOUS_LOGIN=yes</span></span><br><span class="line">  <span class="attr">kafka:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&#x27;bitnami/kafka:latest&#x27;</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;9092:9092&#x27;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_BROKER_ID=1</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_CFG_LISTENERS=PLAINTEXT://:9092</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181/kafka</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ALLOW_PLAINTEXT_LISTENER=yes</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">zookeeper</span></span><br></pre></td></tr></table></figure>
+<p>有几点需要注意：</p>
+<ul>
+<li><p><code>KAFKA_BROKER_ID</code>：设置<code>broker.id</code>，每一个broker必须设置不同的值，否则会启动失败；</p></li>
+<li><p><code>KAFKA_CFG_LISTENERS</code>：设置kafka服务端监听的网络地址，这里是默认值0.0.0.0；</p></li>
+<li><p><code>KAFKA_CFG_ADVERTISED_LISTENERS</code>：向外通告kafka实例的网络地址，一般使用宿主机的局域网地址或者公网地址；</p></li>
+<li><p><code>KAFKA_CFG_ZOOKEEPER_CONNECT</code>：设置zookeeper的地址，这里最好是加上<code>/kafka</code>后缀，不然导致zookeeper的一级目录看起来混乱；</p></li>
+</ul>
+<h3 id="配置文件">配置文件</h3>
+<p>可以通过环境变量快速设置几个关键选项，其他选项可以通过挂载配置文件进行修改：</p>
+<ul>
+<li>环境变量设置</li>
+</ul>
+<blockquote>
+<p>The configuration can easily be setup with the Bitnami Apache Kafka Docker image using the following environment variables:</p>
+<ul>
+<li><code>ALLOW_PLAINTEXT_LISTENER</code>: Allow to use the PLAINTEXT listener. Default: <strong>no</strong>.</li>
+<li><code>KAFKA_INTER_BROKER_USER</code>: Apache Kafka inter broker communication user. Default: admin. Default: <strong>user</strong>.</li>
+<li><code>KAFKA_INTER_BROKER_PASSWORD</code>: Apache Kafka inter broker communication password. Default: <strong>bitnami</strong>.</li>
+<li><code>KAFKA_CERTIFICATE_PASSWORD</code>: Password for certificates. No defaults.</li>
+<li><code>KAFKA_HEAP_OPTS</code>: Apache Kafka's Java Heap size. Default: <strong>-Xmx1024m -Xms1024m</strong>.</li>
+<li><code>KAFKA_ZOOKEEPER_PROTOCOL</code>: Authentication protocol for Zookeeper connections. Allowed protocols: <strong>PLAINTEXT</strong>, <strong>SASL</strong>, <strong>SSL</strong>, and <strong>SASL_SSL</strong>. Defaults: <strong>PLAINTEXT</strong>.</li>
+<li><code>KAFKA_ZOOKEEPER_USER</code>: Apache Kafka Zookeeper user for SASL authentication. No defaults.</li>
+<li><code>KAFKA_ZOOKEEPER_PASSWORD</code>: Apache Kafka Zookeeper user password for SASL authentication. No defaults.</li>
+<li><code>KAFKA_ZOOKEEPER_TLS_KEYSTORE_PASSWORD</code>: Apache Kafka Zookeeper keystore file password and key password. No defaults.</li>
+<li><code>KAFKA_ZOOKEEPER_TLS_TRUSTSTORE_PASSWORD</code>: Apache Kafka Zookeeper truststore file password. No defaults.</li>
+<li><code>KAFKA_ZOOKEEPER_TLS_VERIFY_HOSTNAME</code>: Verify Zookeeper hostname on TLS certificates. Defaults: <strong>true</strong>.</li>
+<li><code>KAFKA_ZOOKEEPER_TLS_TYPE</code>: Choose the TLS certificate format to use. Allowed values: <code>JKS</code>, <code>PEM</code>. Defaults: <strong>JKS</strong>.</li>
+<li><code>KAFKA_CFG_SASL_ENABLED_MECHANISMS</code>: Allowed mechanism when using SASL either for clients, inter broker, or zookeeper comunications. Allowed values: <code>PLAIN</code>, <code>SCRAM-SHA-256</code>, <code>SCRAM-SHA-512</code> or a comma separated combination of those values. Default: <strong>PLAIN,SCRAM-SHA-256,SCRAM-SHA-512</strong></li>
+<li><code>KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL</code>: SASL mechanism to use for inter broker communications. No defaults.</li>
+<li><code>KAFKA_TLS_CLIENT_AUTH</code>: Configures kafka brokers to request client authentication. Allowed values: <code>required</code>, <code>requested</code>, <code>none</code>. Defaults: <strong>required</strong>.</li>
+<li><code>KAFKA_TLS_TYPE</code>: Choose the TLS certificate format to use. Allowed values: <code>JKS</code>, <code>PEM</code>. Defaults: <strong>JKS</strong>.</li>
+<li><code>KAFKA_CLIENT_USERS</code>: Users that will be created into Zookeeper when using SASL for client communications. Separated by commas. Default: <strong>user</strong></li>
+<li><code>KAFKA_CLIENT_PASSWORDS</code>: Passwords for the users specified at<code>KAFKA_CLIENT_USERS</code>. Separated by commas. Default: <strong>bitnami</strong></li>
+<li><code>KAFKA_CFG_MAX_PARTITION_FETCH_BYTES</code>: The maximum amount of data per-partition the server will return. Default: 1048576</li>
+<li><code>KAFKA_CFG_MAX_REQUEST_SIZE</code>: The maximum size of a request in bytes. Default: 1048576</li>
+</ul>
+<p>Additionally, any environment variable beginning with <code>KAFKA_CFG_</code> will be mapped to its corresponding Apache Kafka key. For example, use <code>KAFKA_CFG_BACKGROUND_THREADS</code> in order to set <code>background.threads</code> or <code>KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE</code> in order to configure <code>auto.create.topics.enable</code>.</p>
+</blockquote>
+<ul>
+<li>挂载配置文件</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">kafka:</span></span><br><span class="line">    <span class="string">...</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;kafka_data:/bitnami&#x27;</span></span><br><span class="line"><span class="string">+</span>     <span class="bullet">-</span> <span class="string">/path/to/server.properties:/bitnami/kafka/config/server.properties</span></span><br></pre></td></tr></table></figure>
+<p>一些推荐配置</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">#broker 的全局唯一编号，不能重复，只能是数字。 </span></span><br><span class="line"><span class="attr">broker.id</span>=<span class="number">0</span></span><br><span class="line"><span class="comment">#处理网络请求的线程数量</span></span><br><span class="line"><span class="attr">num.network.threads</span>=<span class="number">3</span></span><br><span class="line"><span class="comment">#用来处理磁盘 IO 的线程数量</span></span><br><span class="line"><span class="attr">num.io.threads</span>=<span class="number">8</span> <span class="comment">#发送套接字的缓冲区大小</span></span><br><span class="line"><span class="attr">socket.send.buffer.bytes</span>=<span class="number">102400</span></span><br><span class="line"><span class="comment">#接收套接字的缓冲区大小 </span></span><br><span class="line"><span class="attr">socket.receive.buffer.bytes</span>=<span class="number">102400</span></span><br><span class="line"><span class="comment">#请求套接字的缓冲区大小</span></span><br><span class="line"><span class="attr">socket.request.max.bytes</span>=<span class="number">104857600</span></span><br><span class="line"><span class="comment">#kafka 运行日志(数据)存放的路径，路径不需要提前创建，kafka 自动帮你创建，可以 配置多个磁盘路径，路径与路径之间可以用&quot;，&quot;分隔 </span></span><br><span class="line"><span class="attr">log.dirs</span>=/opt/module/kafka/datas</span><br><span class="line"><span class="comment">#topic 在当前 broker 上的分区个数</span></span><br><span class="line"><span class="attr">num.partitions</span>=<span class="number">1</span></span><br><span class="line"><span class="comment">#用来恢复和清理 data 下数据的线程数量 </span></span><br><span class="line"><span class="attr">num.recovery.threads.per.data.dir</span>=<span class="number">1</span></span><br><span class="line"><span class="comment"># 每个topic创建时的副本数，默认时1个副本 </span></span><br><span class="line"><span class="attr">offsets.topic.replication.factor</span>=<span class="number">1</span></span><br><span class="line"><span class="comment">#segment 文件保留的最长时间，超时将被删除</span></span><br><span class="line"><span class="attr">log.retention.hours</span>=<span class="number">168</span></span><br><span class="line"><span class="comment">#每个 segment 文件的大小，默认最大 1G </span></span><br><span class="line"><span class="attr">log.segment.bytes</span>=<span class="number">1073741824</span></span><br><span class="line"><span class="comment"># 检查过期数据的时间，默认5分钟检查一次是否数据过期 </span></span><br><span class="line"><span class="attr">log.retention.check.interval.ms</span>=<span class="number">300000</span></span><br><span class="line"><span class="comment">#配置连接 Zookeeper 集群地址(在 zk 根目录下创建/kafka，方便管理)</span></span><br><span class="line"><span class="attr">zookeeper.connect</span>=hadoop102:<span class="number">2181</span>,hadoop103:<span class="number">2181</span>,hadoop104:<span class="number">2181</span>/kafka</span><br></pre></td></tr></table></figure>
+<h2 id="kafka命令行操作">kafka命令行操作</h2>
+<p><img src="image-20220419214422212.png" /></p>
+<h3 id="主题命令行参数">主题命令行参数</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bin/kafka-topics.sh</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>--bootstrap-server &lt;String: server toconnect to&gt;</td>
+<td>链接kafka broker主机名称</td>
+</tr>
+<tr class="even">
+<td>--topic &lt;String: topic&gt;</td>
+<td>操作的 topic 名称</td>
+</tr>
+<tr class="odd">
+<td>--create</td>
+<td>创建主题</td>
+</tr>
+<tr class="even">
+<td>--alter</td>
+<td>修改主题</td>
+</tr>
+<tr class="odd">
+<td>--delete</td>
+<td>删除主题</td>
+</tr>
+<tr class="even">
+<td>--list</td>
+<td>查看所有主题</td>
+</tr>
+<tr class="odd">
+<td>--describe</td>
+<td>查看主题详细描述</td>
+</tr>
+<tr class="even">
+<td>--partitions &lt;Integer: # of partitions&gt;</td>
+<td>设置分区数</td>
+</tr>
+<tr class="odd">
+<td>--replication-factor&lt;Integer: replication factor&gt;</td>
+<td>设置分区副本</td>
+</tr>
+<tr class="even">
+<td>--config &lt;String: name=value&gt;</td>
+<td>更新系统默认的配置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="主题命令行相关操作">主题命令行相关操作</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看当前服务器所有topic</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --list</span><br><span class="line"><span class="comment"># 指定topic名、定义副本数、分区数，创建topic</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --create --partitions 1 --replication-factor 3 --topic first</span><br><span class="line"><span class="comment"># 查看first主题的详情</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --describe --topic first</span><br><span class="line"><span class="comment"># 修改分区数（分区数只能增加不能减少）</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --alter --topic first --partitions 3</span><br><span class="line"><span class="comment"># 删除主题（需要将server.properties 中设置 delete.topic.enable=true，否则只是标记删除）</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --delete --topic first</span><br></pre></td></tr></table></figure>
+<h2 id="生产者命令行操作">生产者命令行操作</h2>
+<h3 id="生产者命令行参数">生产者命令行参数</h3>
+<table>
+<colgroup>
+<col style="width: 57%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>--bootstrap-server &lt;String: server toconnect to&gt;</td>
+<td>连接的 Kafka Broker 主机名称和端口号</td>
+</tr>
+<tr class="even">
+<td>--topic &lt;String: topic&gt;</td>
+<td>操作的 topic 名称</td>
+</tr>
+</tbody>
+</table>
+<h3 id="发送消息">发送消息</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bin/kafka-console-producer.sh --bootstrap-server hadoop102:9092 --topic first</span><br></pre></td></tr></table></figure>
+<h2 id="消费者命令行参操作">消费者命令行参操作</h2>
+<h3 id="消费者命令行参数">消费者命令行参数</h3>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>--bootstrap-server &lt;String: server toconnect to&gt;</td>
+<td>链接的kafka broker主机名和短端口号</td>
+</tr>
+<tr class="even">
+<td>--topic</td>
+<td>操作的topic名称</td>
+</tr>
+<tr class="odd">
+<td>--from-beginning</td>
+<td>从头开始消费</td>
+</tr>
+<tr class="even">
+<td>--group &lt;String: consumer group id&gt;</td>
+<td>指定消费者组名称</td>
+</tr>
+</tbody>
+</table>
+<h3 id="消费消息">消费消息</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --topic first</span><br><span class="line"><span class="comment"># 从主题的开始消费消息</span></span><br><span class="line">bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginning --topic first</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>kafaka</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kafaka学习笔记之绪论</title>
     <url>/p/introduction-to-kafaka-study-notes/</url>
     <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
@@ -5035,21 +5286,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python装饰器abstractmethod</title>
-    <url>/p/how-to-use-python-abstractmethod/</url>
-    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
-<a id="more"></a>
-<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
-<p>将子类<code>get_urls</code>方法注释后无法运行</p>
-<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>abstractmethod</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ssh-genkey参数</title>
     <url>/p/ssh-genkey/</url>
     <content><![CDATA[<p>什么是ssh-genkey？</p>
@@ -5182,178 +5418,6 @@ y=x^2e^x
       <tags>
         <tag>linux</tag>
         <tag>jdk</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>kafaka学习笔记之快速入门</title>
-    <url>/p/introduction-to-kafaka-study-notes-02/</url>
-    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
-<p>关键词：<strong>kafaka</strong></p>
-<a id="more"></a>
-<h2 id="安装部署">安装部署</h2>
-<h3 id="docker安装">docker安装</h3>
-<p>这里使用docker的安装方式，这里贴出使用的镜像地址：https://hub.docker.com/r/bitnami/kafka/</p>
-<p>docker安装方式十分简单，这里贴出使用的docker-compose.yml文件：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">zookeeper:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&#x27;bitnami/zookeeper:latest&#x27;</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;2181:2181&#x27;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ALLOW_ANONYMOUS_LOGIN=yes</span></span><br><span class="line">  <span class="attr">kafka:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&#x27;bitnami/kafka:latest&#x27;</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;9092:9092&#x27;</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_BROKER_ID=1</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_CFG_LISTENERS=PLAINTEXT://:9092</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181/kafka</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ALLOW_PLAINTEXT_LISTENER=yes</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">zookeeper</span></span><br></pre></td></tr></table></figure>
-<p>有几点需要注意：</p>
-<ul>
-<li><p><code>KAFKA_BROKER_ID</code>：设置<code>broker.id</code>，每一个broker必须设置不同的值，否则会启动失败；</p></li>
-<li><p><code>KAFKA_CFG_LISTENERS</code>：设置kafka服务端监听的网络地址，这里是默认值0.0.0.0；</p></li>
-<li><p><code>KAFKA_CFG_ADVERTISED_LISTENERS</code>：向外通告kafka实例的网络地址，一般使用宿主机的局域网地址或者公网地址；</p></li>
-<li><p><code>KAFKA_CFG_ZOOKEEPER_CONNECT</code>：设置zookeeper的地址，这里最好是加上<code>/kafka</code>后缀，不然导致zookeeper的一级目录看起来混乱；</p></li>
-</ul>
-<h3 id="配置文件">配置文件</h3>
-<p>可以通过环境变量快速设置几个关键选项，其他选项可以通过挂载配置文件进行修改：</p>
-<ul>
-<li>环境变量设置</li>
-</ul>
-<blockquote>
-<p>The configuration can easily be setup with the Bitnami Apache Kafka Docker image using the following environment variables:</p>
-<ul>
-<li><code>ALLOW_PLAINTEXT_LISTENER</code>: Allow to use the PLAINTEXT listener. Default: <strong>no</strong>.</li>
-<li><code>KAFKA_INTER_BROKER_USER</code>: Apache Kafka inter broker communication user. Default: admin. Default: <strong>user</strong>.</li>
-<li><code>KAFKA_INTER_BROKER_PASSWORD</code>: Apache Kafka inter broker communication password. Default: <strong>bitnami</strong>.</li>
-<li><code>KAFKA_CERTIFICATE_PASSWORD</code>: Password for certificates. No defaults.</li>
-<li><code>KAFKA_HEAP_OPTS</code>: Apache Kafka's Java Heap size. Default: <strong>-Xmx1024m -Xms1024m</strong>.</li>
-<li><code>KAFKA_ZOOKEEPER_PROTOCOL</code>: Authentication protocol for Zookeeper connections. Allowed protocols: <strong>PLAINTEXT</strong>, <strong>SASL</strong>, <strong>SSL</strong>, and <strong>SASL_SSL</strong>. Defaults: <strong>PLAINTEXT</strong>.</li>
-<li><code>KAFKA_ZOOKEEPER_USER</code>: Apache Kafka Zookeeper user for SASL authentication. No defaults.</li>
-<li><code>KAFKA_ZOOKEEPER_PASSWORD</code>: Apache Kafka Zookeeper user password for SASL authentication. No defaults.</li>
-<li><code>KAFKA_ZOOKEEPER_TLS_KEYSTORE_PASSWORD</code>: Apache Kafka Zookeeper keystore file password and key password. No defaults.</li>
-<li><code>KAFKA_ZOOKEEPER_TLS_TRUSTSTORE_PASSWORD</code>: Apache Kafka Zookeeper truststore file password. No defaults.</li>
-<li><code>KAFKA_ZOOKEEPER_TLS_VERIFY_HOSTNAME</code>: Verify Zookeeper hostname on TLS certificates. Defaults: <strong>true</strong>.</li>
-<li><code>KAFKA_ZOOKEEPER_TLS_TYPE</code>: Choose the TLS certificate format to use. Allowed values: <code>JKS</code>, <code>PEM</code>. Defaults: <strong>JKS</strong>.</li>
-<li><code>KAFKA_CFG_SASL_ENABLED_MECHANISMS</code>: Allowed mechanism when using SASL either for clients, inter broker, or zookeeper comunications. Allowed values: <code>PLAIN</code>, <code>SCRAM-SHA-256</code>, <code>SCRAM-SHA-512</code> or a comma separated combination of those values. Default: <strong>PLAIN,SCRAM-SHA-256,SCRAM-SHA-512</strong></li>
-<li><code>KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL</code>: SASL mechanism to use for inter broker communications. No defaults.</li>
-<li><code>KAFKA_TLS_CLIENT_AUTH</code>: Configures kafka brokers to request client authentication. Allowed values: <code>required</code>, <code>requested</code>, <code>none</code>. Defaults: <strong>required</strong>.</li>
-<li><code>KAFKA_TLS_TYPE</code>: Choose the TLS certificate format to use. Allowed values: <code>JKS</code>, <code>PEM</code>. Defaults: <strong>JKS</strong>.</li>
-<li><code>KAFKA_CLIENT_USERS</code>: Users that will be created into Zookeeper when using SASL for client communications. Separated by commas. Default: <strong>user</strong></li>
-<li><code>KAFKA_CLIENT_PASSWORDS</code>: Passwords for the users specified at<code>KAFKA_CLIENT_USERS</code>. Separated by commas. Default: <strong>bitnami</strong></li>
-<li><code>KAFKA_CFG_MAX_PARTITION_FETCH_BYTES</code>: The maximum amount of data per-partition the server will return. Default: 1048576</li>
-<li><code>KAFKA_CFG_MAX_REQUEST_SIZE</code>: The maximum size of a request in bytes. Default: 1048576</li>
-</ul>
-<p>Additionally, any environment variable beginning with <code>KAFKA_CFG_</code> will be mapped to its corresponding Apache Kafka key. For example, use <code>KAFKA_CFG_BACKGROUND_THREADS</code> in order to set <code>background.threads</code> or <code>KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE</code> in order to configure <code>auto.create.topics.enable</code>.</p>
-</blockquote>
-<ul>
-<li>挂载配置文件</li>
-</ul>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">kafka:</span></span><br><span class="line">    <span class="string">...</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;kafka_data:/bitnami&#x27;</span></span><br><span class="line"><span class="string">+</span>     <span class="bullet">-</span> <span class="string">/path/to/server.properties:/bitnami/kafka/config/server.properties</span></span><br></pre></td></tr></table></figure>
-<p>一些推荐配置</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">#broker 的全局唯一编号，不能重复，只能是数字。 </span></span><br><span class="line"><span class="attr">broker.id</span>=<span class="number">0</span></span><br><span class="line"><span class="comment">#处理网络请求的线程数量</span></span><br><span class="line"><span class="attr">num.network.threads</span>=<span class="number">3</span></span><br><span class="line"><span class="comment">#用来处理磁盘 IO 的线程数量</span></span><br><span class="line"><span class="attr">num.io.threads</span>=<span class="number">8</span> <span class="comment">#发送套接字的缓冲区大小</span></span><br><span class="line"><span class="attr">socket.send.buffer.bytes</span>=<span class="number">102400</span></span><br><span class="line"><span class="comment">#接收套接字的缓冲区大小 </span></span><br><span class="line"><span class="attr">socket.receive.buffer.bytes</span>=<span class="number">102400</span></span><br><span class="line"><span class="comment">#请求套接字的缓冲区大小</span></span><br><span class="line"><span class="attr">socket.request.max.bytes</span>=<span class="number">104857600</span></span><br><span class="line"><span class="comment">#kafka 运行日志(数据)存放的路径，路径不需要提前创建，kafka 自动帮你创建，可以 配置多个磁盘路径，路径与路径之间可以用&quot;，&quot;分隔 </span></span><br><span class="line"><span class="attr">log.dirs</span>=/opt/module/kafka/datas</span><br><span class="line"><span class="comment">#topic 在当前 broker 上的分区个数</span></span><br><span class="line"><span class="attr">num.partitions</span>=<span class="number">1</span></span><br><span class="line"><span class="comment">#用来恢复和清理 data 下数据的线程数量 </span></span><br><span class="line"><span class="attr">num.recovery.threads.per.data.dir</span>=<span class="number">1</span></span><br><span class="line"><span class="comment"># 每个topic创建时的副本数，默认时1个副本 </span></span><br><span class="line"><span class="attr">offsets.topic.replication.factor</span>=<span class="number">1</span></span><br><span class="line"><span class="comment">#segment 文件保留的最长时间，超时将被删除</span></span><br><span class="line"><span class="attr">log.retention.hours</span>=<span class="number">168</span></span><br><span class="line"><span class="comment">#每个 segment 文件的大小，默认最大 1G </span></span><br><span class="line"><span class="attr">log.segment.bytes</span>=<span class="number">1073741824</span></span><br><span class="line"><span class="comment"># 检查过期数据的时间，默认5分钟检查一次是否数据过期 </span></span><br><span class="line"><span class="attr">log.retention.check.interval.ms</span>=<span class="number">300000</span></span><br><span class="line"><span class="comment">#配置连接 Zookeeper 集群地址(在 zk 根目录下创建/kafka，方便管理)</span></span><br><span class="line"><span class="attr">zookeeper.connect</span>=hadoop102:<span class="number">2181</span>,hadoop103:<span class="number">2181</span>,hadoop104:<span class="number">2181</span>/kafka</span><br></pre></td></tr></table></figure>
-<h2 id="kafka命令行操作">kafka命令行操作</h2>
-<p><img src="image-20220419214422212.png" /></p>
-<h3 id="主题命令行参数">主题命令行参数</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bin/kafka-topics.sh</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr class="header">
-<th>参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>--bootstrap-server &lt;String: server toconnect to&gt;</td>
-<td>链接kafka broker主机名称</td>
-</tr>
-<tr class="even">
-<td>--topic &lt;String: topic&gt;</td>
-<td>操作的 topic 名称</td>
-</tr>
-<tr class="odd">
-<td>--create</td>
-<td>创建主题</td>
-</tr>
-<tr class="even">
-<td>--alter</td>
-<td>修改主题</td>
-</tr>
-<tr class="odd">
-<td>--delete</td>
-<td>删除主题</td>
-</tr>
-<tr class="even">
-<td>--list</td>
-<td>查看所有主题</td>
-</tr>
-<tr class="odd">
-<td>--describe</td>
-<td>查看主题详细描述</td>
-</tr>
-<tr class="even">
-<td>--partitions &lt;Integer: # of partitions&gt;</td>
-<td>设置分区数</td>
-</tr>
-<tr class="odd">
-<td>--replication-factor&lt;Integer: replication factor&gt;</td>
-<td>设置分区副本</td>
-</tr>
-<tr class="even">
-<td>--config &lt;String: name=value&gt;</td>
-<td>更新系统默认的配置</td>
-</tr>
-</tbody>
-</table>
-<h3 id="主题命令行相关操作">主题命令行相关操作</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看当前服务器所有topic</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --list</span><br><span class="line"><span class="comment"># 指定topic名、定义副本数、分区数，创建topic</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --create --partitions 1 --replication-factor 3 --topic first</span><br><span class="line"><span class="comment"># 查看first主题的详情</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --describe --topic first</span><br><span class="line"><span class="comment"># 修改分区数（分区数只能增加不能减少）</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --alter --topic first --partitions 3</span><br><span class="line"><span class="comment"># 删除主题（需要将server.properties 中设置 delete.topic.enable=true，否则只是标记删除）</span></span><br><span class="line">bin/kafka-topics.sh --bootstrap-server hadoop102:9092 --delete --topic first</span><br></pre></td></tr></table></figure>
-<h2 id="生产者命令行操作">生产者命令行操作</h2>
-<h3 id="生产者命令行参数">生产者命令行参数</h3>
-<table>
-<colgroup>
-<col style="width: 57%" />
-<col style="width: 42%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>--bootstrap-server &lt;String: server toconnect to&gt;</td>
-<td>连接的 Kafka Broker 主机名称和端口号</td>
-</tr>
-<tr class="even">
-<td>--topic &lt;String: topic&gt;</td>
-<td>操作的 topic 名称</td>
-</tr>
-</tbody>
-</table>
-<h3 id="发送消息">发送消息</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bin/kafka-console-producer.sh --bootstrap-server hadoop102:9092 --topic first</span><br></pre></td></tr></table></figure>
-<h2 id="消费者命令行参操作">消费者命令行参操作</h2>
-<h3 id="消费者命令行参数">消费者命令行参数</h3>
-<table>
-<thead>
-<tr class="header">
-<th>参数</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>--bootstrap-server &lt;String: server toconnect to&gt;</td>
-<td>链接的kafka broker主机名和短端口号</td>
-</tr>
-<tr class="even">
-<td>--topic</td>
-<td>操作的topic名称</td>
-</tr>
-<tr class="odd">
-<td>--from-beginning</td>
-<td>从头开始消费</td>
-</tr>
-<tr class="even">
-<td>--group &lt;String: consumer group id&gt;</td>
-<td>指定消费者组名称</td>
-</tr>
-</tbody>
-</table>
-<h3 id="消费消息">消费消息</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --topic first</span><br><span class="line"><span class="comment"># 从主题的开始消费消息</span></span><br><span class="line">bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginning --topic first</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>kafaka</tag>
       </tags>
   </entry>
   <entry>
@@ -5570,6 +5634,109 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>证书</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</title>
+    <url>/p/use-wrap-unlock-ipv6/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</p>
+<p><strong>关键词</strong>：cloudflare ，wrap</p>
+<a id="more"></a>
+<h3 id="准备工作">准备工作</h3>
+<ul>
+<li>一台Deian 系的服务器</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install curl sudo lsb-release -y</span><br></pre></td></tr></table></figure>
+<h4 id="debian安装">debian安装</h4>
+<ol type="1">
+<li>安装版本高于 5.6 的内核</li>
+<li>安装 wireguard 内核模块</li>
+<li>安装 wireguard-go</li>
+</ol>
+<h5 id="添加backports源">添加backports源</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://deb.debian.org/debian <span class="subst">$(lsb_release -sc)</span>-backports main&quot;</span> | sudo tee /etc/apt/sources.list.d/backports.list</span><br><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
+<p>先执行 <code>uname -r</code> 命令查看内核版本。如果是 5.6 以上内核则已经集成了 Wire­Guard ，就不需要安装了。</p>
+<h5 id="安装网络工具包">安装网络工具包</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install net-tools iproute2 openresolv dnsutils -y</span><br></pre></td></tr></table></figure>
+<p>安装 <strong><a href="https://p3terx.com/go/aHR0cHM6Ly9naXRodWIuY29tL1dpcmVHdWFyZC93aXJlZ3VhcmQtdG9vbHM">wireguard-tools</a></strong> (Wire­Guard 配置工具：<code>wg</code>、<code>wg-quick</code>)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install wireguard-tools --no-install-recommends</span><br></pre></td></tr></table></figure>
+<h5 id="安装内核">安装内核</h5>
+<p>为了稳定性推荐安装 back­ports 仓库中的内核 (截止发文版本为 5.10)。以下是一把梭命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -t $(lsb_release -sc)-backports install linux-image-$(dpkg --print-architecture) linux-headers-$(dpkg --print-architecture) --install-recommends -y</span><br></pre></td></tr></table></figure>
+<p>安装完重启，并执行 <code>uname -r</code> 命令查看内核版本来确认新内核是否被启用。</p>
+<h4 id="debian安装动态内核模块">debian安装动态内核模块</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install wireguard-dkms -y</span><br></pre></td></tr></table></figure>
+<p>安装后执行 <code>modprobe wireguard</code> 命令加载 Wire­Guard 内核模块。</p>
+<h4 id="debian安装wireguard-go">debian安装wireguard-go</h4>
+<p>OpenVZ/LXC VPS 或者不想折腾内核的小伙伴可以安装 <code>wireguard-go</code>，只不过网络性能较低。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL git.io/wireguard-go.sh | sudo bash</span><br></pre></td></tr></table></figure>
+<p>PS：对于 OpenVZ/LXC 的 VPS 需要执行<code>lsmod | grep tun</code>命令来检查 TUN 模块是否正常加载，若没有请自行咕鸽搜索开启方法，否则是不能正常使用的。</p>
+<h4 id="ubuntu安装">ubuntu安装</h4>
+<p>WireGuard可从默认的Ubuntu存储库中获得。 要安装它，请运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install wireguard</span><br></pre></td></tr></table></figure>
+<p>这将安装WireGuard模块和工具。WireGuard作为内核模块运行。</p>
+<h3 id="配置warp">配置WARP</h3>
+<h4 id="安装wgcf">安装wgcf</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL git.io/wgcf.sh | sudo bash</span><br></pre></td></tr></table></figure>
+<h4 id="注册-warp-账户-将生成-wgcf-account.toml-文件保存账户信息">注册 WARP 账户 (将生成 <code>wgcf-account.toml</code> 文件保存账户信息)</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wgcf register</span><br></pre></td></tr></table></figure>
+<h4 id="生成wireguard配置文件wgcf-profile.conf">生成WireGuard配置文件(wgcf-profile.conf)</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wgcf generate</span><br></pre></td></tr></table></figure>
+<p>生成的两个文件记得备份好，尤其是 <code>wgcf-profile.conf</code>，万一未来工具失效、重装系统后可能还用得着。</p>
+<h4 id="编辑wireguard配置文件">编辑WireGuard配置文件</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim wgcf-profile.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Interface]</span><br><span class="line">PrivateKey &#x3D; *</span><br><span class="line">Address &#x3D; *</span><br><span class="line">Address &#x3D; *</span><br><span class="line">DNS &#x3D; 2001:4860:4860::8888</span><br><span class="line">MTU &#x3D; 1280</span><br><span class="line">[Peer]</span><br><span class="line">PublicKey &#x3D; *</span><br><span class="line">AllowedIPs &#x3D; ::&#x2F;0</span><br><span class="line">Endpoint &#x3D; [2606:4700:d0::a29f:c001]:2408</span><br></pre></td></tr></table></figure>
+<p>默认的<code>Endpoint</code>为 <code>engage.cloudflareclient.com</code>，解析成ip一般是以下两个结果：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">162.159.192.1</span><br><span class="line">2606:4700:d0::a29f:c001</span><br></pre></td></tr></table></figure>
+<p>如果想优先使用<code>warp</code>的ipv4地址访问外部网络，则<code>Endpoint</code> 需要设置为ipv4的地址；ipv6依次类推。</p>
+<p>DNS也是一样，如果想用ipv4地址，则需要设置一个ipv4的DNS地址，如<code>8.8.8.8</code>；ipv6则是<code>2001:4860:4860::8888</code>.</p>
+<h4 id="将修改好的配置文件移动到指定目录">将修改好的配置文件移动到指定目录</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp wgcf-profile.conf /etc/wireguard/wgcf.conf</span><br></pre></td></tr></table></figure>
+<h4 id="开启网络接口">开启网络接口</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo wg-quick up wgcf</span><br></pre></td></tr></table></figure>
+<h5 id="有可能遇到的问题">有可能遇到的问题</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/bin/wg-quick: line 31: resolvconf: <span class="built_in">command</span> not found [WireGuard | Debian]</span><br></pre></td></tr></table></figure>
+<p>解决方案：</p>
+<p>执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo ln -s /usr/bin/resolvectl /usr/<span class="built_in">local</span>/bin/resolvconf</span><br></pre></td></tr></table></figure>
+<h4 id="关闭网络接口">关闭网络接口</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo wg-quick down wgcf</span><br></pre></td></tr></table></figure>
+<h4 id="正式启用网络接口">正式启用网络接口</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启用守护进程</span></span><br><span class="line">sudo systemctl start wg-quick@wgcf</span><br><span class="line"><span class="comment"># 设置开机启动</span></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> wg-quick@wgcf</span><br></pre></td></tr></table></figure>
+<h3 id="使用warp">使用WARP+</h3>
+<h4 id="如何获得更多的warp流量">如何获得更多的Warp+流量</h4>
+<p>自动化脚本：https://github.com/navaneethkm004/warp-plus/raw/main/main.py</p>
+<p>需要Python3，执行之前请运行：<code>chmod +x main.py</code></p>
+<p>ID获取方式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat wgcf-account.toml</span><br></pre></td></tr></table></figure>
+<p>输入ID以后，程序开始运行</p>
+<p>查看增加的流量：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wgcf update &amp;&amp; wgcf status</span><br></pre></td></tr></table></figure>
+<h4 id="多个设备共享">多个设备共享</h4>
+<p>将多台设备的<code>license_key</code>设置为同一个，然后执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wgcf update &amp;&amp; wgcf status</span><br></pre></td></tr></table></figure>
+<h4 id="检测warp是否启用">检测warp+是否启用</h4>
+<p>服务器端执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -6 https://cloudflare.com/cdn-cgi/trace</span><br></pre></td></tr></table></figure>
+<p>若<code>warp=plus</code>则说明启用成功。</p>
+<p>若<code>warp=on</code>则需要指向以下操作：</p>
+<ol type="1">
+<li><p>执行<code>wgcf register</code>重新生成一个账户；</p></li>
+<li><p>修改生成的<code>wgcf-account.toml</code>，绑定<code>license_key</code>；</p></li>
+<li><p>执行<code>wgcf generate</code>生成WireGuard VPN配置文件；</p></li>
+<li><p>执行<code>sudo cp wgcf-profile.conf /etc/wireguard/wgcf.conf</code>；</p></li>
+<li><p>启动网络接口，<code>sudo wg-quick up wgcf</code>；</p></li>
+<li><p>执行<code>curl -6 https://cloudflare.com/cdn-cgi/trace</code>.</p></li>
+</ol>
+<p>如果<code>warp</code>的值没有发生变化，需要重新执行1-6步骤。</p>
+<h3 id="end">END</h3>
+<p>感谢：</p>
+<p>https://p3terx.com/archives/use-cloudflare-warp-to-add-extra-ipv4-or-ipv6-network-support-to-vps-servers-for-free.html</p>
+<p>https://hiram.wang/cloudflare-wrap-vps/#2021-03%E6%9B%B4%E6%96%B0-%E5%AE%9E%E7%8E%B0%E6%97%A0%E6%8D%9F%E5%8F%8C%E6%A0%88</p>
+]]></content>
+      <tags>
+        <tag>cloudflare</tag>
+        <tag>wrap</tag>
       </tags>
   </entry>
   <entry>
@@ -6692,34 +6859,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>力扣数组基础之双指针长度最小的子数组</title>
-    <url>/p/minimum-size-subarray-sum-2/</url>
-    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>滑动窗口问题主要确定以下三点：</p>
-<ul>
-<li>窗口内是什么？</li>
-<li>如何移动窗口的起始位置？</li>
-<li>如何移动窗口的结束位置？</li>
-</ul>
-<p>本题中，<strong>窗口就是满足与其和≥s的长度最小的连续子数组</strong>。</p>
-<p>窗口的起始位置如何移动：如果当前窗口的值大于s了，窗口就要向前移动了（也就是该缩小了）。</p>
-<p>窗口的结束位置如何移动：窗口的结束位置就是遍历数组的指针，窗口的起始位置设置为数组的起始位置就可以了。</p>
-<p><img src="20210312160441942.png" /></p>
-<p>滑动窗口的精髓就是<strong>根据当前子序列和大小的情况，不断调节子序列的起始位置</strong>，从而降低复杂度到O(n).</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 滑动窗口</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> result = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">    <span class="keyword">var</span> sum = <span class="number">0</span> <span class="comment">// 滑动窗口数值之和</span></span><br><span class="line">    <span class="keyword">var</span> i = <span class="number">0</span> <span class="comment">// 滑动窗口起始位置</span></span><br><span class="line">    <span class="keyword">var</span> subLength = <span class="number">0</span> <span class="comment">// 滑动窗口的长度</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(nums); j++ &#123;</span><br><span class="line">        sum += nums[j]</span><br><span class="line">        <span class="keyword">for</span> target &lt;= sum &#123; <span class="comment">// 直到target大于和</span></span><br><span class="line">            subLength = (j - i + <span class="number">1</span>) <span class="comment">// 子序列长度</span></span><br><span class="line">            result = min(result, subLength) <span class="comment">// 取子序列长度和result最小值</span></span><br><span class="line">            sum -= num[i++] <span class="comment">// 滑动窗口不断收缩</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> result == <span class="built_in">len</span>(nums) + <span class="number">1</span>&#123; <span class="comment">// 此种情况下没有符合条件的子序列</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣数组基础之模拟螺旋矩阵Ⅱ</title>
     <url>/p/spiral-matrix-ii/</url>
     <content><![CDATA[<p>题目：给你一个正整数 <code>n</code> ，生成一个包含 <code>1</code> 到 <code>n2</code> 所有元素，且元素按顺时针顺序螺旋排列的 <code>n x n</code> 正方形矩阵 <code>matrix</code> 。</p>
@@ -6750,170 +6889,31 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Anacoda3 安装Pytorch小记录</title>
-    <url>/p/Install-Pytorch-using-Anaconda3/</url>
-    <content><![CDATA[<p>话不多说，先上教程。</p>
+    <title>力扣数组基础之双指针长度最小的子数组</title>
+    <url>/p/minimum-size-subarray-sum-2/</url>
+    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
 <a id="more"></a>
-<h4 id="下载anadoda3安装包">1.下载Anadoda3安装包</h4>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>滑动窗口问题主要确定以下三点：</p>
 <ul>
-<li><p>可以选择清华镜像源</p>
-<p>https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-2019.10-Windows-x86_64.exe</p></li>
+<li>窗口内是什么？</li>
+<li>如何移动窗口的起始位置？</li>
+<li>如何移动窗口的结束位置？</li>
 </ul>
-<p><img src="image-20191228165427982-16370643305702.png" /></p>
-<ul>
-<li><p>有条件的可以选择官网下载</p>
-<p>https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe</p>
-<p><img src="image-20191228170139071.png" /></p></li>
-</ul>
-<h4 id="双击安装">2.双击安装</h4>
-<p><em>注意：安装时可以选择将Anaconda注册为默认的Python环境</em></p>
-<p>​ <img src="image-20191228170508433.png" style="zoom:67%;" /></p>
-<p>然后一路next就可以了</p>
-<p>安装完成！</p>
-<p><img src="image-20191228170821162.png" /></p>
-<p>接下来到了很重要的环节————</p>
-<h4 id="创建conda虚拟环境">3.创建conda虚拟环境</h4>
-<p>为什么要创建虚拟环境呢？</p>
-<p>Anaconda主要是对python中的各个包进行管理与部署，从而方便用户的使用体验。</p>
-<p>在从github上面下载别人的代码之后，不同的代码往往需要特定的运行环境。比如说有些代码需要在python3.6的环境下运行，有些代码需要在python2.7的环境下运行。</p>
-<p>这个时候，就需要conda出马了</p>
-<h5 id="选择anaconda-prompt-anaconda3以管理员身份运行">选择Anaconda Prompt (Anaconda3)以管理员身份运行</h5>
-<p><img src="image-20191228171544280.png" /></p>
-<h5 id="输入命令">输入命令：</h5>
-<p><code>conda create -n environment_name python=3 numpy  pytorch torchvision cpuonly -c pytorch</code></p>
-<p>注意：以上命令是安装CPU版本的Pytorch</p>
-<h5 id="如需安装gpu版本的pytorch可以去官网查看对应命令">如需安装GPU版本的Pytorch可以去官网查看对应命令</h5>
-<p>https://pytorch.org/get-started/locally/</p>
-<p><img src="image-20191228172220826.png" /></p>
-<h5 id="然后一路敲y直到安装完成">然后一路敲y直到安装完成</h5>
-<p><img src="image-20191228172356834.png" /></p>
-<p>接下来需要切换到刚刚创建好的虚拟环境</p>
-<h5 id="输入命令-1">输入命令：</h5>
-<p><code>conda activate pytorch</code></p>
-<p><img src="image-20191228172503786.png" /></p>
-<h5 id="安装-librosa-音频处理库">安装 librosa 音频处理库</h5>
-<p><code>conda install -c conda-forge librosa</code></p>
-<h4 id="最后一步安装spyder-ide">4.最后一步：安装Spyder IDE</h4>
-<h5 id="输入命令-2">输入命令：</h5>
-<p><code>conda install spyder</code></p>
-<h5 id="没有问题的话输入命令">没有问题的话输入命令：</h5>
-<p><code>spyder</code></p>
-<p>会自动打开spyder4窗口</p>
-<h5 id="如果出现">如果出现</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">(pytorch) C:\Windows\system32&gt;spyder</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">204</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">from</span> PySide <span class="keyword">import</span> __version__ <span class="keyword">as</span> PYSIDE_VERSION  <span class="comment"># analysis:ignore</span></span><br><span class="line">ModuleNotFoundError: No module named <span class="string">&#x27;PySide&#x27;</span></span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\Scripts\spyder-script.py&quot;</span>, line <span class="number">10</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    sys.exit(main())</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\start.py&quot;</span>, line <span class="number">201</span>, <span class="keyword">in</span> main</span><br><span class="line">    <span class="keyword">from</span> spyder.app <span class="keyword">import</span> mainwindow</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\mainwindow.py&quot;</span>, line <span class="number">52</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    requirements.check_qt()</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\requirements.py&quot;</span>, line <span class="number">41</span>, <span class="keyword">in</span> check_qt</span><br><span class="line">    <span class="keyword">import</span> qtpy</span><br><span class="line">  File <span class="string">&quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;</span>, line <span class="number">210</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    <span class="keyword">raise</span> PythonQtError(<span class="string">&#x27;No Qt bindings could be found&#x27;</span>)</span><br><span class="line">qtpy.PythonQtError: No Qt bindings could be found</span><br></pre></td></tr></table></figure>
-<p>说明没有安装 pyqt</p>
-<p>输入命令</p>
-<p><code>conda install pyqt</code></p>
-<p>即可</p>
-<h5 id="至此pytorch安装完成你又可以愉快的机器学习了">至此，pytorch安装完成，你又可以愉快的机器学习了</h5>
-<p>安装完成后，你会发现开始栏多了一个Spyder，从此，可以直接从这里打开你刚刚创建的虚拟环境对应的Spyder~</p>
-<p><img src="image-20191228174316358.png" /></p>
+<p>本题中，<strong>窗口就是满足与其和≥s的长度最小的连续子数组</strong>。</p>
+<p>窗口的起始位置如何移动：如果当前窗口的值大于s了，窗口就要向前移动了（也就是该缩小了）。</p>
+<p>窗口的结束位置如何移动：窗口的结束位置就是遍历数组的指针，窗口的起始位置设置为数组的起始位置就可以了。</p>
+<p><img src="20210312160441942.png" /></p>
+<p>滑动窗口的精髓就是<strong>根据当前子序列和大小的情况，不断调节子序列的起始位置</strong>，从而降低复杂度到O(n).</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 滑动窗口</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> result = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">    <span class="keyword">var</span> sum = <span class="number">0</span> <span class="comment">// 滑动窗口数值之和</span></span><br><span class="line">    <span class="keyword">var</span> i = <span class="number">0</span> <span class="comment">// 滑动窗口起始位置</span></span><br><span class="line">    <span class="keyword">var</span> subLength = <span class="number">0</span> <span class="comment">// 滑动窗口的长度</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(nums); j++ &#123;</span><br><span class="line">        sum += nums[j]</span><br><span class="line">        <span class="keyword">for</span> target &lt;= sum &#123; <span class="comment">// 直到target大于和</span></span><br><span class="line">            subLength = (j - i + <span class="number">1</span>) <span class="comment">// 子序列长度</span></span><br><span class="line">            result = min(result, subLength) <span class="comment">// 取子序列长度和result最小值</span></span><br><span class="line">            sum -= num[i++] <span class="comment">// 滑动窗口不断收缩</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> result == <span class="built_in">len</span>(nums) + <span class="number">1</span>&#123; <span class="comment">// 此种情况下没有符合条件的子序列</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>Anacoda3</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</title>
-    <url>/p/use-wrap-unlock-ipv6/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</p>
-<p><strong>关键词</strong>：cloudflare ，wrap</p>
-<a id="more"></a>
-<h3 id="准备工作">准备工作</h3>
-<ul>
-<li>一台Deian 系的服务器</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install curl sudo lsb-release -y</span><br></pre></td></tr></table></figure>
-<h4 id="debian安装">debian安装</h4>
-<ol type="1">
-<li>安装版本高于 5.6 的内核</li>
-<li>安装 wireguard 内核模块</li>
-<li>安装 wireguard-go</li>
-</ol>
-<h5 id="添加backports源">添加backports源</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb http://deb.debian.org/debian <span class="subst">$(lsb_release -sc)</span>-backports main&quot;</span> | sudo tee /etc/apt/sources.list.d/backports.list</span><br><span class="line">sudo apt update</span><br></pre></td></tr></table></figure>
-<p>先执行 <code>uname -r</code> 命令查看内核版本。如果是 5.6 以上内核则已经集成了 Wire­Guard ，就不需要安装了。</p>
-<h5 id="安装网络工具包">安装网络工具包</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install net-tools iproute2 openresolv dnsutils -y</span><br></pre></td></tr></table></figure>
-<p>安装 <strong><a href="https://p3terx.com/go/aHR0cHM6Ly9naXRodWIuY29tL1dpcmVHdWFyZC93aXJlZ3VhcmQtdG9vbHM">wireguard-tools</a></strong> (Wire­Guard 配置工具：<code>wg</code>、<code>wg-quick</code>)</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install wireguard-tools --no-install-recommends</span><br></pre></td></tr></table></figure>
-<h5 id="安装内核">安装内核</h5>
-<p>为了稳定性推荐安装 back­ports 仓库中的内核 (截止发文版本为 5.10)。以下是一把梭命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt -t $(lsb_release -sc)-backports install linux-image-$(dpkg --print-architecture) linux-headers-$(dpkg --print-architecture) --install-recommends -y</span><br></pre></td></tr></table></figure>
-<p>安装完重启，并执行 <code>uname -r</code> 命令查看内核版本来确认新内核是否被启用。</p>
-<h4 id="debian安装动态内核模块">debian安装动态内核模块</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install wireguard-dkms -y</span><br></pre></td></tr></table></figure>
-<p>安装后执行 <code>modprobe wireguard</code> 命令加载 Wire­Guard 内核模块。</p>
-<h4 id="debian安装wireguard-go">debian安装wireguard-go</h4>
-<p>OpenVZ/LXC VPS 或者不想折腾内核的小伙伴可以安装 <code>wireguard-go</code>，只不过网络性能较低。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL git.io/wireguard-go.sh | sudo bash</span><br></pre></td></tr></table></figure>
-<p>PS：对于 OpenVZ/LXC 的 VPS 需要执行<code>lsmod | grep tun</code>命令来检查 TUN 模块是否正常加载，若没有请自行咕鸽搜索开启方法，否则是不能正常使用的。</p>
-<h4 id="ubuntu安装">ubuntu安装</h4>
-<p>WireGuard可从默认的Ubuntu存储库中获得。 要安装它，请运行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install wireguard</span><br></pre></td></tr></table></figure>
-<p>这将安装WireGuard模块和工具。WireGuard作为内核模块运行。</p>
-<h3 id="配置warp">配置WARP</h3>
-<h4 id="安装wgcf">安装wgcf</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL git.io/wgcf.sh | sudo bash</span><br></pre></td></tr></table></figure>
-<h4 id="注册-warp-账户-将生成-wgcf-account.toml-文件保存账户信息">注册 WARP 账户 (将生成 <code>wgcf-account.toml</code> 文件保存账户信息)</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wgcf register</span><br></pre></td></tr></table></figure>
-<h4 id="生成wireguard配置文件wgcf-profile.conf">生成WireGuard配置文件(wgcf-profile.conf)</h4>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wgcf generate</span><br></pre></td></tr></table></figure>
-<p>生成的两个文件记得备份好，尤其是 <code>wgcf-profile.conf</code>，万一未来工具失效、重装系统后可能还用得着。</p>
-<h4 id="编辑wireguard配置文件">编辑WireGuard配置文件</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim wgcf-profile.conf</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Interface]</span><br><span class="line">PrivateKey &#x3D; *</span><br><span class="line">Address &#x3D; *</span><br><span class="line">Address &#x3D; *</span><br><span class="line">DNS &#x3D; 2001:4860:4860::8888</span><br><span class="line">MTU &#x3D; 1280</span><br><span class="line">[Peer]</span><br><span class="line">PublicKey &#x3D; *</span><br><span class="line">AllowedIPs &#x3D; ::&#x2F;0</span><br><span class="line">Endpoint &#x3D; [2606:4700:d0::a29f:c001]:2408</span><br></pre></td></tr></table></figure>
-<p>默认的<code>Endpoint</code>为 <code>engage.cloudflareclient.com</code>，解析成ip一般是以下两个结果：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">162.159.192.1</span><br><span class="line">2606:4700:d0::a29f:c001</span><br></pre></td></tr></table></figure>
-<p>如果想优先使用<code>warp</code>的ipv4地址访问外部网络，则<code>Endpoint</code> 需要设置为ipv4的地址；ipv6依次类推。</p>
-<p>DNS也是一样，如果想用ipv4地址，则需要设置一个ipv4的DNS地址，如<code>8.8.8.8</code>；ipv6则是<code>2001:4860:4860::8888</code>.</p>
-<h4 id="将修改好的配置文件移动到指定目录">将修改好的配置文件移动到指定目录</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp wgcf-profile.conf /etc/wireguard/wgcf.conf</span><br></pre></td></tr></table></figure>
-<h4 id="开启网络接口">开启网络接口</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo wg-quick up wgcf</span><br></pre></td></tr></table></figure>
-<h5 id="有可能遇到的问题">有可能遇到的问题</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/bin/wg-quick: line 31: resolvconf: <span class="built_in">command</span> not found [WireGuard | Debian]</span><br></pre></td></tr></table></figure>
-<p>解决方案：</p>
-<p>执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo ln -s /usr/bin/resolvectl /usr/<span class="built_in">local</span>/bin/resolvconf</span><br></pre></td></tr></table></figure>
-<h4 id="关闭网络接口">关闭网络接口</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo wg-quick down wgcf</span><br></pre></td></tr></table></figure>
-<h4 id="正式启用网络接口">正式启用网络接口</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启用守护进程</span></span><br><span class="line">sudo systemctl start wg-quick@wgcf</span><br><span class="line"><span class="comment"># 设置开机启动</span></span><br><span class="line">sudo systemctl <span class="built_in">enable</span> wg-quick@wgcf</span><br></pre></td></tr></table></figure>
-<h3 id="使用warp">使用WARP+</h3>
-<h4 id="如何获得更多的warp流量">如何获得更多的Warp+流量</h4>
-<p>自动化脚本：https://github.com/navaneethkm004/warp-plus/raw/main/main.py</p>
-<p>需要Python3，执行之前请运行：<code>chmod +x main.py</code></p>
-<p>ID获取方式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat wgcf-account.toml</span><br></pre></td></tr></table></figure>
-<p>输入ID以后，程序开始运行</p>
-<p>查看增加的流量：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wgcf update &amp;&amp; wgcf status</span><br></pre></td></tr></table></figure>
-<h4 id="多个设备共享">多个设备共享</h4>
-<p>将多台设备的<code>license_key</code>设置为同一个，然后执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wgcf update &amp;&amp; wgcf status</span><br></pre></td></tr></table></figure>
-<h4 id="检测warp是否启用">检测warp+是否启用</h4>
-<p>服务器端执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -6 https://cloudflare.com/cdn-cgi/trace</span><br></pre></td></tr></table></figure>
-<p>若<code>warp=plus</code>则说明启用成功。</p>
-<p>若<code>warp=on</code>则需要指向以下操作：</p>
-<ol type="1">
-<li><p>执行<code>wgcf register</code>重新生成一个账户；</p></li>
-<li><p>修改生成的<code>wgcf-account.toml</code>，绑定<code>license_key</code>；</p></li>
-<li><p>执行<code>wgcf generate</code>生成WireGuard VPN配置文件；</p></li>
-<li><p>执行<code>sudo cp wgcf-profile.conf /etc/wireguard/wgcf.conf</code>；</p></li>
-<li><p>启动网络接口，<code>sudo wg-quick up wgcf</code>；</p></li>
-<li><p>执行<code>curl -6 https://cloudflare.com/cdn-cgi/trace</code>.</p></li>
-</ol>
-<p>如果<code>warp</code>的值没有发生变化，需要重新执行1-6步骤。</p>
-<h3 id="end">END</h3>
-<p>感谢：</p>
-<p>https://p3terx.com/archives/use-cloudflare-warp-to-add-extra-ipv4-or-ipv6-network-support-to-vps-servers-for-free.html</p>
-<p>https://hiram.wang/cloudflare-wrap-vps/#2021-03%E6%9B%B4%E6%96%B0-%E5%AE%9E%E7%8E%B0%E6%97%A0%E6%8D%9F%E5%8F%8C%E6%A0%88</p>
-]]></content>
-      <tags>
-        <tag>cloudflare</tag>
-        <tag>wrap</tag>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -7273,6 +7273,26 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之移除链表元素</title>
+    <url>/p/remove-linked-list-elements/</url>
+    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="removelinked-list.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
+<p><img src="image-20220207150257390.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7667,26 +7687,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之移除链表元素</title>
-    <url>/p/remove-linked-list-elements/</url>
-    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="removelinked-list.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
-<p><img src="image-20220207150257390.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>机器学习基本概念02</title>
     <url>/p/Basic-Concepts-of-Machine-Learning-02/</url>
     <content><![CDATA[<p>机器学习中的假设空间。</p>
@@ -7739,34 +7739,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>杭州旅游攻略</title>
-    <url>/p/Travel-in-Hangzhou/</url>
-    <content><![CDATA[<p>学在杭州，玩在杭州！</p>
-<a id="more"></a>
-<h3 id="延安路商业街">延安路商业街</h3>
-<p><img src="image-20210131092627579.png" /></p>
-<h3 id="延安路到法喜寺">延安路到法喜寺</h3>
-<p><img src="image-20210131093545985.png" /></p>
-<p>法喜寺</p>
-<p><img src="image-20210131092418794.png" /></p>
-<h3 id="延安路到河坊街">延安路到河坊街</h3>
-<p><img src="image-20210131093828915.png" /></p>
-<p>河坊街</p>
-<p><img src="image-20210131092531902.png" /></p>
-<h3 id="延安路到北高峰">延安路到北高峰</h3>
-<p><img src="image-20210131093705860.png" /></p>
-<p>延安路</p>
-<p><img src="image-20210131092737922.png" /></p>
-<h3 id="西湖龙井">西湖龙井</h3>
-<p><img src="image-20210131094030362.png" /></p>
-<p><img src="image-20210131092947998.png" /></p>
-]]></content>
-      <tags>
-        <tag>Travel</tag>
-        <tag>Hangzhou</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>梯度下降法</title>
     <url>/p/What&#39;s-the-Gradient-descent/</url>
     <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
@@ -7808,6 +7780,34 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Deep Learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>杭州旅游攻略</title>
+    <url>/p/Travel-in-Hangzhou/</url>
+    <content><![CDATA[<p>学在杭州，玩在杭州！</p>
+<a id="more"></a>
+<h3 id="延安路商业街">延安路商业街</h3>
+<p><img src="image-20210131092627579.png" /></p>
+<h3 id="延安路到法喜寺">延安路到法喜寺</h3>
+<p><img src="image-20210131093545985.png" /></p>
+<p>法喜寺</p>
+<p><img src="image-20210131092418794.png" /></p>
+<h3 id="延安路到河坊街">延安路到河坊街</h3>
+<p><img src="image-20210131093828915.png" /></p>
+<p>河坊街</p>
+<p><img src="image-20210131092531902.png" /></p>
+<h3 id="延安路到北高峰">延安路到北高峰</h3>
+<p><img src="image-20210131093705860.png" /></p>
+<p>延安路</p>
+<p><img src="image-20210131092737922.png" /></p>
+<h3 id="西湖龙井">西湖龙井</h3>
+<p><img src="image-20210131094030362.png" /></p>
+<p><img src="image-20210131092947998.png" /></p>
+]]></content>
+      <tags>
+        <tag>Travel</tag>
+        <tag>Hangzhou</tag>
       </tags>
   </entry>
   <entry>
@@ -8084,6 +8084,51 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>线性回归中的基函数</title>
+    <url>/p/a-basis-function-in-linear-regression/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
+<p><strong>关键词：</strong>线性回归，基函数</p>
+<a id="more"></a>
+<h4 id="线性基函数模型">线性基函数模型</h4>
+<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
+y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
+\]</span> 其中 <span class="math display">\[
+x = (x_1,...,x_D)^T
+\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
+y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
+\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
+<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
+y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
+\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
+<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
+<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
+\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
+\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
+<h4 id="代码部分">代码部分</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
+\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
+\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
+\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
+<h5 id="python中的广播规则">python中的广播规则</h5>
+<p>举个例子：</p>
+<p>假设<code>x</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
+<p><code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
+<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
+<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
+<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -8446,51 +8491,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>线性回归中的基函数</title>
-    <url>/p/a-basis-function-in-linear-regression/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
-<p><strong>关键词：</strong>线性回归，基函数</p>
-<a id="more"></a>
-<h4 id="线性基函数模型">线性基函数模型</h4>
-<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
-y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
-\]</span> 其中 <span class="math display">\[
-x = (x_1,...,x_D)^T
-\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
-y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
-\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
-<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
-y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
-\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
-<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
-<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
-\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
-\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
-<h4 id="代码部分">代码部分</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
-\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
-\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
-\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
-<h5 id="python中的广播规则">python中的广播规则</h5>
-<p>举个例子：</p>
-<p>假设<code>x</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
-<p><code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
-<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
-<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
-<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
       </tags>
   </entry>
 </search>
