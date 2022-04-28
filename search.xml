@@ -65,6 +65,23 @@
       </tags>
   </entry>
   <entry>
+    <title>Caddy web docker镜像</title>
+    <url>/p/How-to-use-Caddy-web-docker-image/</url>
+    <content><![CDATA[<p>基于Go语言的web服务器</p>
+<p>Caddy服务器是一个开源的，使用 Golang 编写，支持 HTTP/2 的 Web 服务端。它使用Golang 标准库提供HTTP 功能。 Caddy 一个显著的特性是默认启用HTTPS。它是第一个无需额外配置即可提供HTTPS 特性的Web 服务器。</p>
+<a id="more"></a>
+<p>拉取镜像</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull fly97&#x2F;caddy</span><br></pre></td></tr></table></figure>
+<p>后台运行容器</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run -d --name caddy \</span><br><span class="line">    -p 443:443 -p 80:80 \</span><br><span class="line">    -v /var/caddywww/:/var/caddywww \</span><br><span class="line">    -v /var/<span class="built_in">log</span>/caddy:/var/<span class="built_in">log</span>/caddy \</span><br><span class="line">    -v /etc/caddy:/etc/caddy \</span><br><span class="line">    --restart=always fly97/caddy </span><br></pre></td></tr></table></figure>
+<p>配置文件放在以下目录</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">/etc/caddy/Caddyfile</span><br><span class="line">http:///hub.docker.com https:///hub.docker.com * &#123;</span><br><span class="line">        root /var/caddywww/hub.docker.com</span><br><span class="line">        gzip</span><br><span class="line">        tls /var/caddywww/.ssl/hub.docker.com/_hub.docker.com_bundle.pem /var/caddywww/.ssl/hub.docker.com/_hub.docker.com.pem</span><br><span class="line">        <span class="built_in">log</span> /var/<span class="built_in">log</span>/caddy/access.log</span><br><span class="line">        errors /var/<span class="built_in">log</span>/caddy/error.log</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>caddy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>安装Anaconda3(一)</title>
     <url>/p/Chapter-01-of-how-to-install-anaconda/</url>
     <content><![CDATA[<p>Python是一种面向对象的解释型计算机程序设计语言，其使用，具有跨平台的特点，可以在Linux、macOS以及Windows系统中搭建环境并使用，其编写的代码在不同平台上运行时，几乎不需要做较大的改动，使用者无不受益于它的便捷性。</p>
@@ -109,23 +126,6 @@
 ]]></content>
       <tags>
         <tag>Anacoda3</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Caddy web docker镜像</title>
-    <url>/p/How-to-use-Caddy-web-docker-image/</url>
-    <content><![CDATA[<p>基于Go语言的web服务器</p>
-<p>Caddy服务器是一个开源的，使用 Golang 编写，支持 HTTP/2 的 Web 服务端。它使用Golang 标准库提供HTTP 功能。 Caddy 一个显著的特性是默认启用HTTPS。它是第一个无需额外配置即可提供HTTPS 特性的Web 服务器。</p>
-<a id="more"></a>
-<p>拉取镜像</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull fly97&#x2F;caddy</span><br></pre></td></tr></table></figure>
-<p>后台运行容器</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run -d --name caddy \</span><br><span class="line">    -p 443:443 -p 80:80 \</span><br><span class="line">    -v /var/caddywww/:/var/caddywww \</span><br><span class="line">    -v /var/<span class="built_in">log</span>/caddy:/var/<span class="built_in">log</span>/caddy \</span><br><span class="line">    -v /etc/caddy:/etc/caddy \</span><br><span class="line">    --restart=always fly97/caddy </span><br></pre></td></tr></table></figure>
-<p>配置文件放在以下目录</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">/etc/caddy/Caddyfile</span><br><span class="line">http:///hub.docker.com https:///hub.docker.com * &#123;</span><br><span class="line">        root /var/caddywww/hub.docker.com</span><br><span class="line">        gzip</span><br><span class="line">        tls /var/caddywww/.ssl/hub.docker.com/_hub.docker.com_bundle.pem /var/caddywww/.ssl/hub.docker.com/_hub.docker.com.pem</span><br><span class="line">        <span class="built_in">log</span> /var/<span class="built_in">log</span>/caddy/access.log</span><br><span class="line">        errors /var/<span class="built_in">log</span>/caddy/error.log</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>caddy</tag>
       </tags>
   </entry>
   <entry>
@@ -2177,6 +2177,30 @@
       </tags>
   </entry>
   <entry>
+    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
+    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>不说废话，直接上教程。</p>
+<a id="more"></a>
+<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
+<h6 id="介绍">介绍</h6>
+<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
+<h6 id="区别1">区别1</h6>
+<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
+<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
+<h5 id="区别2">区别2</h5>
+<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
+<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
+<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyQt5教程</title>
     <url>/p/PyQt5-Chinese-tutorial/</url>
     <content><![CDATA[<p>学习PyQt的基本功能。</p>
@@ -2288,30 +2312,6 @@
 ]]></content>
       <tags>
         <tag>PyQt5</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
-    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>不说废话，直接上教程。</p>
-<a id="more"></a>
-<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
-<h6 id="介绍">介绍</h6>
-<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
-<h6 id="区别1">区别1</h6>
-<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
-<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
-<h5 id="区别2">区别2</h5>
-<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
-<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
-<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -2719,6 +2719,38 @@ y=x^2e^x
 </tr>
 </tbody>
 </table>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python中的map函数</title>
+    <url>/p/how-map-functions-works-in-Python/</url>
+    <content><![CDATA[<p>Python内建了map()函数。</p>
+<a id="more"></a>
+<p>Python内建了map()函数。</p>
+<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
+<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
+<p>下面来看Python代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
+<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
+<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
+<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
+<blockquote>
+<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
+</blockquote>
+<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
+<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
+<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
+<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>只需要一行代码。</p>
 ]]></content>
       <tags>
         <tag>Python</tag>
@@ -3432,38 +3464,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python中的map函数</title>
-    <url>/p/how-map-functions-works-in-Python/</url>
-    <content><![CDATA[<p>Python内建了map()函数。</p>
-<a id="more"></a>
-<p>Python内建了map()函数。</p>
-<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
-<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
-<p>下面来看Python代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
-<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
-<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
-<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
-<blockquote>
-<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
-</blockquote>
-<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
-<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
-<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
-<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
-<p>只需要一行代码。</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python列表生成式</title>
     <url>/p/list-generation-in-python/</url>
     <content><![CDATA[<p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。</p>
@@ -3904,84 +3904,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>ROS系统学习小记(二)</title>
-    <url>/p/ROS-system-learning-notes-02/</url>
-    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
-<p><strong>关键词：</strong>ROS</p>
-<a id="more"></a>
-<h3 id="ros试用练习">ROS试用练习</h3>
-<h4 id="ros文件系统">ROS文件系统</h4>
-<p>我们通过命令行工具来浏览ROS的文件系统。</p>
-<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
-<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
-<p>你将要获得以下信息：</p>
-<p><img src="image-20201019194410801.png" /></p>
-<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
-<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
-<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
-<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
-<p><img src="image-20201019195209283.png" /></p>
-<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
-<p>将获得以下新路径：</p>
-<p><img src="image-20201019195406492.png" /></p>
-<h4 id="创建工作空间">创建工作空间</h4>
-<p>我们会在工作空间完成本书使用的所有代码。</p>
-<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
-<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
-<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
-<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
-<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
-<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
-<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
-<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
-<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
-<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
-<p>如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
-<p>这些依赖项主要包括以下几个：</p>
-<ul>
-<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
-<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
-</ul>
-<p>如果所有步骤一切顺利，结果如下图所示：</p>
-<p><img src="image-20201019202650647.png" /></p>
-<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
-<ul>
-<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
-<li>rospack find TEST：此命令用于查看依赖关系。</li>
-<li>rosls TEST：此命令用于查看内容</li>
-<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
-</ul>
-<h4 id="编译ros功能包">编译ROS功能包</h4>
-<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
-<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
-<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
-<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
-<p><img src="image-20201019204443411.png" /></p>
-<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
-<p>如果编译单个工具包，可以使用如下格式的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4143,6 +4065,84 @@ y=x^2e^x
 <p>查看里面的代码</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
 <p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack find</strong> 命令也可以用于查找元功能包。</p>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ROS系统学习小记(二)</title>
+    <url>/p/ROS-system-learning-notes-02/</url>
+    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
+<p><strong>关键词：</strong>ROS</p>
+<a id="more"></a>
+<h3 id="ros试用练习">ROS试用练习</h3>
+<h4 id="ros文件系统">ROS文件系统</h4>
+<p>我们通过命令行工具来浏览ROS的文件系统。</p>
+<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
+<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
+<p>你将要获得以下信息：</p>
+<p><img src="image-20201019194410801.png" /></p>
+<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
+<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
+<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
+<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
+<p><img src="image-20201019195209283.png" /></p>
+<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
+<p>将获得以下新路径：</p>
+<p><img src="image-20201019195406492.png" /></p>
+<h4 id="创建工作空间">创建工作空间</h4>
+<p>我们会在工作空间完成本书使用的所有代码。</p>
+<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
+<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
+<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
+<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
+<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
+<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
+<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
+<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
+<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
+<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
+<p>如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
+<p>这些依赖项主要包括以下几个：</p>
+<ul>
+<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
+<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
+</ul>
+<p>如果所有步骤一切顺利，结果如下图所示：</p>
+<p><img src="image-20201019202650647.png" /></p>
+<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
+<ul>
+<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
+<li>rospack find TEST：此命令用于查看依赖关系。</li>
+<li>rosls TEST：此命令用于查看内容</li>
+<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
+</ul>
+<h4 id="编译ros功能包">编译ROS功能包</h4>
+<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
+<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
+<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
+<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
+<p><img src="image-20201019204443411.png" /></p>
+<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
+<p>如果编译单个工具包，可以使用如下格式的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ROS</tag>
@@ -6447,6 +6447,151 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>初探Docker(二)</title>
+    <url>/p/docker-tutorial-02/</url>
+    <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
+<p><strong>摘要：什么是 Dockerfile？</strong></p>
+<p>Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。</p>
+<p><strong>关键词：</strong>Dockerfile</p>
+<a id="more"></a>
+<h3 id="使用-dockerfile-定制镜像">使用 Dockerfile 定制镜像</h3>
+<h4 id="定制一个ubuntu镜像">定制一个ubuntu镜像</h4>
+<p>在一个空目录下，新建一个名为 Dockerfile 文件，并在文件内添加以下内容：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;这是一个本地构建的ubuntu:18.04镜像&#x27;</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="from-和-run-指令的作用">FROM 和 RUN 指令的作用</h4>
+<p><strong>FROM</strong>：定制的镜像都是基于 FROM 的镜像，这里的 <strong>ubuntu:18.04</strong>就是定制需要的基础镜像。后续的操作都是基于 ubuntu。</p>
+<p><strong>RUN</strong>：用于执行后面跟着的命令行命令。有以下两种格式：</p>
+<p>Shell格式</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> &lt;命令行命令&gt;</span></span><br><span class="line"><span class="comment"># &lt;命令行命令&gt; 等同于，在终端操作的 shell 命令。</span></span><br></pre></td></tr></table></figure>
+<p>Exec 格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> [<span class="string">&quot;可执行文件&quot;</span>, <span class="string">&quot;参数1&quot;</span>, <span class="string">&quot;参数2&quot;</span>]</span></span><br><span class="line"><span class="comment"># 例如：</span></span><br><span class="line"><span class="comment"># RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于 RUN ./test.php dev offline</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。</p>
+<p>​ 例如：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span></span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>​ 以上执行会创建 3 层镜像。可简化为以下格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget \</span></span><br><span class="line"><span class="bash">    &amp;&amp; wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span> \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>以 <strong>&amp;&amp;</strong> 符号连接命令，这样执行后，只会创建 1 层镜像。</p>
+<h4 id="开始构建镜像">开始构建镜像</h4>
+<p>切换到<code>Dockerfile</code> 文件的存放目录，执行以下命令，开始构建对象。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
+<p>以上示例，通过目录下的 Dockerfile 构建一个 <code>ubuntu:latest（镜像名称:镜像标签）</code>。</p>
+<p><strong>注：最后的 . 代表本次执行的上下文路径，下一节会介绍。</strong></p>
+<p><img src="image-20200718201119692.png" /></p>
+<p>以上说明已经构建成功。</p>
+<h4 id="上下文路径">上下文路径</h4>
+<p>上面提到 <strong>.</strong> 是上下文路径，那么什么是上下文路径呢？</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
+<p>上下文路径，是指 docker 在构建镜像，有时候想要使用到本机的文件（比如复制），docker build 命令得知这个路径后，会将路径下的所有内容打包。</p>
+<blockquote>
+<p>由于 docker 的运行模式是 C/S。我们本机是 C，docker 引擎是 S。实际的构建过程是在 docker 引擎下完成的，所以这个时候无法用到我们本机的文件。这就需要把我们本机的指定目录下的文件一起打包提供给 docker 引擎使用。</p>
+</blockquote>
+<p>如果未说明最后一个参数，那么默认上下文路径就是 Dockerfile 所在的位置。</p>
+<p><strong>注意：上下文路径下不要放无用的文件，因为会一起打包发送给 docker 引擎，如果文件过多会造成过程缓慢。</strong></p>
+<h3 id="指令详解">指令详解</h3>
+<h4 id="copy">COPY</h4>
+<p>复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径1&gt;...  &lt;目标路径&gt;</span><br><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] [<span class="string">&quot;&lt;源路径1&gt;&quot;</span>,...  <span class="string">&quot;&lt;目标路径&gt;&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>[--chown=:]</strong>：可选参数，用户改变复制到容器内文件的拥有者和属组。</p>
+<p><strong><源路径></strong>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">COPY</span><span class="bash"> hom* /mydir/</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> hom?.txt /mydir/</span></span><br></pre></td></tr></table></figure>
+<p><strong><目标路径></strong>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。</p>
+<h4 id="add">ADD</h4>
+<p>ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：</p>
+<ul>
+<li>ADD 的优点：在执行 <strong><源文件></strong> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <strong><目标路径></strong>。</li>
+<li>ADD 的缺点：在不解压的前提下，无法复制 tar 压缩文件。会令镜像构建缓存失效，从而可能会令镜像构建变得比较缓慢。具体是否使用，可以根据是否需要自动解压来决定。</li>
+</ul>
+<h4 id="cmd">CMD</h4>
+<p>类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:</p>
+<ul>
+<li>CMD 在docker run 时运行。</li>
+<li>RUN 是在 docker build 时运行。</li>
+</ul>
+<p><strong>作用</strong>：为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD 指令指定的程序可被 docker run 命令行参数中指定要运行的程序所覆盖。</p>
+<p><strong>注意：如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。</strong></p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> &lt;shell 命令&gt; </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;可执行文件或命令&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...] </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]  <span class="comment"># 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>推荐使用第二种格式，执行过程比较明确。第一种格式实际上在运行的过程中也会自动转换成第二种格式运行，并且默认可执行文件是 sh。</p>
+</blockquote>
+<h4 id="entrypoint">ENTRYPOINT</h4>
+<p>类似于 CMD 指令，但其不会被 <code>docker run</code> 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。</p>
+<p>但是, 如果运行 <code>docker run</code> 时使用了 <code>--entrypoint</code> 选项，此选项的参数可当作要运行的程序覆盖 ENTRYPOINT 指令指定的程序。</p>
+<p><strong>优点</strong>：在执行 <code>docker run</code> 的时候可以指定 ENTRYPOINT 运行所需的参数。</p>
+<p><strong>注意</strong>：如果 Dockerfile 中如果存在多个 ENTRYPOINT 指令，仅最后一个生效。</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">&quot;&lt;executeable&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]</span></span><br></pre></td></tr></table></figure>
+<p>可以搭配 CMD 命令使用：一般是变参才会使用 CMD ，这里的 CMD 等于是在给 ENTRYPOINT 传参，以下示例会提到。</p>
+<p>示例：</p>
+<p>假设已通过 Dockerfile 构建了 <strong>nginx:test</strong> 镜像：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM nginx</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;nginx&quot;, &quot;-c&quot;] # 定参</span><br><span class="line">CMD [&quot;&#x2F;etc&#x2F;nginx&#x2F;nginx.conf&quot;] # 变参 </span><br></pre></td></tr></table></figure>
+<p>1、不传参运行</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
+<p>容器内会默认运行以下命令，启动主进程。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>2、传参运行</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span> -c /etc/nginx/new.conf</span></span><br></pre></td></tr></table></figure>
+<p>容器内会默认运行以下命令，启动主进程(/etc/nginx/new.conf:假设容器内已有此文件)</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/new.conf</span><br></pre></td></tr></table></figure>
+<h4 id="env">ENV</h4>
+<p>设置环境变量，定义了环境变量，那么在后续的指令中，就可以使用这个环境变量。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> &lt;key&gt; &lt;value&gt;</span><br><span class="line"><span class="keyword">ENV</span> &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</span><br></pre></td></tr></table></figure>
+<p>以下示例设置 NODE_VERSION = 7.2.0 ， 在后续的指令中可以通过 $NODE_VERSION 引用：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> NODE_VERSION <span class="number">7.2</span>.<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/node-v<span class="variable">$NODE_VERSION</span>-linux-x64.tar.xz&quot;</span> \</span></span><br><span class="line"><span class="bash">  &amp;&amp; curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/SHASUMS256.txt.asc&quot;</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="arg">ARG</h4>
+<p>构建参数，与 ENV 作用一致。不过作用域不一样。ARG 设置的环境变量仅对 Dockerfile 内有效，也就是说只有 <code>docker build</code> 的过程中有效，构建好的镜像内不存在此环境变量。</p>
+<p>构建命令 <code>docker build</code> 中可以用 <code>--build-arg &lt;参数名&gt;=&lt;值&gt;</code> 来覆盖。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ARG</span> &lt;参数名&gt;[=&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
+<h4 id="volume">VOLUME</h4>
+<p>定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。</p>
+<p>作用：</p>
+<ul>
+<li>避免重要的数据，因容器重启而丢失，这是非常致命的。</li>
+<li>避免容器不断变大。</li>
+</ul>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">VOLUME</span><span class="bash"> [<span class="string">&quot;&lt;路径1&gt;&quot;</span>, <span class="string">&quot;&lt;路径2&gt;&quot;</span>...]</span></span><br><span class="line"><span class="keyword">VOLUME</span><span class="bash"> &lt;路径&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在启动容器 docker run 的时候，我们可以通过 -v 参数修改挂载点。</p>
+<p><strong>注意：</strong></p>
+<ol type="1">
+<li>通过<code>docker run</code>命令的<code>-v</code>标识创建的挂载点只能对创建的容器有效。</li>
+<li>通过 Dockerfile 的 VOLUME 指令可以在镜像中创建挂载点，这样只要通过该镜像创建的容器都有了挂载点。</li>
+<li>通过 VOLUME 指令创建的挂载点，无法指定主机上对应的目录，是自动生成的。</li>
+<li><code>docker run</code>中使用 <code>--volumes-from</code>标记的镜像可以共享<strong>匿名数据卷</strong>。镜像可以是同一个镜像，也可以是不同镜像。</li>
+</ol>
+<h4 id="expose">EXPOSE</h4>
+<p>暴露容器的端口。</p>
+<p>作用：</p>
+<ul>
+<li>帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。</li>
+<li>在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 的端口。</li>
+</ul>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">EXPOSE</span> &lt;端口<span class="number">1</span>&gt; [&lt;端口<span class="number">2</span>&gt;...]</span><br></pre></td></tr></table></figure>
+<h4 id="workdir">WORKDIR</h4>
+<p>指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。</p>
+<p>docker build 构建镜像过程中的，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> &lt;工作目录路径&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="user">USER</h4>
+<p>用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。</p>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br></pre></td></tr></table></figure>
+<h4 id="healthcheck">HEALTHCHECK</h4>
+<p>用于指定某个程序或者指令来监控 docker 容器服务的运行状态。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt;：设置检查容器健康状况的命令</span></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> NONE：如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt; : 这边 CMD 后面跟随的命令使用，可以参考 CMD 的用法。</span></span><br></pre></td></tr></table></figure>
+<h4 id="onbuild">ONBUILD</h4>
+<p>用于延迟构建命令的执行。简单的说，就是 Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这是执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ONBUILD</span> &lt;其它指令&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>初探docker(三)</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -6626,151 +6771,6 @@ y=x^2e^x
 <p>本节包含<code>version: "3"</code>中服务定义支持的所有配置选项的列表。</p>
 <h4 id="build-1">build</h4>
 <p>在容器build时使用以下配置。</p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初探Docker(二)</title>
-    <url>/p/docker-tutorial-02/</url>
-    <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
-<p><strong>摘要：什么是 Dockerfile？</strong></p>
-<p>Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。</p>
-<p><strong>关键词：</strong>Dockerfile</p>
-<a id="more"></a>
-<h3 id="使用-dockerfile-定制镜像">使用 Dockerfile 定制镜像</h3>
-<h4 id="定制一个ubuntu镜像">定制一个ubuntu镜像</h4>
-<p>在一个空目录下，新建一个名为 Dockerfile 文件，并在文件内添加以下内容：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;这是一个本地构建的ubuntu:18.04镜像&#x27;</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="from-和-run-指令的作用">FROM 和 RUN 指令的作用</h4>
-<p><strong>FROM</strong>：定制的镜像都是基于 FROM 的镜像，这里的 <strong>ubuntu:18.04</strong>就是定制需要的基础镜像。后续的操作都是基于 ubuntu。</p>
-<p><strong>RUN</strong>：用于执行后面跟着的命令行命令。有以下两种格式：</p>
-<p>Shell格式</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> &lt;命令行命令&gt;</span></span><br><span class="line"><span class="comment"># &lt;命令行命令&gt; 等同于，在终端操作的 shell 命令。</span></span><br></pre></td></tr></table></figure>
-<p>Exec 格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> [<span class="string">&quot;可执行文件&quot;</span>, <span class="string">&quot;参数1&quot;</span>, <span class="string">&quot;参数2&quot;</span>]</span></span><br><span class="line"><span class="comment"># 例如：</span></span><br><span class="line"><span class="comment"># RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于 RUN ./test.php dev offline</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意</strong>：Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。</p>
-<p>​ 例如：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span></span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
-<p>​ 以上执行会创建 3 层镜像。可简化为以下格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget \</span></span><br><span class="line"><span class="bash">    &amp;&amp; wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span> \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
-<p>以 <strong>&amp;&amp;</strong> 符号连接命令，这样执行后，只会创建 1 层镜像。</p>
-<h4 id="开始构建镜像">开始构建镜像</h4>
-<p>切换到<code>Dockerfile</code> 文件的存放目录，执行以下命令，开始构建对象。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
-<p>以上示例，通过目录下的 Dockerfile 构建一个 <code>ubuntu:latest（镜像名称:镜像标签）</code>。</p>
-<p><strong>注：最后的 . 代表本次执行的上下文路径，下一节会介绍。</strong></p>
-<p><img src="image-20200718201119692.png" /></p>
-<p>以上说明已经构建成功。</p>
-<h4 id="上下文路径">上下文路径</h4>
-<p>上面提到 <strong>.</strong> 是上下文路径，那么什么是上下文路径呢？</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
-<p>上下文路径，是指 docker 在构建镜像，有时候想要使用到本机的文件（比如复制），docker build 命令得知这个路径后，会将路径下的所有内容打包。</p>
-<blockquote>
-<p>由于 docker 的运行模式是 C/S。我们本机是 C，docker 引擎是 S。实际的构建过程是在 docker 引擎下完成的，所以这个时候无法用到我们本机的文件。这就需要把我们本机的指定目录下的文件一起打包提供给 docker 引擎使用。</p>
-</blockquote>
-<p>如果未说明最后一个参数，那么默认上下文路径就是 Dockerfile 所在的位置。</p>
-<p><strong>注意：上下文路径下不要放无用的文件，因为会一起打包发送给 docker 引擎，如果文件过多会造成过程缓慢。</strong></p>
-<h3 id="指令详解">指令详解</h3>
-<h4 id="copy">COPY</h4>
-<p>复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径1&gt;...  &lt;目标路径&gt;</span><br><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] [<span class="string">&quot;&lt;源路径1&gt;&quot;</span>,...  <span class="string">&quot;&lt;目标路径&gt;&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>[--chown=:]</strong>：可选参数，用户改变复制到容器内文件的拥有者和属组。</p>
-<p><strong><源路径></strong>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">COPY</span><span class="bash"> hom* /mydir/</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> hom?.txt /mydir/</span></span><br></pre></td></tr></table></figure>
-<p><strong><目标路径></strong>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。</p>
-<h4 id="add">ADD</h4>
-<p>ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：</p>
-<ul>
-<li>ADD 的优点：在执行 <strong><源文件></strong> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <strong><目标路径></strong>。</li>
-<li>ADD 的缺点：在不解压的前提下，无法复制 tar 压缩文件。会令镜像构建缓存失效，从而可能会令镜像构建变得比较缓慢。具体是否使用，可以根据是否需要自动解压来决定。</li>
-</ul>
-<h4 id="cmd">CMD</h4>
-<p>类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:</p>
-<ul>
-<li>CMD 在docker run 时运行。</li>
-<li>RUN 是在 docker build 时运行。</li>
-</ul>
-<p><strong>作用</strong>：为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD 指令指定的程序可被 docker run 命令行参数中指定要运行的程序所覆盖。</p>
-<p><strong>注意：如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。</strong></p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> &lt;shell 命令&gt; </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;可执行文件或命令&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...] </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]  <span class="comment"># 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数</span></span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>推荐使用第二种格式，执行过程比较明确。第一种格式实际上在运行的过程中也会自动转换成第二种格式运行，并且默认可执行文件是 sh。</p>
-</blockquote>
-<h4 id="entrypoint">ENTRYPOINT</h4>
-<p>类似于 CMD 指令，但其不会被 <code>docker run</code> 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。</p>
-<p>但是, 如果运行 <code>docker run</code> 时使用了 <code>--entrypoint</code> 选项，此选项的参数可当作要运行的程序覆盖 ENTRYPOINT 指令指定的程序。</p>
-<p><strong>优点</strong>：在执行 <code>docker run</code> 的时候可以指定 ENTRYPOINT 运行所需的参数。</p>
-<p><strong>注意</strong>：如果 Dockerfile 中如果存在多个 ENTRYPOINT 指令，仅最后一个生效。</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">&quot;&lt;executeable&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]</span></span><br></pre></td></tr></table></figure>
-<p>可以搭配 CMD 命令使用：一般是变参才会使用 CMD ，这里的 CMD 等于是在给 ENTRYPOINT 传参，以下示例会提到。</p>
-<p>示例：</p>
-<p>假设已通过 Dockerfile 构建了 <strong>nginx:test</strong> 镜像：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM nginx</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;nginx&quot;, &quot;-c&quot;] # 定参</span><br><span class="line">CMD [&quot;&#x2F;etc&#x2F;nginx&#x2F;nginx.conf&quot;] # 变参 </span><br></pre></td></tr></table></figure>
-<p>1、不传参运行</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
-<p>容器内会默认运行以下命令，启动主进程。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-<p>2、传参运行</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span> -c /etc/nginx/new.conf</span></span><br></pre></td></tr></table></figure>
-<p>容器内会默认运行以下命令，启动主进程(/etc/nginx/new.conf:假设容器内已有此文件)</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/new.conf</span><br></pre></td></tr></table></figure>
-<h4 id="env">ENV</h4>
-<p>设置环境变量，定义了环境变量，那么在后续的指令中，就可以使用这个环境变量。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> &lt;key&gt; &lt;value&gt;</span><br><span class="line"><span class="keyword">ENV</span> &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</span><br></pre></td></tr></table></figure>
-<p>以下示例设置 NODE_VERSION = 7.2.0 ， 在后续的指令中可以通过 $NODE_VERSION 引用：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> NODE_VERSION <span class="number">7.2</span>.<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/node-v<span class="variable">$NODE_VERSION</span>-linux-x64.tar.xz&quot;</span> \</span></span><br><span class="line"><span class="bash">  &amp;&amp; curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/SHASUMS256.txt.asc&quot;</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="arg">ARG</h4>
-<p>构建参数，与 ENV 作用一致。不过作用域不一样。ARG 设置的环境变量仅对 Dockerfile 内有效，也就是说只有 <code>docker build</code> 的过程中有效，构建好的镜像内不存在此环境变量。</p>
-<p>构建命令 <code>docker build</code> 中可以用 <code>--build-arg &lt;参数名&gt;=&lt;值&gt;</code> 来覆盖。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ARG</span> &lt;参数名&gt;[=&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
-<h4 id="volume">VOLUME</h4>
-<p>定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。</p>
-<p>作用：</p>
-<ul>
-<li>避免重要的数据，因容器重启而丢失，这是非常致命的。</li>
-<li>避免容器不断变大。</li>
-</ul>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">VOLUME</span><span class="bash"> [<span class="string">&quot;&lt;路径1&gt;&quot;</span>, <span class="string">&quot;&lt;路径2&gt;&quot;</span>...]</span></span><br><span class="line"><span class="keyword">VOLUME</span><span class="bash"> &lt;路径&gt;</span></span><br></pre></td></tr></table></figure>
-<p>在启动容器 docker run 的时候，我们可以通过 -v 参数修改挂载点。</p>
-<p><strong>注意：</strong></p>
-<ol type="1">
-<li>通过<code>docker run</code>命令的<code>-v</code>标识创建的挂载点只能对创建的容器有效。</li>
-<li>通过 Dockerfile 的 VOLUME 指令可以在镜像中创建挂载点，这样只要通过该镜像创建的容器都有了挂载点。</li>
-<li>通过 VOLUME 指令创建的挂载点，无法指定主机上对应的目录，是自动生成的。</li>
-<li><code>docker run</code>中使用 <code>--volumes-from</code>标记的镜像可以共享<strong>匿名数据卷</strong>。镜像可以是同一个镜像，也可以是不同镜像。</li>
-</ol>
-<h4 id="expose">EXPOSE</h4>
-<p>暴露容器的端口。</p>
-<p>作用：</p>
-<ul>
-<li>帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。</li>
-<li>在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 的端口。</li>
-</ul>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">EXPOSE</span> &lt;端口<span class="number">1</span>&gt; [&lt;端口<span class="number">2</span>&gt;...]</span><br></pre></td></tr></table></figure>
-<h4 id="workdir">WORKDIR</h4>
-<p>指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。</p>
-<p>docker build 构建镜像过程中的，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> &lt;工作目录路径&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="user">USER</h4>
-<p>用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。</p>
-<p>格式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br></pre></td></tr></table></figure>
-<h4 id="healthcheck">HEALTHCHECK</h4>
-<p>用于指定某个程序或者指令来监控 docker 容器服务的运行状态。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt;：设置检查容器健康状况的命令</span></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> NONE：如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt; : 这边 CMD 后面跟随的命令使用，可以参考 CMD 的用法。</span></span><br></pre></td></tr></table></figure>
-<h4 id="onbuild">ONBUILD</h4>
-<p>用于延迟构建命令的执行。简单的说，就是 Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这是执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ONBUILD</span> &lt;其它指令&gt;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>docker</tag>
@@ -7521,6 +7521,26 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之移除链表元素</title>
+    <url>/p/remove-linked-list-elements/</url>
+    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="removelinked-list.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
+<p><img src="image-20220207150257390.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣链表基础之链表相交</title>
     <url>/p/intersection-of-two-linked-lists-lcci/</url>
     <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
@@ -7731,26 +7751,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之移除链表元素</title>
-    <url>/p/remove-linked-list-elements/</url>
-    <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="removelinked-list.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,6,3,4,5,6], val &#x3D; 6</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>添加一个虚拟头节点，这样原链表的所有节点都可以按照统一的方式进行移除了。</p>
-<p><img src="image-20220207150257390.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
