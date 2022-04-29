@@ -7324,6 +7324,27 @@ t≥times[i],&amp; i=N-1
       </tags>
   </entry>
   <entry>
+    <title>力扣每日一题之最短补全词</title>
+    <url>/p/shortest-completing-word/</url>
+    <content><![CDATA[<p>给你一个字符串<code>licensePlate</code>和一个字符串数组<code>words</code>，请你找出并返回<code>words</code>中最短补全词。</p>
+<p>补全词是一个包含<code>licensePlate</code>中所有字母的单词，在所有补全词中，最短的那个就是最短补全词。</p>
+<ul>
+<li>在匹配<code>licensePlate</code>中的数字或空格。</li>
+<li>不区分大小写</li>
+<li>如果某个字母在<code>licensePlace</code>中出现不止一次，那么该字母在补全词中的出现的次数也应当一致或者更多。</li>
+</ul>
+<p>例如：<code>licensePlate</code>=<code>aBc 12c</code>, 那么他的补全词应当包含字母<code>a</code>、<code>b</code>忽略大小写和两个<code>c</code>，可能的补全词有<code>abccdef</code>、<code>caaacab</code>以及<code>cbca</code>。</p>
+<p>请你找出并返回<code>words</code>中的最短补全词。题目数据中保证一定存在一个最短补全词。当有多个单词都符合最短补全词的匹配条件时区<code>words</code>中<strong>最靠前</strong>的那个。</p>
+<a id="more"></a>
+<h2 id="方法一统计字符出现次数">方法一：统计字符出现次数</h2>
+<p>根据题意，先统计<code>licesePlate</code>中每个字母的出现次数（忽略大小写），然后遍历<code>words</code>中的每个单词，若26个英文字母在该单词中初选次数均小于<code>licesePlate</code>中才出现的次数，则该单词是一个补全词。返回最短且最靠前的补全词。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;unicode&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">shortestCompletingWord</span><span class="params">(licensePlate <span class="keyword">string</span>, words []<span class="keyword">string</span>)</span> <span class="params">(ans <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	cnt := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> _, ch := <span class="keyword">range</span> licensePlate &#123;</span><br><span class="line">		<span class="keyword">if</span> unicode.IsLetter(ch) &#123; <span class="comment">// 如果是字母</span></span><br><span class="line">			cnt[unicode.ToLower(ch)-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span> <span class="comment">// 就让他变成小写</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">next:</span><br><span class="line">	<span class="keyword">for</span> _, word := <span class="keyword">range</span> words &#123;</span><br><span class="line">		c := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">		<span class="keyword">for</span> _, ch := <span class="keyword">range</span> word &#123;</span><br><span class="line">			c[ch-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">26</span>; i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> c[i] &lt; cnt[i] &#123;</span><br><span class="line">				<span class="keyword">continue</span> next</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> ans == <span class="string">&quot;&quot;</span> || <span class="built_in">len</span>(word) &lt; <span class="built_in">len</span>(ans) &#123;</span><br><span class="line">			ans = word</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之课程表Ⅲ</title>
     <url>/p/course-schedule-iii/</url>
     <content><![CDATA[<p>这里有<code>n</code>门不同的在线课程，按<code>1</code>到<code>n</code>编号。给你一个数组<code>courses</code>，其中<code>courses[i] = [durationi, lastDayi]</code>表示第<code>i</code>门课将会持续上<code>durationi</code>天课，并且必须不晚于<code>lastDayi</code>的时候完成。</p>
@@ -7420,24 +7441,24 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣每日一题之最短补全词</title>
-    <url>/p/shortest-completing-word/</url>
-    <content><![CDATA[<p>给你一个字符串<code>licensePlate</code>和一个字符串数组<code>words</code>，请你找出并返回<code>words</code>中最短补全词。</p>
-<p>补全词是一个包含<code>licensePlate</code>中所有字母的单词，在所有补全词中，最短的那个就是最短补全词。</p>
-<ul>
-<li>在匹配<code>licensePlate</code>中的数字或空格。</li>
-<li>不区分大小写</li>
-<li>如果某个字母在<code>licensePlace</code>中出现不止一次，那么该字母在补全词中的出现的次数也应当一致或者更多。</li>
-</ul>
-<p>例如：<code>licensePlate</code>=<code>aBc 12c</code>, 那么他的补全词应当包含字母<code>a</code>、<code>b</code>忽略大小写和两个<code>c</code>，可能的补全词有<code>abccdef</code>、<code>caaacab</code>以及<code>cbca</code>。</p>
-<p>请你找出并返回<code>words</code>中的最短补全词。题目数据中保证一定存在一个最短补全词。当有多个单词都符合最短补全词的匹配条件时区<code>words</code>中<strong>最靠前</strong>的那个。</p>
+    <title>力扣链表基础之删除链表的倒数第N个节点</title>
+    <url>/p/remove-nth-node-from-end-of-list/</url>
+    <content><![CDATA[<p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p>
 <a id="more"></a>
-<h2 id="方法一统计字符出现次数">方法一：统计字符出现次数</h2>
-<p>根据题意，先统计<code>licesePlate</code>中每个字母的出现次数（忽略大小写），然后遍历<code>words</code>中的每个单词，若26个英文字母在该单词中初选次数均小于<code>licesePlate</code>中才出现的次数，则该单词是一个补全词。返回最短且最靠前的补全词。</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;unicode&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">shortestCompletingWord</span><span class="params">(licensePlate <span class="keyword">string</span>, words []<span class="keyword">string</span>)</span> <span class="params">(ans <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	cnt := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> _, ch := <span class="keyword">range</span> licensePlate &#123;</span><br><span class="line">		<span class="keyword">if</span> unicode.IsLetter(ch) &#123; <span class="comment">// 如果是字母</span></span><br><span class="line">			cnt[unicode.ToLower(ch)-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span> <span class="comment">// 就让他变成小写</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">next:</span><br><span class="line">	<span class="keyword">for</span> _, word := <span class="keyword">range</span> words &#123;</span><br><span class="line">		c := [<span class="number">26</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">		<span class="keyword">for</span> _, ch := <span class="keyword">range</span> word &#123;</span><br><span class="line">			c[ch-<span class="string">&#x27;a&#x27;</span>] += <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">26</span>; i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> c[i] &lt; cnt[i] &#123;</span><br><span class="line">				<span class="keyword">continue</span> next</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> ans == <span class="string">&quot;&quot;</span> || <span class="built_in">len</span>(word) &lt; <span class="built_in">len</span>(ans) &#123;</span><br><span class="line">			ans = word</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>示例</strong></p>
+<p><img src="remove_ex1.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5], n &#x3D; 2</span><br><span class="line">输出：[1,2,3,5]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用<strong>虚拟头节点</strong>。</p>
+<p>如果要删除倒数第n个节点，让fast移动n步，然后让fast和slow同时移动，直到fast指向链表末尾。删掉slow所指向的节点就可以了。</p>
+<p>实际操作中可以让fast先移动n+1步，然后让fast和slow同时移动，直到fast指向NULL，此时slow恰好指向待删除结点的上一个，此时执行删除结点的操作即可。</p>
+<p><img src="image-20220215193937378.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// fast先移动n+1步，然后让fast和slow同时移动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeNthFromEnd</span><span class="params">(head *ListNode, n <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">	dummy.Next = head</span><br><span class="line">	fast := dummy</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">	&#125;</span><br><span class="line">	slow := dummy</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">		slow = slow.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> slow != <span class="literal">nil</span> &amp;&amp; slow.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow.Next = slow.Next.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -7493,27 +7514,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之删除链表的倒数第N个节点</title>
-    <url>/p/remove-nth-node-from-end-of-list/</url>
-    <content><![CDATA[<p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="remove_ex1.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5], n &#x3D; 2</span><br><span class="line">输出：[1,2,3,5]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。</p>
-<p>如果要删除倒数第n个节点，让fast移动n步，然后让fast和slow同时移动，直到fast指向链表末尾。删掉slow所指向的节点就可以了。</p>
-<p>实际操作中可以让fast先移动n+1步，然后让fast和slow同时移动，直到fast指向NULL，此时slow恰好指向待删除结点的上一个，此时执行删除结点的操作即可。</p>
-<p><img src="image-20220215193937378.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// fast先移动n+1步，然后让fast和slow同时移动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeNthFromEnd</span><span class="params">(head *ListNode, n <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">	dummy.Next = head</span><br><span class="line">	fast := dummy</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">	&#125;</span><br><span class="line">	slow := dummy</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">		slow = slow.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> slow != <span class="literal">nil</span> &amp;&amp; slow.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow.Next = slow.Next.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
