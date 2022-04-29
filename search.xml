@@ -7043,23 +7043,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>力扣数组基础之双指针有序数组的平方</title>
-    <url>/p/minimum-size-subarray-sum/</url>
-    <content><![CDATA[<p>题目：给你一个按 <strong>非递减顺序</strong> 排序的整数数组 <code>nums</code>，返回 <strong>每个数字的平方</strong> 组成的新数组，要求也按 <strong>非递减顺序</strong> 排序。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p><img src="双指针03.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣数组基础之双指针移除元素</title>
     <url>/p/remove-element/</url>
     <content><![CDATA[<p>题目：给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。</p>
@@ -7075,6 +7058,23 @@ y=x^2e^x
 <p><strong>示意图</strong></p>
 <p><img src="双指针.png" /></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElement</span><span class="params">(nums []<span class="keyword">int</span>, val <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> slowIndex <span class="keyword">int</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> fastIndex := <span class="number">0</span>; fastIndex &lt; <span class="built_in">len</span>(nums);fastIndex++&#123;</span><br><span class="line">        <span class="keyword">if</span> nums[fastIndex] != val &#123;</span><br><span class="line">            nums[slowIndex] = nums[fastIndex]</span><br><span class="line">            slowIndex += <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> slowIndex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之双指针有序数组的平方</title>
+    <url>/p/minimum-size-subarray-sum/</url>
+    <content><![CDATA[<p>题目：给你一个按 <strong>非递减顺序</strong> 排序的整数数组 <code>nums</code>，返回 <strong>每个数字的平方</strong> 组成的新数组，要求也按 <strong>非递减顺序</strong> 排序。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p><img src="双指针03.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7599,6 +7599,17 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在Docker Destop启用k8s服务</title>
+    <url>/p/enable-k8s-in-docker-desktop/</url>
+    <content><![CDATA[<p>本文是progit的学习记录。</p>
+<p>关键词：<strong>git</strong></p>
+<a id="more"></a>
+]]></content>
+      <tags>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
