@@ -25,18 +25,29 @@
     var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="本文是progit的学习记录。 关键词：git">
+  <meta name="description" content="作为目前事实上的容器编排系统标准，K8s 无疑是现代应用的基石。 本文主要是开启Docker Desktop for Win&#x2F;Mac 的K8s服务。 关键词：docker，k8s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在Docker Destop启用k8s服务">
 <meta property="og:url" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/index.html">
 <meta property="og:site_name" content="个人随想">
-<meta property="og:description" content="本文是progit的学习记录。 关键词：git">
+<meta property="og:description" content="作为目前事实上的容器编排系统标准，K8s 无疑是现代应用的基石。 本文主要是开启Docker Desktop for Win&#x2F;Mac 的K8s服务。 关键词：docker，k8s">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429163406392.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429163857048.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429164553018.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429164629527.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429165336573.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429170726815.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429170904942.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429171026647.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429171129620.png">
+<meta property="og:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429171807293.png">
 <meta property="article:published_time" content="2022-04-29T06:37:00.000Z">
 <meta property="article:modified_time" content="2022-04-29T06:37:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fly97.cn/p/enable-k8s-in-docker-desktop/image-20220429163406392.png">
 
 
 <link rel="canonical" href="https://fly97.cn/p/enable-k8s-in-docker-desktop/">
@@ -197,7 +208,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -209,6 +220,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9Ak8s%E7%89%88%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">确定k8s版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%87%E6%8D%A2%E5%88%B0%E5%AF%B9%E5%BA%94%E5%88%86%E6%94%AF"><span class="nav-number">2.</span> <span class="nav-text">切换到对应分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AFk8s"><span class="nav-number">3.</span> <span class="nav-text">开启K8s</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEk8s"><span class="nav-number">4.</span> <span class="nav-text">配置K8s</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -328,9 +340,71 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>本文是progit的学习记录。</p>
-<p>关键词：<strong>git</strong></p>
+        <p>作为目前事实上的容器编排系统标准，K8s 无疑是现代应用的基石。</p>
+<p>本文主要是开启Docker Desktop for Win/Mac 的K8s服务。</p>
+<p>关键词：<strong>docker，k8s</strong></p>
 <a id="more"></a>
+<h3 id="确定k8s版本">确定k8s版本</h3>
+<ul>
+<li>需安装 Docker Desktop 的 Mac 或者 Windows 版本，如果没有请下载<a target="_blank" rel="noopener" href="https://store.docker.com/search?type=edition&amp;offering=community">下载 Docker CE最新版本</a></li>
+<li>当前 master 分支已经在 Docker for Mac/Windows 4.4.2 (包含 Docker CE 20.10.12 和 Kubernetes 1.22.5) 版本测试通过</li>
+<li>如果需要测试其他版本，请查看 Docker Desktop版本，Docker -&gt; About Docker Desktop</li>
+</ul>
+<p><img src="image-20220429163406392.png" /></p>
+<h3 id="切换到对应分支">切换到对应分支</h3>
+<p>在任意目录下clone<a target="_blank" rel="noopener" href="https://github.com/AliyunContainerService/k8s-for-docker-desktop">k8s-for-docker-desktop</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/AliyunContainerService/k8s-for-docker-desktop.git</span><br></pre></td></tr></table></figure>
+<p>这里的Kubernetes版本为 v1.22.5, 故使用 <a target="_blank" rel="noopener" href="https://github.com/AliyunContainerService/k8s-for-docker-desktop/tree/v1.22.5">v1.22.5 分支</a> <code>git checkout v1.22.5</code></p>
+<h3 id="开启k8s">开启K8s</h3>
+<p>为 Docker daemon 配置镜像加速，参考<a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">阿里云镜像服务</a> 或中科大镜像加速地址<code>https://docker.mirrors.ustc.edu.cn</code></p>
+<p><img src="image-20220429163857048.png" /></p>
+<p>从阿里云镜像服务下载 Kubernetes 所需要的镜像</p>
+<p>在 Mac 上执行如下脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;load_images.sh</span><br></pre></td></tr></table></figure>
+<p>在Windows上，使用 PowerShell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\load_images.ps1</span><br></pre></td></tr></table></figure>
+<p>说明:</p>
+<ul>
+<li>如果因为安全策略无法执行 PowerShell 脚本，请在 “以管理员身份运行” 的 PowerShell 中执行 <code>Set-ExecutionPolicy RemoteSigned</code> 命令。</li>
+<li>如果需要，可以通过修改 <code>images.properties</code> 文件自行加载你自己需要的镜像</li>
+</ul>
+<p><img src="image-20220429164553018.png" /></p>
+<p>开启 Kubernetes，并等待 Kubernetes 开始运行</p>
+<p><img src="image-20220429164629527.png" /></p>
+<p>当左下角出现k8s的图标时，说明开启成功</p>
+<p><img src="image-20220429165336573.png" /></p>
+<p>TIPS：</p>
+<p>在Mac上:</p>
+<p>如果在Kubernetes部署的过程中出现问题，可以通过docker desktop应用日志获得实时日志信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pred&#x3D;&#39;process matches &quot;.*(ocker|vpnkit).*&quot;</span><br><span class="line">  || (process in &#123;&quot;taskgated-helper&quot;, &quot;launchservicesd&quot;, &quot;kernel&quot;&#125; &amp;&amp; eventMessage contains[c] &quot;docker&quot;)&#39;</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;log stream --style syslog --level&#x3D;debug --color&#x3D;always --predicate &quot;$pred&quot;</span><br></pre></td></tr></table></figure>
+<p>在Windows上:</p>
+<p>如果在Kubernetes部署的过程中出现问题，可以在 <code>C:\ProgramData\DockerDesktop</code>下的service.txt 查看Docker日志, 在 <code>C:\Users\yourUserName\AppData\Local\Docker</code>下的log.txt 查看Kubernetes日志。</p>
+<h3 id="配置k8s">配置K8s</h3>
+<p>验证k8s集群状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl cluster-info</span><br><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429170726815.png" /></p>
+<p>配置K8s控制台</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f kubernetes-dashboard.yaml</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429170904942.png" /></p>
+<p>检查 kubernetes-dashboard 应用状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n kubernetes-dashboard</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429171026647.png" /></p>
+<p>开启API Server 访问代理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl proxy</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429171129620.png" /></p>
+<p>通过如下URL访问kubernetes-dashboard</p>
+<p>http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/</p>
+<p>配置Mac环境</p>
+<p>配置控制台访问令牌</p>
+<p>对于Mac环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TOKEN&#x3D;$(kubectl -n kube-system describe secret default| awk &#39;$1&#x3D;&#x3D;&quot;token:&quot;&#123;print $2&#125;&#39;)</span><br><span class="line">kubectl config set-credentials docker-desktop --token&#x3D;&quot;$&#123;TOKEN&#125;&quot;</span><br><span class="line">echo $TOKEN</span><br></pre></td></tr></table></figure>
+<p>对于Windows环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$TOKEN&#x3D;((kubectl -n kube-system describe secret default | Select-String &quot;token:&quot;) -split &quot; +&quot;)[1]</span><br><span class="line">kubectl config set-credentials docker-desktop --token&#x3D;&quot;$&#123;TOKEN&#125;&quot;</span><br><span class="line">echo $TOKEN</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429171807293.png" /></p>
+<p>登录dashboard的时候选择令牌，输入上文控制台输出中的内容。</p>
+<p>或者选择kubeconfig，路径如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mac: <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">Win: %UserProfile%\.kube\config</span><br></pre></td></tr></table></figure>
+<p>点击登陆，进入Kubernetes Dashboard</p>
 
     </div>
 
