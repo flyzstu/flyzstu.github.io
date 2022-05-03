@@ -2177,6 +2177,80 @@
       </tags>
   </entry>
   <entry>
+    <title>PyTorch中对图像的操作</title>
+    <url>/p/How-to-process-images-in-Pytorch/</url>
+    <content><![CDATA[<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。</p>
+<a id="more"></a>
+<h3 id="数据处理">数据处理</h3>
+<h4 id="数据加载">数据加载</h4>
+<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。数据集对象被抽象为Dataset类，实现自定义的数据集需要继承Dataset，并实现两个Python魔法方法。</p>
+<ul>
+<li><code>__getitem__():返回一条数据或一个样本。obj[index]等价于obj.getitem__(index).</code></li>
+<li><code>__len__():返回样本的数量.len(obj)等价于obj.__len__().</code></li>
+</ul>
+<p>这里我们以某学校结课项目为例，谈谈在PyTorch中处理图像的操作。</p>
+<p><img src="202011081130.png" style="zoom:50%;" /></p>
+<p>第一步，首先要考虑的操作是将"绝缘子"文件夹下面的文件全部load到内存中，说干就干。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span>(<span class="params">data.Dataset</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        imgs = os.listdir(root)</span><br><span class="line">        <span class="comment"># 所有图片的绝对路径</span></span><br><span class="line">        <span class="comment"># 这里不实际加载图片, 只是指定路径</span></span><br><span class="line">        <span class="comment"># 当调用__getitem__才会真正读图片</span></span><br><span class="line">        self.imgs = [os.path.join(root, img) <span class="keyword">for</span> img <span class="keyword">in</span> imgs]</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>):</span></span><br><span class="line">        img_path = self.imgs[index]</span><br><span class="line">        label = <span class="string">&#x27;jueyuanzi&#x27;</span>               				<span class="comment">#这里的标签是随便指定的</span></span><br><span class="line">        pli_img = Image.open(img_path)</span><br><span class="line">        array = np.asarray(pli_img)</span><br><span class="line">        data = torch.from_numpy(array)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> data, label</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> len(self.imgs)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dataset  = Data(<span class="string">&#x27;..\\绝缘子&#x27;</span>)</span><br><span class="line">img, label = dataset[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img, label <span class="keyword">in</span> dataset:</span><br><span class="line">    print(img.size(), img.float().mean(), label)</span><br></pre></td></tr></table></figure>
+<p>实验结果：</p>
+<p><img src="image-20201108113830607.png" /></p>
+<p>通过上面的代码，我们学习了如何自定义自己的数据集，并可以依次获取。但是这里的数据不适合实际使用，其具有以下问题：</p>
+<ol type="1">
+<li>返回的数据形状会因为样本的形状而变化，这里由于图片的大小是一致的，因此无需处理。<strong>但是如果每张图片的大小不一</strong>，返回的数据大小就会不一致，这对于需要取batch训练的神经网络来说非常不友好。</li>
+<li>返回的样本数值较大，未归一化至<strong>[-1, 1]</strong>.</li>
+</ol>
+<p>针对上述问题，PyTorch提供了torchvision。它是一个视觉工具包，提供了很多视觉图像处理的工具，其中<code>tranforms</code>模块提供了对PIL Image和Tensor对象的常用操作。</p>
+<p>对PIL Image 的常见操作如下：</p>
+<ul>
+<li>Resize：调整图片尺寸。</li>
+<li>CenterCrop、RandCrop、RandomSizedCrop：裁剪图片。</li>
+<li>Pad：填充。</li>
+<li>ToTensor：将PIL Image对象转成Tensor，会自动将[0, 255]归一化至[0, 1]。</li>
+</ul>
+<p>对Tensor 的常见操作如下：</p>
+<ul>
+<li>Normalize：标准化，及减去均值，除以标准差。</li>
+<li>ToPILImage：将Tensor转为PIL Image对象。</li>
+</ul>
+<p>如果对这些图片进行操作，可以通过Compose将这些操作拼接起来。请注意：这些操作帝国一后是以对象的形式存在，真正使用时需调用它的__call__方法，类似于nn.Module。具体实现请下面的代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Created on Sun Nov  8 10:05:04 2020</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">@author: wf09</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> utils</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms <span class="keyword">as</span> T</span><br><span class="line"></span><br><span class="line">transform = T.Compose([</span><br><span class="line">        T.Resize([<span class="number">375</span>, <span class="number">500</span>]),   <span class="comment">#缩放图片</span></span><br><span class="line">        T.CenterCrop([<span class="number">375</span>, <span class="number">500</span>]), <span class="comment">#从图片中间切出这个大小的图片</span></span><br><span class="line">        T.ToTensor(),             <span class="comment">#将图片转换到Tensor, 归一化[0, 1]</span></span><br><span class="line">        T.Normalize(mean=[<span class="number">.5</span>, <span class="number">.5</span>, <span class="number">.5</span>], std =[<span class="number">.5</span>, <span class="number">.5</span>, <span class="number">.5</span>])  <span class="comment">#标准化到[-1, 1]</span></span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span>(<span class="params">data.Dataset</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root, transforms=None</span>):</span></span><br><span class="line">        imgs = os.listdir(root)</span><br><span class="line">        <span class="comment"># 所有图片的绝对路径</span></span><br><span class="line">        <span class="comment"># 这里不实际加载图片, 只是指定路径</span></span><br><span class="line">        <span class="comment"># 当调用__getitem__才会真正读图片</span></span><br><span class="line">        self.imgs = [os.path.join(root, img) <span class="keyword">for</span> img <span class="keyword">in</span> imgs]</span><br><span class="line">        self.transforms = transforms</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>):</span></span><br><span class="line">        img_path = self.imgs[index]</span><br><span class="line">        label = <span class="string">&#x27;jueyuanzi&#x27;</span></span><br><span class="line"><span class="comment">#        pli_img = Image.open(img_path)</span></span><br><span class="line"><span class="comment">#        array = np.asarray(pli_img)</span></span><br><span class="line"><span class="comment">#        data = torch.from_numpy(array)</span></span><br><span class="line">        data = Image.open(img_path)</span><br><span class="line">        <span class="keyword">if</span> self.transforms:</span><br><span class="line">            data = self.transforms(data)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> data, label</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> len(self.imgs)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dataset  = Data(<span class="string">&#x27;..\\不同形态绝缘子&#x27;</span>, transform)</span><br><span class="line">img, label = dataset[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img, label <span class="keyword">in</span> dataset:</span><br><span class="line">    print(img.size(), img.float().mean(), label)</span><br><span class="line">    utils</span><br><span class="line">    </span><br><span class="line">        </span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<h3 id="未完待续">未完待续</h3>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+如何将操作后的图片保存下来？</li>
+<li><input type="checkbox" disabled="" />
+什么是Python中的魔法方法？</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
+    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>不说废话，直接上教程。</p>
+<a id="more"></a>
+<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
+<h6 id="介绍">介绍</h6>
+<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
+<h6 id="区别1">区别1</h6>
+<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
+<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
+<h5 id="区别2">区别2</h5>
+<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
+<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
+<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyQt5教程</title>
     <url>/p/PyQt5-Chinese-tutorial/</url>
     <content><![CDATA[<p>学习PyQt的基本功能。</p>
@@ -2288,80 +2362,6 @@
 ]]></content>
       <tags>
         <tag>PyQt5</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch中torch.Tensor和torch.tensor的区别</title>
-    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>不说废话，直接上教程。</p>
-<a id="more"></a>
-<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
-<h6 id="介绍">介绍</h6>
-<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
-<h6 id="区别1">区别1</h6>
-<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
-<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
-<h5 id="区别2">区别2</h5>
-<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; 1 torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
-<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
-<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch中对图像的操作</title>
-    <url>/p/How-to-process-images-in-Pytorch/</url>
-    <content><![CDATA[<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。</p>
-<a id="more"></a>
-<h3 id="数据处理">数据处理</h3>
-<h4 id="数据加载">数据加载</h4>
-<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。数据集对象被抽象为Dataset类，实现自定义的数据集需要继承Dataset，并实现两个Python魔法方法。</p>
-<ul>
-<li><code>__getitem__():返回一条数据或一个样本。obj[index]等价于obj.getitem__(index).</code></li>
-<li><code>__len__():返回样本的数量.len(obj)等价于obj.__len__().</code></li>
-</ul>
-<p>这里我们以某学校结课项目为例，谈谈在PyTorch中处理图像的操作。</p>
-<p><img src="202011081130.png" style="zoom:50%;" /></p>
-<p>第一步，首先要考虑的操作是将"绝缘子"文件夹下面的文件全部load到内存中，说干就干。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span>(<span class="params">data.Dataset</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        imgs = os.listdir(root)</span><br><span class="line">        <span class="comment"># 所有图片的绝对路径</span></span><br><span class="line">        <span class="comment"># 这里不实际加载图片, 只是指定路径</span></span><br><span class="line">        <span class="comment"># 当调用__getitem__才会真正读图片</span></span><br><span class="line">        self.imgs = [os.path.join(root, img) <span class="keyword">for</span> img <span class="keyword">in</span> imgs]</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>):</span></span><br><span class="line">        img_path = self.imgs[index]</span><br><span class="line">        label = <span class="string">&#x27;jueyuanzi&#x27;</span>               				<span class="comment">#这里的标签是随便指定的</span></span><br><span class="line">        pli_img = Image.open(img_path)</span><br><span class="line">        array = np.asarray(pli_img)</span><br><span class="line">        data = torch.from_numpy(array)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> data, label</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> len(self.imgs)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dataset  = Data(<span class="string">&#x27;..\\绝缘子&#x27;</span>)</span><br><span class="line">img, label = dataset[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img, label <span class="keyword">in</span> dataset:</span><br><span class="line">    print(img.size(), img.float().mean(), label)</span><br></pre></td></tr></table></figure>
-<p>实验结果：</p>
-<p><img src="image-20201108113830607.png" /></p>
-<p>通过上面的代码，我们学习了如何自定义自己的数据集，并可以依次获取。但是这里的数据不适合实际使用，其具有以下问题：</p>
-<ol type="1">
-<li>返回的数据形状会因为样本的形状而变化，这里由于图片的大小是一致的，因此无需处理。<strong>但是如果每张图片的大小不一</strong>，返回的数据大小就会不一致，这对于需要取batch训练的神经网络来说非常不友好。</li>
-<li>返回的样本数值较大，未归一化至<strong>[-1, 1]</strong>.</li>
-</ol>
-<p>针对上述问题，PyTorch提供了torchvision。它是一个视觉工具包，提供了很多视觉图像处理的工具，其中<code>tranforms</code>模块提供了对PIL Image和Tensor对象的常用操作。</p>
-<p>对PIL Image 的常见操作如下：</p>
-<ul>
-<li>Resize：调整图片尺寸。</li>
-<li>CenterCrop、RandCrop、RandomSizedCrop：裁剪图片。</li>
-<li>Pad：填充。</li>
-<li>ToTensor：将PIL Image对象转成Tensor，会自动将[0, 255]归一化至[0, 1]。</li>
-</ul>
-<p>对Tensor 的常见操作如下：</p>
-<ul>
-<li>Normalize：标准化，及减去均值，除以标准差。</li>
-<li>ToPILImage：将Tensor转为PIL Image对象。</li>
-</ul>
-<p>如果对这些图片进行操作，可以通过Compose将这些操作拼接起来。请注意：这些操作帝国一后是以对象的形式存在，真正使用时需调用它的__call__方法，类似于nn.Module。具体实现请下面的代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Created on Sun Nov  8 10:05:04 2020</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">@author: wf09</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> utils</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms <span class="keyword">as</span> T</span><br><span class="line"></span><br><span class="line">transform = T.Compose([</span><br><span class="line">        T.Resize([<span class="number">375</span>, <span class="number">500</span>]),   <span class="comment">#缩放图片</span></span><br><span class="line">        T.CenterCrop([<span class="number">375</span>, <span class="number">500</span>]), <span class="comment">#从图片中间切出这个大小的图片</span></span><br><span class="line">        T.ToTensor(),             <span class="comment">#将图片转换到Tensor, 归一化[0, 1]</span></span><br><span class="line">        T.Normalize(mean=[<span class="number">.5</span>, <span class="number">.5</span>, <span class="number">.5</span>], std =[<span class="number">.5</span>, <span class="number">.5</span>, <span class="number">.5</span>])  <span class="comment">#标准化到[-1, 1]</span></span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span>(<span class="params">data.Dataset</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root, transforms=None</span>):</span></span><br><span class="line">        imgs = os.listdir(root)</span><br><span class="line">        <span class="comment"># 所有图片的绝对路径</span></span><br><span class="line">        <span class="comment"># 这里不实际加载图片, 只是指定路径</span></span><br><span class="line">        <span class="comment"># 当调用__getitem__才会真正读图片</span></span><br><span class="line">        self.imgs = [os.path.join(root, img) <span class="keyword">for</span> img <span class="keyword">in</span> imgs]</span><br><span class="line">        self.transforms = transforms</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>):</span></span><br><span class="line">        img_path = self.imgs[index]</span><br><span class="line">        label = <span class="string">&#x27;jueyuanzi&#x27;</span></span><br><span class="line"><span class="comment">#        pli_img = Image.open(img_path)</span></span><br><span class="line"><span class="comment">#        array = np.asarray(pli_img)</span></span><br><span class="line"><span class="comment">#        data = torch.from_numpy(array)</span></span><br><span class="line">        data = Image.open(img_path)</span><br><span class="line">        <span class="keyword">if</span> self.transforms:</span><br><span class="line">            data = self.transforms(data)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> data, label</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> len(self.imgs)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dataset  = Data(<span class="string">&#x27;..\\不同形态绝缘子&#x27;</span>, transform)</span><br><span class="line">img, label = dataset[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img, label <span class="keyword">in</span> dataset:</span><br><span class="line">    print(img.size(), img.float().mean(), label)</span><br><span class="line">    utils</span><br><span class="line">    </span><br><span class="line">        </span><br><span class="line"> </span><br></pre></td></tr></table></figure>
-<h3 id="未完待续">未完待续</h3>
-<ul class="task-list">
-<li><input type="checkbox" disabled="" />
-如何将操作后的图片保存下来？</li>
-<li><input type="checkbox" disabled="" />
-什么是Python中的魔法方法？</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -3568,42 +3568,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python时间处理</title>
-    <url>/p/time-processing-in-python/</url>
-    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
-<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
-<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
-<a id="more"></a>
-<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
-<p>datetime 是Python处理日期和时间的标准库。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
-<h4 id="打印当地时间">打印当地时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
-<h4 id="unix时间戳转换">unix时间戳转换</h4>
-<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
-<ul>
-<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
-<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
-<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
-<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
-<ul>
-<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
-<li>利用<code>strftime()</code>函数重新格式化为时间</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
-<p>参考链接</p>
-<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python的一些高级用法</title>
     <url>/p/Some-advanced-usages-of-Python/</url>
     <content><![CDATA[<p>此文介绍了一些Python的一些常见的高级用法。</p>
@@ -3665,6 +3629,42 @@ y=x^2e^x
 <p><img src="image-20200920144322294.png" /></p>
 ]]></content>
       <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python时间处理</title>
+    <url>/p/time-processing-in-python/</url>
+    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
+<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
+<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
+<a id="more"></a>
+<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
+<p>datetime 是Python处理日期和时间的标准库。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
+<h4 id="打印当地时间">打印当地时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
+<h4 id="unix时间戳转换">unix时间戳转换</h4>
+<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
+<ul>
+<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
+<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
+<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
+<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
+<ul>
+<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
+<li>利用<code>strftime()</code>函数重新格式化为时间</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
+<p>参考链接</p>
+<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
+]]></content>
+      <tags>
+        <tag>time</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -8172,6 +8172,61 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>牛客SQL刷题</title>
+    <url>/p/niuke-SQL-brush-questions/</url>
+    <content><![CDATA[<p>本文主要介绍牛客网上SQL刷题的题目。</p>
+<p>后端开发，必须要学SQL，不学习SQL怎么行。</p>
+<p>关键词：<strong>SQL</strong></p>
+<a id="more"></a>
+<p>构造数据</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">drop table if exists user_profile;</span><br><span class="line">CREATE TABLE &#96;user_profile&#96; (</span><br><span class="line">&#96;id&#96; int NOT NULL,</span><br><span class="line">&#96;device_id&#96; int NOT NULL,</span><br><span class="line">&#96;gender&#96; varchar(14) NOT NULL,</span><br><span class="line">&#96;age&#96; int ,</span><br><span class="line">&#96;university&#96; varchar(32) NOT NULL,</span><br><span class="line">&#96;province&#96; varchar(32)  NOT NULL);</span><br><span class="line">INSERT INTO user_profile VALUES(1,2138,&#39;male&#39;,21,&#39;北京大学&#39;,&#39;BeiJing&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(2,3214,&#39;male&#39;,null,&#39;复旦大学&#39;,&#39;Shanghai&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(3,6543,&#39;female&#39;,20,&#39;北京大学&#39;,&#39;BeiJing&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(4,2315,&#39;female&#39;,23,&#39;浙江大学&#39;,&#39;ZheJiang&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(5,5432,&#39;male&#39;,25,&#39;山东大学&#39;,&#39;Shandong&#39;);;</span><br></pre></td></tr></table></figure>
+<p>查询所有列</p>
+<p><strong>一般不用</strong>*</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select id, device_id, gender, age, university, province from  user_profile;</span><br></pre></td></tr></table></figure>
+<p>查询多列</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> device_id, gender, age, university <span class="keyword">from</span>  user_profile;</span><br></pre></td></tr></table></figure>
+<p>查询用户所在学校并去重</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select distinct university from user_profile;</span><br><span class="line">select university from user_profile group by university;</span><br></pre></td></tr></table></figure>
+<p>查询前两条device_id</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id FROM user_profile LIMIT 2;</span><br></pre></td></tr></table></figure>
+<p>给查询后的列重新命名</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id as user_infos_example FROM user_profile LIMIT 2;</span><br></pre></td></tr></table></figure>
+<p>查询指定学校的信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, university from user_profile where university &#x3D; &#39;北京大学&#39;;</span><br></pre></td></tr></table></figure>
+<p>查询年龄大于24岁的信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age, university from user_profile where age &gt; 24;</span><br></pre></td></tr></table></figure>
+<p>查询某个年龄段的用户信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age from user_profile where age &gt;&#x3D; 20 and age &lt;&#x3D; 23;</span><br></pre></td></tr></table></figure>
+<p>查询不是复旦大学的信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age, university from user_profile where university !&#x3D; &#39;复旦大学&#39;;</span><br></pre></td></tr></table></figure>
+<p>查询年龄不为null的信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age, university from user_profile where age is not null ;</span><br></pre></td></tr></table></figure>
+<p>查询GPA&gt;3.5的男性信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where gpa &gt; 3.5 and gender &#x3D; &#39;male&#39;;</span><br></pre></td></tr></table></figure>
+<p>查询学校为北大或GPA在3.7以上(不包括3.7)信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where university &#x3D; &#39;北京大学&#39; or gpa &gt; 3.7;</span><br></pre></td></tr></table></figure>
+<p>查询学校为北大、复旦和山大的同学</p>
+<p>推荐使用第二种方法</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where university &#x3D; &#39;北京大学&#39; or university &#x3D; &#39;复旦大学&#39; or university &#x3D; &#39;山东大学&#39;;</span><br><span class="line">select device_id, gender, age, university, gpa from user_profile where university in(&#39;北京大学&#39;, &#39;复旦大学&#39;, &#39;山东大学&#39;); # 复用</span><br></pre></td></tr></table></figure>
+<p>查询gpa在3.5以上(不包括3.5)的山东大学用户 或 gpa在3.8以上(不包括3.8)的复旦大学同学</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where (university  &#39;复旦大学&#39; and gpa &gt; 3.7) or (university &#x3D; &#39;山东大学&#39; and gpa &gt; 3.5);</span><br></pre></td></tr></table></figure>
+<p>查看学校名称中含北京的用户</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, age, university from user_profile where university REGEXP &#39;.*北京.*&#39;; # 正则</span><br><span class="line">select device_id, age, university from user_profile where university LIKE &#39;%北京%&#39;; # 模糊匹配</span><br><span class="line">select device_id, age, university from user_profile where locate(&#39;北京&#39;, university) &gt; 0; # 查找子串</span><br></pre></td></tr></table></figure>
+<p>查找GPA最高值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select max(gpa) as gpa from user_profile where university &#x3D; &#39;复旦大学&#39;; # max函数</span><br><span class="line">select gpa from user_profile where university &#x3D; &#39;复旦大学&#39; order by gpa desc limit 1; # 降序排列</span><br></pre></td></tr></table></figure>
+<p>计算男生人数平均GPA，其中平均GPA保留小数点后一位</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(id) as male_num, round(avg(gpa), 1) as avg_gpa from user_profile where gender &#x3D; &#39;male&#39;;</span><br></pre></td></tr></table></figure>
+<p>计算出每个学校每种性别的用户数、30天内平均活跃天数和平均发帖数量</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select gender,</span><br><span class="line">       university,</span><br><span class="line">       count(*)                             as user_num,</span><br><span class="line">       round(avg(active_days_within_30), 1) as avg_active_day,</span><br><span class="line">       round(avg(question_cnt), 1)          as avg_question_cnt</span><br><span class="line">from user_profile</span><br><span class="line">group by gender, university;  #多分组，分组计算</span><br></pre></td></tr></table></figure>
+<p>取出平均发贴数低于5的学校或平均回帖数小于20的学校</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select university, avg(question_cnt) as avg_question_cnt, avg(answer_cnt) as avg_answer_cnt</span><br><span class="line">from user_profile</span><br><span class="line">group by university</span><br><span class="line">having avg_question_cnt &lt; 5 or avg_answer_cnt &lt; 20; # 分组过滤，不能用where，要用having</span><br></pre></td></tr></table></figure>
+<p>查询不同大学的用户平均发帖情况，按照平均发帖情况进行升序排列</p>
+]]></content>
+      <tags>
+        <tag>SQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>深度学习常见损失函数</title>
     <url>/p/common-loss-functions-for-deep-learning/</url>
     <content><![CDATA[<p>我们所说的优化，即优化网络权值使得损失函数值变小。但是，损失函数值变小是否能代表模型的分类/回归精度变高呢？那么多种损失函数，应该如何选择呢？</p>
@@ -8250,61 +8305,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>牛客SQL刷题</title>
-    <url>/p/niuke-SQL-brush-questions/</url>
-    <content><![CDATA[<p>本文主要介绍牛客网上SQL刷题的题目。</p>
-<p>后端开发，必须要学SQL，不学习SQL怎么行。</p>
-<p>关键词：<strong>SQL</strong></p>
-<a id="more"></a>
-<p>构造数据</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">drop table if exists user_profile;</span><br><span class="line">CREATE TABLE &#96;user_profile&#96; (</span><br><span class="line">&#96;id&#96; int NOT NULL,</span><br><span class="line">&#96;device_id&#96; int NOT NULL,</span><br><span class="line">&#96;gender&#96; varchar(14) NOT NULL,</span><br><span class="line">&#96;age&#96; int ,</span><br><span class="line">&#96;university&#96; varchar(32) NOT NULL,</span><br><span class="line">&#96;province&#96; varchar(32)  NOT NULL);</span><br><span class="line">INSERT INTO user_profile VALUES(1,2138,&#39;male&#39;,21,&#39;北京大学&#39;,&#39;BeiJing&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(2,3214,&#39;male&#39;,null,&#39;复旦大学&#39;,&#39;Shanghai&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(3,6543,&#39;female&#39;,20,&#39;北京大学&#39;,&#39;BeiJing&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(4,2315,&#39;female&#39;,23,&#39;浙江大学&#39;,&#39;ZheJiang&#39;);</span><br><span class="line">INSERT INTO user_profile VALUES(5,5432,&#39;male&#39;,25,&#39;山东大学&#39;,&#39;Shandong&#39;);;</span><br></pre></td></tr></table></figure>
-<p>查询所有列</p>
-<p><strong>一般不用</strong>*</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select id, device_id, gender, age, university, province from  user_profile;</span><br></pre></td></tr></table></figure>
-<p>查询多列</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> device_id, gender, age, university <span class="keyword">from</span>  user_profile;</span><br></pre></td></tr></table></figure>
-<p>查询用户所在学校并去重</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select distinct university from user_profile;</span><br><span class="line">select university from user_profile group by university;</span><br></pre></td></tr></table></figure>
-<p>查询前两条device_id</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id FROM user_profile LIMIT 2;</span><br></pre></td></tr></table></figure>
-<p>给查询后的列重新命名</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id as user_infos_example FROM user_profile LIMIT 2;</span><br></pre></td></tr></table></figure>
-<p>查询指定学校的信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, university from user_profile where university &#x3D; &#39;北京大学&#39;;</span><br></pre></td></tr></table></figure>
-<p>查询年龄大于24岁的信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age, university from user_profile where age &gt; 24;</span><br></pre></td></tr></table></figure>
-<p>查询某个年龄段的用户信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age from user_profile where age &gt;&#x3D; 20 and age &lt;&#x3D; 23;</span><br></pre></td></tr></table></figure>
-<p>查询不是复旦大学的信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age, university from user_profile where university !&#x3D; &#39;复旦大学&#39;;</span><br></pre></td></tr></table></figure>
-<p>查询年龄不为null的信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT device_id, gender, age, university from user_profile where age is not null ;</span><br></pre></td></tr></table></figure>
-<p>查询GPA&gt;3.5的男性信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where gpa &gt; 3.5 and gender &#x3D; &#39;male&#39;;</span><br></pre></td></tr></table></figure>
-<p>查询学校为北大或GPA在3.7以上(不包括3.7)信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where university &#x3D; &#39;北京大学&#39; or gpa &gt; 3.7;</span><br></pre></td></tr></table></figure>
-<p>查询学校为北大、复旦和山大的同学</p>
-<p>推荐使用第二种方法</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where university &#x3D; &#39;北京大学&#39; or university &#x3D; &#39;复旦大学&#39; or university &#x3D; &#39;山东大学&#39;;</span><br><span class="line">select device_id, gender, age, university, gpa from user_profile where university in(&#39;北京大学&#39;, &#39;复旦大学&#39;, &#39;山东大学&#39;); # 复用</span><br></pre></td></tr></table></figure>
-<p>查询gpa在3.5以上(不包括3.5)的山东大学用户 或 gpa在3.8以上(不包括3.8)的复旦大学同学</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where (university  &#39;复旦大学&#39; and gpa &gt; 3.7) or (university &#x3D; &#39;山东大学&#39; and gpa &gt; 3.5);</span><br></pre></td></tr></table></figure>
-<p>查看学校名称中含北京的用户</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select device_id, age, university from user_profile where university REGEXP &#39;.*北京.*&#39;; # 正则</span><br><span class="line">select device_id, age, university from user_profile where university LIKE &#39;%北京%&#39;; # 模糊匹配</span><br><span class="line">select device_id, age, university from user_profile where locate(&#39;北京&#39;, university) &gt; 0; # 查找子串</span><br></pre></td></tr></table></figure>
-<p>查找GPA最高值</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select max(gpa) as gpa from user_profile where university &#x3D; &#39;复旦大学&#39;; # max函数</span><br><span class="line">select gpa from user_profile where university &#x3D; &#39;复旦大学&#39; order by gpa desc limit 1; # 降序排列</span><br></pre></td></tr></table></figure>
-<p>计算男生人数平均GPA，其中平均GPA保留小数点后一位</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(id) as male_num, round(avg(gpa), 1) as avg_gpa from user_profile where gender &#x3D; &#39;male&#39;;</span><br></pre></td></tr></table></figure>
-<p>计算出每个学校每种性别的用户数、30天内平均活跃天数和平均发帖数量</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select gender,</span><br><span class="line">       university,</span><br><span class="line">       count(*)                             as user_num,</span><br><span class="line">       round(avg(active_days_within_30), 1) as avg_active_day,</span><br><span class="line">       round(avg(question_cnt), 1)          as avg_question_cnt</span><br><span class="line">from user_profile</span><br><span class="line">group by gender, university;  #多分组，分组计算</span><br></pre></td></tr></table></figure>
-<p>取出平均发贴数低于5的学校或平均回帖数小于20的学校</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select university, avg(question_cnt) as avg_question_cnt, avg(answer_cnt) as avg_answer_cnt</span><br><span class="line">from user_profile</span><br><span class="line">group by university</span><br><span class="line">having avg_question_cnt &lt; 5 or avg_answer_cnt &lt; 20; # 分组过滤，不能用where，要用having</span><br></pre></td></tr></table></figure>
-<p>查询不同大学的用户平均发帖情况，按照平均发帖情况进行升序排列</p>
-]]></content>
-      <tags>
-        <tag>SQL</tag>
       </tags>
   </entry>
   <entry>
