@@ -4745,45 +4745,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>docker安装jenkins</title>
-    <url>/p/install-jenkins-in-docker/</url>
-    <content><![CDATA[<p>关键词：docker，jenkins</p>
-<p>为什么要用docker？这个不在赘述。</p>
-<p>最近要求部署的项目要求是内外网隔离的，代码跑起来估计要安装各种依赖，想想就头大。。。</p>
-<p>现在考虑的是可以通过部署docker私有仓库，拉取镜像，跑容器。</p>
-<p>为啥还需要jenkins呢，因为项目还没有开发完毕，但是交付的日期还有不到10天了。。。</p>
-<a id="more"></a>
-<h3 id="安装">安装</h3>
-<p>官方教程：https://www.jenkins.io/doc/book/installing/linux/</p>
-<p>建议参考英文，看不懂的可以用谷歌翻译。</p>
-<p>官网给出方法的是通过<code>docker:dind</code>镜像运行另外一个部署了docker daemon的容器（区别于宿主机），然后通过<code>docker-workflow</code>方式使用，这样就实现了<strong>宿主机和构建环境</strong>的隔离，但是这样有点麻烦。。。于是就采用了之前文章中说过的<strong>docker in docker 的用法</strong>。</p>
-<h4 id="直接使用docker-compose安装">直接使用docker-compose安装</h4>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-        <tag>jenkins</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang中迭代channel和array</title>
-    <url>/p/how-to-iterate-channel-and-arrry-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍如何在golang中迭代channel和array。</p>
-<a id="more"></a>
-<h2 id="range循环切片">range循环切片</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> key, index := <span class="keyword">range</span> []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125; &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;key = %d, index = %d\n&quot;</span>, key, index)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="range循环channel">range循环channel</h2>
-<p>当channel关闭时<strong>自动退出循环</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> c := <span class="keyword">range</span> ch1 &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;c: %v\n&quot;</span>, c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="通道取值">通道取值</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  data1, ok := &lt;-ch1</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  data2, ok := &lt;-ch2</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;data1: %v, data2: %v\n&quot;</span>, data1, data2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="select多路复用">select多路复用</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> data := &lt;-ch1:</span><br><span class="line">    &#123;</span><br><span class="line">      fmt.Printf(<span class="string">&quot;data: %v\n&quot;</span>, data)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ch2:</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker in docker</title>
     <url>/p/docker-in-docker/</url>
     <content><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
@@ -4843,6 +4804,45 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker安装jenkins</title>
+    <url>/p/install-jenkins-in-docker/</url>
+    <content><![CDATA[<p>关键词：docker，jenkins</p>
+<p>为什么要用docker？这个不在赘述。</p>
+<p>最近要求部署的项目要求是内外网隔离的，代码跑起来估计要安装各种依赖，想想就头大。。。</p>
+<p>现在考虑的是可以通过部署docker私有仓库，拉取镜像，跑容器。</p>
+<p>为啥还需要jenkins呢，因为项目还没有开发完毕，但是交付的日期还有不到10天了。。。</p>
+<a id="more"></a>
+<h3 id="安装">安装</h3>
+<p>官方教程：https://www.jenkins.io/doc/book/installing/linux/</p>
+<p>建议参考英文，看不懂的可以用谷歌翻译。</p>
+<p>官网给出方法的是通过<code>docker:dind</code>镜像运行另外一个部署了docker daemon的容器（区别于宿主机），然后通过<code>docker-workflow</code>方式使用，这样就实现了<strong>宿主机和构建环境</strong>的隔离，但是这样有点麻烦。。。于是就采用了之前文章中说过的<strong>docker in docker 的用法</strong>。</p>
+<h4 id="直接使用docker-compose安装">直接使用docker-compose安装</h4>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>jenkins</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中迭代channel和array</title>
+    <url>/p/how-to-iterate-channel-and-arrry-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍如何在golang中迭代channel和array。</p>
+<a id="more"></a>
+<h2 id="range循环切片">range循环切片</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> key, index := <span class="keyword">range</span> []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125; &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;key = %d, index = %d\n&quot;</span>, key, index)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="range循环channel">range循环channel</h2>
+<p>当channel关闭时<strong>自动退出循环</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> c := <span class="keyword">range</span> ch1 &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;c: %v\n&quot;</span>, c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="通道取值">通道取值</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  data1, ok := &lt;-ch1</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  data2, ok := &lt;-ch2</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;data1: %v, data2: %v\n&quot;</span>, data1, data2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="select多路复用">select多路复用</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> data := &lt;-ch1:</span><br><span class="line">    &#123;</span><br><span class="line">      fmt.Printf(<span class="string">&quot;data: %v\n&quot;</span>, data)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ch2:</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -8972,6 +8972,44 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
+    <title>零基础入门ROS(一)</title>
+    <url>/p/ros-tutorial-01/</url>
+    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
+<p>此次记录的主要是软件安装过程中遇到的问题。</p>
+<a id="more"></a>
+<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
+<p>安装好Ubuntu 1804以后首先换源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
+<h3 id="安装ros-melodic">安装ROS Melodic</h3>
+<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
+<h4 id="设置sources.list">设置sources.list</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h5 id="更新">【更新】</h5>
+<p>国科大ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>北外ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置密钥">设置密钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
+<p>另一种方式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<h4 id="安装">安装</h4>
+<p>桌面完整版：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
+<h3 id="初始化rosdep">初始化rosdep</h3>
+<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
+<h3 id="设置环境">设置环境</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="构建工厂依赖">构建工厂依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>零基础入门ROS(三)</title>
     <url>/p/ros-tutorial-03/</url>
     <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
@@ -9112,44 +9150,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 </tr>
 </tbody>
 </table>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>零基础入门ROS(一)</title>
-    <url>/p/ros-tutorial-01/</url>
-    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
-<p>此次记录的主要是软件安装过程中遇到的问题。</p>
-<a id="more"></a>
-<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
-<p>安装好Ubuntu 1804以后首先换源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
-<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
-<h3 id="安装ros-melodic">安装ROS Melodic</h3>
-<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
-<h4 id="设置sources.list">设置sources.list</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h5 id="更新">【更新】</h5>
-<p>国科大ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>北外ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="设置密钥">设置密钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
-<p>另一种方式</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
-<h4 id="安装">安装</h4>
-<p>桌面完整版：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
-<h3 id="初始化rosdep">初始化rosdep</h3>
-<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
-<h3 id="设置环境">设置环境</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
-<h3 id="构建工厂依赖">构建工厂依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ROS</tag>
