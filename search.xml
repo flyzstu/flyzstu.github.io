@@ -2707,20 +2707,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python3 requests如何定制header</title>
-    <url>/p/how-to-customize-headers-for-python-requests/</url>
-    <content><![CDATA[<p>聊聊Python的request库</p>
-<a id="more"></a>
-<h3 id="定制请求头">定制请求头</h3>
-<p>如果想为请求添加HTTP头部，只需要简单传递一个<code>dict</code>给<code>headers</code>参数即可。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import json</span><br><span class="line">import requests</span><br><span class="line">url &#x3D; &quot;&quot;</span><br><span class="line">payload &#x3D; &#123;&#39;some&#39;:&#39;data&#39;&#125;</span><br><span class="line">headers &#x3D; &#123;&#39;content-type&#39;:&#39;application&#x2F;json&#39;&#125;</span><br><span class="line">r &#x3D; requests.post(url, data&#x3D;json.dumps(payload), headers&#x3D;headers)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>requests</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python中下划线命名模式</title>
     <url>/p/underscore-naming-pattern-in-python/</url>
     <content><![CDATA[<p>直接上表格。</p>
@@ -2769,6 +2755,20 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python3 requests如何定制header</title>
+    <url>/p/how-to-customize-headers-for-python-requests/</url>
+    <content><![CDATA[<p>聊聊Python的request库</p>
+<a id="more"></a>
+<h3 id="定制请求头">定制请求头</h3>
+<p>如果想为请求添加HTTP头部，只需要简单传递一个<code>dict</code>给<code>headers</code>参数即可。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import json</span><br><span class="line">import requests</span><br><span class="line">url &#x3D; &quot;&quot;</span><br><span class="line">payload &#x3D; &#123;&#39;some&#39;:&#39;data&#39;&#125;</span><br><span class="line">headers &#x3D; &#123;&#39;content-type&#39;:&#39;application&#x2F;json&#39;&#125;</span><br><span class="line">r &#x3D; requests.post(url, data&#x3D;json.dumps(payload), headers&#x3D;headers)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>requests</tag>
       </tags>
   </entry>
   <entry>
@@ -3568,6 +3568,42 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python时间处理</title>
+    <url>/p/time-processing-in-python/</url>
+    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
+<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
+<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
+<a id="more"></a>
+<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
+<p>datetime 是Python处理日期和时间的标准库。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
+<h4 id="打印当地时间">打印当地时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
+<h4 id="unix时间戳转换">unix时间戳转换</h4>
+<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
+<ul>
+<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
+<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
+<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
+<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
+<ul>
+<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
+<li>利用<code>strftime()</code>函数重新格式化为时间</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
+<p>参考链接</p>
+<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python多线程的应用</title>
     <url>/p/how-to-use-python-multithreading/</url>
     <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
@@ -3611,42 +3647,6 @@ y=x^2e^x
 <p>这里在主线程中使用了延迟1秒，来让子线程启动的子线程有机会输出其daemon属性值，如果不设置延迟，还没等到子线程的子线程启动，子线程就结束了，最终导致子线程的子线程无法启动。</p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python时间处理</title>
-    <url>/p/time-processing-in-python/</url>
-    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
-<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
-<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
-<a id="more"></a>
-<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
-<p>datetime 是Python处理日期和时间的标准库。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
-<h4 id="打印当地时间">打印当地时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
-<h4 id="unix时间戳转换">unix时间戳转换</h4>
-<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
-<ul>
-<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
-<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
-<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
-<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
-<ul>
-<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
-<li>利用<code>strftime()</code>函数重新格式化为时间</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
-<p>参考链接</p>
-<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
-]]></content>
-      <tags>
-        <tag>time</tag>
         <tag>Python</tag>
       </tags>
   </entry>
