@@ -129,30 +129,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Dedian 10 使用qbittorrent-nox web</title>
-    <url>/p/qbittorrent-nox-on-debian/</url>
-    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
-<a id="more"></a>
-<h3 id="下载安装包">下载安装包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p>
-<h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;qBittorrent Command Line Client</span><br><span class="line">After&#x3D;network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;forking</span><br><span class="line">User&#x3D;qbittorrent-nox</span><br><span class="line">Group&#x3D;qbittorrent-nox</span><br><span class="line">UMask&#x3D;007</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;qbittorrent-nox -d --webui-port&#x3D;8090</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure>
-<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
-<p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p>
-<p>在tools-options-Web UI中找到Authentication，修改username及password。</p>
-]]></content>
-      <tags>
-        <tag>Debian</tag>
-        <tag>qbittorrent-nox</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Dedian10使用Rclone同步ondrive</title>
     <url>/p/rclone-on-debian/</url>
     <content><![CDATA[<p>Dedian10 使用Rclone同步onedrive</p>
@@ -176,6 +152,30 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 本地到网盘</span></span><br><span class="line">rclone [功能选项] &lt;本地路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到本地</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;本地路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到网盘</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">常用功能选项</span><br><span class="line">rclone copy - 复制</span><br><span class="line">rclone move - 移动，如果要在移动后删除空源目录，请加上 --delete-empty-src-dirs 参数</span><br><span class="line">rclone sync - 同步：将源目录同步到目标目录，只更改目标目录。</span><br><span class="line">rclone size - 查看网盘文件占用大小。</span><br><span class="line">rclone delete - 删除路径下的文件内容。</span><br><span class="line">rclone purge - 删除路径及其所有文件内容。</span><br><span class="line">rclone mkdir - 创建目录。</span><br><span class="line">rclone rmdir - 删除目录。</span><br><span class="line">rclone rmdirs - 删除指定灵境下的空目录。如果加上 --leave-root 参数，则不会删除根目录。</span><br><span class="line">rclone check - 检查源和目的地址数据是否匹配。</span><br><span class="line">rclone ls - 列出指定路径下的所有的文件以及文件大小和路径。</span><br><span class="line">rclone lsl - 比上面多一个显示上传时间。</span><br><span class="line">rclone lsd 列出指定路径下的目录</span><br><span class="line">rclone lsf - 列出指定路径下的目录和文件</span><br><span class="line">常用参数</span><br><span class="line">-n = --dry-run - 测试运行，用来查看 rclone 在实际运行中会进行哪些操作。</span><br><span class="line">-P = --progress - 显示实时传输进度，500mS 刷新一次，否则默认 1 分钟刷新一次。</span><br><span class="line">--cache-chunk-size SizeSuffi - 块的大小，默认5M，理论上是越大上传速度越快，同时占用内存也越多。如果设置得太大，可能会导致进程中断。</span><br><span class="line">--cache-chunk-total-size SizeSuffix - 块可以在本地磁盘上占用的总大小，默认10G。</span><br><span class="line">--transfers=N - 并行文件数，默认为4。在比较小的内存的VPS上建议调小这个参数，比如128M的小鸡上使用建议设置为1。</span><br><span class="line">--config string - 指定配置文件路径，string为配置文件路径。</span><br><span class="line">--ignore-errors - 跳过错误。比如 OneDrive 在传了某些特殊文件后会提示Failed to copy: failed to open <span class="built_in">source</span> object: malwareDetected: Malware detected，这会导致后续的传输任务被终止掉，此时就可以加上这个参数跳过错误。但需要注意 RCLONE 的退出状态码不会为0。</span><br></pre></td></tr></table></figure>
 <p>参考：https://p3terx.com/archives/rclone-advanced-user-manual-common-command-parameters.html</p>
+]]></content>
+      <tags>
+        <tag>Debian</tag>
+        <tag>qbittorrent-nox</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Dedian 10 使用qbittorrent-nox web</title>
+    <url>/p/qbittorrent-nox-on-debian/</url>
+    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
+<a id="more"></a>
+<h3 id="下载安装包">下载安装包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p>
+<h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;qBittorrent Command Line Client</span><br><span class="line">After&#x3D;network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;forking</span><br><span class="line">User&#x3D;qbittorrent-nox</span><br><span class="line">Group&#x3D;qbittorrent-nox</span><br><span class="line">UMask&#x3D;007</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;qbittorrent-nox -d --webui-port&#x3D;8090</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure>
+<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
+<p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p>
+<p>在tools-options-Web UI中找到Authentication，修改username及password。</p>
 ]]></content>
       <tags>
         <tag>Debian</tag>
