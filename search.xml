@@ -5115,6 +5115,103 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>K8s核心概念</title>
+    <url>/p/core-concept-about-k8s/</url>
+    <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第三章Kubernetes 核心概念</strong>学习笔记。</p>
+<p>关键词：<strong>k8s</strong></p>
+<a id="more"></a>
+<h3 id="k8s的架构">k8s的架构</h3>
+<p>k8s的架构是比较典型的二层架构和server-client架构。Master作为中央的管控节点，会与Node进行一个链接。</p>
+<p>所有用户侧的组件，只会和Master进行连接，把希望的状态或者想执行的命令发给Master，Master会把这些命令发给相应的节点。</p>
+<p><img src="kubernetes-high-level-component-archtecture.jpg" /></p>
+<h4 id="master">Master</h4>
+<p>Master节点主要包含四个主要的组件：API Server、Controller、Scheduler以及etcd：</p>
+<p><img src="image-20220429212540202.png" /></p>
+<ul>
+<li>API Server：用来处理API操作，k8s的所有组件都会和API Server进行连接，组件和组件之间一般不进行独立链接，都要依赖API Server进行消息的传送。</li>
+<li>Controller：控制器。用来完成对集群状态的一些管理。例如<strong>自动对容器进行修复，或者自动进行水平扩张</strong>。</li>
+<li>Scheduler：调度器。顾名思义就是完成调度的操作。例如把一个用户提交的Container，依赖于它对CPU、对memory请求大小，找一台合适的节点，进行放置。</li>
+<li>etcd：分布式存储系统。API Server中所需要的原信息存在etcd中，etcd本身是一个高可用系统，通过etcd保证整个k8s Master节点的高可用性。</li>
+</ul>
+<h4 id="node">Node</h4>
+<p>Node是真正运行业务负载的，每个业务负载以<strong>Pod</strong>的形式运行。一个Pod中运行一个或者多个容器，真正运行这些Pod组件的是<strong>kubelet</strong>，也就是Node上面最关键的组件，它通过API Server接收到需要Pod运行的状态，然后提交到Container Runtime组件中，在OS上创建容器所需要的环境，最终把容器或者Pod运行起来。Node需要对存储和网络进行管理。K8s不直接管理存储和网络，K8s通过Storage Plugin或者Network Plugin进行管理，完成存储和网络操作。</p>
+<p><img src="image-20220429213903847.png" /></p>
+<p>在K8s自己的环境里，也会有k8s的Network，他是为了提供Service Network来进行组网。真正完成组网的组件是Kube-proxy。Kube-proxy利用iptable的能力来组建k8s集群的网络。以上就是Node上面的四个组件（Container Runtime、Storage Plugin、Network Plugin、Kube-proxy）。</p>
+<p>注意：K8s上的Node不会直接和用户进行交互，Node和用户之间的交互只会通过Master节点。用户通过Master节点下发这些信息。K8s上的每个Node，都会运行上面的这几个组件。</p>
+<h5 id="例子">例子</h5>
+<p>通过一个例子看K8s架构中的这些组件是如何进行交互的。</p>
+<p><img src="image-20220429220138689.png" /></p>
+<p>用户通过UI或者CLI提交一个Pod到K8s进行部署，这个Pod请求会首先通过UI或者CLI提交给K8s API Server，下一步API Server会把这个信息写入到存储系统etcd，之后Scheduler会通过API Server的watch机制得到这个信息：有一个Pod需要被调度。</p>
+<p>此时Scheduler会根据这个内存状态进行一次调度决策，在完成这次调度以后，Scheduler向API Server报告。此时API Server接收到消息以后，把这次结果写入etcd，然后API Server会通知相应的节点。相应节点的Kubelet会得到这个通知，Kubelet调用Container Runtime来启动配置这个容器和这个容器的运行环境，去调度Storage Plugin来配置存储，Network Plugin去配置网络。</p>
+<h3 id="核心概念">核心概念</h3>
+<h4 id="pod">Pod</h4>
+<p>Pod是K8s的一个最小调度和属性单元，用户可以通过K8s的Pod API来生产一个Pod，让K8s对这个Pod进行调度，也就是把他放到另一个K8s管理的节点上运行起来。</p>
+<p>一个Pod简单来说是一组容器的抽象，它包含一个或者多个容器。</p>
+<p>Pod包含一些其他所需要的资源，比如卷。</p>
+<p><img src="image-20220430130241945.png" /></p>
+<p>Pod的共享上下文包括一组Linux命名空间，控制组和可能一些其他的隔离方面，这些都是用来隔离Docker容器的技术。在Pod的上下文中，每个独立的应用可能会进一步实施隔离。</p>
+<p>就Docker使用的概念术语来说，<strong>Pod类似于共享名字空间和文件系统卷的一组Docker容器</strong>。</p>
+<p>Pod给这些容器提供了一个共享的运行环境，他们会共享同一个网络环境，这些容器可以用localhost来进行直接的连接。</p>
+<h5 id="使用pod">使用Pod</h5>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:1.14.2</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>要创建上面的Pod，请运行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f simple-pod.yaml</span><br></pre></td></tr></table></figure>
+<p>注意：Pod一般不是直接创建的，而是使用<strong>工作负载资源</strong>创建的，</p>
+<h4 id="volume">Volume</h4>
+<p>Volume用来管理K8s存储，Volume声明容器中的容器可以访问文件的目录。</p>
+<p>一个卷可以被挂载Pod中一个或者多个容器指定的路径下面。</p>
+<p>Volume本身是一个<strong>抽象</strong>的概念，一个Volume可以支持多种后端存储。K8s的Volume就支持了很多存储插件，可以支持<strong>本地的存储</strong>，也可以支持<strong>分布式存储</strong>。它也可以支持云存储，例如阿里云上的云盘、AWS上的云盘、Google上的云盘等。</p>
+<p><img src="image-20220430132644760.png" /></p>
+<p>Docker 也有 <a href="https://docs.docker.com/storage/">卷（Volume）</a> 的概念，但对它只有少量且松散的管理。 Docker 卷是磁盘上或者另外一个容器内的一个目录。 Docker 提供卷驱动程序，但是其功能非常有限。</p>
+<p>Kubernetes 支持很多类型的卷。 <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">Pod</a> 可以同时使用任意数目的卷类型。 临时卷类型的生命周期与 Pod 相同，但持久卷可以比 Pod 的存活期长。 当 Pod 不再存在时，Kubernetes 也会销毁临时卷；不过 Kubernetes 不会销毁<strong>持久卷</strong>。 对于给定 Pod 中任何类型的卷，在容器重启期间数据都不会丢失。</p>
+<h5 id="挂载本地卷">挂载本地卷</h5>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:1.14.2</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/mnt/logs</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">logs</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">go-logs</span></span><br><span class="line">        <span class="attr">hostPath:</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/logs</span></span><br></pre></td></tr></table></figure>
+<h5 id="挂载网络卷nfs">挂载网络卷NFS</h5>
+<p>待补充</p>
+<h4 id="deployment">Deployment</h4>
+<p>Deployment为<strong>Pod和ReplicaSet（副本）</strong>提供声明式的更新能力。</p>
+<p>Deployment是在Pod上层的抽象，用Deployment这个抽象来做应用的真正管理，而Pod是组成Deployment的最小单元。</p>
+<p>K8s通过Controller也就是控制器去维护Deployment中Pod的数目，帮助Deployment自动恢复失败的Pod。</p>
+<p><img src="image-20220430135024552.png" /></p>
+<p>例如可以定义一个Deployment，这个Deployment需要两个Pod，当一个Pod失败后，控制器会检测到，他会重新把Deployment中的Pod数据从一个恢复到两个，然后再去重新生成一个Pod。</p>
+<p>通过控制器，还可以完成发布的策略，例如进行滚动升级，或者版本回滚等。</p>
+<h5 id="创建deployment">创建Deployment</h5>
+<p>下面是一个 Deployment 示例。其中创建了一个 ReplicaSet，负责启动三个 <code>nginx</code> Pods：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.14.2</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>在该例中：</p>
+<ul>
+<li>创建名为<code>nginx-deployment</code>的Deployment</li>
+<li>该Deployment创建<code>3</code>个（由replicas字段标明）Pod副本</li>
+<li><code>selector</code>字段定义了Deployment如何查找要管理的Pods。在这里选择Pod模板中定义的标签（app：nginx）。</li>
+</ul>
+<blockquote>
+<p><code>spec.selector.matchLabels</code> 字段是key-Value键值对映射，在matchLabels映射的每个Key-Value映射等效于<code>matchExpressions</code>中的一个元素，即key字段是<code>key</code>，操作符是<code>In</code>，<code>values</code>数组仅包含<code>value</code>。在<code>matchLabels</code>和<code>matchExpressions</code>中给出的所有条件都满足才能匹配。</p>
+</blockquote>
+<ul>
+<li>template包含以下子字段：
+<ul>
+<li>Pod被使用<code>.metadata.labels</code>字段打上<code>app:nginx</code>标签</li>
+<li>Pod模板规约即<code>.template.spec</code>字段指示Pods运行一个nginx容器，该容器运行<code>nginx:1.14.2</code>的Docker Hub 镜像</li>
+<li>创建一个容器并使用<code>.spec.template.spec.containers[0].name</code>字段并将其命名为<code>nginx</code></li>
+</ul></li>
+</ul>
+<h4 id="service">Service</h4>
+<p>Service提供了一个或者多个Pod实例的稳定访问地址。</p>
+<p>从上文中可以看到，一个Deployment可以有两个甚至更多个完全相同的Pod，对于一个外部的用户来说，访问哪一个Pod其实都属于一样的，所以他希望做一次负载均衡，在做负载均衡的同时，只想访问某一个固定的<strong>VIP，VirtualIP</strong>地址，而不希望得到一个具体的Pod的IP地址。</p>
+<p>由于Pod本身可能会终止，如果一个Pod失败了，可能会换成另外一个新的。</p>
+<p>对于外部用户来说，提供了多个具体的Pod地址，这个用户需要不停的去更新Pod地址。<strong>K8s的Service把所有Pod的访问能力抽象成一个第三方的IP地址。</strong></p>
+<p>实现Service有多种方式，K8s支持Cluster IP，上面讲过的kuber-proxy组网，也支持nodePort，LoadBalancer等其他的一些访问能力。</p>
+<p><img src="image-20220430153116204.png" /></p>
+<h5 id="使用service">使用Service</h5>
+<p>例如，假定有一组Pod，他们对外暴露了9376端口，同时还被打上了app=Myapp标签</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">MyApp</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">9376</span></span><br></pre></td></tr></table></figure>
+<p>上述配置创建了一个名为<code>my-service</code>的对象，它会将请求代理到TCP端口9376，并且具有标签<code>app=MyApp</code>的Pod上。</p>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kafaka学习笔记之快速入门</title>
     <url>/p/introduction-to-kafaka-study-notes-02/</url>
     <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
@@ -7295,44 +7392,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>利用heroku实现自动发布博客</title>
-    <url>/p/automate-blog-posting-with-heroku/</url>
-    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
-<p>关键词：<strong>heroku，自动化构建</strong></p>
-<a id="more"></a>
-<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
-<h3 id="安装">安装</h3>
-<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
-<h3 id="登录">登录</h3>
-<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
-<p>如果出现Logged in as 则表示登陆成功。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
-<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
-<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
-<p><img src="image-20220409100956279.png" /></p>
-<p>为了简化步骤，这里先使用第一种方式。</p>
-<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
-<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
-<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
-<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
-<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
-<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
-<p><img src="image-20220409125928022.png" /></p>
-<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
-<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
-<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
-<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
-]]></content>
-      <tags>
-        <tag>heroku</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探httprouter</title>
     <url>/p/httprouter-tutorial-01/</url>
     <content><![CDATA[<p>httprouter 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
@@ -7378,6 +7437,44 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>利用heroku实现自动发布博客</title>
+    <url>/p/automate-blog-posting-with-heroku/</url>
+    <content><![CDATA[<p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
+<p>关键词：<strong>heroku，自动化构建</strong></p>
+<a id="more"></a>
+<h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
+<h3 id="安装">安装</h3>
+<p>官网提供了<a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
+<h3 id="登录">登录</h3>
+<p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
+<p>如果出现Logged in as 则表示登陆成功。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku login -i</span><br><span class="line"><span class="comment">#heroku: Enter your login credentials</span></span><br><span class="line"><span class="comment">#Email: zlb@mail.io</span></span><br><span class="line"><span class="comment">#Password: ***************</span></span><br><span class="line"><span class="comment">#Logged in as zlb@mail.io</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用-docker-进行部署">使用 Docker 进行部署</h2>
+<p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
+<p><img src="image-20220409100956279.png" /></p>
+<p>为了简化步骤，这里先使用第一种方式。</p>
+<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
+<h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
+<h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
+<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
+<p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
+<p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
+<p><img src="image-20220409125928022.png" /></p>
+<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
+<h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
+<p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
+<p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>
+]]></content>
+      <tags>
+        <tag>heroku</tag>
       </tags>
   </entry>
   <entry>
@@ -7735,6 +7832,29 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>力扣每日一题之保持城市天际线</title>
+    <url>/p/max-increase-to-keep-city-skyline/</url>
+    <content><![CDATA[<p>给你一座<code>nxn</code>个街区组成的城市，每个截取都包含一座立方体建筑。给你一个坐标从0开始的<code>nxn</code>整数矩阵<code>grid</code>，其中<code>grid[r][c]</code>表示坐落于<code>r</code>行c列的建筑物的高度。</p>
+<p>城市的天际线是从远处观察城市时，所有建筑物形成的外部轮廓。从东、南、西、北四个方向观测到的天际线可能不同。</p>
+<p>我们被允许为任意数量的建筑物的高度增加任意增量（不同的建筑物的增量可能不同）。高度为0的建筑物的高度也可以增加。然而，增加的建筑物高度不能影响从任何主要方向观察城市的得到的天际线。</p>
+<p>在 <strong>不改变</strong> 从任何主要方向观测到的城市的天际线的前提下，返回建筑物可以增加的最大高度增量总和。</p>
+<a id="more"></a>
+<p><strong>示例1</strong></p>
+<p><strong>输入</strong>：<code>grid = [[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]</code> <strong>输出</strong>：<code>35</code> <strong>解释</strong>：建筑物的高度如上图中心所示。 用红色绘制从不同方向观看得到的天际线。 在不影响天际线的情况下，增加建筑物的高度： <code>gridNew = [ [8, 4, 8, 7],             [7, 4, 7, 7],             [9, 4, 8, 7],             [3, 3, 3, 3] ]</code></p>
+<p><strong>示例2</strong></p>
+<p><strong>输入</strong>：<code>grid=[[0,0,0],[0,0,0],[0,0,0]]</code> <strong>输出</strong>：0 <strong>解释</strong>：增加任何建筑物的高度都会导致天际线的变化。</p>
+<h3 id="方法一贪心算法">方法一：贪心算法</h3>
+<p>从左侧和右侧看，城市天际线等于<strong>矩阵grid每一行的建筑物的最大值</strong>；从顶部和底部看，城市天际线等于<strong>矩阵grid的每一列的建筑物的最大值</strong>。只要<strong>不改变每一行和每一列的建筑物的高度的最大值</strong>，就能保持城市天际线，因此可以使用贪心的思想计算高度建筑可以增加的最大高度。</p>
+<p>由于矩阵grid的行数和列数都是n，因此创建一个两个长度为n的数组rowMax和colMax分别记录建筑物grid的每一行的最大值和每一列的最大值。遍历矩阵grid填入两个数组之后，再次遍历矩阵，计算每个建筑物可以增加的最大值。</p>
+<p>对于<code>0&lt;=i, j&lt;n</code>时，对于第i行和第j列的建筑物，其所在行的建筑物高度的最大值是<code>rowMax[i]</code>，其所在列的建筑物的高度的最大值是<code>colMax[j]</code>。为了保持城市天际线，该建筑物增加后的高度不能超过其所在行和所在列的建筑物高度最大值，即该建筑物增加后的最大高度是<code>min(rowMax[i], colMax[j])</code>。由于该建筑物的原始高度是<code>grid[j][j]</code>，因此该建筑物增加后的最大高度是<code>min(rowMax[i], colMax[j]) - grid[i, j]</code>.</p>
+<p>对于矩阵grid中每个元素可以增加的最大值，即可得到建筑物高度可以增加的最大总和。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt; b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxIncreaseKeepingSkyline</span><span class="params">(grid [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">//计算每一行的最大值和每一列的最大值</span></span><br><span class="line">	m, n := <span class="built_in">len</span>(grid), <span class="built_in">len</span>(grid[<span class="number">0</span>])</span><br><span class="line">	rowMax := <span class="built_in">make</span>([]<span class="keyword">int</span>, m)</span><br><span class="line">	colMax := <span class="built_in">make</span>([]<span class="keyword">int</span>, n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; m; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; n; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> rowMax[i] &lt; grid[i][j] &#123;</span><br><span class="line">				rowMax[i] = grid[i][j]</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> colMax[j] &lt; grid[i][j] &#123;</span><br><span class="line">				colMax[j] = grid[i][j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 每一个栅格上的建筑物不能超过所在行最大值、所在列最大值两者的最小值</span></span><br><span class="line">    <span class="comment">// 能增加的最大值是这两者的差</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; m; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; n; j++ &#123;</span><br><span class="line">			ret += min(rowMax[i], colMax[j]) - grid[i][j]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之在线选举</title>
     <url>/p/online-election/</url>
     <content><![CDATA[<p>给你两个证书数组<code>persons</code>和<code>times</code>。在选举中，第<code>i</code>张选票是在时刻为<code>times[i]</code>时投给选举人<code>persons[i]</code>的。</p>
@@ -7790,29 +7910,6 @@ t≥times[i],&amp; i=N-1
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *TopVotedCandidate)</span> <span class="title">Q</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">// 二分查找</span></span><br><span class="line">	mid := <span class="number">0</span></span><br><span class="line">	left := <span class="number">0</span></span><br><span class="line">	right := <span class="built_in">len</span>(t.times) - <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">		mid = left + (right-left)/<span class="number">2</span></span><br><span class="line">		<span class="keyword">if</span> i &gt; t.times[mid] &#123;</span><br><span class="line">			left = mid + <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> i &lt; t.times[mid] &#123;</span><br><span class="line">			right = mid - <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> t.tops[mid]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> t.tops[right]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="库函数二分查找">库函数二分查找</h3>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *TopVotedCandidate)</span> <span class="title">Q</span><span class="params">(t <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> c.tops[sort.SearchInts(c.times, t+<span class="number">1</span>)<span class="number">-1</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣每日一题之保持城市天际线</title>
-    <url>/p/max-increase-to-keep-city-skyline/</url>
-    <content><![CDATA[<p>给你一座<code>nxn</code>个街区组成的城市，每个截取都包含一座立方体建筑。给你一个坐标从0开始的<code>nxn</code>整数矩阵<code>grid</code>，其中<code>grid[r][c]</code>表示坐落于<code>r</code>行c列的建筑物的高度。</p>
-<p>城市的天际线是从远处观察城市时，所有建筑物形成的外部轮廓。从东、南、西、北四个方向观测到的天际线可能不同。</p>
-<p>我们被允许为任意数量的建筑物的高度增加任意增量（不同的建筑物的增量可能不同）。高度为0的建筑物的高度也可以增加。然而，增加的建筑物高度不能影响从任何主要方向观察城市的得到的天际线。</p>
-<p>在 <strong>不改变</strong> 从任何主要方向观测到的城市的天际线的前提下，返回建筑物可以增加的最大高度增量总和。</p>
-<a id="more"></a>
-<p><strong>示例1</strong></p>
-<p><strong>输入</strong>：<code>grid = [[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]</code> <strong>输出</strong>：<code>35</code> <strong>解释</strong>：建筑物的高度如上图中心所示。 用红色绘制从不同方向观看得到的天际线。 在不影响天际线的情况下，增加建筑物的高度： <code>gridNew = [ [8, 4, 8, 7],             [7, 4, 7, 7],             [9, 4, 8, 7],             [3, 3, 3, 3] ]</code></p>
-<p><strong>示例2</strong></p>
-<p><strong>输入</strong>：<code>grid=[[0,0,0],[0,0,0],[0,0,0]]</code> <strong>输出</strong>：0 <strong>解释</strong>：增加任何建筑物的高度都会导致天际线的变化。</p>
-<h3 id="方法一贪心算法">方法一：贪心算法</h3>
-<p>从左侧和右侧看，城市天际线等于<strong>矩阵grid每一行的建筑物的最大值</strong>；从顶部和底部看，城市天际线等于<strong>矩阵grid的每一列的建筑物的最大值</strong>。只要<strong>不改变每一行和每一列的建筑物的高度的最大值</strong>，就能保持城市天际线，因此可以使用贪心的思想计算高度建筑可以增加的最大高度。</p>
-<p>由于矩阵grid的行数和列数都是n，因此创建一个两个长度为n的数组rowMax和colMax分别记录建筑物grid的每一行的最大值和每一列的最大值。遍历矩阵grid填入两个数组之后，再次遍历矩阵，计算每个建筑物可以增加的最大值。</p>
-<p>对于<code>0&lt;=i, j&lt;n</code>时，对于第i行和第j列的建筑物，其所在行的建筑物高度的最大值是<code>rowMax[i]</code>，其所在列的建筑物的高度的最大值是<code>colMax[j]</code>。为了保持城市天际线，该建筑物增加后的高度不能超过其所在行和所在列的建筑物高度最大值，即该建筑物增加后的最大高度是<code>min(rowMax[i], colMax[j])</code>。由于该建筑物的原始高度是<code>grid[j][j]</code>，因此该建筑物增加后的最大高度是<code>min(rowMax[i], colMax[j]) - grid[i, j]</code>.</p>
-<p>对于矩阵grid中每个元素可以增加的最大值，即可得到建筑物高度可以增加的最大总和。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt; b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxIncreaseKeepingSkyline</span><span class="params">(grid [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">//计算每一行的最大值和每一列的最大值</span></span><br><span class="line">	m, n := <span class="built_in">len</span>(grid), <span class="built_in">len</span>(grid[<span class="number">0</span>])</span><br><span class="line">	rowMax := <span class="built_in">make</span>([]<span class="keyword">int</span>, m)</span><br><span class="line">	colMax := <span class="built_in">make</span>([]<span class="keyword">int</span>, n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; m; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; n; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> rowMax[i] &lt; grid[i][j] &#123;</span><br><span class="line">				rowMax[i] = grid[i][j]</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> colMax[j] &lt; grid[i][j] &#123;</span><br><span class="line">				colMax[j] = grid[i][j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 每一个栅格上的建筑物不能超过所在行最大值、所在列最大值两者的最小值</span></span><br><span class="line">    <span class="comment">// 能增加的最大值是这两者的差</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; m; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; n; j++ &#123;</span><br><span class="line">			ret += min(rowMax[i], colMax[j]) - grid[i][j]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7959,6 +8056,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <url>/p/swap-nodes-in-pairs/</url>
+    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img src="swap_ex1.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
+<p><img src="image-20220214194056147.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣链表基础之删除链表的倒数第N个节点</title>
     <url>/p/remove-nth-node-from-end-of-list/</url>
     <content><![CDATA[<p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p>
@@ -7973,25 +8089,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p><img src="image-20220215193937378.png" /></p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// fast先移动n+1步，然后让fast和slow同时移动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeNthFromEnd</span><span class="params">(head *ListNode, n <span class="keyword">int</span>)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">	dummy.Next = head</span><br><span class="line">	fast := dummy</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">	&#125;</span><br><span class="line">	slow := dummy</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &#123;</span><br><span class="line">		fast = fast.Next</span><br><span class="line">		slow = slow.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> slow != <span class="literal">nil</span> &amp;&amp; slow.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow.Next = slow.Next.Next</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <url>/p/swap-nodes-in-pairs/</url>
-    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img src="swap_ex1.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
-<p><img src="image-20220214194056147.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -8082,6 +8179,44 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣题目类型之回溯法（一）</title>
+    <url>/p/back-tracking-one/</url>
+    <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
+<p>回溯是递归的副产品，只要有递归就会有回溯。</p>
+<a id="more"></a>
+<h2 id="回溯法的效率">回溯法的效率</h2>
+<p>回溯的本质是穷举，穷举所有可能。如果还想让回溯法高效一些，可以加一些剪枝的操作，但其本质仍是穷举。</p>
+<h2 id="回溯法可以解决的问题">回溯法可以解决的问题</h2>
+<p>回溯法，一般用于解决以下问题：</p>
+<ul>
+<li>组合问题：N个数里面按一定规则找出k个数的集合；</li>
+<li>切割问题：一个字符串按一定规则有几种切割方式；</li>
+<li>子集问题：一个N个数的集合里有多少符合条件的子集；</li>
+<li>排列问题：N个数按一定规则全排列，有几种排列方式；</li>
+<li>棋盘问题：N皇后，解数独等。</li>
+</ul>
+<h2 id="如何理解回溯法">如何理解回溯法</h2>
+<p>回溯法解决的问题都可以抽象成树形结构，因为回溯法解决的都是在集合中递归查找子集：</p>
+<ul>
+<li>集合的大小是树的宽度</li>
+<li>递归的深度是树的深度</li>
+</ul>
+<p>递归要有终止条件，因此必然是一颗高度有限的树（N叉树）</p>
+<h2 id="回溯法模板">回溯法模板</h2>
+<p>回溯三部曲</p>
+<ul>
+<li><strong>返回值以及参数</strong>：一般是先写逻辑，然后需要什么参数填写什么参数。</li>
+<li><strong>终止条件</strong>：什么时候达到了终止条件，树中就可以看出，一般来说搜到叶子节点了，也就找到了满足条件的一条答案，然后把整个答案存起来，并结束本层递归。</li>
+<li><strong>遍历过程</strong>：回溯法是在集合中递归搜索，集合的大小构成了树的宽度，递归的深度构成了树的深度。</li>
+</ul>
+<p><img src="20210130173631174.png" /></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(参数)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (终止条件) &#123;</span><br><span class="line">        存放结果;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (选择; 本层集合中元素(树中节点孩子的大小就是集合的大小)) &#123; <span class="comment">// for循环是横向遍历</span></span><br><span class="line">        处理节点;</span><br><span class="line">        func(路径, 选择列表); <span class="comment">// 递归是纵向遍历</span></span><br><span class="line">        回溯，撤销处理结果</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>在Docker Destop启用k8s服务</title>
     <url>/p/enable-k8s-in-docker-desktop/</url>
     <content><![CDATA[<p>作为目前事实上的容器编排系统标准，K8s 无疑是现代应用的基石。</p>
@@ -8152,44 +8287,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣题目类型之回溯法（一）</title>
-    <url>/p/back-tracking-one/</url>
-    <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
-<p>回溯是递归的副产品，只要有递归就会有回溯。</p>
-<a id="more"></a>
-<h2 id="回溯法的效率">回溯法的效率</h2>
-<p>回溯的本质是穷举，穷举所有可能。如果还想让回溯法高效一些，可以加一些剪枝的操作，但其本质仍是穷举。</p>
-<h2 id="回溯法可以解决的问题">回溯法可以解决的问题</h2>
-<p>回溯法，一般用于解决以下问题：</p>
-<ul>
-<li>组合问题：N个数里面按一定规则找出k个数的集合；</li>
-<li>切割问题：一个字符串按一定规则有几种切割方式；</li>
-<li>子集问题：一个N个数的集合里有多少符合条件的子集；</li>
-<li>排列问题：N个数按一定规则全排列，有几种排列方式；</li>
-<li>棋盘问题：N皇后，解数独等。</li>
-</ul>
-<h2 id="如何理解回溯法">如何理解回溯法</h2>
-<p>回溯法解决的问题都可以抽象成树形结构，因为回溯法解决的都是在集合中递归查找子集：</p>
-<ul>
-<li>集合的大小是树的宽度</li>
-<li>递归的深度是树的深度</li>
-</ul>
-<p>递归要有终止条件，因此必然是一颗高度有限的树（N叉树）</p>
-<h2 id="回溯法模板">回溯法模板</h2>
-<p>回溯三部曲</p>
-<ul>
-<li><strong>返回值以及参数</strong>：一般是先写逻辑，然后需要什么参数填写什么参数。</li>
-<li><strong>终止条件</strong>：什么时候达到了终止条件，树中就可以看出，一般来说搜到叶子节点了，也就找到了满足条件的一条答案，然后把整个答案存起来，并结束本层递归。</li>
-<li><strong>遍历过程</strong>：回溯法是在集合中递归搜索，集合的大小构成了树的宽度，递归的深度构成了树的深度。</li>
-</ul>
-<p><img src="20210130173631174.png" /></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(参数)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (终止条件) &#123;</span><br><span class="line">        存放结果;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (选择; 本层集合中元素(树中节点孩子的大小就是集合的大小)) &#123; <span class="comment">// for循环是横向遍历</span></span><br><span class="line">        处理节点;</span><br><span class="line">        func(路径, 选择列表); <span class="comment">// 递归是纵向遍历</span></span><br><span class="line">        回溯，撤销处理结果</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -8443,66 +8540,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>数值分析第一章作业</title>
-    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，数值分析</p>
-<a id="more"></a>
-<p><img src="image-20201013093358782.png" /></p>
-<p><img src="image-20201013102937713.png" /></p>
-<p><img src="image-20201013104909315.png" /></p>
-<p><img src="image-20201013104922645.png" /></p>
-<p><img src="image-20201013104953613.png" /></p>
-<p><img src="image-20201013110136891.png" /></p>
-<p><img src="image-20201013110806596.png" /> <span class="math display">\[
-2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
-\]</span></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念01</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
-    <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
-<a id="more"></a>
-<h4 id="引言">引言</h4>
-<p>机器学习的经典定义：<strong>利用经验改善系统自身的性能。</strong></p>
-<p>机器学习所研究的主要内容，是关于在计算机上从数据中产生的模型的算法，即学习算法。有了学习算法，我们把经验数据提供给它，它就能基于这些数据产生模型。在面对新的情况时，模型会给我们相应的判断。</p>
-<blockquote>
-<p>【Mitchell,1997】给出了一个更形式化的定义：假设用<em>P</em>来评估计算机程序在某任务类<em>T</em>上的性能，若一个程序通过利用经验<em>E</em>在<em>T</em>中任务上获得了性能改善，则我们就说关于<em>T</em>和<em>P</em>，该程序对<em>E</em>进行了学习。</p>
-</blockquote>
-<p>模型：泛指从数据中学到的结果。有文献用"模型"指全局性结果(例如一颗决策树)，而用"模式"指局部性结果(例如一条规则).</p>
-<h4 id="基本术语">基本术语</h4>
-<p>要进行机器学习，首先要有数据。假定收集了一批关于西瓜的数据，例如（色泽=青绿；根蒂=蜷缩；敲声=浊响），（色泽=乌黑；根蒂=稍蜷；敲声=沉闷），（色泽=浅白；根蒂=硬挺；敲声=清脆），······，每对括号内是一条记录，"="的意思是"取值为".</p>
-<p>记录数据的集合称为一个<strong>"数据集"(data set)</strong>，其中每条记录是关于一个事件和对象的叙述，称为一个<strong>"示例"（instance)或"样本"（sample）</strong>。</p>
-<p>反应事件或对象在某方面的表现或者性质的事项，例如"色泽"，"根蒂"，"敲声"，称为<strong>"属性"（attribute)或"特征"（feature）</strong>。</p>
-<p>属性上的取值，例如"青绿"，"乌黑"，称为<strong>"属性值"（attribute value）</strong>。属性张成的空间称为<strong>"属性空间"（attribute space）、"样本空间"（sample space）或"输入空间"</strong>。</p>
-<p>例如，我们把"色泽"、"根蒂"和"敲声"作为三个坐标轴，则他们张成的一个用于描述西瓜的三维空间，每个西瓜都可在这个空间找到他们自己的坐标位置。由于空间中的每个点对应一个坐标向量，因此也把一个示例称为一个<strong>"特征向量"（feature vector）</strong>。</p>
-<p>​ 一般地，令$ D=\{x_1,x_2,...,x_m\} <span class="math inline">\(表示包含\)</span>m<span class="math inline">\(个实例的数据集，每个实例由\)</span>d<span class="math inline">\(个属性描述(例如上面的西瓜数据使用了3个属性)，则每个实例\)</span>x_i=\{x_{i1},x_{i2},...,x_{id}\}<span class="math inline">\(是\)</span>d$维样本空间 <span class="math inline">\(\chi\)</span> 中一个向量，<span class="math inline">\(x_i \in \chi\)</span>，其中<span class="math inline">\(x\_{ij}\)</span>是第<span class="math inline">\(j\)</span>个属性上的取值(例如上述第3个西瓜在第二个属性上的属性是"硬挺")，<span class="math inline">\(d\)</span>称为样本<span class="math inline">\(x_i\)</span>的<strong>"维数"(dimensionality)</strong>.</p>
-<p>​ 从数据中学得模型的过程称为<strong>"学习"（learning）</strong>或者<strong>"训练"（training）</strong>，这个过程通过执行某个学习算法来完成。训练过程使用的数据称为<strong>"训练数据"（training data）</strong>，其中每个样本称为一个<strong>"训练样本"（training sample)</strong>，训练样本组成的集合称为<strong>"训练集"（training set）</strong>。学得模型对应了关于数据的某种潜在的规律，因此亦称<strong>"假设"（hypothesis）</strong>；这种潜在规律本身，则称为<strong>"真相"或"真实"(ground-truth)</strong>，学习过程就是为了找出或逼近真相。</p>
-<blockquote>
-<p>训练样本亦称为"训练示例"（training instance）或者"训练例"。</p>
-<p>学习算法通常由参数需要设置，使用不同的参数值和(或)训练数据，将产生不同的结果。</p>
-<p>有时将模型称为"学习器"（learner)，可看作学习算法在给定数据和参数空间上的实例化。</p>
-</blockquote>
-<p>​ 如果希望学得一个能够判断没剖开的是不是"好瓜"的模型，仅有前面的示例数据显然是不够的，要建立这样的关于<strong>"预测"（prediction）</strong>的模型，需要获得训练样本的"结果"信息，例如"((色泽=青绿；根蒂=蜷缩；敲声=浊响)，好瓜)"。这里关于实例结果的信息，例如"好瓜"，称为<strong>"标记"（label）</strong>；拥有了标记信息的示例，则成为<strong>"样例"（example)</strong>。一般地，用<span class="math inline">\((x_i,y_i)\)</span>表示第<span class="math inline">\(i\)</span>个样例，其中<span class="math inline">\(y_i \in Y\)</span>是示例<span class="math inline">\(x_i\)</span>的标记，<span class="math inline">\(Y\)</span> 是所有标记的集合，亦称为<strong>"标记空间"(label space)或"输出空间"</strong>。</p>
-<p>​ 若我们欲预测的是离散值，例如"好瓜"、"坏瓜"，此类任务被称为<strong>"分类"(classification)</strong>；若欲预测的是连续值，例如西瓜成熟度0.95，0.37，此类学习任务称为<strong>"回归"(regression)</strong>。对涉及两个类别的<strong>"二分类"(binary classification)</strong>任务，通常称其中一个类为<strong>"正类"(positive class)</strong>，另一个类称为<strong>"反类"(negative class)</strong>;涉及多个类别时，则成为<strong>"多分类"(multi-class classification)</strong>任务。一般地，预测任务是希望通过对训练集<span class="math inline">\(\{(x_1,y_1),(x_2,y_2),...,(x_m,y_m)\}\)</span>进行学习，建立一个从输入空间<span class="math inline">\(X\)</span>到输出空间<span class="math inline">\(Y\)</span>的映射<span class="math inline">\(f : X \to Y\)</span>。对于二分类任务，通常令<span class="math inline">\(Y=\\{-1,+1\\}\)</span>或<span class="math inline">\(\\{0,1\\}\)</span>；对多分类任务，<span class="math inline">\(|Y|&gt;2\)</span>；对于回归任务，<span class="math inline">\(Y=R\)</span>，<span class="math inline">\(R\)</span>为实数集。</p>
-<p>​ 学得模型后，使用其进行预测的过程称为<strong>"测试"(testing)</strong>，被预测的样本称为<strong>"测试样本"(testing sample)</strong>。例如在学得<span class="math inline">\(f\)</span>后，对测试例<span class="math inline">\(x\)</span>可得到其预测标记<span class="math inline">\(y=f(x)\)</span>。</p>
-<p>​ 还可以对西瓜做<strong>"聚类"(clustering)</strong>，即将训练集中的西瓜分成若干组，每组称为一个<strong>"簇"（cluster）</strong>；这些自动形成得簇可能对应一些潜在得概念划分，例如"浅色瓜"、"深色瓜"，甚至"本地瓜"、"外地瓜"。这样的学习过程有助于哦我们了解数据内在得规律，能为更深入地分析数据建立基础。需说明的是，在聚类分析中，"浅色瓜，本地瓜"这样得概念我们实现是不知道的，而且学习过程中使用的训练样本通常不拥有标记信息。</p>
-<p>​ 根据训练数据是否拥有标记信息，学习任务可大致分为两大类：<strong>"监督学习"(supervised learning)</strong>和<strong>"无监督学习"(unsupervised learning)</strong>。分类和回归是监督学习的代表，而聚类是无监督学习的代表。</p>
-<p>​ 需要注意的是，机器学习的目标是使学得的模型能很好地适用于"新样本"，而不是仅仅在训练样本上工作得很好；即便对聚类这样得无监督学习任务，我们也希望学得簇划分能适用于没在训练集中出现的样本。学得模型适用于新样本的能力，称为<strong>"泛化"(generalization)能力</strong>。具有强泛化能力的模型能够很好的适用于整个样本空间。尽管训练集通常只是样本空间的一个很小的采样，我们仍希望它能很好的反映出样本空间的特性，否则就很难再期望在训练集上学得的模型能在整个样本空间上都工作得很好。</p>
-<blockquote>
-<p>通常假设样本空间中全体样本服从一个未知<strong>"分布"(distribution)</strong><span class="math inline">\(\small D\)</span>，我们获得的每个样本都是<strong>"独立同分布"(independent and identically distributed，简称<span class="math inline">\(i.i.d\)</span>)</strong>。一般而言，训练样本越多，我们得到得关于<span class="math inline">\(D\)</span>的信息越多，这样就越有可能通过学习获得具有强泛化能力的模型。</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>搭建hexo并推送到GitHub Pages</title>
     <url>/p/build-a-hexo-blog-and-push-to-GitHub-Pages/</url>
     <content><![CDATA[<p>之前因为重装系统丢掉了已经搭建好的Hexo博客配置文件。经过这件事以后我深刻地记住了备份的重要性。趁着刚刚搭建完博客，于是写一篇文章水一下！</p>
@@ -8563,6 +8600,66 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       <tags>
         <tag>git</tag>
         <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数值分析第一章作业</title>
+    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，数值分析</p>
+<a id="more"></a>
+<p><img src="image-20201013093358782.png" /></p>
+<p><img src="image-20201013102937713.png" /></p>
+<p><img src="image-20201013104909315.png" /></p>
+<p><img src="image-20201013104922645.png" /></p>
+<p><img src="image-20201013104953613.png" /></p>
+<p><img src="image-20201013110136891.png" /></p>
+<p><img src="image-20201013110806596.png" /> <span class="math display">\[
+2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
+\]</span></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>机器学习基本概念01</title>
+    <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
+    <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
+<a id="more"></a>
+<h4 id="引言">引言</h4>
+<p>机器学习的经典定义：<strong>利用经验改善系统自身的性能。</strong></p>
+<p>机器学习所研究的主要内容，是关于在计算机上从数据中产生的模型的算法，即学习算法。有了学习算法，我们把经验数据提供给它，它就能基于这些数据产生模型。在面对新的情况时，模型会给我们相应的判断。</p>
+<blockquote>
+<p>【Mitchell,1997】给出了一个更形式化的定义：假设用<em>P</em>来评估计算机程序在某任务类<em>T</em>上的性能，若一个程序通过利用经验<em>E</em>在<em>T</em>中任务上获得了性能改善，则我们就说关于<em>T</em>和<em>P</em>，该程序对<em>E</em>进行了学习。</p>
+</blockquote>
+<p>模型：泛指从数据中学到的结果。有文献用"模型"指全局性结果(例如一颗决策树)，而用"模式"指局部性结果(例如一条规则).</p>
+<h4 id="基本术语">基本术语</h4>
+<p>要进行机器学习，首先要有数据。假定收集了一批关于西瓜的数据，例如（色泽=青绿；根蒂=蜷缩；敲声=浊响），（色泽=乌黑；根蒂=稍蜷；敲声=沉闷），（色泽=浅白；根蒂=硬挺；敲声=清脆），······，每对括号内是一条记录，"="的意思是"取值为".</p>
+<p>记录数据的集合称为一个<strong>"数据集"(data set)</strong>，其中每条记录是关于一个事件和对象的叙述，称为一个<strong>"示例"（instance)或"样本"（sample）</strong>。</p>
+<p>反应事件或对象在某方面的表现或者性质的事项，例如"色泽"，"根蒂"，"敲声"，称为<strong>"属性"（attribute)或"特征"（feature）</strong>。</p>
+<p>属性上的取值，例如"青绿"，"乌黑"，称为<strong>"属性值"（attribute value）</strong>。属性张成的空间称为<strong>"属性空间"（attribute space）、"样本空间"（sample space）或"输入空间"</strong>。</p>
+<p>例如，我们把"色泽"、"根蒂"和"敲声"作为三个坐标轴，则他们张成的一个用于描述西瓜的三维空间，每个西瓜都可在这个空间找到他们自己的坐标位置。由于空间中的每个点对应一个坐标向量，因此也把一个示例称为一个<strong>"特征向量"（feature vector）</strong>。</p>
+<p>​ 一般地，令$ D=\{x_1,x_2,...,x_m\} <span class="math inline">\(表示包含\)</span>m<span class="math inline">\(个实例的数据集，每个实例由\)</span>d<span class="math inline">\(个属性描述(例如上面的西瓜数据使用了3个属性)，则每个实例\)</span>x_i=\{x_{i1},x_{i2},...,x_{id}\}<span class="math inline">\(是\)</span>d$维样本空间 <span class="math inline">\(\chi\)</span> 中一个向量，<span class="math inline">\(x_i \in \chi\)</span>，其中<span class="math inline">\(x\_{ij}\)</span>是第<span class="math inline">\(j\)</span>个属性上的取值(例如上述第3个西瓜在第二个属性上的属性是"硬挺")，<span class="math inline">\(d\)</span>称为样本<span class="math inline">\(x_i\)</span>的<strong>"维数"(dimensionality)</strong>.</p>
+<p>​ 从数据中学得模型的过程称为<strong>"学习"（learning）</strong>或者<strong>"训练"（training）</strong>，这个过程通过执行某个学习算法来完成。训练过程使用的数据称为<strong>"训练数据"（training data）</strong>，其中每个样本称为一个<strong>"训练样本"（training sample)</strong>，训练样本组成的集合称为<strong>"训练集"（training set）</strong>。学得模型对应了关于数据的某种潜在的规律，因此亦称<strong>"假设"（hypothesis）</strong>；这种潜在规律本身，则称为<strong>"真相"或"真实"(ground-truth)</strong>，学习过程就是为了找出或逼近真相。</p>
+<blockquote>
+<p>训练样本亦称为"训练示例"（training instance）或者"训练例"。</p>
+<p>学习算法通常由参数需要设置，使用不同的参数值和(或)训练数据，将产生不同的结果。</p>
+<p>有时将模型称为"学习器"（learner)，可看作学习算法在给定数据和参数空间上的实例化。</p>
+</blockquote>
+<p>​ 如果希望学得一个能够判断没剖开的是不是"好瓜"的模型，仅有前面的示例数据显然是不够的，要建立这样的关于<strong>"预测"（prediction）</strong>的模型，需要获得训练样本的"结果"信息，例如"((色泽=青绿；根蒂=蜷缩；敲声=浊响)，好瓜)"。这里关于实例结果的信息，例如"好瓜"，称为<strong>"标记"（label）</strong>；拥有了标记信息的示例，则成为<strong>"样例"（example)</strong>。一般地，用<span class="math inline">\((x_i,y_i)\)</span>表示第<span class="math inline">\(i\)</span>个样例，其中<span class="math inline">\(y_i \in Y\)</span>是示例<span class="math inline">\(x_i\)</span>的标记，<span class="math inline">\(Y\)</span> 是所有标记的集合，亦称为<strong>"标记空间"(label space)或"输出空间"</strong>。</p>
+<p>​ 若我们欲预测的是离散值，例如"好瓜"、"坏瓜"，此类任务被称为<strong>"分类"(classification)</strong>；若欲预测的是连续值，例如西瓜成熟度0.95，0.37，此类学习任务称为<strong>"回归"(regression)</strong>。对涉及两个类别的<strong>"二分类"(binary classification)</strong>任务，通常称其中一个类为<strong>"正类"(positive class)</strong>，另一个类称为<strong>"反类"(negative class)</strong>;涉及多个类别时，则成为<strong>"多分类"(multi-class classification)</strong>任务。一般地，预测任务是希望通过对训练集<span class="math inline">\(\{(x_1,y_1),(x_2,y_2),...,(x_m,y_m)\}\)</span>进行学习，建立一个从输入空间<span class="math inline">\(X\)</span>到输出空间<span class="math inline">\(Y\)</span>的映射<span class="math inline">\(f : X \to Y\)</span>。对于二分类任务，通常令<span class="math inline">\(Y=\\{-1,+1\\}\)</span>或<span class="math inline">\(\\{0,1\\}\)</span>；对多分类任务，<span class="math inline">\(|Y|&gt;2\)</span>；对于回归任务，<span class="math inline">\(Y=R\)</span>，<span class="math inline">\(R\)</span>为实数集。</p>
+<p>​ 学得模型后，使用其进行预测的过程称为<strong>"测试"(testing)</strong>，被预测的样本称为<strong>"测试样本"(testing sample)</strong>。例如在学得<span class="math inline">\(f\)</span>后，对测试例<span class="math inline">\(x\)</span>可得到其预测标记<span class="math inline">\(y=f(x)\)</span>。</p>
+<p>​ 还可以对西瓜做<strong>"聚类"(clustering)</strong>，即将训练集中的西瓜分成若干组，每组称为一个<strong>"簇"（cluster）</strong>；这些自动形成得簇可能对应一些潜在得概念划分，例如"浅色瓜"、"深色瓜"，甚至"本地瓜"、"外地瓜"。这样的学习过程有助于哦我们了解数据内在得规律，能为更深入地分析数据建立基础。需说明的是，在聚类分析中，"浅色瓜，本地瓜"这样得概念我们实现是不知道的，而且学习过程中使用的训练样本通常不拥有标记信息。</p>
+<p>​ 根据训练数据是否拥有标记信息，学习任务可大致分为两大类：<strong>"监督学习"(supervised learning)</strong>和<strong>"无监督学习"(unsupervised learning)</strong>。分类和回归是监督学习的代表，而聚类是无监督学习的代表。</p>
+<p>​ 需要注意的是，机器学习的目标是使学得的模型能很好地适用于"新样本"，而不是仅仅在训练样本上工作得很好；即便对聚类这样得无监督学习任务，我们也希望学得簇划分能适用于没在训练集中出现的样本。学得模型适用于新样本的能力，称为<strong>"泛化"(generalization)能力</strong>。具有强泛化能力的模型能够很好的适用于整个样本空间。尽管训练集通常只是样本空间的一个很小的采样，我们仍希望它能很好的反映出样本空间的特性，否则就很难再期望在训练集上学得的模型能在整个样本空间上都工作得很好。</p>
+<blockquote>
+<p>通常假设样本空间中全体样本服从一个未知<strong>"分布"(distribution)</strong><span class="math inline">\(\small D\)</span>，我们获得的每个样本都是<strong>"独立同分布"(independent and identically distributed，简称<span class="math inline">\(i.i.d\)</span>)</strong>。一般而言，训练样本越多，我们得到得关于<span class="math inline">\(D\)</span>的信息越多，这样就越有可能通过学习获得具有强泛化能力的模型。</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -8771,38 +8868,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
-    <title>现代信号分析第二章作业</title>
-    <url>/p/Chapter-01-of-Modern-Signal-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，现代信号分析</p>
-<a id="more"></a>
-<p><img src="image-20200928193703316.png" /></p>
-<p><img src="image-20201011203228683.png" /></p>
-<p><img src="image-20201011203330808.png" /></p>
-<p><img src="image-20200928193714036.png" /></p>
-<p><img src="image-20201011203626045.png" /></p>
-<p><img src="image-20201011203639917.png" /></p>
-<p><img src="image-20201011203658032.png" /></p>
-<p><img src="image-20201011203716172.png" /></p>
-<p><img src="image-20201011203748238.png" /></p>
-<p><img src="image-20201011203823320.png" /></p>
-<p><img src="image-20201011203917101.png" /></p>
-<p><img src="image-20201011203848593.png" /></p>
-<p><img src="image-20200928193737091.png" /></p>
-<p><img src="image-20201011204004991.png" /></p>
-<p><img src="image-20201011204054961.png" /></p>
-<p><img src="image-20201011204157647.png" /></p>
-<p><img src="image-20200928193754540.png" /></p>
-<p><img src="image-20201011204330872.png" /></p>
-<p><img src="image-20201011204359072.png" /></p>
-<p><img src="image-20201011204438075.png" /></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>牛客SQL刷题</title>
     <url>/p/niuke-SQL-brush-questions/</url>
     <content><![CDATA[<p>本文主要介绍牛客网上SQL刷题的题目。</p>
@@ -8855,6 +8920,38 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>SQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>现代信号分析第二章作业</title>
+    <url>/p/Chapter-01-of-Modern-Signal-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，现代信号分析</p>
+<a id="more"></a>
+<p><img src="image-20200928193703316.png" /></p>
+<p><img src="image-20201011203228683.png" /></p>
+<p><img src="image-20201011203330808.png" /></p>
+<p><img src="image-20200928193714036.png" /></p>
+<p><img src="image-20201011203626045.png" /></p>
+<p><img src="image-20201011203639917.png" /></p>
+<p><img src="image-20201011203658032.png" /></p>
+<p><img src="image-20201011203716172.png" /></p>
+<p><img src="image-20201011203748238.png" /></p>
+<p><img src="image-20201011203823320.png" /></p>
+<p><img src="image-20201011203917101.png" /></p>
+<p><img src="image-20201011203848593.png" /></p>
+<p><img src="image-20200928193737091.png" /></p>
+<p><img src="image-20201011204004991.png" /></p>
+<p><img src="image-20201011204054961.png" /></p>
+<p><img src="image-20201011204157647.png" /></p>
+<p><img src="image-20200928193754540.png" /></p>
+<p><img src="image-20201011204330872.png" /></p>
+<p><img src="image-20201011204359072.png" /></p>
+<p><img src="image-20201011204438075.png" /></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
@@ -9063,44 +9160,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
-    <title>零基础入门ROS(一)</title>
-    <url>/p/ros-tutorial-01/</url>
-    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
-<p>此次记录的主要是软件安装过程中遇到的问题。</p>
-<a id="more"></a>
-<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
-<p>安装好Ubuntu 1804以后首先换源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
-<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
-<h3 id="安装ros-melodic">安装ROS Melodic</h3>
-<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
-<h4 id="设置sources.list">设置sources.list</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h5 id="更新">【更新】</h5>
-<p>国科大ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>北外ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="设置密钥">设置密钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
-<p>另一种方式</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
-<h4 id="安装">安装</h4>
-<p>桌面完整版：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
-<h3 id="初始化rosdep">初始化rosdep</h3>
-<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
-<h3 id="设置环境">设置环境</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
-<h3 id="构建工厂依赖">构建工厂依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记一次重装系统</title>
     <url>/p/an-experience-of-reinstalling-win10/</url>
     <content><![CDATA[<p>本文主要介绍了如何使用U盘进行重装系统，主要面向电脑小白用户。</p>
@@ -9224,6 +9283,44 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础入门ROS(一)</title>
+    <url>/p/ros-tutorial-01/</url>
+    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
+<p>此次记录的主要是软件安装过程中遇到的问题。</p>
+<a id="more"></a>
+<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
+<p>安装好Ubuntu 1804以后首先换源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line">cp /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
+<h3 id="安装ros-melodic">安装ROS Melodic</h3>
+<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
+<h4 id="设置sources.list">设置sources.list</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h5 id="更新">【更新】</h5>
+<p>国科大ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>北外ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置密钥">设置密钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
+<p>另一种方式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<h4 id="安装">安装</h4>
+<p>桌面完整版：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
+<h3 id="初始化rosdep">初始化rosdep</h3>
+<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
+<h3 id="设置环境">设置环境</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;source &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;setup.bash&quot; &gt;&gt; ~&#x2F;.bashrc</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="构建工厂依赖">构建工厂依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
       </tags>
   </entry>
   <entry>
