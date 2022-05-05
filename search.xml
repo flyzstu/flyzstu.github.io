@@ -636,6 +636,24 @@
       </tags>
   </entry>
   <entry>
+    <title>Go语言读取json文件</title>
+    <url>/p/read-json-file-in-golang/</url>
+    <content><![CDATA[<p>使用golang内置库<code>encoding/json</code>读取json格式文件</p>
+<p><strong>关键词</strong>：golang</p>
+<a id="more"></a>
+<h2 id="json反序列化json文件到结构体">json反序列化：json文件到结构体</h2>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://xxxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;usersInfo&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xxxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">        &#125;, </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xx&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="代码">代码</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID       <span class="keyword">string</span> <span class="string">`json:&quot;zstuID&quot;`</span> <span class="comment">// 结构体Tag, 指定json的Key</span></span><br><span class="line">	Name     <span class="keyword">string</span> <span class="string">`json:&quot;zstuName&quot;`</span></span><br><span class="line">	Password <span class="keyword">string</span> <span class="string">`json:&quot;zstuPassword&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Users <span class="keyword">struct</span> &#123;</span><br><span class="line">	ZstuUsers []User <span class="string">`json:&quot;usersInfo&quot;`</span></span><br><span class="line">	ZstuUrl   <span class="keyword">string</span> <span class="string">`json:&quot;url&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jsonData, err := os.ReadFile(fileName)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;读取json文件失败，错误：%v\n&quot;</span>, err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">err = json.Unmarshal(jsonData, &amp;userInfo)  <span class="comment">// 注意是传地址</span></span><br></pre></td></tr></table></figure>
+<h2 id="json序列化结构体到json格式的字符串">json序列化：结构体到json格式的字符串</h2>
+<h3 id="代码-1">代码</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">users := []User&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    user := User&#123;</span><br><span class="line">        ID:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Name: <span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Password:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    users = <span class="built_in">append</span>(users, user)</span><br><span class="line">u := &amp;Users&#123;</span><br><span class="line">    ZstuUrl:<span class="string">&quot;https://google.com&quot;</span>,</span><br><span class="line">    ZstuUsers: users</span><br><span class="line">&#125;</span><br><span class="line">jsonData, err := json.Marshal(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;json序列化失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;json:%s\n&quot;</span>, jsonData)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Intel Realsense T265使用教程</title>
     <url>/p/Intel-Realsense-T265-in-ubuntu/</url>
     <content><![CDATA[<p><strong>摘要</strong>：英特尔® 实感™ 追踪摄像头 T265 是一款全新的独立同步定位与建图设备，可用于机器人、无人机等领域。本文主要介绍了如何在ubuntu系统上安装Intel Realsense T265追踪摄像头。</p>
@@ -2530,6 +2548,23 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python3中decode和encode的区别</title>
+    <url>/p/how-to-use-requests-in-python/</url>
+    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
+<a id="more"></a>
+<h3 id="decode和encode的区别">decode和encode的区别</h3>
+<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
+<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
+<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>decode</tag>
+        <tag>encode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python3中的正则表达式</title>
     <url>/p/how-to-use-re-in-python/</url>
     <content><![CDATA[<p>摘要：这个模块提供了正则表达式匹配操作。模式和被搜索的字符串既可以是unicode字符串(str类型)，也可以是8位字节串。但是两者不能混用。当进行替换操作时，替换字符串的类型也必须与所用的模式和搜索的字符串类型一致。</p>
@@ -2546,23 +2581,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>re</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python3中decode和encode的区别</title>
-    <url>/p/how-to-use-requests-in-python/</url>
-    <content><![CDATA[<p>聊聊Python3中decode和encode的区别</p>
-<a id="more"></a>
-<h3 id="decode和encode的区别">decode和encode的区别</h3>
-<p>字符串编码常用类型：utf-8,gb2312,cp936,gbk等。</p>
-<p>Python3中，取消了unicode类型，代替它的是使用unicode字符的字符串类型(str)，字符串类型(str)成为了基础类型，编码后的类型成为了字节类型(bytes)</p>
-<p>bytes----(decode)----&gt;str-----(encode)-----&gt;bytes</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">u = <span class="string">&#x27;中文&#x27;</span>                 <span class="comment">#指定字符串类型对象u</span></span><br><span class="line">s = u.encode(<span class="string">&#x27;gb2312&#x27;</span>)     <span class="comment">#以gb2312编码对u进行编码, 获得bytes类型对象s</span></span><br><span class="line">u1 = s.decode(<span class="string">&#x27;gb2312&#x27;</span>)    <span class="comment">#以gb2312编码对s进行解码, 获得str类型对象u</span></span><br><span class="line">u2 = s.decode(<span class="string">&#x27;utf-8&#x27;</span>)     <span class="comment">#以utf-8编码对s进行解码, 将无法获得还原原来的字符串内容</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>decode</tag>
-        <tag>encode</tag>
       </tags>
   </entry>
   <entry>
@@ -3918,81 +3936,18 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>ROS系统学习小记(二)</title>
-    <url>/p/ROS-system-learning-notes-02/</url>
-    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
-<p><strong>关键词：</strong>ROS</p>
+    <title>Python装饰器abstractmethod</title>
+    <url>/p/how-to-use-python-abstractmethod/</url>
+    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
 <a id="more"></a>
-<h3 id="ros试用练习">ROS试用练习</h3>
-<h4 id="ros文件系统">ROS文件系统</h4>
-<p>我们通过命令行工具来浏览ROS的文件系统。</p>
-<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
-<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
-<p>你将要获得以下信息：</p>
-<p><img src="image-20201019194410801.png" /></p>
-<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
-<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
-<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
-<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
-<p><img src="image-20201019195209283.png" /></p>
-<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
-<p>将获得以下新路径：</p>
-<p><img src="image-20201019195406492.png" /></p>
-<h4 id="创建工作空间">创建工作空间</h4>
-<p>我们会在工作空间完成本书使用的所有代码。</p>
-<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
-<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
-<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
-<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
-<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
-<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
-<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
-<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
-<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
-<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
-<p>如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
-<p>这些依赖项主要包括以下几个：</p>
-<ul>
-<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
-<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
-</ul>
-<p>如果所有步骤一切顺利，结果如下图所示：</p>
-<p><img src="image-20201019202650647.png" /></p>
-<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
-<ul>
-<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
-<li>rospack find TEST：此命令用于查看依赖关系。</li>
-<li>rosls TEST：此命令用于查看内容</li>
-<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
-</ul>
-<h4 id="编译ros功能包">编译ROS功能包</h4>
-<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
-<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
-<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
-<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
-<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
-<p><img src="image-20201019204443411.png" /></p>
-<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
-<p>如果编译单个工具包，可以使用如下格式的命令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
+<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
+<p>将子类<code>get_urls</code>方法注释后无法运行</p>
+<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
 ]]></content>
       <tags>
-        <tag>ROS</tag>
+        <tag>Python</tag>
+        <tag>abstractmethod</tag>
       </tags>
   </entry>
   <entry>
@@ -4157,6 +4112,84 @@ y=x^2e^x
 <p>查看里面的代码</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
 <p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack find</strong> 命令也可以用于查找元功能包。</p>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ROS系统学习小记(二)</title>
+    <url>/p/ROS-system-learning-notes-02/</url>
+    <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
+<p><strong>关键词：</strong>ROS</p>
+<a id="more"></a>
+<h3 id="ros试用练习">ROS试用练习</h3>
+<h4 id="ros文件系统">ROS文件系统</h4>
+<p>我们通过命令行工具来浏览ROS的文件系统。</p>
+<p>为了获得功能包和功能包集的信息,比如,其路径、依赖关系等，我们将使用<strong>rospack</strong>、<strong>rosstack</strong>命令进入功能包和功能包集，并列出其中 的内容。</p>
+<p>例如，如果你想要找<strong>turtlesim</strong>包的路径，可以使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find turtlesim </span><br></pre></td></tr></table></figure>
+<p>你将要获得以下信息：</p>
+<p><img src="image-20201019194410801.png" /></p>
+<p>如果你想要找到已经在系统安装过的某个<strong>元功能包</strong>，示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rospack find ros_comm</span><br></pre></td></tr></table></figure>
+<p>你将获得ros-comm元功能包的路径：<img src="image-20201019194825060.png" /></p>
+<p><em>注意：功能包是rospack ，元功能包是rosstack，要注意区分。</em></p>
+<p>要获得功能包或者功能包集下面的文件列表，需要使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rosls turtlesim</span><br></pre></td></tr></table></figure>
+<p><img src="image-20201019195209283.png" /></p>
+<p>更改当前目录，尤其是进入某个文件夹，可以使用roscd命令完成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">roscd turtlesim</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
+<p>将获得以下新路径：</p>
+<p><img src="image-20201019195406492.png" /></p>
+<h4 id="创建工作空间">创建工作空间</h4>
+<p>我们会在工作空间完成本书使用的所有代码。</p>
+<p>要查看ROS正在使用的工作空间，请使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="variable">$ROS_PACKAGE_PATH</span></span><br></pre></td></tr></table></figure>
+<p>会看到如下类似信息：<img src="image-20201019195658744.png" /></p>
+<p>我们将要创建的文件夹位于<code>/root/dev/catkin_ws/src</code>中。要新建文件夹，使用以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /root/dev/catkin_ws/src</span><br><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_init_workspace</span><br></pre></td></tr></table></figure>
+<p>当创建工作空间文件夹后，里面并没有功能包，只有CMakeList.txt文件。使用下面的命令来<strong>编译工作空间</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>你将看到类似信息：<img src="image-20201019200504031.png" /></p>
+<p>现在输入<code>ls</code>命令，可以看到创建的新文件夹，分别是build和devel文件夹。</p>
+<p>输入以下命令，再次初始化ros环境，至此，工作空间创建完毕。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br></pre></td></tr></table></figure>
+<p>这一步只重新加载了setup.bash文件，如果关闭并打开一个新的命令行窗口，也将得到同样的效果。</p>
+<p>输入以下命令，将ROS的初始化脚本加入到bash的配置文件中，这样，每次打开一个新的bash shell窗口时，就自动完成了ROS的初始化。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source /opt/ros/kinetic/setup.bash&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="创建ros功能包和元功能包">创建ROS功能包和元功能包</h4>
+<p>使用以下命令在之前建立的工作空间中创建新的功能包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/src</span><br><span class="line">catkin_create_pkg TEST std_msgs roscpp</span><br></pre></td></tr></table></figure>
+<p>此命令的格式包括包的名称和依赖项。在这个示例中，依赖项包括 <strong>std_msgs</strong> 和 <strong>roscpp</strong>.</p>
+<p>如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">catkin_create_pkg name [dependencies [dependencies ...]]</span><br><span class="line">positional arguments:</span><br><span class="line">  name                  The name for the package</span><br><span class="line">  dependencies          Catkin package Dependencies</span><br></pre></td></tr></table></figure>
+<p>这些依赖项主要包括以下几个：</p>
+<ul>
+<li>std_msgs：包含了常见的消息类型，表示基本数据类型和其他基本的消息构造，如多维数组。</li>
+<li>roscpp：使用C++实现了ROS的各种功能。它提供了一个客户端库，让C++程序员能够调用这些接口快速完成与ROS的主题、服务和参数相关的开发工作。</li>
+</ul>
+<p>如果所有步骤一切顺利，结果如下图所示：</p>
+<p><img src="image-20201019202650647.png" /></p>
+<p>正如我们看到的，可以使用rospack、roscd和rosls命令来获取新的功能包信息。下面是可以执行的一些操作。</p>
+<ul>
+<li>rospack profile：此命令用于通知用户ROS中新添加的内容。在安装任何功能包之后使用它。</li>
+<li>rospack find TEST：此命令用于查看依赖关系。</li>
+<li>rosls TEST：此命令用于查看内容</li>
+<li>roscd TEST：此命令会切换到TEST功能包所在的路径。</li>
+</ul>
+<h4 id="编译ros功能包">编译ROS功能包</h4>
+<p>编译功能包的的时候，主要是代码的编译过程，不仅包括用户添加的代码，还包括由消息和服务生成的代码。</p>
+<p>为了编译功能包，可以使用<code>catin_make</code>工具：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/dev/catkin_ws/</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>如果没有看到错误提示信息，说明功能包编译成功。</p>
+<p>必须在<code>workspace</code>文件夹中运行catkin_make命令。如果在其他文件这样做，命令将无法执行！</p>
+<p>当你在TEST文件夹中试图使用catkin_make编译工具包时，你会看到如下错误：</p>
+<p><img src="image-20201019204443411.png" /></p>
+<p>当你在<code>catkin_ws</code>文件夹中执行catkin_make命令时，则会编译成功。</p>
+<p>如果编译单个工具包，可以使用如下格式的命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">catkin_make --pkg &lt;package name&gt;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ROS</tag>
@@ -4709,21 +4742,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python装饰器abstractmethod</title>
-    <url>/p/how-to-use-python-abstractmethod/</url>
-    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
-<a id="more"></a>
-<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
-<p>将子类<code>get_urls</code>方法注释后无法运行</p>
-<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>abstractmethod</tag>
       </tags>
   </entry>
   <entry>
@@ -8522,24 +8540,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>Go语言读取json文件</title>
-    <url>/p/read-json-file-in-golang/</url>
-    <content><![CDATA[<p>使用golang内置库<code>encoding/json</code>读取json格式文件</p>
-<p><strong>关键词</strong>：golang</p>
-<a id="more"></a>
-<h2 id="json反序列化json文件到结构体">json反序列化：json文件到结构体</h2>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://xxxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;usersInfo&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xxxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">        &#125;, </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xx&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="代码">代码</h3>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID       <span class="keyword">string</span> <span class="string">`json:&quot;zstuID&quot;`</span> <span class="comment">// 结构体Tag, 指定json的Key</span></span><br><span class="line">	Name     <span class="keyword">string</span> <span class="string">`json:&quot;zstuName&quot;`</span></span><br><span class="line">	Password <span class="keyword">string</span> <span class="string">`json:&quot;zstuPassword&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Users <span class="keyword">struct</span> &#123;</span><br><span class="line">	ZstuUsers []User <span class="string">`json:&quot;usersInfo&quot;`</span></span><br><span class="line">	ZstuUrl   <span class="keyword">string</span> <span class="string">`json:&quot;url&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jsonData, err := os.ReadFile(fileName)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;读取json文件失败，错误：%v\n&quot;</span>, err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">err = json.Unmarshal(jsonData, &amp;userInfo)  <span class="comment">// 注意是传地址</span></span><br></pre></td></tr></table></figure>
-<h2 id="json序列化结构体到json格式的字符串">json序列化：结构体到json格式的字符串</h2>
-<h3 id="代码-1">代码</h3>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">users := []User&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    user := User&#123;</span><br><span class="line">        ID:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Name: <span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Password:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    users = <span class="built_in">append</span>(users, user)</span><br><span class="line">u := &amp;Users&#123;</span><br><span class="line">    ZstuUrl:<span class="string">&quot;https://google.com&quot;</span>,</span><br><span class="line">    ZstuUsers: users</span><br><span class="line">&#125;</span><br><span class="line">jsonData, err := json.Marshal(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;json序列化失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;json:%s\n&quot;</span>, jsonData)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>搭建hexo并推送到GitHub Pages</title>
     <url>/p/build-a-hexo-blog-and-push-to-GitHub-Pages/</url>
     <content><![CDATA[<p>之前因为重装系统丢掉了已经搭建好的Hexo博客配置文件。经过这件事以后我深刻地记住了备份的重要性。趁着刚刚搭建完博客，于是写一篇文章水一下！</p>
@@ -8624,6 +8624,34 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>机器学习基本概念02</title>
+    <url>/p/Basic-Concepts-of-Machine-Learning-02/</url>
+    <content><![CDATA[<p>机器学习中的假设空间。</p>
+<a id="more"></a>
+<h4 id="假设空间">假设空间</h4>
+<p>​ <strong>归纳(induction)和演绎(deduction)</strong>是科学推理的两大基本手段。归纳是从特殊到一般的"泛化"(generalization)过程。即从具体的事实归结出一般性规律；演绎则是从一般到特殊的"特化"(specialization)过程，即从基础原理推演出具体状况。例如，在数学公理系统中，基于一组公理和推理规则推导出与之相恰的定理，这是演绎；而"从样例中学习"显然是一个归纳的过程，因此亦称为<strong>"归纳学习"(inductive learning)</strong></p>
+<p>​ 归纳学习有狭义和广义之分，广义的归纳学习大体相当于从样例中学习，而狭义的归纳学习则要求从训练数据中学得概念(concept),因此亦称为<strong>"概念学习"或"概念形成"</strong>.概念学习技术目前应用、研究都比较少，因为要学得泛化性能好而且语义明确的概念实在是太难了，现实常用的技术大多数产生"黑箱"模型.然而，对概念学习有所理解，有助于理解机器学习的一些基础思想。</p>
+<p>​ 概念学习中最基本的是<strong>布尔概念学习</strong>，即对"是""不是"这样的可表示为0/1布尔值的目标概念的学习.举一个简单的例子，假定我们获得了这样的一个训练数据集：</p>
+<p><img src="image-20200806202414852.png" style="zoom:50%;" /></p>
+<p>​ 这里要学习的目标是"好瓜"，暂且假设"好瓜"可由"色泽""根蒂""敲声”这三个因素完全确定，换言之，只要某个瓜的三个属性取值明确了，我们就能判断出它是不是好瓜，于是，我们学到的将是"好瓜是某种色泽、某种根蒂、某种敲声的瓜"这样的概念，用布尔表达式写出来则是<strong>"好瓜$ $(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>，这里"?"表示尚未确定的取值，而我们的任务就是通过对上表的训练集进行学习，把"?"确定下来.</p>
+<p>​ 读者可能马上发现，上表第一行：<strong>"(色泽=青绿)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>不就是好瓜吗？是的，但这是一个已见过的瓜，不要忘记学习的目的是<strong>"泛化"</strong>，即通过对训练集中的瓜的学习以获得对没见过瓜进行判断的能力.如果仅仅把训练集中的瓜"记住"，今后再见到一模一样的瓜当然可以判断，但是，对没见过的瓜，例如<strong>"(色泽=浅白)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>怎么办呢？</p>
+<p>​ 我们可以把学习过程看作一个在<strong>所有假设组成的空间</strong>中进行搜索的过程，搜索目标是找到与训练集<strong>"匹配(fit)"</strong>的假设，即能够将训练集中的瓜判断正确的假设.假设的表示一旦确定，假设空间及其规模大小就确定了.这里我们的假设空间由形如<strong>"(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>的可能取值所形成的假设组成.例如色泽有"青绿""乌黑""浅白"这三种可能取值；还需考虑到，也许色泽无论取什么值都合适，我们用通配符"*"来表示，例如**"好瓜$ <span class="math inline">\((色泽=\*)^(根蒂=蜷缩)^(敲声=浊响)&quot;**，即&quot;好瓜是根蒂蜷缩、敲声浊响的瓜，什么色泽都行&quot;.此外，还需要考虑极端情况，有可能&quot;好瓜&quot;这个概念根本不成立，世界上没有&quot;好瓜&quot;这种东西，我们用\)</span> $表示这个假设。这样，若"色泽""根蒂""敲声"分别有3、2、2种可能取值，则我们面临的假设空间规模大小为<span class="math inline">\(4 \times 3 \times 3+1=37\)</span>.下图直观地显示了这个西瓜空间假设问题。</p>
+<blockquote>
+<p>这里我们假定训练样本不含噪声，而且不考虑"非青绿"这样的<span class="math inline">\(\not\subset A\)</span>操作，由于训练集包含正例，因此$ $假设自然不出现。</p>
+</blockquote>
+<p><img src="image-20200806202019247.png" /></p>
+<p>​ 可以有许多策略对这个假设空间进行搜索，例如自顶向下、从一般到特殊，或是自底向上、从特殊到一般，搜索过程种可以不断删除与正例不一致的假设和(或)与反例一致的假设.最终将会获得<strong>与训练集一致(即对所有训练样本能够进行正确判断)</strong>的假设，这就是我们学习的结果。</p>
+<blockquote>
+<p>有很多可能的选择，如在路径上自顶向下与自底向上同时进行，在操作上只删除与正例不一致的假设等。</p>
+</blockquote>
+<p>​ 需注意的是，现实问题种我们常面临很大的假设空间，但学习过程是基于有限样本训练集进行的，因此，可能有多个假设与训练集一致，即存在一个<strong>与训练集一致的"假设集合"</strong>，我们称之为<strong>"版本空间"(version space).</strong>例如，在西瓜问题中，与表1.1训练集所对应的版本空间如图1.2所示.</p>
+<p><img src="image-20200806203152041.png"/></p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>机器学习基本概念01</title>
     <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
     <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
@@ -8657,34 +8685,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <blockquote>
 <p>通常假设样本空间中全体样本服从一个未知<strong>"分布"(distribution)</strong><span class="math inline">\(\small D\)</span>，我们获得的每个样本都是<strong>"独立同分布"(independent and identically distributed，简称<span class="math inline">\(i.i.d\)</span>)</strong>。一般而言，训练样本越多，我们得到得关于<span class="math inline">\(D\)</span>的信息越多，这样就越有可能通过学习获得具有强泛化能力的模型。</p>
 </blockquote>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念02</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-02/</url>
-    <content><![CDATA[<p>机器学习中的假设空间。</p>
-<a id="more"></a>
-<h4 id="假设空间">假设空间</h4>
-<p>​ <strong>归纳(induction)和演绎(deduction)</strong>是科学推理的两大基本手段。归纳是从特殊到一般的"泛化"(generalization)过程。即从具体的事实归结出一般性规律；演绎则是从一般到特殊的"特化"(specialization)过程，即从基础原理推演出具体状况。例如，在数学公理系统中，基于一组公理和推理规则推导出与之相恰的定理，这是演绎；而"从样例中学习"显然是一个归纳的过程，因此亦称为<strong>"归纳学习"(inductive learning)</strong></p>
-<p>​ 归纳学习有狭义和广义之分，广义的归纳学习大体相当于从样例中学习，而狭义的归纳学习则要求从训练数据中学得概念(concept),因此亦称为<strong>"概念学习"或"概念形成"</strong>.概念学习技术目前应用、研究都比较少，因为要学得泛化性能好而且语义明确的概念实在是太难了，现实常用的技术大多数产生"黑箱"模型.然而，对概念学习有所理解，有助于理解机器学习的一些基础思想。</p>
-<p>​ 概念学习中最基本的是<strong>布尔概念学习</strong>，即对"是""不是"这样的可表示为0/1布尔值的目标概念的学习.举一个简单的例子，假定我们获得了这样的一个训练数据集：</p>
-<p><img src="image-20200806202414852.png" style="zoom:50%;" /></p>
-<p>​ 这里要学习的目标是"好瓜"，暂且假设"好瓜"可由"色泽""根蒂""敲声”这三个因素完全确定，换言之，只要某个瓜的三个属性取值明确了，我们就能判断出它是不是好瓜，于是，我们学到的将是"好瓜是某种色泽、某种根蒂、某种敲声的瓜"这样的概念，用布尔表达式写出来则是<strong>"好瓜$ $(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>，这里"?"表示尚未确定的取值，而我们的任务就是通过对上表的训练集进行学习，把"?"确定下来.</p>
-<p>​ 读者可能马上发现，上表第一行：<strong>"(色泽=青绿)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>不就是好瓜吗？是的，但这是一个已见过的瓜，不要忘记学习的目的是<strong>"泛化"</strong>，即通过对训练集中的瓜的学习以获得对没见过瓜进行判断的能力.如果仅仅把训练集中的瓜"记住"，今后再见到一模一样的瓜当然可以判断，但是，对没见过的瓜，例如<strong>"(色泽=浅白)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>怎么办呢？</p>
-<p>​ 我们可以把学习过程看作一个在<strong>所有假设组成的空间</strong>中进行搜索的过程，搜索目标是找到与训练集<strong>"匹配(fit)"</strong>的假设，即能够将训练集中的瓜判断正确的假设.假设的表示一旦确定，假设空间及其规模大小就确定了.这里我们的假设空间由形如<strong>"(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>的可能取值所形成的假设组成.例如色泽有"青绿""乌黑""浅白"这三种可能取值；还需考虑到，也许色泽无论取什么值都合适，我们用通配符"*"来表示，例如**"好瓜$ <span class="math inline">\((色泽=\*)^(根蒂=蜷缩)^(敲声=浊响)&quot;**，即&quot;好瓜是根蒂蜷缩、敲声浊响的瓜，什么色泽都行&quot;.此外，还需要考虑极端情况，有可能&quot;好瓜&quot;这个概念根本不成立，世界上没有&quot;好瓜&quot;这种东西，我们用\)</span> $表示这个假设。这样，若"色泽""根蒂""敲声"分别有3、2、2种可能取值，则我们面临的假设空间规模大小为<span class="math inline">\(4 \times 3 \times 3+1=37\)</span>.下图直观地显示了这个西瓜空间假设问题。</p>
-<blockquote>
-<p>这里我们假定训练样本不含噪声，而且不考虑"非青绿"这样的<span class="math inline">\(\not\subset A\)</span>操作，由于训练集包含正例，因此$ $假设自然不出现。</p>
-</blockquote>
-<p><img src="image-20200806202019247.png" /></p>
-<p>​ 可以有许多策略对这个假设空间进行搜索，例如自顶向下、从一般到特殊，或是自底向上、从特殊到一般，搜索过程种可以不断删除与正例不一致的假设和(或)与反例一致的假设.最终将会获得<strong>与训练集一致(即对所有训练样本能够进行正确判断)</strong>的假设，这就是我们学习的结果。</p>
-<blockquote>
-<p>有很多可能的选择，如在路径上自顶向下与自底向上同时进行，在操作上只删除与正例不一致的假设等。</p>
-</blockquote>
-<p>​ 需注意的是，现实问题种我们常面临很大的假设空间，但学习过程是基于有限样本训练集进行的，因此，可能有多个假设与训练集一致，即存在一个<strong>与训练集一致的"假设集合"</strong>，我们称之为<strong>"版本空间"(version space).</strong>例如，在西瓜问题中，与表1.1训练集所对应的版本空间如图1.2所示.</p>
-<p><img src="image-20200806203152041.png"/></p>
 ]]></content>
       <tags>
         <tag>机器学习</tag>
