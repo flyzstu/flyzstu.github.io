@@ -4212,18 +4212,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu安装php指南</title>
-    <url>/p/How-to-install-php-on-Ubuntu/</url>
-    <content><![CDATA[<h4 id="ubuntu安装php指南">Ubuntu安装php指南</h4>
-<p>由于自带的apt源中不包含php，所以在安装php之前需要给apt添加第三方源</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo add-apt-repository ppa:ondrej/php</span><br><span class="line"><span class="comment">#sudo add-apt-repository -r ppa:ondrej/php              #删除</span></span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y php7.3</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Linux运维</tag>
-        <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu安装nodejs并更改npm镜像源</title>
     <url>/p/How-to-install-nodejs-and-change-npm-mirror-source-on-Ubuntu/</url>
     <content><![CDATA[<h4 id="ubuntu安装nodejs并更改npm镜像源">Ubuntu安装nodejs并更改npm镜像源</h4>
@@ -4254,6 +4242,18 @@ y=x^2e^x
       <tags>
         <tag>Linux运维</tag>
         <tag>nodejs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu安装php指南</title>
+    <url>/p/How-to-install-php-on-Ubuntu/</url>
+    <content><![CDATA[<h4 id="ubuntu安装php指南">Ubuntu安装php指南</h4>
+<p>由于自带的apt源中不包含php，所以在安装php之前需要给apt添加第三方源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo add-apt-repository ppa:ondrej/php</span><br><span class="line"><span class="comment">#sudo add-apt-repository -r ppa:ondrej/php              #删除</span></span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y php7.3</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Linux运维</tag>
+        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -9324,6 +9324,59 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
+    <title>零基础入门ROS(三)</title>
+    <url>/p/ros-tutorial-03/</url>
+    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
+<p>今天写的主要是使用opencv进行相机标定（Camera Calibration）的步骤。</p>
+<a id="more"></a>
+<h3 id="下载opencv源码">下载opencv源码</h3>
+<p>这里用到的源码版本是opencv3.2.0，操作环境是Ubuntu 18.04 LTS。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/opencv/opencv/archive/refs/tags/3.2.0.tar.gz</span><br><span class="line">tar -xvf 3.2.0.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="使用已有的图片进行标定">使用已有的图片进行标定</h3>
+<h4 id="编译camera_calibration.cpp">编译camera_calibration.cpp</h4>
+<h5 id="进入指定目录">进入指定目录</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.2.0</span><br><span class="line">cd samples&#x2F;cpp&#x2F;tutorial_code&#x2F;calib3d&#x2F;camera_calibration</span><br></pre></td></tr></table></figure>
+<h5 id="创建cmakelist.txt文件">创建CMakeList.txt文件</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim CMakeLists.txt</span><br></pre></td></tr></table></figure>
+<p>复制下列代码到文件.</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( camera_calibration camera_calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( camera_calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
+<h5 id="编译">编译</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir build </span><br><span class="line">cd build </span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
+<p><img src="calibration01.png" /></p>
+<h5 id="修改参数">修改参数</h5>
+<p>编辑同级目录下的<code>in_VID5.xml</code>文件，根据标定靶的行数和列数来修改参数。这里的使用的标定靶一共有<strong>6</strong>行，每一行有8个内部角点。</p>
+<p><img src="calibration02.png" /></p>
+<p><img src="calibration03.png" /></p>
+<p>其中<code>VID5.xml</code>存放的是标定图片路径，一般图片应不少于3张，图片越多标定效果越好。</p>
+<p><img src="calibration04.png" /></p>
+<h5 id="标定">标定</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mv build&#x2F;camera_calibration .</span><br><span class="line">.&#x2F;camera_calibration .&#x2F;in_VID5.xml</span><br></pre></td></tr></table></figure>
+<p><img src="calibration05.png" /></p>
+<p>生成的out_camera_data.xml就是标定后得到的参数文件。</p>
+<h3 id="使用视频对摄像头进行标定">使用视频对摄像头进行标定</h3>
+<h4 id="编译calibration.cpp">编译calibration.cpp</h4>
+<h5 id="进入指定目录-1">进入指定目录</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.4.3</span><br><span class="line">mkdir -p ..&#x2F;calibration_ws</span><br><span class="line">cp samples&#x2F;cpp&#x2F;calibration.cpp ..&#x2F;calibration_ws</span><br><span class="line">cd ..&#x2F;calibration_ws</span><br></pre></td></tr></table></figure>
+<h5 id="创建cmakelists.txt文件">创建CMakeLists.txt文件</h5>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( calibration calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
+<h5 id="编译-1">编译</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
+<p><img src="calibration06.png" /></p>
+<h5 id="标定-1">标定</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod +x calibration</span><br><span class="line">./calibration -w=8 -h=6</span><br></pre></td></tr></table></figure>
+<p>这里的h指的是标定靶一共有<strong>6</strong>行，w指的是每一行有<strong>8</strong>个内部角点。</p>
+<p>按g键开始标定。</p>
+<p><img src="calibration07.png" /></p>
+<p>标定完毕。</p>
+<p><img src="calibration08.png" /></p>
+<p><img src="calibration09.png" /></p>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+        <tag>camera calibration</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>零基础入门ROS(二)</title>
     <url>/p/ros-tutorial-02/</url>
     <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
@@ -9414,59 +9467,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>零基础入门ROS(三)</title>
-    <url>/p/ros-tutorial-03/</url>
-    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
-<p>今天写的主要是使用opencv进行相机标定（Camera Calibration）的步骤。</p>
-<a id="more"></a>
-<h3 id="下载opencv源码">下载opencv源码</h3>
-<p>这里用到的源码版本是opencv3.2.0，操作环境是Ubuntu 18.04 LTS。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/opencv/opencv/archive/refs/tags/3.2.0.tar.gz</span><br><span class="line">tar -xvf 3.2.0.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="使用已有的图片进行标定">使用已有的图片进行标定</h3>
-<h4 id="编译camera_calibration.cpp">编译camera_calibration.cpp</h4>
-<h5 id="进入指定目录">进入指定目录</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.2.0</span><br><span class="line">cd samples&#x2F;cpp&#x2F;tutorial_code&#x2F;calib3d&#x2F;camera_calibration</span><br></pre></td></tr></table></figure>
-<h5 id="创建cmakelist.txt文件">创建CMakeList.txt文件</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim CMakeLists.txt</span><br></pre></td></tr></table></figure>
-<p>复制下列代码到文件.</p>
-<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( camera_calibration camera_calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( camera_calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
-<h5 id="编译">编译</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir build </span><br><span class="line">cd build </span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
-<p><img src="calibration01.png" /></p>
-<h5 id="修改参数">修改参数</h5>
-<p>编辑同级目录下的<code>in_VID5.xml</code>文件，根据标定靶的行数和列数来修改参数。这里的使用的标定靶一共有<strong>6</strong>行，每一行有8个内部角点。</p>
-<p><img src="calibration02.png" /></p>
-<p><img src="calibration03.png" /></p>
-<p>其中<code>VID5.xml</code>存放的是标定图片路径，一般图片应不少于3张，图片越多标定效果越好。</p>
-<p><img src="calibration04.png" /></p>
-<h5 id="标定">标定</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mv build&#x2F;camera_calibration .</span><br><span class="line">.&#x2F;camera_calibration .&#x2F;in_VID5.xml</span><br></pre></td></tr></table></figure>
-<p><img src="calibration05.png" /></p>
-<p>生成的out_camera_data.xml就是标定后得到的参数文件。</p>
-<h3 id="使用视频对摄像头进行标定">使用视频对摄像头进行标定</h3>
-<h4 id="编译calibration.cpp">编译calibration.cpp</h4>
-<h5 id="进入指定目录-1">进入指定目录</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.4.3</span><br><span class="line">mkdir -p ..&#x2F;calibration_ws</span><br><span class="line">cp samples&#x2F;cpp&#x2F;calibration.cpp ..&#x2F;calibration_ws</span><br><span class="line">cd ..&#x2F;calibration_ws</span><br></pre></td></tr></table></figure>
-<h5 id="创建cmakelists.txt文件">创建CMakeLists.txt文件</h5>
-<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( calibration calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
-<h5 id="编译-1">编译</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
-<p><img src="calibration06.png" /></p>
-<h5 id="标定-1">标定</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod +x calibration</span><br><span class="line">./calibration -w=8 -h=6</span><br></pre></td></tr></table></figure>
-<p>这里的h指的是标定靶一共有<strong>6</strong>行，w指的是每一行有<strong>8</strong>个内部角点。</p>
-<p>按g键开始标定。</p>
-<p><img src="calibration07.png" /></p>
-<p>标定完毕。</p>
-<p><img src="calibration08.png" /></p>
-<p><img src="calibration09.png" /></p>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-        <tag>camera calibration</tag>
       </tags>
   </entry>
 </search>
