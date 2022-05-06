@@ -713,6 +713,62 @@
       </tags>
   </entry>
   <entry>
+    <title>Jenkins和持续集成</title>
+    <url>/p/jenkins-and-CI/</url>
+    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
+<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
+<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
+<p>关键词：<strong>jenkins，持续集成</strong></p>
+<a id="more"></a>
+<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
+<p>持续集成，Continuous Integration，简称CI。</p>
+<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
+<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
+<h3 id="持续集成的特点">持续集成的特点</h3>
+<ul>
+<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
+<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
+<li><p>需要代码托管工具支持</p></li>
+</ul>
+<h3 id="持续集成的作用">持续集成的作用</h3>
+<ul>
+<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
+<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
+</ul>
+<h2 id="如何实现持续集成">如何实现持续集成？</h2>
+<h3 id="jenkins介绍">Jenkins介绍</h3>
+<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
+<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
+<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
+<ul>
+<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
+<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
+<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
+<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
+</ul>
+<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
+<h3 id="jenkins特点">Jenkins特点</h3>
+<ul>
+<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
+<li><p>易配置：提供友好的GUI配置界面；</p></li>
+<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
+<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
+<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
+<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
+<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
+<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
+<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
+</ul>
+<h3 id="其他集成工具">其他集成工具</h3>
+<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
+<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
+]]></content>
+      <tags>
+        <tag>jenkins</tag>
+        <tag>CI/CD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Jetson Xavier 开发实录</title>
     <url>/p/How-to-use-Jetson-Xavier/</url>
     <content><![CDATA[<p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
@@ -907,62 +963,6 @@
       <tags>
         <tag>Jetson</tag>
         <tag>CUDA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Jenkins和持续集成</title>
-    <url>/p/jenkins-and-CI/</url>
-    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
-<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
-<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
-<p>关键词：<strong>jenkins，持续集成</strong></p>
-<a id="more"></a>
-<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
-<p>持续集成，Continuous Integration，简称CI。</p>
-<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
-<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
-<h3 id="持续集成的特点">持续集成的特点</h3>
-<ul>
-<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
-<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
-<li><p>需要代码托管工具支持</p></li>
-</ul>
-<h3 id="持续集成的作用">持续集成的作用</h3>
-<ul>
-<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
-<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
-</ul>
-<h2 id="如何实现持续集成">如何实现持续集成？</h2>
-<h3 id="jenkins介绍">Jenkins介绍</h3>
-<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
-<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
-<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
-<ul>
-<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
-<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
-<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
-<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
-</ul>
-<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
-<h3 id="jenkins特点">Jenkins特点</h3>
-<ul>
-<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
-<li><p>易配置：提供友好的GUI配置界面；</p></li>
-<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
-<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
-<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
-<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
-<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
-<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
-<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
-</ul>
-<h3 id="其他集成工具">其他集成工具</h3>
-<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
-<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
-]]></content>
-      <tags>
-        <tag>jenkins</tag>
-        <tag>CI/CD</tag>
       </tags>
   </entry>
   <entry>
@@ -2362,31 +2362,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PyTorch中的Tensor</title>
-    <url>/p/Tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
-<a id="more"></a>
-<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
-<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
-<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
-<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
-<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PyTorch中对图像的操作</title>
     <url>/p/How-to-process-images-in-Pytorch/</url>
     <content><![CDATA[<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。</p>
@@ -2437,6 +2412,31 @@
       </tags>
   </entry>
   <entry>
+    <title>PyTorch中的Tensor</title>
+    <url>/p/Tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
+<a id="more"></a>
+<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
+<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
+<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
+<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyTorch中的损失函数和优化器</title>
     <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
     <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
@@ -2451,25 +2451,6 @@
       <tags>
         <tag>PyTorch</tag>
         <tag>计算图</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python3中的正则表达式</title>
-    <url>/p/how-to-use-re-in-python/</url>
-    <content><![CDATA[<p>摘要：这个模块提供了正则表达式匹配操作。模式和被搜索的字符串既可以是unicode字符串(str类型)，也可以是8位字节串。但是两者不能混用。当进行替换操作时，替换字符串的类型也必须与所用的模式和搜索的字符串类型一致。</p>
-<p>关键字：Python，正则表达式</p>
-<a id="more"></a>
-<p>正则表达式使用反斜杠字符来表示特殊形式或是允许在使用特殊字符时不引发他们的特殊含义。例如，要匹配一个反斜杠字面值，用户可能必须写成 <code>'\\\\'</code> 来作为模式字符串，因为正则表达式必须为 <code>\\</code>，而每个反斜杠在普通 Python 字符串字面值中又必须表示为 <code>\\</code>。</p>
-<p>解决办法时对于正则表达式样式使用Python的原始字符串表达法；在带有<code>'r'</code>前缀的字符串字面值中，反斜杠不必做任何特殊处理。</p>
-<p>因此<code>r''\n</code>表示包含<code>\</code>和<code>n</code>的两个字符的字符串，而""则表示只包含一个换行符的字符串。样式在Python代码中通常都会使用这种原始字符串表示法来表示。</p>
-<p>绝大多数正则表达式操作都提供模块函数和方法，在编译正则表达式这些函数是一个途径，不需要先编译一个正则对象，但是损失了一些优化参数。</p>
-<h3 id="正则表达式语法">正则表达式语法</h3>
-<p>一个正则表达式指定了一系列与之匹配的字符串；模块内的函数可以检查某个字符串是否跟跟定的正则表达式相匹配（或者一个正则表达式是否匹配到一个字符串）。</p>
-<p>正则表达式可以拼接；如果A和B都是正则表达式，那么AN</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>re</tag>
       </tags>
   </entry>
   <entry>
@@ -2581,6 +2562,25 @@ y=x^2e^x
         <tag>Python</tag>
         <tag>decode</tag>
         <tag>encode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python3中的正则表达式</title>
+    <url>/p/how-to-use-re-in-python/</url>
+    <content><![CDATA[<p>摘要：这个模块提供了正则表达式匹配操作。模式和被搜索的字符串既可以是unicode字符串(str类型)，也可以是8位字节串。但是两者不能混用。当进行替换操作时，替换字符串的类型也必须与所用的模式和搜索的字符串类型一致。</p>
+<p>关键字：Python，正则表达式</p>
+<a id="more"></a>
+<p>正则表达式使用反斜杠字符来表示特殊形式或是允许在使用特殊字符时不引发他们的特殊含义。例如，要匹配一个反斜杠字面值，用户可能必须写成 <code>'\\\\'</code> 来作为模式字符串，因为正则表达式必须为 <code>\\</code>，而每个反斜杠在普通 Python 字符串字面值中又必须表示为 <code>\\</code>。</p>
+<p>解决办法时对于正则表达式样式使用Python的原始字符串表达法；在带有<code>'r'</code>前缀的字符串字面值中，反斜杠不必做任何特殊处理。</p>
+<p>因此<code>r''\n</code>表示包含<code>\</code>和<code>n</code>的两个字符的字符串，而""则表示只包含一个换行符的字符串。样式在Python代码中通常都会使用这种原始字符串表示法来表示。</p>
+<p>绝大多数正则表达式操作都提供模块函数和方法，在编译正则表达式这些函数是一个途径，不需要先编译一个正则对象，但是损失了一些优化参数。</p>
+<h3 id="正则表达式语法">正则表达式语法</h3>
+<p>一个正则表达式指定了一系列与之匹配的字符串；模块内的函数可以检查某个字符串是否跟跟定的正则表达式相匹配（或者一个正则表达式是否匹配到一个字符串）。</p>
+<p>正则表达式可以拼接；如果A和B都是正则表达式，那么AN</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>re</tag>
       </tags>
   </entry>
   <entry>
@@ -2718,6 +2718,57 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>requests</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python中下划线命名模式</title>
+    <url>/p/underscore-naming-pattern-in-python/</url>
+    <content><![CDATA[<p>直接上表格。</p>
+<a id="more"></a>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 9%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">命名模式</th>
+<th style="text-align: center;">举例</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">单前导下划线</td>
+<td style="text-align: center;">_var</td>
+<td>命名约定，仅供内部使用。通常不会由Python解释器内部执行（通配符导入除外），只作为对程序员的提示。通配符导入时，_var代表的<strong>属性</strong>或者<strong>函数</strong>不会被导入。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">单末尾下划线</td>
+<td style="text-align: center;">var_</td>
+<td>按照约定使用避免与Python关键字的命名冲突。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">双前导下划线</td>
+<td style="text-align: center;">__var</td>
+<td>当在类上下文使用时，触发名称修饰，由Python解释器强制执行。<br /><strong>Tips：</strong>可以理解为Python对象的<strong>私有属性</strong>。仅供<strong>Python内部成员函数</strong>使用。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">双前导和双末尾下划线</td>
+<td style="text-align: center;">__var__</td>
+<td>表示Python语言定义的特殊方法，避免在你自己的属性中使用这种特殊方法。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">单下划线</td>
+<td style="text-align: center;">_</td>
+<td>有时用作临时或者不关心的变量名称，也表示<strong>Python REPL</strong>最近的一个表达式的结果。</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -3428,57 +3479,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python中下划线命名模式</title>
-    <url>/p/underscore-naming-pattern-in-python/</url>
-    <content><![CDATA[<p>直接上表格。</p>
-<a id="more"></a>
-<table>
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 9%" />
-<col style="width: 68%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: center;">命名模式</th>
-<th style="text-align: center;">举例</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">单前导下划线</td>
-<td style="text-align: center;">_var</td>
-<td>命名约定，仅供内部使用。通常不会由Python解释器内部执行（通配符导入除外），只作为对程序员的提示。通配符导入时，_var代表的<strong>属性</strong>或者<strong>函数</strong>不会被导入。</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">单末尾下划线</td>
-<td style="text-align: center;">var_</td>
-<td>按照约定使用避免与Python关键字的命名冲突。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">双前导下划线</td>
-<td style="text-align: center;">__var</td>
-<td>当在类上下文使用时，触发名称修饰，由Python解释器强制执行。<br /><strong>Tips：</strong>可以理解为Python对象的<strong>私有属性</strong>。仅供<strong>Python内部成员函数</strong>使用。</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">双前导和双末尾下划线</td>
-<td style="text-align: center;">__var__</td>
-<td>表示Python语言定义的特殊方法，避免在你自己的属性中使用这种特殊方法。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">单下划线</td>
-<td style="text-align: center;">_</td>
-<td>有时用作临时或者不关心的变量名称，也表示<strong>Python REPL</strong>最近的一个表达式的结果。</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python中的map函数</title>
     <url>/p/how-map-functions-works-in-Python/</url>
     <content><![CDATA[<p>Python内建了map()函数。</p>
@@ -3936,6 +3936,21 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python装饰器abstractmethod</title>
+    <url>/p/how-to-use-python-abstractmethod/</url>
+    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
+<a id="more"></a>
+<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
+<p>将子类<code>get_urls</code>方法注释后无法运行</p>
+<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>abstractmethod</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4178,21 +4193,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python装饰器abstractmethod</title>
-    <url>/p/how-to-use-python-abstractmethod/</url>
-    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
-<a id="more"></a>
-<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
-<p>将子类<code>get_urls</code>方法注释后无法运行</p>
-<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>abstractmethod</tag>
       </tags>
   </entry>
   <entry>
@@ -4487,133 +4487,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
-    <url>/p/install-and-configure-coturn-in-debian/</url>
-    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
-<p><strong>关键词</strong>：coturn，stun，turn</p>
-<a id="more"></a>
-<p>安装Coturn一般分为两步。</p>
-<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
-<p>第二步是安装Coturn。</p>
-<h2 id="安装libevent">安装libevent</h2>
-<p>相关地址：</p>
-<ul>
-<li>https://github.com/libevent/libevent</li>
-<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
-</ul>
-<p><strong>注意</strong></p>
-<p>libevent与openssl的版本对应关系如下：</p>
-<table>
-<thead>
-<tr class="header">
-<th>libevent</th>
-<th>openssl</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2.1.x</td>
-<td>1.1</td>
-</tr>
-<tr class="even">
-<td>2.0.x</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
-<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
-<h3 id="查看openssl版本">查看openssl版本</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
-<p>这里使用2.1.12的版本进行安装。</p>
-<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="安装openssl依赖">安装openssl依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
-<h3 id="编译">编译</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
-<h3 id="打包">打包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211212133649851.png" /></p>
-<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
-<p><img src="image-20211212133609907.png" /></p>
-<h3 id="安装成功">安装成功</h3>
-<p><img src="image-20211212133729426.png" /></p>
-<h2 id="安装coturn">安装Coturn</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
-<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
-<h3 id="turn数据库配置">TURN数据库配置</h3>
-<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：</p>
-<ul>
-<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
-<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
-<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
-</ul>
-<p><strong>安装sqlite</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
-<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
-<p>需要安装libmysqlclient-dev：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
-<p><strong>查看当前的普通用户</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
-<p><strong>删除普通用户</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
-<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
-<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
-<p>一些常用的配置：</p>
-<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip&#x3D;172.17.62.224</span><br><span class="line">listening-device&#x3D;eth0</span><br><span class="line"># TURN服务器UDP&#x2F;TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port&#x3D;3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port&#x3D;5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device&#x3D;eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port&#x3D;49152</span><br><span class="line">max-port&#x3D;65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm&#x3D;deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#39;静态&#39; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert&#x3D;&#x2F;root&#x2F;ssl&#x2F;cert.pem </span><br><span class="line">pkey&#x3D;&#x2F;root&#x2F;ssl&#x2F;certs&#x2F;key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
-<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
-<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
-<h3 id="重启服务">重启服务</h3>
-<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
-<h2 id="配置docker">配置docker</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(id -u):$(id -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
-<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
-<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
-<p><img src="image-20211127213711931.png" style="zoom:33%;" /></p>
-<p><img src="image-20211127213631207.png" /></p>
-<p><img src="image-20211127214043008.png" /></p>
-]]></content>
-      <tags>
-        <tag>coturn</tag>
-        <tag>STUN</tag>
-        <tag>TURN</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>crontab定时任务不执行</title>
-    <url>/p/crontab-does-not-work/</url>
-    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
-<p><strong>关键词：crontab定时计划任务不执行</strong></p>
-<a id="more"></a>
-<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
-<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
-<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
-<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
-<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
-<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
-<h5 id="附录linux重定向">附录：linux重定向</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
-<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
-<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
-<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
-]]></content>
-      <tags>
-        <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能</title>
     <url>/p/WebRTC-study-notes-01/</url>
     <content><![CDATA[<p>实习公司一直开展的项目突然停滞了，因为一个老板的需求我们一直无法满足：</p>
@@ -4742,6 +4615,133 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>WebRTC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
+    <url>/p/install-and-configure-coturn-in-debian/</url>
+    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
+<p><strong>关键词</strong>：coturn，stun，turn</p>
+<a id="more"></a>
+<p>安装Coturn一般分为两步。</p>
+<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
+<p>第二步是安装Coturn。</p>
+<h2 id="安装libevent">安装libevent</h2>
+<p>相关地址：</p>
+<ul>
+<li>https://github.com/libevent/libevent</li>
+<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
+</ul>
+<p><strong>注意</strong></p>
+<p>libevent与openssl的版本对应关系如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>libevent</th>
+<th>openssl</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2.1.x</td>
+<td>1.1</td>
+</tr>
+<tr class="even">
+<td>2.0.x</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
+<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
+<h3 id="查看openssl版本">查看openssl版本</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
+<p>这里使用2.1.12的版本进行安装。</p>
+<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="安装openssl依赖">安装openssl依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
+<h3 id="编译">编译</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h3 id="打包">打包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211212133649851.png" /></p>
+<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
+<p><img src="image-20211212133609907.png" /></p>
+<h3 id="安装成功">安装成功</h3>
+<p><img src="image-20211212133729426.png" /></p>
+<h2 id="安装coturn">安装Coturn</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
+<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
+<h3 id="turn数据库配置">TURN数据库配置</h3>
+<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
+<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
+<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
+</ul>
+<p><strong>安装sqlite</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
+<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
+<p>需要安装libmysqlclient-dev：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
+<p><strong>查看当前的普通用户</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
+<p><strong>删除普通用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
+<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
+<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
+<p>一些常用的配置：</p>
+<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip&#x3D;172.17.62.224</span><br><span class="line">listening-device&#x3D;eth0</span><br><span class="line"># TURN服务器UDP&#x2F;TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port&#x3D;3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port&#x3D;5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device&#x3D;eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port&#x3D;49152</span><br><span class="line">max-port&#x3D;65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm&#x3D;deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#39;静态&#39; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert&#x3D;&#x2F;root&#x2F;ssl&#x2F;cert.pem </span><br><span class="line">pkey&#x3D;&#x2F;root&#x2F;ssl&#x2F;certs&#x2F;key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
+<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
+<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
+<h3 id="重启服务">重启服务</h3>
+<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
+<h2 id="配置docker">配置docker</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(id -u):$(id -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
+<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
+<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
+<p><img src="image-20211127213711931.png" style="zoom:33%;" /></p>
+<p><img src="image-20211127213631207.png" /></p>
+<p><img src="image-20211127214043008.png" /></p>
+]]></content>
+      <tags>
+        <tag>coturn</tag>
+        <tag>STUN</tag>
+        <tag>TURN</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>crontab定时任务不执行</title>
+    <url>/p/crontab-does-not-work/</url>
+    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
+<p><strong>关键词：crontab定时计划任务不执行</strong></p>
+<a id="more"></a>
+<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
+<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
+<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
+<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
+<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
+<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
+<h5 id="附录linux重定向">附录：linux重定向</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
+<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
+<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
+<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
+]]></content>
+      <tags>
+        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
@@ -5384,6 +5384,23 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>nginx.conf配置文件详解</title>
+    <url>/p/How-to-configure-nginx-conf/</url>
+    <content><![CDATA[<p>本文主要介绍了nginx的配置文件。</p>
+<p><strong>摘要：</strong>Nginx 配置文件主要分成四部分：main（全局设置）、server（主机设置）、upstream（上游服务器设置，主要为反向代理、负载均衡相关配置）和 location（URL匹配特定位置后的设置）。main 部分设置的指令影响其他所有部分的设置；server 部分的指令主要用于制定虚拟主机域名、IP 和端口号；upstream 的指令用于设置一系列的后端服务器，设置反向代理及后端服务器的负载均衡；location 部分用于匹配网页位置（比如，根目录“/”，“/images”，等等）。他们之间的关系：server 继承 main，location 继承 server；upstream 既不会继承指令也不会被继承。</p>
+<p><strong>关键词：</strong>Nginx</p>
+<a id="more"></a>
+<p>当前 nginx 支持的几个指令上下文()：</p>
+<h4 id="nginx.conf-配置文件">nginx.conf 配置文件</h4>
+<hr />
+<p>下面是 nginx.conf 详细的配置文件介绍（<strong>以下配置参数很多时候并不一定用的到，只是作为配置参数说明参考，可以看下面的通用版介绍</strong>）</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment">#定义Nginx运行的用户和用户组</span></span><br><span class="line"><span class="attribute">user</span> www www; </span><br><span class="line"></span><br><span class="line"><span class="comment">#nginx进程数，通常设置成和cpu的数量相等</span></span><br><span class="line"><span class="attribute">worker_processes</span> <span class="number">4</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">#全局错误日志定义类型，[debug | info | notice | warn | error | crit]</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#进程pid文件</span></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#指定进程可以打开的最大描述符：数目</span></span><br><span class="line"><span class="comment">#工作模式与连接数上限</span></span><br><span class="line"><span class="comment">##这个指令是指当一个nginx进程打开的最多文件描述符数目，理论值应该是最多打开文件数（ulimit -n）与nginx进程数相除，但是nginx分配请求并不是那么均匀，所以最好与ulimit -n 的值保持一致。</span></span><br><span class="line"><span class="comment">#这是因为nginx调度时分配请求到进程并不是那么的均衡，所以假如填写10240，总并发量达到3-4万时就有进程可能超过10240了，这时会返回502错误。</span></span><br><span class="line"><span class="attribute">worker_rlimit_nofile</span> <span class="number">65535</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="comment">#参考事件模型，use [ kqueue | rtsig | epoll | /dev/poll | select | poll ]; epoll模型</span></span><br><span class="line">    <span class="comment">#是Linux 2.6以上版本内核中的高性能网络I/O模型，linux建议epoll，如果跑在FreeBSD上面，就用kqueue模型。</span></span><br><span class="line">    <span class="comment">#补充说明：</span></span><br><span class="line">    <span class="comment">#与apache相类，nginx针对不同的操作系统，有不同的事件模型</span></span><br><span class="line">    <span class="comment">#A）标准事件模型</span></span><br><span class="line">    <span class="comment">#Select、poll属于标准事件模型，如果当前系统不存在更有效的方法，nginx会选择select或poll</span></span><br><span class="line">    <span class="comment">#B）高效事件模型</span></span><br><span class="line">    <span class="comment">#Kqueue：使用于FreeBSD 4.1+, OpenBSD 2.9+, NetBSD 2.0 和 MacOS X.使用双处理器的MacOS X系统使用kqueue可能会造成内核崩溃。</span></span><br><span class="line">    <span class="comment">#Epoll：使用于Linux内核2.6版本及以后的系统。</span></span><br><span class="line">    <span class="comment">#/dev/poll：使用于Solaris 7 11/99+，HP/UX 11.22+ (eventport)，IRIX 6.5.15+ 和 Tru64 UNIX 5.1A+。</span></span><br><span class="line">    <span class="comment">#Eventport：使用于Solaris 10。 为了防止出现内核崩溃的问题， 有必要安装安全补丁。</span></span><br><span class="line">    <span class="attribute">use</span> <span class="literal">epoll</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#单个进程最大连接数（最大连接数=连接数+进程数）</span></span><br><span class="line">    <span class="comment">#根据硬件调整，和前面工作进程配合起来用，尽量大，但是别把cup跑到100%就行。</span></span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#keepalive 超时时间</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span> <span class="number">60</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#客户端请求头部的缓冲区大小。这个可以根据你的系统分页大小来设置，一般一个请求头的大小不会超过1k，不过由于一般系统分页都要大于1k，所以这里设置为分页大小。</span></span><br><span class="line">    <span class="comment">#分页大小可以用命令getconf PAGESIZE 取得。</span></span><br><span class="line">    <span class="comment">#[root@web001 ~]# getconf PAGESIZE</span></span><br><span class="line">    <span class="comment">#但也有client_header_buffer_size超过4k的情况，但是client_header_buffer_size该值必须设置为“系统分页大小”的整倍数。</span></span><br><span class="line">    <span class="attribute">client_header_buffer_size</span> <span class="number">4k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#这个将为打开文件指定缓存，默认是没有启用的，max指定缓存数量，建议和打开文件数一致，inactive是指经过多长时间文件没被请求后删除缓存。</span></span><br><span class="line">    <span class="attribute">open_file_cache</span> max=<span class="number">65535</span> inactive=<span class="number">60s</span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#这个是指多长时间检查一次缓存的有效信息。</span></span><br><span class="line">    <span class="comment">#语法:open_file_cache_valid time 默认值:open_file_cache_valid 60 使用字段:http, server, location 这个指令指定了何时需要检查open_file_cache中缓存项目的有效信息.</span></span><br><span class="line">    <span class="attribute">open_file_cache_valid</span> <span class="number">80s</span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#open_file_cache指令中的inactive参数时间内文件的最少使用次数，如果超过这个数字，文件描述符一直是在缓存中打开的，如上例，如果有一个文件在inactive时间内一次没被使用，它将被移除。</span></span><br><span class="line">    <span class="comment">#语法:open_file_cache_min_uses number 默认值:open_file_cache_min_uses 1 使用字段:http, server, location  这个指令指定了在open_file_cache指令无效的参数中一定的时间范围内可以使用的最小文件数,如果使用更大的值,文件描述符在cache中总是打开状态.</span></span><br><span class="line">    <span class="attribute">open_file_cache_min_uses</span> <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#语法:open_file_cache_errors on | off 默认值:open_file_cache_errors off 使用字段:http, server, location 这个指令指定是否在搜索一个文件是记录cache错误.</span></span><br><span class="line">    <span class="attribute">open_file_cache_errors</span> <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#设定http服务器，利用它的反向代理功能提供负载均衡支持</span></span><br><span class="line">http&#123;</span><br><span class="line">    <span class="comment">#文件扩展名与文件类型映射表</span></span><br><span class="line">    <span class="attribute">include</span> mime.types;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#默认文件类型</span></span><br><span class="line">    <span class="attribute">default_type</span> application/octet-stream;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#默认编码</span></span><br><span class="line">    <span class="attribute">charset</span> utf-<span class="number">8</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#服务器名字的hash表大小</span></span><br><span class="line">    <span class="comment">#保存服务器名字的hash表是由指令server_names_hash_max_size 和server_names_hash_bucket_size所控制的。参数hash bucket size总是等于hash表的大小，并且是一路处理器缓存大小的倍数。在减少了在内存中的存取次数后，使在处理器中加速查找hash表键值成为可能。如果hash bucket size等于一路处理器缓存的大小，那么在查找键的时候，最坏的情况下在内存中查找的次数为2。第一次是确定存储单元的地址，第二次是在存储单元中查找键 值。因此，如果Nginx给出需要增大hash max size 或 hash bucket size的提示，那么首要的是增大前一个参数的大小.</span></span><br><span class="line">    <span class="attribute">server_names_hash_bucket_size</span> <span class="number">128</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#客户端请求头部的缓冲区大小。这个可以根据你的系统分页大小来设置，一般一个请求的头部大小不会超过1k，不过由于一般系统分页都要大于1k，所以这里设置为分页大小。分页大小可以用命令getconf PAGESIZE取得。</span></span><br><span class="line">    <span class="attribute">client_header_buffer_size</span> <span class="number">32k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#客户请求头缓冲大小。nginx默认会用client_header_buffer_size这个buffer来读取header值，如果header过大，它会使用large_client_header_buffers来读取。</span></span><br><span class="line">    <span class="attribute">large_client_header_buffers</span> <span class="number">4</span> <span class="number">64k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#设定通过nginx上传文件的大小</span></span><br><span class="line">    <span class="attribute">client_max_body_size</span> <span class="number">8m</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#开启高效文件传输模式，sendfile指令指定nginx是否调用sendfile函数来输出文件，对于普通应用设为 on，如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络I/O处理速度，降低系统的负载。注意：如果图片显示不正常把这个改成off。</span></span><br><span class="line">    <span class="comment">#sendfile指令指定 nginx 是否调用sendfile 函数（zero copy 方式）来输出文件，对于普通应用，必须设为on。如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络IO处理速度，降低系统uptime。</span></span><br><span class="line">    <span class="attribute">sendfile</span> <span class="literal">on</span>;</span><br><span class="line">    </span><br><span class="line">     <span class="comment">#开启目录列表访问，合适下载服务器，默认关闭。</span></span><br><span class="line">    <span class="attribute">autoindex</span> <span class="literal">on</span>;</span><br><span class="line">    </span><br><span class="line">      <span class="comment">#此选项允许或禁止使用socke的TCP_CORK的选项，此选项仅在使用sendfile的时候使用</span></span><br><span class="line">    <span class="attribute">tcp_nopush</span> <span class="literal">on</span>;</span><br><span class="line">     </span><br><span class="line">    <span class="attribute">tcp_nodelay</span> <span class="literal">on</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#长连接超时时间，单位是秒</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span> <span class="number">120</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#FastCGI相关参数是为了改善网站的性能：减少资源占用，提高访问速度。下面参数看字面意思都能理解。</span></span><br><span class="line">    <span class="attribute">fastcgi_connect_timeout</span> <span class="number">300</span>;</span><br><span class="line">    <span class="attribute">fastcgi_send_timeout</span> <span class="number">300</span>;</span><br><span class="line">    <span class="attribute">fastcgi_read_timeout</span> <span class="number">300</span>;</span><br><span class="line">    <span class="attribute">fastcgi_buffer_size</span> <span class="number">64k</span>;</span><br><span class="line">    <span class="attribute">fastcgi_buffers</span> <span class="number">4</span> <span class="number">64k</span>;</span><br><span class="line">    <span class="attribute">fastcgi_busy_buffers_size</span> <span class="number">128k</span>;</span><br><span class="line">    <span class="attribute">fastcgi_temp_file_write_size</span> <span class="number">128k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#gzip模块设置</span></span><br><span class="line">    <span class="attribute">gzip</span> <span class="literal">on</span>; <span class="comment">#开启gzip压缩输出</span></span><br><span class="line">    <span class="attribute">gzip_min_length</span> <span class="number">1k</span>;    <span class="comment">#最小压缩文件大小</span></span><br><span class="line">    <span class="attribute">gzip_buffers</span> <span class="number">4</span> <span class="number">16k</span>;    <span class="comment">#压缩缓冲区</span></span><br><span class="line">    <span class="attribute">gzip_http_version</span> <span class="number">1</span>.<span class="number">0</span>; <span class="comment">#压缩版本（默认1.1，前端如果是squid2.5请使用1.0）</span></span><br><span class="line">    <span class="attribute">gzip_comp_level</span> <span class="number">2</span>;     <span class="comment">#压缩等级</span></span><br><span class="line">    <span class="attribute">gzip_types</span> text/plain application/x-javascript text/css application/xml;    <span class="comment">#压缩类型，默认就已经包含textml，所以下面就不用再写了，写上去也不会有问题，但是会有一个warn。</span></span><br><span class="line">    <span class="attribute">gzip_vary</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#开启限制IP连接数的时候需要使用</span></span><br><span class="line">    <span class="comment">#limit_zone crawler $binary_remote_addr 10m;</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#负载均衡配置</span></span><br><span class="line">    <span class="attribute">upstream</span> piao.jd.com &#123;</span><br><span class="line">     </span><br><span class="line">        <span class="comment">#upstream的负载均衡，weight是权重，可以根据机器配置定义权重。weigth参数表示权值，权值越高被分配到的几率越大。</span></span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.80.121:80</span> weight=<span class="number">3</span>;</span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.80.122:80</span> weight=<span class="number">2</span>;</span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.80.123:80</span> weight=<span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#nginx的upstream目前支持4种方式的分配</span></span><br><span class="line">        <span class="comment">#1、轮询（默认）</span></span><br><span class="line">        <span class="comment">#每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除。</span></span><br><span class="line">        <span class="comment">#2、weight</span></span><br><span class="line">        <span class="comment">#指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况。</span></span><br><span class="line">        <span class="comment">#例如：</span></span><br><span class="line">        <span class="comment">#upstream bakend &#123;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.14 weight=10;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.15 weight=10;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#2、ip_hash</span></span><br><span class="line">        <span class="comment">#每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题。</span></span><br><span class="line">        <span class="comment">#例如：</span></span><br><span class="line">        <span class="comment">#upstream bakend &#123;</span></span><br><span class="line">        <span class="comment">#    ip_hash;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.14:88;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.15:80;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#3、fair（第三方）</span></span><br><span class="line">        <span class="comment">#按后端服务器的响应时间来分配请求，响应时间短的优先分配。</span></span><br><span class="line">        <span class="comment">#upstream backend &#123;</span></span><br><span class="line">        <span class="comment">#    server server1;</span></span><br><span class="line">        <span class="comment">#    server server2;</span></span><br><span class="line">        <span class="comment">#    fair;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#4、url_hash（第三方）</span></span><br><span class="line">        <span class="comment">#按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。</span></span><br><span class="line">        <span class="comment">#例：在upstream中加入hash语句，server语句中不能写入weight等其他的参数，hash_method是使用的hash算法</span></span><br><span class="line">        <span class="comment">#upstream backend &#123;</span></span><br><span class="line">        <span class="comment">#    server squid1:3128;</span></span><br><span class="line">        <span class="comment">#    server squid2:3128;</span></span><br><span class="line">        <span class="comment">#    hash $request_uri;</span></span><br><span class="line">        <span class="comment">#    hash_method crc32;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#tips:</span></span><br><span class="line">        <span class="comment">#upstream bakend&#123;#定义负载均衡设备的Ip及设备状态&#125;&#123;</span></span><br><span class="line">        <span class="comment">#    ip_hash;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:9090 down;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:8080 weight=2;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:6060;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:7070 backup;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#在需要使用负载均衡的server中增加 proxy_pass http://bakend/;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#每个设备的状态设置为:</span></span><br><span class="line">        <span class="comment">#1.down表示单前的server暂时不参与负载</span></span><br><span class="line">        <span class="comment">#2.weight为weight越大，负载的权重就越大。</span></span><br><span class="line">        <span class="comment">#3.max_fails：允许请求失败的次数默认为1.当超过最大次数时，返回proxy_next_upstream模块定义的错误</span></span><br><span class="line">        <span class="comment">#4.fail_timeout:max_fails次失败后，暂停的时间。</span></span><br><span class="line">        <span class="comment">#5.backup： 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻。</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#nginx支持同时设置多组的负载均衡，用来给不用的server来使用。</span></span><br><span class="line">        <span class="comment">#client_body_in_file_only设置为On 可以讲client post过来的数据记录到文件中用来做debug</span></span><br><span class="line">        <span class="comment">#client_body_temp_path设置记录文件的目录 可以设置最多3层目录</span></span><br><span class="line">        <span class="comment">#location对URL进行匹配.可以进行重定向或者进行新的代理 负载均衡</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#虚拟主机的配置</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="comment">#监听端口</span></span><br><span class="line">        <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#域名可以有多个，用空格隔开</span></span><br><span class="line">        <span class="attribute">server_name</span> www.jd.com jd.com;</span><br><span class="line">        <span class="comment">#默认入口文件名称</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm index.php;</span><br><span class="line">        <span class="attribute">root</span> /data/www/jd;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#对******进行负载均衡</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .*.(php|php5)?$</span></span><br><span class="line"><span class="regexp"></span>        &#123;</span><br><span class="line">            <span class="attribute">fastcgi_pass</span> <span class="number">127.0.0.1:9000</span>;</span><br><span class="line">            <span class="attribute">fastcgi_index</span> index.php;</span><br><span class="line">            <span class="attribute">include</span> fastcgi.conf;</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#图片缓存时间设置</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .*.(gif|jpg|jpeg|png|bmp|swf)$</span></span><br><span class="line"><span class="regexp"></span>        &#123;</span><br><span class="line">            <span class="attribute">expires</span> <span class="number">10d</span>;</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#JS和CSS缓存时间设置</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .*.(js|css)?$</span></span><br><span class="line"><span class="regexp"></span>        &#123;</span><br><span class="line">            <span class="attribute">expires</span> <span class="number">1h</span>;</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#日志格式设定</span></span><br><span class="line">        <span class="comment">#$remote_addr与$http_x_forwarded_for用以记录客户端的ip地址；</span></span><br><span class="line">        <span class="comment">#$remote_user：用来记录客户端用户名称；</span></span><br><span class="line">        <span class="comment">#$time_local： 用来记录访问时间与时区；</span></span><br><span class="line">        <span class="comment">#$request： 用来记录请求的url与http协议；</span></span><br><span class="line">        <span class="comment">#$status： 用来记录请求状态；成功是200，</span></span><br><span class="line">        <span class="comment">#$body_bytes_sent ：记录发送给客户端文件主体内容大小；</span></span><br><span class="line">        <span class="comment">#$http_referer：用来记录从那个页面链接访问过来的；</span></span><br><span class="line">        <span class="comment">#$http_user_agent：记录客户浏览器的相关信息；</span></span><br><span class="line">        <span class="comment">#通常web服务器放在反向代理的后面，这样就不能获取到客户的IP地址了，通过$remote_add拿到的IP地址是反向代理服务器的iP地址。反向代理服务器在转发请求的http头信息中，可以增加x_forwarded_for信息，用以记录原有客户端的IP地址和原来客户端的请求的服务器地址。</span></span><br><span class="line">        <span class="attribute">log_format</span> access <span class="string">&#x27;<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] &quot;<span class="variable">$request</span>&quot; &#x27;</span></span><br><span class="line">        <span class="string">&#x27;<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> &quot;<span class="variable">$http_referer</span>&quot; &#x27;</span></span><br><span class="line">        <span class="string">&#x27;&quot;<span class="variable">$http_user_agent</span>&quot; <span class="variable">$http_x_forwarded_for</span>&#x27;</span>;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#定义本虚拟主机的访问日志</span></span><br><span class="line">        <span class="attribute">access_log</span>  /usr/local/nginx/logs/host.access.log  main;</span><br><span class="line">        <span class="attribute">access_log</span>  /usr/local/nginx/logs/host.access.<span class="number">404</span>.log  log404;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#对 &quot;/connect-controller&quot; 启用反向代理</span></span><br><span class="line">        <span class="attribute">location</span> /connect-controller &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://127.0.0.1:88; <span class="comment">#请注意此处端口号不能与虚拟主机监听的端口号一样（也就是server监听的端口）</span></span><br><span class="line">            <span class="attribute">proxy_redirect</span> <span class="literal">off</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">             </span><br><span class="line">            <span class="comment">#后端的Web服务器可以通过X-Forwarded-For获取用户真实IP</span></span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">             </span><br><span class="line">            <span class="comment">#以下是一些反向代理的配置，可选。</span></span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#允许客户端请求的最大单文件字节数</span></span><br><span class="line">            <span class="attribute">client_max_body_size</span> <span class="number">10m</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#缓冲区代理缓冲用户端请求的最大字节数，</span></span><br><span class="line">            <span class="comment">#如果把它设置为比较大的数值，例如256k，那么，无论使用firefox还是IE浏览器，来提交任意小于256k的图片，都很正常。如果注释该指令，使用默认的client_body_buffer_size设置，也就是操作系统页面大小的两倍，8k或者16k，问题就出现了。</span></span><br><span class="line">            <span class="comment">#无论使用firefox4.0还是IE8.0，提交一个比较大，200k左右的图片，都返回500 Internal Server Error错误</span></span><br><span class="line">            <span class="attribute">client_body_buffer_size</span> <span class="number">128k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#表示使nginx阻止HTTP应答代码为400或者更高的应答。</span></span><br><span class="line">            <span class="attribute">proxy_intercept_errors</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#后端服务器连接的超时时间_发起握手等候响应超时时间</span></span><br><span class="line">            <span class="comment">#nginx跟后端服务器连接超时时间(代理连接超时)</span></span><br><span class="line">            <span class="attribute">proxy_connect_timeout</span> <span class="number">90</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#后端服务器数据回传时间(代理发送超时)</span></span><br><span class="line">            <span class="comment">#后端服务器数据回传时间_就是在规定时间之内后端服务器必须传完所有的数据</span></span><br><span class="line">            <span class="attribute">proxy_send_timeout</span> <span class="number">90</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#连接成功后，后端服务器响应时间(代理接收超时)</span></span><br><span class="line">            <span class="comment">#连接成功后_等候后端服务器响应时间_其实已经进入后端的排队之中等候处理（也可以说是后端服务器处理请求的时间）</span></span><br><span class="line">            <span class="attribute">proxy_read_timeout</span> <span class="number">90</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#设置代理服务器（nginx）保存用户头信息的缓冲区大小</span></span><br><span class="line">            <span class="comment">#设置从被代理服务器读取的第一部分应答的缓冲区大小，通常情况下这部分应答中包含一个小的应答头，默认情况下这个值的大小为指令proxy_buffers中指定的一个缓冲区的大小，不过可以将其设置为更小</span></span><br><span class="line">            <span class="attribute">proxy_buffer_size</span> <span class="number">4k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#proxy_buffers缓冲区，网页平均在32k以下的设置</span></span><br><span class="line">            <span class="comment">#设置用于读取应答（来自被代理服务器）的缓冲区数目和大小，默认情况也为分页大小，根据操作系统的不同可能是4k或者8k</span></span><br><span class="line">            <span class="attribute">proxy_buffers</span> <span class="number">4</span> <span class="number">32k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#高负荷下缓冲大小（proxy_buffers*2）</span></span><br><span class="line">            <span class="attribute">proxy_busy_buffers_size</span> <span class="number">64k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#设置在写入proxy_temp_path时数据的大小，预防一个工作进程在传递文件时阻塞太长</span></span><br><span class="line">            <span class="comment">#设定缓存文件夹大小，大于这个值，将从upstream服务器传</span></span><br><span class="line">            <span class="attribute">proxy_temp_file_write_size</span> <span class="number">64k</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#本地动静分离反向代理配置</span></span><br><span class="line">        <span class="comment">#所有jsp的页面均交由tomcat或resin处理</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .(jsp|jspx|do)?$</span> &#123;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://127.0.0.1:8080;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>nginx</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kafaka学习笔记之绪论</title>
     <url>/p/introduction-to-kafaka-study-notes/</url>
     <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
@@ -5439,23 +5456,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>kafaka</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>nginx.conf配置文件详解</title>
-    <url>/p/How-to-configure-nginx-conf/</url>
-    <content><![CDATA[<p>本文主要介绍了nginx的配置文件。</p>
-<p><strong>摘要：</strong>Nginx 配置文件主要分成四部分：main（全局设置）、server（主机设置）、upstream（上游服务器设置，主要为反向代理、负载均衡相关配置）和 location（URL匹配特定位置后的设置）。main 部分设置的指令影响其他所有部分的设置；server 部分的指令主要用于制定虚拟主机域名、IP 和端口号；upstream 的指令用于设置一系列的后端服务器，设置反向代理及后端服务器的负载均衡；location 部分用于匹配网页位置（比如，根目录“/”，“/images”，等等）。他们之间的关系：server 继承 main，location 继承 server；upstream 既不会继承指令也不会被继承。</p>
-<p><strong>关键词：</strong>Nginx</p>
-<a id="more"></a>
-<p>当前 nginx 支持的几个指令上下文()：</p>
-<h4 id="nginx.conf-配置文件">nginx.conf 配置文件</h4>
-<hr />
-<p>下面是 nginx.conf 详细的配置文件介绍（<strong>以下配置参数很多时候并不一定用的到，只是作为配置参数说明参考，可以看下面的通用版介绍</strong>）</p>
-<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="comment">#定义Nginx运行的用户和用户组</span></span><br><span class="line"><span class="attribute">user</span> www www; </span><br><span class="line"></span><br><span class="line"><span class="comment">#nginx进程数，通常设置成和cpu的数量相等</span></span><br><span class="line"><span class="attribute">worker_processes</span> <span class="number">4</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">#全局错误日志定义类型，[debug | info | notice | warn | error | crit]</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#进程pid文件</span></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#指定进程可以打开的最大描述符：数目</span></span><br><span class="line"><span class="comment">#工作模式与连接数上限</span></span><br><span class="line"><span class="comment">##这个指令是指当一个nginx进程打开的最多文件描述符数目，理论值应该是最多打开文件数（ulimit -n）与nginx进程数相除，但是nginx分配请求并不是那么均匀，所以最好与ulimit -n 的值保持一致。</span></span><br><span class="line"><span class="comment">#这是因为nginx调度时分配请求到进程并不是那么的均衡，所以假如填写10240，总并发量达到3-4万时就有进程可能超过10240了，这时会返回502错误。</span></span><br><span class="line"><span class="attribute">worker_rlimit_nofile</span> <span class="number">65535</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="comment">#参考事件模型，use [ kqueue | rtsig | epoll | /dev/poll | select | poll ]; epoll模型</span></span><br><span class="line">    <span class="comment">#是Linux 2.6以上版本内核中的高性能网络I/O模型，linux建议epoll，如果跑在FreeBSD上面，就用kqueue模型。</span></span><br><span class="line">    <span class="comment">#补充说明：</span></span><br><span class="line">    <span class="comment">#与apache相类，nginx针对不同的操作系统，有不同的事件模型</span></span><br><span class="line">    <span class="comment">#A）标准事件模型</span></span><br><span class="line">    <span class="comment">#Select、poll属于标准事件模型，如果当前系统不存在更有效的方法，nginx会选择select或poll</span></span><br><span class="line">    <span class="comment">#B）高效事件模型</span></span><br><span class="line">    <span class="comment">#Kqueue：使用于FreeBSD 4.1+, OpenBSD 2.9+, NetBSD 2.0 和 MacOS X.使用双处理器的MacOS X系统使用kqueue可能会造成内核崩溃。</span></span><br><span class="line">    <span class="comment">#Epoll：使用于Linux内核2.6版本及以后的系统。</span></span><br><span class="line">    <span class="comment">#/dev/poll：使用于Solaris 7 11/99+，HP/UX 11.22+ (eventport)，IRIX 6.5.15+ 和 Tru64 UNIX 5.1A+。</span></span><br><span class="line">    <span class="comment">#Eventport：使用于Solaris 10。 为了防止出现内核崩溃的问题， 有必要安装安全补丁。</span></span><br><span class="line">    <span class="attribute">use</span> <span class="literal">epoll</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#单个进程最大连接数（最大连接数=连接数+进程数）</span></span><br><span class="line">    <span class="comment">#根据硬件调整，和前面工作进程配合起来用，尽量大，但是别把cup跑到100%就行。</span></span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#keepalive 超时时间</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span> <span class="number">60</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#客户端请求头部的缓冲区大小。这个可以根据你的系统分页大小来设置，一般一个请求头的大小不会超过1k，不过由于一般系统分页都要大于1k，所以这里设置为分页大小。</span></span><br><span class="line">    <span class="comment">#分页大小可以用命令getconf PAGESIZE 取得。</span></span><br><span class="line">    <span class="comment">#[root@web001 ~]# getconf PAGESIZE</span></span><br><span class="line">    <span class="comment">#但也有client_header_buffer_size超过4k的情况，但是client_header_buffer_size该值必须设置为“系统分页大小”的整倍数。</span></span><br><span class="line">    <span class="attribute">client_header_buffer_size</span> <span class="number">4k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#这个将为打开文件指定缓存，默认是没有启用的，max指定缓存数量，建议和打开文件数一致，inactive是指经过多长时间文件没被请求后删除缓存。</span></span><br><span class="line">    <span class="attribute">open_file_cache</span> max=<span class="number">65535</span> inactive=<span class="number">60s</span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#这个是指多长时间检查一次缓存的有效信息。</span></span><br><span class="line">    <span class="comment">#语法:open_file_cache_valid time 默认值:open_file_cache_valid 60 使用字段:http, server, location 这个指令指定了何时需要检查open_file_cache中缓存项目的有效信息.</span></span><br><span class="line">    <span class="attribute">open_file_cache_valid</span> <span class="number">80s</span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#open_file_cache指令中的inactive参数时间内文件的最少使用次数，如果超过这个数字，文件描述符一直是在缓存中打开的，如上例，如果有一个文件在inactive时间内一次没被使用，它将被移除。</span></span><br><span class="line">    <span class="comment">#语法:open_file_cache_min_uses number 默认值:open_file_cache_min_uses 1 使用字段:http, server, location  这个指令指定了在open_file_cache指令无效的参数中一定的时间范围内可以使用的最小文件数,如果使用更大的值,文件描述符在cache中总是打开状态.</span></span><br><span class="line">    <span class="attribute">open_file_cache_min_uses</span> <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#语法:open_file_cache_errors on | off 默认值:open_file_cache_errors off 使用字段:http, server, location 这个指令指定是否在搜索一个文件是记录cache错误.</span></span><br><span class="line">    <span class="attribute">open_file_cache_errors</span> <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#设定http服务器，利用它的反向代理功能提供负载均衡支持</span></span><br><span class="line">http&#123;</span><br><span class="line">    <span class="comment">#文件扩展名与文件类型映射表</span></span><br><span class="line">    <span class="attribute">include</span> mime.types;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#默认文件类型</span></span><br><span class="line">    <span class="attribute">default_type</span> application/octet-stream;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#默认编码</span></span><br><span class="line">    <span class="attribute">charset</span> utf-<span class="number">8</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#服务器名字的hash表大小</span></span><br><span class="line">    <span class="comment">#保存服务器名字的hash表是由指令server_names_hash_max_size 和server_names_hash_bucket_size所控制的。参数hash bucket size总是等于hash表的大小，并且是一路处理器缓存大小的倍数。在减少了在内存中的存取次数后，使在处理器中加速查找hash表键值成为可能。如果hash bucket size等于一路处理器缓存的大小，那么在查找键的时候，最坏的情况下在内存中查找的次数为2。第一次是确定存储单元的地址，第二次是在存储单元中查找键 值。因此，如果Nginx给出需要增大hash max size 或 hash bucket size的提示，那么首要的是增大前一个参数的大小.</span></span><br><span class="line">    <span class="attribute">server_names_hash_bucket_size</span> <span class="number">128</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#客户端请求头部的缓冲区大小。这个可以根据你的系统分页大小来设置，一般一个请求的头部大小不会超过1k，不过由于一般系统分页都要大于1k，所以这里设置为分页大小。分页大小可以用命令getconf PAGESIZE取得。</span></span><br><span class="line">    <span class="attribute">client_header_buffer_size</span> <span class="number">32k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#客户请求头缓冲大小。nginx默认会用client_header_buffer_size这个buffer来读取header值，如果header过大，它会使用large_client_header_buffers来读取。</span></span><br><span class="line">    <span class="attribute">large_client_header_buffers</span> <span class="number">4</span> <span class="number">64k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#设定通过nginx上传文件的大小</span></span><br><span class="line">    <span class="attribute">client_max_body_size</span> <span class="number">8m</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#开启高效文件传输模式，sendfile指令指定nginx是否调用sendfile函数来输出文件，对于普通应用设为 on，如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络I/O处理速度，降低系统的负载。注意：如果图片显示不正常把这个改成off。</span></span><br><span class="line">    <span class="comment">#sendfile指令指定 nginx 是否调用sendfile 函数（zero copy 方式）来输出文件，对于普通应用，必须设为on。如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络IO处理速度，降低系统uptime。</span></span><br><span class="line">    <span class="attribute">sendfile</span> <span class="literal">on</span>;</span><br><span class="line">    </span><br><span class="line">     <span class="comment">#开启目录列表访问，合适下载服务器，默认关闭。</span></span><br><span class="line">    <span class="attribute">autoindex</span> <span class="literal">on</span>;</span><br><span class="line">    </span><br><span class="line">      <span class="comment">#此选项允许或禁止使用socke的TCP_CORK的选项，此选项仅在使用sendfile的时候使用</span></span><br><span class="line">    <span class="attribute">tcp_nopush</span> <span class="literal">on</span>;</span><br><span class="line">     </span><br><span class="line">    <span class="attribute">tcp_nodelay</span> <span class="literal">on</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#长连接超时时间，单位是秒</span></span><br><span class="line">    <span class="attribute">keepalive_timeout</span> <span class="number">120</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#FastCGI相关参数是为了改善网站的性能：减少资源占用，提高访问速度。下面参数看字面意思都能理解。</span></span><br><span class="line">    <span class="attribute">fastcgi_connect_timeout</span> <span class="number">300</span>;</span><br><span class="line">    <span class="attribute">fastcgi_send_timeout</span> <span class="number">300</span>;</span><br><span class="line">    <span class="attribute">fastcgi_read_timeout</span> <span class="number">300</span>;</span><br><span class="line">    <span class="attribute">fastcgi_buffer_size</span> <span class="number">64k</span>;</span><br><span class="line">    <span class="attribute">fastcgi_buffers</span> <span class="number">4</span> <span class="number">64k</span>;</span><br><span class="line">    <span class="attribute">fastcgi_busy_buffers_size</span> <span class="number">128k</span>;</span><br><span class="line">    <span class="attribute">fastcgi_temp_file_write_size</span> <span class="number">128k</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#gzip模块设置</span></span><br><span class="line">    <span class="attribute">gzip</span> <span class="literal">on</span>; <span class="comment">#开启gzip压缩输出</span></span><br><span class="line">    <span class="attribute">gzip_min_length</span> <span class="number">1k</span>;    <span class="comment">#最小压缩文件大小</span></span><br><span class="line">    <span class="attribute">gzip_buffers</span> <span class="number">4</span> <span class="number">16k</span>;    <span class="comment">#压缩缓冲区</span></span><br><span class="line">    <span class="attribute">gzip_http_version</span> <span class="number">1</span>.<span class="number">0</span>; <span class="comment">#压缩版本（默认1.1，前端如果是squid2.5请使用1.0）</span></span><br><span class="line">    <span class="attribute">gzip_comp_level</span> <span class="number">2</span>;     <span class="comment">#压缩等级</span></span><br><span class="line">    <span class="attribute">gzip_types</span> text/plain application/x-javascript text/css application/xml;    <span class="comment">#压缩类型，默认就已经包含textml，所以下面就不用再写了，写上去也不会有问题，但是会有一个warn。</span></span><br><span class="line">    <span class="attribute">gzip_vary</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#开启限制IP连接数的时候需要使用</span></span><br><span class="line">    <span class="comment">#limit_zone crawler $binary_remote_addr 10m;</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#负载均衡配置</span></span><br><span class="line">    <span class="attribute">upstream</span> piao.jd.com &#123;</span><br><span class="line">     </span><br><span class="line">        <span class="comment">#upstream的负载均衡，weight是权重，可以根据机器配置定义权重。weigth参数表示权值，权值越高被分配到的几率越大。</span></span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.80.121:80</span> weight=<span class="number">3</span>;</span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.80.122:80</span> weight=<span class="number">2</span>;</span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.80.123:80</span> weight=<span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#nginx的upstream目前支持4种方式的分配</span></span><br><span class="line">        <span class="comment">#1、轮询（默认）</span></span><br><span class="line">        <span class="comment">#每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除。</span></span><br><span class="line">        <span class="comment">#2、weight</span></span><br><span class="line">        <span class="comment">#指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况。</span></span><br><span class="line">        <span class="comment">#例如：</span></span><br><span class="line">        <span class="comment">#upstream bakend &#123;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.14 weight=10;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.15 weight=10;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#2、ip_hash</span></span><br><span class="line">        <span class="comment">#每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题。</span></span><br><span class="line">        <span class="comment">#例如：</span></span><br><span class="line">        <span class="comment">#upstream bakend &#123;</span></span><br><span class="line">        <span class="comment">#    ip_hash;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.14:88;</span></span><br><span class="line">        <span class="comment">#    server 192.168.0.15:80;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#3、fair（第三方）</span></span><br><span class="line">        <span class="comment">#按后端服务器的响应时间来分配请求，响应时间短的优先分配。</span></span><br><span class="line">        <span class="comment">#upstream backend &#123;</span></span><br><span class="line">        <span class="comment">#    server server1;</span></span><br><span class="line">        <span class="comment">#    server server2;</span></span><br><span class="line">        <span class="comment">#    fair;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#4、url_hash（第三方）</span></span><br><span class="line">        <span class="comment">#按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。</span></span><br><span class="line">        <span class="comment">#例：在upstream中加入hash语句，server语句中不能写入weight等其他的参数，hash_method是使用的hash算法</span></span><br><span class="line">        <span class="comment">#upstream backend &#123;</span></span><br><span class="line">        <span class="comment">#    server squid1:3128;</span></span><br><span class="line">        <span class="comment">#    server squid2:3128;</span></span><br><span class="line">        <span class="comment">#    hash $request_uri;</span></span><br><span class="line">        <span class="comment">#    hash_method crc32;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#tips:</span></span><br><span class="line">        <span class="comment">#upstream bakend&#123;#定义负载均衡设备的Ip及设备状态&#125;&#123;</span></span><br><span class="line">        <span class="comment">#    ip_hash;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:9090 down;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:8080 weight=2;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:6060;</span></span><br><span class="line">        <span class="comment">#    server 127.0.0.1:7070 backup;</span></span><br><span class="line">        <span class="comment">#&#125;</span></span><br><span class="line">        <span class="comment">#在需要使用负载均衡的server中增加 proxy_pass http://bakend/;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#每个设备的状态设置为:</span></span><br><span class="line">        <span class="comment">#1.down表示单前的server暂时不参与负载</span></span><br><span class="line">        <span class="comment">#2.weight为weight越大，负载的权重就越大。</span></span><br><span class="line">        <span class="comment">#3.max_fails：允许请求失败的次数默认为1.当超过最大次数时，返回proxy_next_upstream模块定义的错误</span></span><br><span class="line">        <span class="comment">#4.fail_timeout:max_fails次失败后，暂停的时间。</span></span><br><span class="line">        <span class="comment">#5.backup： 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻。</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#nginx支持同时设置多组的负载均衡，用来给不用的server来使用。</span></span><br><span class="line">        <span class="comment">#client_body_in_file_only设置为On 可以讲client post过来的数据记录到文件中用来做debug</span></span><br><span class="line">        <span class="comment">#client_body_temp_path设置记录文件的目录 可以设置最多3层目录</span></span><br><span class="line">        <span class="comment">#location对URL进行匹配.可以进行重定向或者进行新的代理 负载均衡</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#虚拟主机的配置</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="comment">#监听端口</span></span><br><span class="line">        <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#域名可以有多个，用空格隔开</span></span><br><span class="line">        <span class="attribute">server_name</span> www.jd.com jd.com;</span><br><span class="line">        <span class="comment">#默认入口文件名称</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm index.php;</span><br><span class="line">        <span class="attribute">root</span> /data/www/jd;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#对******进行负载均衡</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .*.(php|php5)?$</span></span><br><span class="line"><span class="regexp"></span>        &#123;</span><br><span class="line">            <span class="attribute">fastcgi_pass</span> <span class="number">127.0.0.1:9000</span>;</span><br><span class="line">            <span class="attribute">fastcgi_index</span> index.php;</span><br><span class="line">            <span class="attribute">include</span> fastcgi.conf;</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#图片缓存时间设置</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .*.(gif|jpg|jpeg|png|bmp|swf)$</span></span><br><span class="line"><span class="regexp"></span>        &#123;</span><br><span class="line">            <span class="attribute">expires</span> <span class="number">10d</span>;</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#JS和CSS缓存时间设置</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .*.(js|css)?$</span></span><br><span class="line"><span class="regexp"></span>        &#123;</span><br><span class="line">            <span class="attribute">expires</span> <span class="number">1h</span>;</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#日志格式设定</span></span><br><span class="line">        <span class="comment">#$remote_addr与$http_x_forwarded_for用以记录客户端的ip地址；</span></span><br><span class="line">        <span class="comment">#$remote_user：用来记录客户端用户名称；</span></span><br><span class="line">        <span class="comment">#$time_local： 用来记录访问时间与时区；</span></span><br><span class="line">        <span class="comment">#$request： 用来记录请求的url与http协议；</span></span><br><span class="line">        <span class="comment">#$status： 用来记录请求状态；成功是200，</span></span><br><span class="line">        <span class="comment">#$body_bytes_sent ：记录发送给客户端文件主体内容大小；</span></span><br><span class="line">        <span class="comment">#$http_referer：用来记录从那个页面链接访问过来的；</span></span><br><span class="line">        <span class="comment">#$http_user_agent：记录客户浏览器的相关信息；</span></span><br><span class="line">        <span class="comment">#通常web服务器放在反向代理的后面，这样就不能获取到客户的IP地址了，通过$remote_add拿到的IP地址是反向代理服务器的iP地址。反向代理服务器在转发请求的http头信息中，可以增加x_forwarded_for信息，用以记录原有客户端的IP地址和原来客户端的请求的服务器地址。</span></span><br><span class="line">        <span class="attribute">log_format</span> access <span class="string">&#x27;<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] &quot;<span class="variable">$request</span>&quot; &#x27;</span></span><br><span class="line">        <span class="string">&#x27;<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> &quot;<span class="variable">$http_referer</span>&quot; &#x27;</span></span><br><span class="line">        <span class="string">&#x27;&quot;<span class="variable">$http_user_agent</span>&quot; <span class="variable">$http_x_forwarded_for</span>&#x27;</span>;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#定义本虚拟主机的访问日志</span></span><br><span class="line">        <span class="attribute">access_log</span>  /usr/local/nginx/logs/host.access.log  main;</span><br><span class="line">        <span class="attribute">access_log</span>  /usr/local/nginx/logs/host.access.<span class="number">404</span>.log  log404;</span><br><span class="line">         </span><br><span class="line">        <span class="comment">#对 &quot;/connect-controller&quot; 启用反向代理</span></span><br><span class="line">        <span class="attribute">location</span> /connect-controller &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://127.0.0.1:88; <span class="comment">#请注意此处端口号不能与虚拟主机监听的端口号一样（也就是server监听的端口）</span></span><br><span class="line">            <span class="attribute">proxy_redirect</span> <span class="literal">off</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">             </span><br><span class="line">            <span class="comment">#后端的Web服务器可以通过X-Forwarded-For获取用户真实IP</span></span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">             </span><br><span class="line">            <span class="comment">#以下是一些反向代理的配置，可选。</span></span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#允许客户端请求的最大单文件字节数</span></span><br><span class="line">            <span class="attribute">client_max_body_size</span> <span class="number">10m</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#缓冲区代理缓冲用户端请求的最大字节数，</span></span><br><span class="line">            <span class="comment">#如果把它设置为比较大的数值，例如256k，那么，无论使用firefox还是IE浏览器，来提交任意小于256k的图片，都很正常。如果注释该指令，使用默认的client_body_buffer_size设置，也就是操作系统页面大小的两倍，8k或者16k，问题就出现了。</span></span><br><span class="line">            <span class="comment">#无论使用firefox4.0还是IE8.0，提交一个比较大，200k左右的图片，都返回500 Internal Server Error错误</span></span><br><span class="line">            <span class="attribute">client_body_buffer_size</span> <span class="number">128k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#表示使nginx阻止HTTP应答代码为400或者更高的应答。</span></span><br><span class="line">            <span class="attribute">proxy_intercept_errors</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#后端服务器连接的超时时间_发起握手等候响应超时时间</span></span><br><span class="line">            <span class="comment">#nginx跟后端服务器连接超时时间(代理连接超时)</span></span><br><span class="line">            <span class="attribute">proxy_connect_timeout</span> <span class="number">90</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#后端服务器数据回传时间(代理发送超时)</span></span><br><span class="line">            <span class="comment">#后端服务器数据回传时间_就是在规定时间之内后端服务器必须传完所有的数据</span></span><br><span class="line">            <span class="attribute">proxy_send_timeout</span> <span class="number">90</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#连接成功后，后端服务器响应时间(代理接收超时)</span></span><br><span class="line">            <span class="comment">#连接成功后_等候后端服务器响应时间_其实已经进入后端的排队之中等候处理（也可以说是后端服务器处理请求的时间）</span></span><br><span class="line">            <span class="attribute">proxy_read_timeout</span> <span class="number">90</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#设置代理服务器（nginx）保存用户头信息的缓冲区大小</span></span><br><span class="line">            <span class="comment">#设置从被代理服务器读取的第一部分应答的缓冲区大小，通常情况下这部分应答中包含一个小的应答头，默认情况下这个值的大小为指令proxy_buffers中指定的一个缓冲区的大小，不过可以将其设置为更小</span></span><br><span class="line">            <span class="attribute">proxy_buffer_size</span> <span class="number">4k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#proxy_buffers缓冲区，网页平均在32k以下的设置</span></span><br><span class="line">            <span class="comment">#设置用于读取应答（来自被代理服务器）的缓冲区数目和大小，默认情况也为分页大小，根据操作系统的不同可能是4k或者8k</span></span><br><span class="line">            <span class="attribute">proxy_buffers</span> <span class="number">4</span> <span class="number">32k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#高负荷下缓冲大小（proxy_buffers*2）</span></span><br><span class="line">            <span class="attribute">proxy_busy_buffers_size</span> <span class="number">64k</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">#设置在写入proxy_temp_path时数据的大小，预防一个工作进程在传递文件时阻塞太长</span></span><br><span class="line">            <span class="comment">#设定缓存文件夹大小，大于这个值，将从upstream服务器传</span></span><br><span class="line">            <span class="attribute">proxy_temp_file_write_size</span> <span class="number">64k</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#本地动静分离反向代理配置</span></span><br><span class="line">        <span class="comment">#所有jsp的页面均交由tomcat或resin处理</span></span><br><span class="line">        <span class="attribute">location</span> <span class="regexp">~ .(jsp|jspx|do)?$</span> &#123;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://127.0.0.1:8080;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>nginx</tag>
       </tags>
   </entry>
   <entry>
@@ -6745,25 +6745,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>修改Pip镜像源</title>
-    <url>/p/Modify-pip-mirror-source/</url>
-    <content><![CDATA[<p>修改pip镜像源</p>
-<a id="more"></a>
-<p>清华源：https://pypi.tuna.tsinghua.edu.cn/simple/</p>
-<p>豆瓣源：https://pypi.doubanio.com/simple/</p>
-<p>使用方法</p>
-<p>临时使用：可以在使用pip的时候加参数-i https://pypi.tuna.tsinghua.edu.cn/simple</p>
-<p>例如：<code>pip install numpy -i https://pypi.tuna.tsinghua.edu.cn/simple</code></p>
-<p>永久修改：linux下，修改 <code>~/.pip/pip.conf</code>，设置为以下内容：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
-<p>windows下，直接在user目录中创建一个pip目录，如：C:\.pip，新建文件pip.ini，内容如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>pip</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探Tkinter(一)</title>
     <url>/p/tkinter-tutorial-02/</url>
     <content><![CDATA[<p>基于 Python 的 Tkinter 常用于UI界面开发。</p>
@@ -6854,6 +6835,25 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>Tkinter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>修改Pip镜像源</title>
+    <url>/p/Modify-pip-mirror-source/</url>
+    <content><![CDATA[<p>修改pip镜像源</p>
+<a id="more"></a>
+<p>清华源：https://pypi.tuna.tsinghua.edu.cn/simple/</p>
+<p>豆瓣源：https://pypi.doubanio.com/simple/</p>
+<p>使用方法</p>
+<p>临时使用：可以在使用pip的时候加参数-i https://pypi.tuna.tsinghua.edu.cn/simple</p>
+<p>例如：<code>pip install numpy -i https://pypi.tuna.tsinghua.edu.cn/simple</code></p>
+<p>永久修改：linux下，修改 <code>~/.pip/pip.conf</code>，设置为以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
+<p>windows下，直接在user目录中创建一个pip目录，如：C:\.pip，新建文件pip.ini，内容如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>pip</tag>
       </tags>
   </entry>
   <entry>
@@ -7062,151 +7062,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>初探Docker(二)</title>
-    <url>/p/docker-tutorial-02/</url>
-    <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
-<p><strong>摘要：什么是 Dockerfile？</strong></p>
-<p>Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。</p>
-<p><strong>关键词：</strong>Dockerfile</p>
-<a id="more"></a>
-<h3 id="使用-dockerfile-定制镜像">使用 Dockerfile 定制镜像</h3>
-<h4 id="定制一个ubuntu镜像">定制一个ubuntu镜像</h4>
-<p>在一个空目录下，新建一个名为 Dockerfile 文件，并在文件内添加以下内容：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;这是一个本地构建的ubuntu:18.04镜像&#x27;</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="from-和-run-指令的作用">FROM 和 RUN 指令的作用</h4>
-<p><strong>FROM</strong>：定制的镜像都是基于 FROM 的镜像，这里的 <strong>ubuntu:18.04</strong>就是定制需要的基础镜像。后续的操作都是基于 ubuntu。</p>
-<p><strong>RUN</strong>：用于执行后面跟着的命令行命令。有以下两种格式：</p>
-<p>Shell格式</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> &lt;命令行命令&gt;</span></span><br><span class="line"><span class="comment"># &lt;命令行命令&gt; 等同于，在终端操作的 shell 命令。</span></span><br></pre></td></tr></table></figure>
-<p>Exec 格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> [<span class="string">&quot;可执行文件&quot;</span>, <span class="string">&quot;参数1&quot;</span>, <span class="string">&quot;参数2&quot;</span>]</span></span><br><span class="line"><span class="comment"># 例如：</span></span><br><span class="line"><span class="comment"># RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于 RUN ./test.php dev offline</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意</strong>：Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。</p>
-<p>​ 例如：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span></span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
-<p>​ 以上执行会创建 3 层镜像。可简化为以下格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget \</span></span><br><span class="line"><span class="bash">    &amp;&amp; wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span> \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
-<p>以 <strong>&amp;&amp;</strong> 符号连接命令，这样执行后，只会创建 1 层镜像。</p>
-<h4 id="开始构建镜像">开始构建镜像</h4>
-<p>切换到<code>Dockerfile</code> 文件的存放目录，执行以下命令，开始构建对象。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
-<p>以上示例，通过目录下的 Dockerfile 构建一个 <code>ubuntu:latest（镜像名称:镜像标签）</code>。</p>
-<p><strong>注：最后的 . 代表本次执行的上下文路径，下一节会介绍。</strong></p>
-<p><img src="image-20200718201119692.png" /></p>
-<p>以上说明已经构建成功。</p>
-<h4 id="上下文路径">上下文路径</h4>
-<p>上面提到 <strong>.</strong> 是上下文路径，那么什么是上下文路径呢？</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
-<p>上下文路径，是指 docker 在构建镜像，有时候想要使用到本机的文件（比如复制），docker build 命令得知这个路径后，会将路径下的所有内容打包。</p>
-<blockquote>
-<p>由于 docker 的运行模式是 C/S。我们本机是 C，docker 引擎是 S。实际的构建过程是在 docker 引擎下完成的，所以这个时候无法用到我们本机的文件。这就需要把我们本机的指定目录下的文件一起打包提供给 docker 引擎使用。</p>
-</blockquote>
-<p>如果未说明最后一个参数，那么默认上下文路径就是 Dockerfile 所在的位置。</p>
-<p><strong>注意：上下文路径下不要放无用的文件，因为会一起打包发送给 docker 引擎，如果文件过多会造成过程缓慢。</strong></p>
-<h3 id="指令详解">指令详解</h3>
-<h4 id="copy">COPY</h4>
-<p>复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径1&gt;...  &lt;目标路径&gt;</span><br><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] [<span class="string">&quot;&lt;源路径1&gt;&quot;</span>,...  <span class="string">&quot;&lt;目标路径&gt;&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>[--chown=:]</strong>：可选参数，用户改变复制到容器内文件的拥有者和属组。</p>
-<p><strong><源路径></strong>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">COPY</span><span class="bash"> hom* /mydir/</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> hom?.txt /mydir/</span></span><br></pre></td></tr></table></figure>
-<p><strong><目标路径></strong>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。</p>
-<h4 id="add">ADD</h4>
-<p>ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：</p>
-<ul>
-<li>ADD 的优点：在执行 <strong><源文件></strong> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <strong><目标路径></strong>。</li>
-<li>ADD 的缺点：在不解压的前提下，无法复制 tar 压缩文件。会令镜像构建缓存失效，从而可能会令镜像构建变得比较缓慢。具体是否使用，可以根据是否需要自动解压来决定。</li>
-</ul>
-<h4 id="cmd">CMD</h4>
-<p>类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:</p>
-<ul>
-<li>CMD 在docker run 时运行。</li>
-<li>RUN 是在 docker build 时运行。</li>
-</ul>
-<p><strong>作用</strong>：为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD 指令指定的程序可被 docker run 命令行参数中指定要运行的程序所覆盖。</p>
-<p><strong>注意：如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。</strong></p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> &lt;shell 命令&gt; </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;可执行文件或命令&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...] </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]  <span class="comment"># 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数</span></span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>推荐使用第二种格式，执行过程比较明确。第一种格式实际上在运行的过程中也会自动转换成第二种格式运行，并且默认可执行文件是 sh。</p>
-</blockquote>
-<h4 id="entrypoint">ENTRYPOINT</h4>
-<p>类似于 CMD 指令，但其不会被 <code>docker run</code> 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。</p>
-<p>但是, 如果运行 <code>docker run</code> 时使用了 <code>--entrypoint</code> 选项，此选项的参数可当作要运行的程序覆盖 ENTRYPOINT 指令指定的程序。</p>
-<p><strong>优点</strong>：在执行 <code>docker run</code> 的时候可以指定 ENTRYPOINT 运行所需的参数。</p>
-<p><strong>注意</strong>：如果 Dockerfile 中如果存在多个 ENTRYPOINT 指令，仅最后一个生效。</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">&quot;&lt;executeable&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]</span></span><br></pre></td></tr></table></figure>
-<p>可以搭配 CMD 命令使用：一般是变参才会使用 CMD ，这里的 CMD 等于是在给 ENTRYPOINT 传参，以下示例会提到。</p>
-<p>示例：</p>
-<p>假设已通过 Dockerfile 构建了 <strong>nginx:test</strong> 镜像：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM nginx</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;nginx&quot;, &quot;-c&quot;] # 定参</span><br><span class="line">CMD [&quot;&#x2F;etc&#x2F;nginx&#x2F;nginx.conf&quot;] # 变参 </span><br></pre></td></tr></table></figure>
-<p>1、不传参运行</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
-<p>容器内会默认运行以下命令，启动主进程。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-<p>2、传参运行</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span> -c /etc/nginx/new.conf</span></span><br></pre></td></tr></table></figure>
-<p>容器内会默认运行以下命令，启动主进程(/etc/nginx/new.conf:假设容器内已有此文件)</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/new.conf</span><br></pre></td></tr></table></figure>
-<h4 id="env">ENV</h4>
-<p>设置环境变量，定义了环境变量，那么在后续的指令中，就可以使用这个环境变量。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> &lt;key&gt; &lt;value&gt;</span><br><span class="line"><span class="keyword">ENV</span> &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</span><br></pre></td></tr></table></figure>
-<p>以下示例设置 NODE_VERSION = 7.2.0 ， 在后续的指令中可以通过 $NODE_VERSION 引用：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> NODE_VERSION <span class="number">7.2</span>.<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/node-v<span class="variable">$NODE_VERSION</span>-linux-x64.tar.xz&quot;</span> \</span></span><br><span class="line"><span class="bash">  &amp;&amp; curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/SHASUMS256.txt.asc&quot;</span></span></span><br></pre></td></tr></table></figure>
-<h4 id="arg">ARG</h4>
-<p>构建参数，与 ENV 作用一致。不过作用域不一样。ARG 设置的环境变量仅对 Dockerfile 内有效，也就是说只有 <code>docker build</code> 的过程中有效，构建好的镜像内不存在此环境变量。</p>
-<p>构建命令 <code>docker build</code> 中可以用 <code>--build-arg &lt;参数名&gt;=&lt;值&gt;</code> 来覆盖。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ARG</span> &lt;参数名&gt;[=&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
-<h4 id="volume">VOLUME</h4>
-<p>定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。</p>
-<p>作用：</p>
-<ul>
-<li>避免重要的数据，因容器重启而丢失，这是非常致命的。</li>
-<li>避免容器不断变大。</li>
-</ul>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">VOLUME</span><span class="bash"> [<span class="string">&quot;&lt;路径1&gt;&quot;</span>, <span class="string">&quot;&lt;路径2&gt;&quot;</span>...]</span></span><br><span class="line"><span class="keyword">VOLUME</span><span class="bash"> &lt;路径&gt;</span></span><br></pre></td></tr></table></figure>
-<p>在启动容器 docker run 的时候，我们可以通过 -v 参数修改挂载点。</p>
-<p><strong>注意：</strong></p>
-<ol type="1">
-<li>通过<code>docker run</code>命令的<code>-v</code>标识创建的挂载点只能对创建的容器有效。</li>
-<li>通过 Dockerfile 的 VOLUME 指令可以在镜像中创建挂载点，这样只要通过该镜像创建的容器都有了挂载点。</li>
-<li>通过 VOLUME 指令创建的挂载点，无法指定主机上对应的目录，是自动生成的。</li>
-<li><code>docker run</code>中使用 <code>--volumes-from</code>标记的镜像可以共享<strong>匿名数据卷</strong>。镜像可以是同一个镜像，也可以是不同镜像。</li>
-</ol>
-<h4 id="expose">EXPOSE</h4>
-<p>暴露容器的端口。</p>
-<p>作用：</p>
-<ul>
-<li>帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。</li>
-<li>在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 的端口。</li>
-</ul>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">EXPOSE</span> &lt;端口<span class="number">1</span>&gt; [&lt;端口<span class="number">2</span>&gt;...]</span><br></pre></td></tr></table></figure>
-<h4 id="workdir">WORKDIR</h4>
-<p>指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。</p>
-<p>docker build 构建镜像过程中的，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> &lt;工作目录路径&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="user">USER</h4>
-<p>用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。</p>
-<p>格式：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br></pre></td></tr></table></figure>
-<h4 id="healthcheck">HEALTHCHECK</h4>
-<p>用于指定某个程序或者指令来监控 docker 容器服务的运行状态。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt;：设置检查容器健康状况的命令</span></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> NONE：如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt; : 这边 CMD 后面跟随的命令使用，可以参考 CMD 的用法。</span></span><br></pre></td></tr></table></figure>
-<h4 id="onbuild">ONBUILD</h4>
-<p>用于延迟构建命令的执行。简单的说，就是 Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这是执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。</p>
-<p>格式：</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ONBUILD</span> &lt;其它指令&gt;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探docker(三)</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -7392,6 +7247,151 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>初探Docker(二)</title>
+    <url>/p/docker-tutorial-02/</url>
+    <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
+<p><strong>摘要：什么是 Dockerfile？</strong></p>
+<p>Dockerfile 是一个用来构建镜像的文本文件，文本内容包含了一条条构建镜像所需的指令和说明。</p>
+<p><strong>关键词：</strong>Dockerfile</p>
+<a id="more"></a>
+<h3 id="使用-dockerfile-定制镜像">使用 Dockerfile 定制镜像</h3>
+<h4 id="定制一个ubuntu镜像">定制一个ubuntu镜像</h4>
+<p>在一个空目录下，新建一个名为 Dockerfile 文件，并在文件内添加以下内容：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;这是一个本地构建的ubuntu:18.04镜像&#x27;</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="from-和-run-指令的作用">FROM 和 RUN 指令的作用</h4>
+<p><strong>FROM</strong>：定制的镜像都是基于 FROM 的镜像，这里的 <strong>ubuntu:18.04</strong>就是定制需要的基础镜像。后续的操作都是基于 ubuntu。</p>
+<p><strong>RUN</strong>：用于执行后面跟着的命令行命令。有以下两种格式：</p>
+<p>Shell格式</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> &lt;命令行命令&gt;</span></span><br><span class="line"><span class="comment"># &lt;命令行命令&gt; 等同于，在终端操作的 shell 命令。</span></span><br></pre></td></tr></table></figure>
+<p>Exec 格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="bash"> [<span class="string">&quot;可执行文件&quot;</span>, <span class="string">&quot;参数1&quot;</span>, <span class="string">&quot;参数2&quot;</span>]</span></span><br><span class="line"><span class="comment"># 例如：</span></span><br><span class="line"><span class="comment"># RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于 RUN ./test.php dev offline</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。</p>
+<p>​ 例如：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span></span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>​ 以上执行会创建 3 层镜像。可简化为以下格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> centos</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> yum install wget \</span></span><br><span class="line"><span class="bash">    &amp;&amp; wget -O redis.tar.gz <span class="string">&quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;</span> \</span></span><br><span class="line"><span class="bash">    &amp;&amp; tar -xvf redis.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>以 <strong>&amp;&amp;</strong> 符号连接命令，这样执行后，只会创建 1 层镜像。</p>
+<h4 id="开始构建镜像">开始构建镜像</h4>
+<p>切换到<code>Dockerfile</code> 文件的存放目录，执行以下命令，开始构建对象。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
+<p>以上示例，通过目录下的 Dockerfile 构建一个 <code>ubuntu:latest（镜像名称:镜像标签）</code>。</p>
+<p><strong>注：最后的 . 代表本次执行的上下文路径，下一节会介绍。</strong></p>
+<p><img src="image-20200718201119692.png" /></p>
+<p>以上说明已经构建成功。</p>
+<h4 id="上下文路径">上下文路径</h4>
+<p>上面提到 <strong>.</strong> 是上下文路径，那么什么是上下文路径呢？</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker build -t ubuntu:latest .</span><br></pre></td></tr></table></figure>
+<p>上下文路径，是指 docker 在构建镜像，有时候想要使用到本机的文件（比如复制），docker build 命令得知这个路径后，会将路径下的所有内容打包。</p>
+<blockquote>
+<p>由于 docker 的运行模式是 C/S。我们本机是 C，docker 引擎是 S。实际的构建过程是在 docker 引擎下完成的，所以这个时候无法用到我们本机的文件。这就需要把我们本机的指定目录下的文件一起打包提供给 docker 引擎使用。</p>
+</blockquote>
+<p>如果未说明最后一个参数，那么默认上下文路径就是 Dockerfile 所在的位置。</p>
+<p><strong>注意：上下文路径下不要放无用的文件，因为会一起打包发送给 docker 引擎，如果文件过多会造成过程缓慢。</strong></p>
+<h3 id="指令详解">指令详解</h3>
+<h4 id="copy">COPY</h4>
+<p>复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径1&gt;...  &lt;目标路径&gt;</span><br><span class="line">COPY [--chown=&lt;user&gt;:&lt;group&gt;] [<span class="string">&quot;&lt;源路径1&gt;&quot;</span>,...  <span class="string">&quot;&lt;目标路径&gt;&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>[--chown=:]</strong>：可选参数，用户改变复制到容器内文件的拥有者和属组。</p>
+<p><strong><源路径></strong>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">COPY</span><span class="bash"> hom* /mydir/</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> hom?.txt /mydir/</span></span><br></pre></td></tr></table></figure>
+<p><strong><目标路径></strong>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。</p>
+<h4 id="add">ADD</h4>
+<p>ADD 指令和 COPY 的使用格式一致（同样需求下，官方推荐使用 COPY）。功能也类似，不同之处如下：</p>
+<ul>
+<li>ADD 的优点：在执行 <strong><源文件></strong> 为 tar 压缩文件的话，压缩格式为 gzip, bzip2 以及 xz 的情况下，会自动复制并解压到 <strong><目标路径></strong>。</li>
+<li>ADD 的缺点：在不解压的前提下，无法复制 tar 压缩文件。会令镜像构建缓存失效，从而可能会令镜像构建变得比较缓慢。具体是否使用，可以根据是否需要自动解压来决定。</li>
+</ul>
+<h4 id="cmd">CMD</h4>
+<p>类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:</p>
+<ul>
+<li>CMD 在docker run 时运行。</li>
+<li>RUN 是在 docker build 时运行。</li>
+</ul>
+<p><strong>作用</strong>：为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD 指令指定的程序可被 docker run 命令行参数中指定要运行的程序所覆盖。</p>
+<p><strong>注意：如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。</strong></p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CMD</span><span class="bash"> &lt;shell 命令&gt; </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;可执行文件或命令&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...] </span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]  <span class="comment"># 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>推荐使用第二种格式，执行过程比较明确。第一种格式实际上在运行的过程中也会自动转换成第二种格式运行，并且默认可执行文件是 sh。</p>
+</blockquote>
+<h4 id="entrypoint">ENTRYPOINT</h4>
+<p>类似于 CMD 指令，但其不会被 <code>docker run</code> 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。</p>
+<p>但是, 如果运行 <code>docker run</code> 时使用了 <code>--entrypoint</code> 选项，此选项的参数可当作要运行的程序覆盖 ENTRYPOINT 指令指定的程序。</p>
+<p><strong>优点</strong>：在执行 <code>docker run</code> 的时候可以指定 ENTRYPOINT 运行所需的参数。</p>
+<p><strong>注意</strong>：如果 Dockerfile 中如果存在多个 ENTRYPOINT 指令，仅最后一个生效。</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">&quot;&lt;executeable&gt;&quot;</span>,<span class="string">&quot;&lt;param1&gt;&quot;</span>,<span class="string">&quot;&lt;param2&gt;&quot;</span>,...]</span></span><br></pre></td></tr></table></figure>
+<p>可以搭配 CMD 命令使用：一般是变参才会使用 CMD ，这里的 CMD 等于是在给 ENTRYPOINT 传参，以下示例会提到。</p>
+<p>示例：</p>
+<p>假设已通过 Dockerfile 构建了 <strong>nginx:test</strong> 镜像：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM nginx</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;nginx&quot;, &quot;-c&quot;] # 定参</span><br><span class="line">CMD [&quot;&#x2F;etc&#x2F;nginx&#x2F;nginx.conf&quot;] # 变参 </span><br></pre></td></tr></table></figure>
+<p>1、不传参运行</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span></span></span><br></pre></td></tr></table></figure>
+<p>容器内会默认运行以下命令，启动主进程。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>2、传参运行</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">docker <span class="keyword">run</span><span class="bash">  nginx:<span class="built_in">test</span> -c /etc/nginx/new.conf</span></span><br></pre></td></tr></table></figure>
+<p>容器内会默认运行以下命令，启动主进程(/etc/nginx/new.conf:假设容器内已有此文件)</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nginx -c /etc/nginx/new.conf</span><br></pre></td></tr></table></figure>
+<h4 id="env">ENV</h4>
+<p>设置环境变量，定义了环境变量，那么在后续的指令中，就可以使用这个环境变量。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> &lt;key&gt; &lt;value&gt;</span><br><span class="line"><span class="keyword">ENV</span> &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...</span><br></pre></td></tr></table></figure>
+<p>以下示例设置 NODE_VERSION = 7.2.0 ， 在后续的指令中可以通过 $NODE_VERSION 引用：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> NODE_VERSION <span class="number">7.2</span>.<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/node-v<span class="variable">$NODE_VERSION</span>-linux-x64.tar.xz&quot;</span> \</span></span><br><span class="line"><span class="bash">  &amp;&amp; curl -SLO <span class="string">&quot;https://nodejs.org/dist/v<span class="variable">$NODE_VERSION</span>/SHASUMS256.txt.asc&quot;</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="arg">ARG</h4>
+<p>构建参数，与 ENV 作用一致。不过作用域不一样。ARG 设置的环境变量仅对 Dockerfile 内有效，也就是说只有 <code>docker build</code> 的过程中有效，构建好的镜像内不存在此环境变量。</p>
+<p>构建命令 <code>docker build</code> 中可以用 <code>--build-arg &lt;参数名&gt;=&lt;值&gt;</code> 来覆盖。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ARG</span> &lt;参数名&gt;[=&lt;默认值&gt;]</span><br></pre></td></tr></table></figure>
+<h4 id="volume">VOLUME</h4>
+<p>定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷。</p>
+<p>作用：</p>
+<ul>
+<li>避免重要的数据，因容器重启而丢失，这是非常致命的。</li>
+<li>避免容器不断变大。</li>
+</ul>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">VOLUME</span><span class="bash"> [<span class="string">&quot;&lt;路径1&gt;&quot;</span>, <span class="string">&quot;&lt;路径2&gt;&quot;</span>...]</span></span><br><span class="line"><span class="keyword">VOLUME</span><span class="bash"> &lt;路径&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在启动容器 docker run 的时候，我们可以通过 -v 参数修改挂载点。</p>
+<p><strong>注意：</strong></p>
+<ol type="1">
+<li>通过<code>docker run</code>命令的<code>-v</code>标识创建的挂载点只能对创建的容器有效。</li>
+<li>通过 Dockerfile 的 VOLUME 指令可以在镜像中创建挂载点，这样只要通过该镜像创建的容器都有了挂载点。</li>
+<li>通过 VOLUME 指令创建的挂载点，无法指定主机上对应的目录，是自动生成的。</li>
+<li><code>docker run</code>中使用 <code>--volumes-from</code>标记的镜像可以共享<strong>匿名数据卷</strong>。镜像可以是同一个镜像，也可以是不同镜像。</li>
+</ol>
+<h4 id="expose">EXPOSE</h4>
+<p>暴露容器的端口。</p>
+<p>作用：</p>
+<ul>
+<li>帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射。</li>
+<li>在运行时使用随机端口映射时，也就是 docker run -P 时，会自动随机映射 EXPOSE 的端口。</li>
+</ul>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">EXPOSE</span> &lt;端口<span class="number">1</span>&gt; [&lt;端口<span class="number">2</span>&gt;...]</span><br></pre></td></tr></table></figure>
+<h4 id="workdir">WORKDIR</h4>
+<p>指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。</p>
+<p>docker build 构建镜像过程中的，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> &lt;工作目录路径&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="user">USER</h4>
+<p>用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户（用户和用户组必须提前已经存在）。</p>
+<p>格式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USER &lt;用户名&gt;[:&lt;用户组&gt;]</span><br></pre></td></tr></table></figure>
+<h4 id="healthcheck">HEALTHCHECK</h4>
+<p>用于指定某个程序或者指令来监控 docker 容器服务的运行状态。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt;：设置检查容器健康状况的命令</span></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> NONE：如果基础镜像有健康检查指令，使用这行可以屏蔽掉其健康检查指令</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">HEALTHCHECK</span><span class="bash"> [选项] CMD &lt;命令&gt; : 这边 CMD 后面跟随的命令使用，可以参考 CMD 的用法。</span></span><br></pre></td></tr></table></figure>
+<h4 id="onbuild">ONBUILD</h4>
+<p>用于延迟构建命令的执行。简单的说，就是 Dockerfile 里用 ONBUILD 指定的命令，在本次构建镜像的过程中不会执行（假设镜像为 test-build）。当有新的 Dockerfile 使用了之前构建的镜像 FROM test-build ，这是执行新镜像的 Dockerfile 构建时候，会执行 test-build 的 Dockerfile 里的 ONBUILD 指定的命令。</p>
+<p>格式：</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ONBUILD</span> &lt;其它指令&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>初探httprouter</title>
     <url>/p/httprouter-tutorial-01/</url>
     <content><![CDATA[<p>httprouter 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
@@ -7475,6 +7475,41 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>heroku</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<a id="more"></a>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span> // 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -7594,41 +7629,6 @@ y=x^2e^x
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convertBST</span><span class="params">(root *TreeNode)</span> *<span class="title">TreeNode</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> root != <span class="literal">nil</span> &#123;</span><br><span class="line">        convertBST(root.Right)</span><br><span class="line">        sum += root.Val</span><br><span class="line">        root.Val = sum</span><br><span class="line">        convertBST(root.Left)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> root</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="拓展">拓展</h4>
 <p>递归函数是否需要返回值的问题？</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<a id="more"></a>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span> // 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7960,6 +7960,45 @@ t≥times[i],&amp; i=N-1
       </tags>
   </entry>
   <entry>
+    <title>力扣每日一题之适龄的朋友</title>
+    <url>/p/friends-of-appropriate-ages/</url>
+    <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
+<p>如果下述任意一个条件为真，那么用户 x 将不会向用户 y（x != y）发送好友请求：</p>
+<ul>
+<li>age[y] &lt;= 0.5 * age[x] + 7</li>
+<li>age[y] &gt; age[x]</li>
+<li>age[y] &gt; 100 &amp;&amp; age[x] &lt; 100 否则，x 将会向 y 发送一条好友请求。</li>
+</ul>
+<p>注意，如果 x 向 y 发送一条好友请求，y 不必也向 x 发送一条好友请求。另外，用户不会向自己发送好友请求。</p>
+<p>返回在该社交媒体网站上产生的好友请求总数。</p>
+<a id="more"></a>
+<p>示例 1：</p>
+<p>输入：ages = [16,16] 输出：2 解释：2 人互发好友请求。</p>
+<p>示例 2：</p>
+<p>输入：ages = [16,17,18] 输出：2 解释：产生的好友请求为 17 -&gt; 16 ，18 -&gt; 17</p>
+<p>示例 3：</p>
+<p>输入：ages = [20,30,100,110,120] 输出：3 解释：产生的好友请求为 110 -&gt; 100 ，120 -&gt; 110 ，120 -&gt; 100</p>
+<h2 id="方法一排序双指针">方法一：排序+双指针</h2>
+<p>观察题目中给出的三个条件：</p>
+<p><img src="image-20211228131642378.png" /></p>
+<p>可知条件3是蕴含条件2中的，即如果满足条件3那么也就满足条件2。因此当条件12均不满足时，用户x就会向用户y发送好友请求。</p>
+<p>用户y需要满足： <span class="math display">\[
+0.5 \times ages[x]+7 &lt; ages[y] \leq age[x]
+\]</span> 当<span class="math inline">\(age[x] \leq 14\)</span>时，不存在满足要求的ages[y]，因此我们只需要考虑<span class="math inline">\(ages[y] \geq 15\)</span>的情况，此时满足要求的<span class="math inline">\(ages[y]\)</span>的范围：<span class="math inline">\((0.5 \times ages[x]+7, age[x]]\)</span>。</p>
+<p>当<span class="math inline">\(age[x]\)</span>增加时，上述区间的左右边界均<strong>单调递增</strong>，因此如果我们将数组的<span class="math inline">\(ages\)</span>进行升序排序，那么就可以在遍历<span class="math inline">\(ages[x]\)</span>的同时，使用两个指针left和right维护满足要求的左右边界。当x向后移动一个位置时：</p>
+<ul>
+<li>如果左边界指针left指向的元素<strong>不满足</strong><span class="math inline">\(ages[left] &gt; 0.5 \ times ages[x] + 7\)</span>，那么就将左边界向右移动一个位置；</li>
+<li>如果右边界指针right指向的下一个元素<strong>满足</strong><span class="math inline">\(ages[right+1] \geq ages[x]\)</span>，那么就将右边界向右移动一个位置；</li>
+</ul>
+<p>这样一来，<span class="math inline">\([left, right]\)</span>就是满足要求的y的下标。需要注意的是，<span class="math inline">\(x\)</span>本身一定在<span class="math inline">\([left, right]\)</span>区间内，因此<span class="math inline">\(x\)</span>发送的好友请求数，即为<span class="math inline">\([left, right]\)</span>区间的长度-1.</p>
+<p>我们将每一个x对应的<span class="math inline">\([left, right]\)</span>区间的长度减去1进行累加，就可以得到最后的答案。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">numFriendRequests</span><span class="params">(ages []<span class="keyword">int</span>)</span> <span class="params">(ans <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        sort.Ints(ages)</span><br><span class="line">        left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> _, age := <span class="keyword">range</span> ages &#123;</span><br><span class="line">            <span class="keyword">if</span> age &lt; <span class="number">15</span> &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> ages[left]*<span class="number">2</span> &lt;= age+<span class="number">14</span> &#123;</span><br><span class="line">                left ++</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> right+<span class="number">1</span> &lt; <span class="built_in">len</span>(ages) &amp;&amp; ages[right+<span class="number">1</span>] &lt;= age &#123;</span><br><span class="line">                right ++</span><br><span class="line">            &#125;</span><br><span class="line">            ans += right - left</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之课程表Ⅲ</title>
     <url>/p/course-schedule-iii/</url>
     <content><![CDATA[<p>这里有<code>n</code>门不同的在线课程，按<code>1</code>到<code>n</code>编号。给你一个数组<code>courses</code>，其中<code>courses[i] = [durationi, lastDayi]</code>表示第<code>i</code>门课将会持续上<code>durationi</code>天课，并且必须不晚于<code>lastDayi</code>的时候完成。</p>
@@ -8011,45 +8050,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 </ul>
 <p>在遍历完成之后，优先队列中包含的元素个数即为答案。</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">scheduleCourse</span><span class="params">(courses [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    sort.Slice(courses, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> courses[i][<span class="number">1</span>] &lt; courses[j][<span class="number">1</span>]</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    h := &amp;Heap&#123;&#125;</span><br><span class="line">    total := <span class="number">0</span> <span class="comment">// 优先队列中所有课程的总时间</span></span><br><span class="line">    <span class="keyword">for</span> _, course := <span class="keyword">range</span> courses &#123;</span><br><span class="line">        <span class="keyword">if</span> t := course[<span class="number">0</span>]; total+t &lt;= course[<span class="number">1</span>] &#123;</span><br><span class="line">            total += t</span><br><span class="line">            heap.Push(h, t)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> h.Len() &gt; <span class="number">0</span> &amp;&amp; t &lt; h.IntSlice[<span class="number">0</span>] &#123;</span><br><span class="line">            total += t - h.IntSlice[<span class="number">0</span>]</span><br><span class="line">            h.IntSlice[<span class="number">0</span>] = t</span><br><span class="line">            heap.Fix(h, <span class="number">0</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h.Len()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Heap <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h Heap)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> h.IntSlice[i] &gt; h.IntSlice[j]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Push</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    h.IntSlice = <span class="built_in">append</span>(h.IntSlice, x.(<span class="keyword">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">    a := h.IntSlice</span><br><span class="line">    x := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    h.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣每日一题之适龄的朋友</title>
-    <url>/p/friends-of-appropriate-ages/</url>
-    <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
-<p>如果下述任意一个条件为真，那么用户 x 将不会向用户 y（x != y）发送好友请求：</p>
-<ul>
-<li>age[y] &lt;= 0.5 * age[x] + 7</li>
-<li>age[y] &gt; age[x]</li>
-<li>age[y] &gt; 100 &amp;&amp; age[x] &lt; 100 否则，x 将会向 y 发送一条好友请求。</li>
-</ul>
-<p>注意，如果 x 向 y 发送一条好友请求，y 不必也向 x 发送一条好友请求。另外，用户不会向自己发送好友请求。</p>
-<p>返回在该社交媒体网站上产生的好友请求总数。</p>
-<a id="more"></a>
-<p>示例 1：</p>
-<p>输入：ages = [16,16] 输出：2 解释：2 人互发好友请求。</p>
-<p>示例 2：</p>
-<p>输入：ages = [16,17,18] 输出：2 解释：产生的好友请求为 17 -&gt; 16 ，18 -&gt; 17</p>
-<p>示例 3：</p>
-<p>输入：ages = [20,30,100,110,120] 输出：3 解释：产生的好友请求为 110 -&gt; 100 ，120 -&gt; 110 ，120 -&gt; 100</p>
-<h2 id="方法一排序双指针">方法一：排序+双指针</h2>
-<p>观察题目中给出的三个条件：</p>
-<p><img src="image-20211228131642378.png" /></p>
-<p>可知条件3是蕴含条件2中的，即如果满足条件3那么也就满足条件2。因此当条件12均不满足时，用户x就会向用户y发送好友请求。</p>
-<p>用户y需要满足： <span class="math display">\[
-0.5 \times ages[x]+7 &lt; ages[y] \leq age[x]
-\]</span> 当<span class="math inline">\(age[x] \leq 14\)</span>时，不存在满足要求的ages[y]，因此我们只需要考虑<span class="math inline">\(ages[y] \geq 15\)</span>的情况，此时满足要求的<span class="math inline">\(ages[y]\)</span>的范围：<span class="math inline">\((0.5 \times ages[x]+7, age[x]]\)</span>。</p>
-<p>当<span class="math inline">\(age[x]\)</span>增加时，上述区间的左右边界均<strong>单调递增</strong>，因此如果我们将数组的<span class="math inline">\(ages\)</span>进行升序排序，那么就可以在遍历<span class="math inline">\(ages[x]\)</span>的同时，使用两个指针left和right维护满足要求的左右边界。当x向后移动一个位置时：</p>
-<ul>
-<li>如果左边界指针left指向的元素<strong>不满足</strong><span class="math inline">\(ages[left] &gt; 0.5 \ times ages[x] + 7\)</span>，那么就将左边界向右移动一个位置；</li>
-<li>如果右边界指针right指向的下一个元素<strong>满足</strong><span class="math inline">\(ages[right+1] \geq ages[x]\)</span>，那么就将右边界向右移动一个位置；</li>
-</ul>
-<p>这样一来，<span class="math inline">\([left, right]\)</span>就是满足要求的y的下标。需要注意的是，<span class="math inline">\(x\)</span>本身一定在<span class="math inline">\([left, right]\)</span>区间内，因此<span class="math inline">\(x\)</span>发送的好友请求数，即为<span class="math inline">\([left, right]\)</span>区间的长度-1.</p>
-<p>我们将每一个x对应的<span class="math inline">\([left, right]\)</span>区间的长度减去1进行累加，就可以得到最后的答案。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">numFriendRequests</span><span class="params">(ages []<span class="keyword">int</span>)</span> <span class="params">(ans <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        sort.Ints(ages)</span><br><span class="line">        left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> _, age := <span class="keyword">range</span> ages &#123;</span><br><span class="line">            <span class="keyword">if</span> age &lt; <span class="number">15</span> &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> ages[left]*<span class="number">2</span> &lt;= age+<span class="number">14</span> &#123;</span><br><span class="line">                left ++</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> right+<span class="number">1</span> &lt; <span class="built_in">len</span>(ages) &amp;&amp; ages[right+<span class="number">1</span>] &lt;= age &#123;</span><br><span class="line">                right ++</span><br><span class="line">            &#125;</span><br><span class="line">            ans += right - left</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -8156,29 +8156,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之链表相交</title>
-    <url>/p/intersection-of-two-linked-lists-lcci/</url>
-    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Intersected at &#39;8&#39;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
-<ul>
-<li>a + c + b = b + c + a</li>
-<li>若无交集，则a + b = b + a</li>
-</ul>
-<p><img src="image-20220216162953801.png" /></p>
-<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣题目类型之回溯法（一）</title>
     <url>/p/back-tracking-one/</url>
     <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
@@ -8214,6 +8191,62 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之链表相交</title>
+    <url>/p/intersection-of-two-linked-lists-lcci/</url>
+    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Intersected at &#39;8&#39;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
+<ul>
+<li>a + c + b = b + c + a</li>
+<li>若无交集，则a + b = b + a</li>
+</ul>
+<p><img src="image-20220216162953801.png" /></p>
+<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>奥卡姆剃刀和没有免费的午餐定理</title>
+    <url>/p/Occam&#39;s-razor-and-no-free-lunch-theorem/</url>
+    <content><![CDATA[<p>本文原载于<a href="https://imlogm.github.io/">https://imlogm.github.io</a>，转载请注明出处！</p>
+<p><strong>摘要</strong>：“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理。由于名字有点怪，所以初学者可能在理解上陷入误区。本文试图用简洁易懂的方式解释这两个原则和定理，并告诉大家它们的名字是怎么来的。</p>
+<p><strong>关键字</strong>：机器学习, 奥卡姆剃刀, 没有免费的午餐</p>
+<a id="more"></a>
+<p>“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理，很多书都会提到它们来提升逼格。不过，烦就烦在它们的名字取的有些不好理解，初学者望文生义就容易错误理解。其实，了解了它们名字的由来，这两个原则和定理是很容易想明白的，也不用去纠结如何证明它们，因为它们更接近哲学思想，而不是你会在实际项目中用到的公式。</p>
+<h4 id="奥卡姆剃刀occams-razor">奥卡姆剃刀（Occam’s razor）</h4>
+<p>“奥卡姆剃刀”其实并不是机器学习领域产生的定理，事实上，它是哲学领域的一个思想。这个思想说起来也很简单，7个字，<code>“简单的是最好的”</code>。</p>
+<p>相信大家不难理解这个哲学思想，比如在数学领域，大多数数学家认为“好的公式应当是简洁明了的”，就是“奥卡姆剃刀”的体现。</p>
+<p>这个思想我能理解，但为什么叫这么奇怪的名字？容易想到，“奥卡姆”是提出这个思想的人的名字；至于为什么叫“剃刀”是因为这个思想的提出，对封建旧思想来说是把锋利的剃刀，狠狠地剃除教会的旧思想。（具体是如何剃除旧思想的就不展开了）</p>
+<p>那这个思想是怎么应用在机器学习领域的呢？用下图就可以概括：</p>
+<p><img src="overfit.png" style="zoom:80%;" align="center"/></p>
+<p>了解机器学习的同学不难看出，上图表示的是过拟合问题，不了解的同学也不必担心，可以把上图想象成用曲线拟合几个点。</p>
+<p>那么问题来了，上图中，哪种拟合方式是比较好的呢？相信大多数人都会选择左小图的拟合方式。机器学习领域也通常认为左小图是比较好的，原因就是“奥卡姆剃刀”的思想，“简单的是最好的”。</p>
+<p>有些敢于挑战权威的同学可能会反驳，“怎么证明图1左小图是更简单的呢？我可以认为右小图更简单”。是的，这个问题周志华的西瓜书中也有提到，其实是没有办法说明哪种更简单。这也是哲学问题的通病，难以联系到实际中，往往会有多种解读。</p>
+<p>不过我们不用去纠结怎样才算“简单”，只要明白这个词是什么意思就可以了。</p>
+<p>可能还会有同学反驳，“我同意左小图是简单的，但万一实际情况中右小图才是更符合结果的拟合方式呢？”。这个想法也是对的，我们无法证明实际情况一定是左小图的拟合方式最好。这也就是下面“没有免费的午餐”定理要说明的。</p>
+<h4 id="没有免费的午餐定理no-free-lunch-nfl">“没有免费的午餐”定理（no free lunch, NFL）</h4>
+<p>这个定理的名字乍一看很唬人，也有很多初学者因为这个名字陷入了误区。我们可以先把名字放在一边，先看定理的内容。</p>
+<p>这个定理证明起来很复杂，一长串的数学公式，但说明白其实只要一句话，<code>“没有一种机器学习算法是适用于所有情况的”</code>。</p>
+<p>这也符合我们的直觉。举个例子吧，比如上图，假设上图的左小图是机器算法A给出的拟合曲线，上图的右小图是机器算法B给出的拟合曲线。我们就一定能说机器算法A比机器算法B更好吗？或者说左小图的拟合曲线一定比右小图更符合实际情况吗？都不能。“没有免费的午餐”定理证明了对于所有机器学习问题，机器算法A更好与机器算法B更好的概率是一样的。<code>更一般地说，对于所有机器学习问题，任何一种算法（包括瞎猜）的期望效果都是一样的</code>。</p>
+<p>那我们还学个啥？既然任何算法的期望效果和瞎猜一样，我们为什么还要学？</p>
+<p>注意，这个定理有个前提：“对于所有机器学习问题，且所有问题同等重要”。而我们实际情况不是这样，我们在实际中往往更关心的是一个特定的机器学习问题，对于特定的问题，特定的机器学习算法效果自然比瞎猜更好。还是上图的例子，虽然“没有免费的午餐”定理告诉我们：我们不能预计到底是左小图拟合更好还是右小图拟合更好，但聪明的你一定能想到：是好是坏，代入到具体问题中检验一下不就知道了。</p>
+<p>这个定理本质上就是告诉我们不要奢望能找到一种算法对所有问题都适用。这么说来，这个定理其实有点废话，因为我们面对的总是一个特定的问题，而不是所有问题。</p>
+<p>但是这个定理其实揭示了一个哲学思想，“有得必有失”，某一个机器学习算法在某个领域好用，在另外一个领域就有可能不好用，瞎猜在一些情况下不好用，但在某个特定的问题上会很好用。就像能量守恒定理，这里的能量增加，另外一边的能量就会减少。天上掉馅饼被你捡到了，这个时刻你很幸运，但是之后你就会倒霉。</p>
+<p>理解了上面一段话，也就明白了这个定理为什么取这么奇怪的名字。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -8287,39 +8320,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>奥卡姆剃刀和没有免费的午餐定理</title>
-    <url>/p/Occam&#39;s-razor-and-no-free-lunch-theorem/</url>
-    <content><![CDATA[<p>本文原载于<a href="https://imlogm.github.io/">https://imlogm.github.io</a>，转载请注明出处！</p>
-<p><strong>摘要</strong>：“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理。由于名字有点怪，所以初学者可能在理解上陷入误区。本文试图用简洁易懂的方式解释这两个原则和定理，并告诉大家它们的名字是怎么来的。</p>
-<p><strong>关键字</strong>：机器学习, 奥卡姆剃刀, 没有免费的午餐</p>
-<a id="more"></a>
-<p>“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理，很多书都会提到它们来提升逼格。不过，烦就烦在它们的名字取的有些不好理解，初学者望文生义就容易错误理解。其实，了解了它们名字的由来，这两个原则和定理是很容易想明白的，也不用去纠结如何证明它们，因为它们更接近哲学思想，而不是你会在实际项目中用到的公式。</p>
-<h4 id="奥卡姆剃刀occams-razor">奥卡姆剃刀（Occam’s razor）</h4>
-<p>“奥卡姆剃刀”其实并不是机器学习领域产生的定理，事实上，它是哲学领域的一个思想。这个思想说起来也很简单，7个字，<code>“简单的是最好的”</code>。</p>
-<p>相信大家不难理解这个哲学思想，比如在数学领域，大多数数学家认为“好的公式应当是简洁明了的”，就是“奥卡姆剃刀”的体现。</p>
-<p>这个思想我能理解，但为什么叫这么奇怪的名字？容易想到，“奥卡姆”是提出这个思想的人的名字；至于为什么叫“剃刀”是因为这个思想的提出，对封建旧思想来说是把锋利的剃刀，狠狠地剃除教会的旧思想。（具体是如何剃除旧思想的就不展开了）</p>
-<p>那这个思想是怎么应用在机器学习领域的呢？用下图就可以概括：</p>
-<p><img src="overfit.png" style="zoom:80%;" align="center"/></p>
-<p>了解机器学习的同学不难看出，上图表示的是过拟合问题，不了解的同学也不必担心，可以把上图想象成用曲线拟合几个点。</p>
-<p>那么问题来了，上图中，哪种拟合方式是比较好的呢？相信大多数人都会选择左小图的拟合方式。机器学习领域也通常认为左小图是比较好的，原因就是“奥卡姆剃刀”的思想，“简单的是最好的”。</p>
-<p>有些敢于挑战权威的同学可能会反驳，“怎么证明图1左小图是更简单的呢？我可以认为右小图更简单”。是的，这个问题周志华的西瓜书中也有提到，其实是没有办法说明哪种更简单。这也是哲学问题的通病，难以联系到实际中，往往会有多种解读。</p>
-<p>不过我们不用去纠结怎样才算“简单”，只要明白这个词是什么意思就可以了。</p>
-<p>可能还会有同学反驳，“我同意左小图是简单的，但万一实际情况中右小图才是更符合结果的拟合方式呢？”。这个想法也是对的，我们无法证明实际情况一定是左小图的拟合方式最好。这也就是下面“没有免费的午餐”定理要说明的。</p>
-<h4 id="没有免费的午餐定理no-free-lunch-nfl">“没有免费的午餐”定理（no free lunch, NFL）</h4>
-<p>这个定理的名字乍一看很唬人，也有很多初学者因为这个名字陷入了误区。我们可以先把名字放在一边，先看定理的内容。</p>
-<p>这个定理证明起来很复杂，一长串的数学公式，但说明白其实只要一句话，<code>“没有一种机器学习算法是适用于所有情况的”</code>。</p>
-<p>这也符合我们的直觉。举个例子吧，比如上图，假设上图的左小图是机器算法A给出的拟合曲线，上图的右小图是机器算法B给出的拟合曲线。我们就一定能说机器算法A比机器算法B更好吗？或者说左小图的拟合曲线一定比右小图更符合实际情况吗？都不能。“没有免费的午餐”定理证明了对于所有机器学习问题，机器算法A更好与机器算法B更好的概率是一样的。<code>更一般地说，对于所有机器学习问题，任何一种算法（包括瞎猜）的期望效果都是一样的</code>。</p>
-<p>那我们还学个啥？既然任何算法的期望效果和瞎猜一样，我们为什么还要学？</p>
-<p>注意，这个定理有个前提：“对于所有机器学习问题，且所有问题同等重要”。而我们实际情况不是这样，我们在实际中往往更关心的是一个特定的机器学习问题，对于特定的问题，特定的机器学习算法效果自然比瞎猜更好。还是上图的例子，虽然“没有免费的午餐”定理告诉我们：我们不能预计到底是左小图拟合更好还是右小图拟合更好，但聪明的你一定能想到：是好是坏，代入到具体问题中检验一下不就知道了。</p>
-<p>这个定理本质上就是告诉我们不要奢望能找到一种算法对所有问题都适用。这么说来，这个定理其实有点废话，因为我们面对的总是一个特定的问题，而不是所有问题。</p>
-<p>但是这个定理其实揭示了一个哲学思想，“有得必有失”，某一个机器学习算法在某个领域好用，在另外一个领域就有可能不好用，瞎猜在一些情况下不好用，但在某个特定的问题上会很好用。就像能量守恒定理，这里的能量增加，另外一边的能量就会减少。天上掉馅饼被你捡到了，这个时刻你很幸运，但是之后你就会倒霉。</p>
-<p>理解了上面一段话，也就明白了这个定理为什么取这么奇怪的名字。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -8405,6 +8405,41 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>安装autojump自动切换目录</title>
+    <url>/p/install-autojump-to-automatically-switch-directories/</url>
+    <content><![CDATA[<p>本文介绍了autojump的使用，使用autojump可以很方便地切换目录。</p>
+<p><strong>摘要</strong>：熟悉Linux 的小伙伴们都知道，在终端下需要使用命令<code>cd</code>切换目录。对于多层目录，还需要不停的用使用<code>cd</code>命令或者 Tab 键补齐，如果目录下文件夹过多，还需要使用<code>ls</code>查看当前目录下的文件。<a href="https://github.com/wting/autojump">autojump</a>是浏览文件系统的一种更快的方法。它通过维护命令行中最常用的目录的数据库来工作。autojump 是通过记录进入过的目录到数据库来实现的，所以必须是曾经进入过的目录才能跳转。</p>
+<p><strong>关键字</strong>：autojump</p>
+<a id="more"></a>
+<h4 id="linux下安装">Linux下安装</h4>
+<h5 id="源码安装">源码安装</h5>
+<p>克隆以下仓库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/wting/autojump.git</span><br></pre></td></tr></table></figure>
+<p>coding分流</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://e.coding.net/fly97/github-projects/autojump.git</span><br></pre></td></tr></table></figure>
+<p>执行安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> autojump</span><br><span class="line">chmod +x install.py</span><br><span class="line">./install.py</span><br></pre></td></tr></table></figure>
+<h5 id="fish-shell的设置">fish shell的设置</h5>
+<p>执行以下命令以创建fish shell的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;if test -f /root/.autojump/share/autojump/autojump.fish; . /root/.autojump/share/autojump/autojump.fish; end&quot;</span> &gt;&gt; ~/.config/fish/config.fish</span><br></pre></td></tr></table></figure>
+<h5 id="修改环境变量">修改环境变量</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export PATH=&quot;</span><span class="variable">$PATH</span>:/root/.autojump/bin<span class="string">&quot; &gt; /etc/profile</span></span><br></pre></td></tr></table></figure>
+<h5 id="执行以下命令检查是否正常运行">执行以下命令检查是否正常运行</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20200811140853462.png" /></p>
+<h4 id="常用命令">常用命令</h4>
+<h5 id="查看-autojump-存储的目录的状态">查看 <code>autojump</code> 存储的目录的状态</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -s</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200811142040440.png" /></p>
+<h5 id="查看使用帮助">查看使用帮助</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -h</span><br></pre></td></tr></table></figure>
+<p><img src="image-20200811142133380.png" /></p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>安装Fish自动匹配历史命令</title>
     <url>/p/install-fish-shell-to-automatically-match-historical-commands/</url>
     <content><![CDATA[<p>本文介绍了Fish的使用，使用Fish可以根据输入自动匹配历史命令。</p>
@@ -8448,41 +8483,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> fish_greeting</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
 <h4 id="其他配置">其他配置</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">alias</span> l <span class="string">&quot;ll&quot;</span></span><br><span class="line"><span class="built_in">alias</span> dir <span class="string">&quot;dde-file-manager . &amp;&quot;</span></span><br><span class="line"><span class="built_in">alias</span> docker <span class="string">&quot;sudo docker&quot;</span></span><br><span class="line"><span class="built_in">alias</span> apt <span class="string">&quot;sudo apt&quot;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>安装autojump自动切换目录</title>
-    <url>/p/install-autojump-to-automatically-switch-directories/</url>
-    <content><![CDATA[<p>本文介绍了autojump的使用，使用autojump可以很方便地切换目录。</p>
-<p><strong>摘要</strong>：熟悉Linux 的小伙伴们都知道，在终端下需要使用命令<code>cd</code>切换目录。对于多层目录，还需要不停的用使用<code>cd</code>命令或者 Tab 键补齐，如果目录下文件夹过多，还需要使用<code>ls</code>查看当前目录下的文件。<a href="https://github.com/wting/autojump">autojump</a>是浏览文件系统的一种更快的方法。它通过维护命令行中最常用的目录的数据库来工作。autojump 是通过记录进入过的目录到数据库来实现的，所以必须是曾经进入过的目录才能跳转。</p>
-<p><strong>关键字</strong>：autojump</p>
-<a id="more"></a>
-<h4 id="linux下安装">Linux下安装</h4>
-<h5 id="源码安装">源码安装</h5>
-<p>克隆以下仓库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/wting/autojump.git</span><br></pre></td></tr></table></figure>
-<p>coding分流</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://e.coding.net/fly97/github-projects/autojump.git</span><br></pre></td></tr></table></figure>
-<p>执行安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> autojump</span><br><span class="line">chmod +x install.py</span><br><span class="line">./install.py</span><br></pre></td></tr></table></figure>
-<h5 id="fish-shell的设置">fish shell的设置</h5>
-<p>执行以下命令以创建fish shell的配置文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;if test -f /root/.autojump/share/autojump/autojump.fish; . /root/.autojump/share/autojump/autojump.fish; end&quot;</span> &gt;&gt; ~/.config/fish/config.fish</span><br></pre></td></tr></table></figure>
-<h5 id="修改环境变量">修改环境变量</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export PATH=&quot;</span><span class="variable">$PATH</span>:/root/.autojump/bin<span class="string">&quot; &gt; /etc/profile</span></span><br></pre></td></tr></table></figure>
-<h5 id="执行以下命令检查是否正常运行">执行以下命令检查是否正常运行</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
-<p><img src="image-20200811140853462.png" /></p>
-<h4 id="常用命令">常用命令</h4>
-<h5 id="查看-autojump-存储的目录的状态">查看 <code>autojump</code> 存储的目录的状态</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -s</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200811142040440.png" /></p>
-<h5 id="查看使用帮助">查看使用帮助</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">j -h</span><br></pre></td></tr></table></figure>
-<p><img src="image-20200811142133380.png" /></p>
 ]]></content>
       <tags>
         <tag>Linux</tag>
@@ -8603,27 +8603,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>数值分析第一章作业</title>
-    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，数值分析</p>
-<a id="more"></a>
-<p><img src="image-20201013093358782.png" /></p>
-<p><img src="image-20201013102937713.png" /></p>
-<p><img src="image-20201013104909315.png" /></p>
-<p><img src="image-20201013104922645.png" /></p>
-<p><img src="image-20201013104953613.png" /></p>
-<p><img src="image-20201013110136891.png" /></p>
-<p><img src="image-20201013110806596.png" /> <span class="math display">\[
-2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
-\]</span></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>机器学习基本概念01</title>
     <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
     <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
@@ -8660,6 +8639,27 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数值分析第一章作业</title>
+    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，数值分析</p>
+<a id="more"></a>
+<p><img src="image-20201013093358782.png" /></p>
+<p><img src="image-20201013102937713.png" /></p>
+<p><img src="image-20201013104909315.png" /></p>
+<p><img src="image-20201013104922645.png" /></p>
+<p><img src="image-20201013104953613.png" /></p>
+<p><img src="image-20201013110136891.png" /></p>
+<p><img src="image-20201013110806596.png" /> <span class="math display">\[
+2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
+\]</span></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
@@ -8715,34 +8715,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>杭州旅游攻略</title>
-    <url>/p/Travel-in-Hangzhou/</url>
-    <content><![CDATA[<p>学在杭州，玩在杭州！</p>
-<a id="more"></a>
-<h3 id="延安路商业街">延安路商业街</h3>
-<p><img src="image-20210131092627579.png" /></p>
-<h3 id="延安路到法喜寺">延安路到法喜寺</h3>
-<p><img src="image-20210131093545985.png" /></p>
-<p>法喜寺</p>
-<p><img src="image-20210131092418794.png" /></p>
-<h3 id="延安路到河坊街">延安路到河坊街</h3>
-<p><img src="image-20210131093828915.png" /></p>
-<p>河坊街</p>
-<p><img src="image-20210131092531902.png" /></p>
-<h3 id="延安路到北高峰">延安路到北高峰</h3>
-<p><img src="image-20210131093705860.png" /></p>
-<p>延安路</p>
-<p><img src="image-20210131092737922.png" /></p>
-<h3 id="西湖龙井">西湖龙井</h3>
-<p><img src="image-20210131094030362.png" /></p>
-<p><img src="image-20210131092947998.png" /></p>
-]]></content>
-      <tags>
-        <tag>Travel</tag>
-        <tag>Hangzhou</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>梯度下降法</title>
     <url>/p/What&#39;s-the-Gradient-descent/</url>
     <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
@@ -8784,6 +8756,34 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Deep Learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>杭州旅游攻略</title>
+    <url>/p/Travel-in-Hangzhou/</url>
+    <content><![CDATA[<p>学在杭州，玩在杭州！</p>
+<a id="more"></a>
+<h3 id="延安路商业街">延安路商业街</h3>
+<p><img src="image-20210131092627579.png" /></p>
+<h3 id="延安路到法喜寺">延安路到法喜寺</h3>
+<p><img src="image-20210131093545985.png" /></p>
+<p>法喜寺</p>
+<p><img src="image-20210131092418794.png" /></p>
+<h3 id="延安路到河坊街">延安路到河坊街</h3>
+<p><img src="image-20210131093828915.png" /></p>
+<p>河坊街</p>
+<p><img src="image-20210131092531902.png" /></p>
+<h3 id="延安路到北高峰">延安路到北高峰</h3>
+<p><img src="image-20210131093705860.png" /></p>
+<p>延安路</p>
+<p><img src="image-20210131092737922.png" /></p>
+<h3 id="西湖龙井">西湖龙井</h3>
+<p><img src="image-20210131094030362.png" /></p>
+<p><img src="image-20210131092947998.png" /></p>
+]]></content>
+      <tags>
+        <tag>Travel</tag>
+        <tag>Hangzhou</tag>
       </tags>
   </entry>
   <entry>
