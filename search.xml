@@ -3568,6 +3568,42 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python时间处理</title>
+    <url>/p/time-processing-in-python/</url>
+    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
+<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
+<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
+<a id="more"></a>
+<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
+<p>datetime 是Python处理日期和时间的标准库。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
+<h4 id="打印当地时间">打印当地时间</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
+<h4 id="unix时间戳转换">unix时间戳转换</h4>
+<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
+<ul>
+<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
+<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
+<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
+<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
+<ul>
+<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
+<li>利用<code>strftime()</code>函数重新格式化为时间</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
+<p>参考链接</p>
+<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python多线程的应用</title>
     <url>/p/how-to-use-python-multithreading/</url>
     <content><![CDATA[<p>创建线程之前，需要首先了解一下进程和线程的区别，父线程和子线程的区别：</p>
@@ -3611,42 +3647,6 @@ y=x^2e^x
 <p>这里在主线程中使用了延迟1秒，来让子线程启动的子线程有机会输出其daemon属性值，如果不设置延迟，还没等到子线程的子线程启动，子线程就结束了，最终导致子线程的子线程无法启动。</p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python时间处理</title>
-    <url>/p/time-processing-in-python/</url>
-    <content><![CDATA[<p>本文主要介绍了Python时间处理的函数。</p>
-<p><strong>摘要</strong>：有时需要在国外的服务器上处理北京时间等非本地时区的时间，经过查找，发现了<code>pytz</code>这个处理时区的包。<code>pytz</code>允许使用Python 2.4或更高版本进行准确的跨平台时区计算。</p>
-<p><strong>关键词</strong>：时区计算，pytz，unix时间戳转换</p>
-<a id="more"></a>
-<h4 id="将utc时间转换成local时间">将UTC时间转换成Local时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> pytz <span class="keyword">import</span> timezone</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法1</span></span><br><span class="line">utc = pytz.utc</span><br><span class="line">utc_dt = utc.localize(datetime.utcfromtimestamp(time.time())) <span class="comment"># 获得UTC时间</span></span><br><span class="line"></span><br><span class="line">shanghai = timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>) 						<span class="comment"># 定义一个时区</span></span><br><span class="line">shanghai_dt = utc_dt.astimezone(shanghai)                     <span class="comment"># 将本地时区的时间转换成UTC时间</span></span><br><span class="line"></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>                                <span class="comment"># 定义打印时间</span></span><br><span class="line">print(shanghai_dt.strftime(fmt)                               <span class="comment"># 输出指定时区的时间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法2</span></span><br><span class="line"><span class="comment"># 将UTC时间转换为指定时区时间</span></span><br><span class="line"><span class="comment"># 获得UTC时间</span></span><br><span class="line">utc_time = datetime.datetime.now(datetime.timezone.utc)</span><br><span class="line"><span class="comment"># 转换成指定时区时间</span></span><br><span class="line">t = utc_time.astimezone(pytz.timezone(<span class="string">&#x27;Asia/Shanghai&#x27;</span>))</span><br><span class="line">print(<span class="string">&quot;指定时区时间:&#123;&#125;&quot;</span>.format(t))</span><br><span class="line">print(t.strftime(<span class="string">&quot;%Y/%m/%d %H:%M:%S %Z&quot;</span>))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>通过Python自带的包也可以方便的进行时区转换。这里使用的是datetime.</p>
-<p>datetime 是Python处理日期和时间的标准库。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="comment"># 拿到UTC时间，并强制设置时区为UTC+0:00:</span></span><br><span class="line">utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc) </span><br><span class="line">print(utc_dt)</span><br><span class="line"></span><br><span class="line"><span class="comment"># astimezone()将转换时区为北京时间:</span></span><br><span class="line">bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line"> <span class="comment"># 定义打印时间的格式</span></span><br><span class="line">fmt = <span class="string">&#x27;%Y-%m-%d %H:%M:%S %Z%z&#x27;</span>   </span><br><span class="line">bj_dt.strftime(fmt)</span><br><span class="line">print(bj_dt)</span><br></pre></td></tr></table></figure>
-<h4 id="打印当地时间">打印当地时间</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>, time.localtime()))</span><br></pre></td></tr></table></figure>
-<h4 id="unix时间戳转换">unix时间戳转换</h4>
-<h5 id="将时间转换为时间戳">将时间转换为时间戳</h5>
-<ul>
-<li>利用<code>strptime()</code>函数将时间转换为时间数组</li>
-<li>利用<code>mktime()</code>函数将时间数组转换为时间戳</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">dt = <span class="string">&quot;2020-09-26 19:58:25&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为时间数组</span></span><br><span class="line">timeArray = time.strptime(dt, <span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>)</span><br><span class="line"><span class="comment"># 转换成时间戳</span></span><br><span class="line">timestamp = time.mktime(timeArray)</span><br></pre></td></tr></table></figure>
-<h5 id="将时间戳转换为时间">将时间戳转换为时间</h5>
-<p>在时间戳转换成时间中，首先要将时间戳转换为<code>localtime</code>，再转换为时间的具体格式：</p>
-<ul>
-<li>利用<code>localtime()</code>函数将时间戳转换为<code>localtime</code>的格式</li>
-<li>利用<code>strftime()</code>函数重新格式化为时间</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line">timestamp = <span class="number">1604113349</span></span><br><span class="line"><span class="comment"># 转换为localtime</span></span><br><span class="line">time_local = time.localtime(timestamp)</span><br><span class="line"><span class="comment"># 转换为新的时间格式</span></span><br><span class="line">dt = time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>,time_local)</span><br></pre></td></tr></table></figure>
-<p>参考链接</p>
-<p>https://www.liaoxuefeng.com/wiki/1016959663602400/1017648783851616</p>
-]]></content>
-      <tags>
-        <tag>time</tag>
         <tag>Python</tag>
       </tags>
   </entry>
@@ -8624,45 +8624,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>机器学习基本概念01</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
-    <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
-<a id="more"></a>
-<h4 id="引言">引言</h4>
-<p>机器学习的经典定义：<strong>利用经验改善系统自身的性能。</strong></p>
-<p>机器学习所研究的主要内容，是关于在计算机上从数据中产生的模型的算法，即学习算法。有了学习算法，我们把经验数据提供给它，它就能基于这些数据产生模型。在面对新的情况时，模型会给我们相应的判断。</p>
-<blockquote>
-<p>【Mitchell,1997】给出了一个更形式化的定义：假设用<em>P</em>来评估计算机程序在某任务类<em>T</em>上的性能，若一个程序通过利用经验<em>E</em>在<em>T</em>中任务上获得了性能改善，则我们就说关于<em>T</em>和<em>P</em>，该程序对<em>E</em>进行了学习。</p>
-</blockquote>
-<p>模型：泛指从数据中学到的结果。有文献用"模型"指全局性结果(例如一颗决策树)，而用"模式"指局部性结果(例如一条规则).</p>
-<h4 id="基本术语">基本术语</h4>
-<p>要进行机器学习，首先要有数据。假定收集了一批关于西瓜的数据，例如（色泽=青绿；根蒂=蜷缩；敲声=浊响），（色泽=乌黑；根蒂=稍蜷；敲声=沉闷），（色泽=浅白；根蒂=硬挺；敲声=清脆），······，每对括号内是一条记录，"="的意思是"取值为".</p>
-<p>记录数据的集合称为一个<strong>"数据集"(data set)</strong>，其中每条记录是关于一个事件和对象的叙述，称为一个<strong>"示例"（instance)或"样本"（sample）</strong>。</p>
-<p>反应事件或对象在某方面的表现或者性质的事项，例如"色泽"，"根蒂"，"敲声"，称为<strong>"属性"（attribute)或"特征"（feature）</strong>。</p>
-<p>属性上的取值，例如"青绿"，"乌黑"，称为<strong>"属性值"（attribute value）</strong>。属性张成的空间称为<strong>"属性空间"（attribute space）、"样本空间"（sample space）或"输入空间"</strong>。</p>
-<p>例如，我们把"色泽"、"根蒂"和"敲声"作为三个坐标轴，则他们张成的一个用于描述西瓜的三维空间，每个西瓜都可在这个空间找到他们自己的坐标位置。由于空间中的每个点对应一个坐标向量，因此也把一个示例称为一个<strong>"特征向量"（feature vector）</strong>。</p>
-<p>​ 一般地，令$ D=\{x_1,x_2,...,x_m\} <span class="math inline">\(表示包含\)</span>m<span class="math inline">\(个实例的数据集，每个实例由\)</span>d<span class="math inline">\(个属性描述(例如上面的西瓜数据使用了3个属性)，则每个实例\)</span>x_i=\{x_{i1},x_{i2},...,x_{id}\}<span class="math inline">\(是\)</span>d$维样本空间 <span class="math inline">\(\chi\)</span> 中一个向量，<span class="math inline">\(x_i \in \chi\)</span>，其中<span class="math inline">\(x\_{ij}\)</span>是第<span class="math inline">\(j\)</span>个属性上的取值(例如上述第3个西瓜在第二个属性上的属性是"硬挺")，<span class="math inline">\(d\)</span>称为样本<span class="math inline">\(x_i\)</span>的<strong>"维数"(dimensionality)</strong>.</p>
-<p>​ 从数据中学得模型的过程称为<strong>"学习"（learning）</strong>或者<strong>"训练"（training）</strong>，这个过程通过执行某个学习算法来完成。训练过程使用的数据称为<strong>"训练数据"（training data）</strong>，其中每个样本称为一个<strong>"训练样本"（training sample)</strong>，训练样本组成的集合称为<strong>"训练集"（training set）</strong>。学得模型对应了关于数据的某种潜在的规律，因此亦称<strong>"假设"（hypothesis）</strong>；这种潜在规律本身，则称为<strong>"真相"或"真实"(ground-truth)</strong>，学习过程就是为了找出或逼近真相。</p>
-<blockquote>
-<p>训练样本亦称为"训练示例"（training instance）或者"训练例"。</p>
-<p>学习算法通常由参数需要设置，使用不同的参数值和(或)训练数据，将产生不同的结果。</p>
-<p>有时将模型称为"学习器"（learner)，可看作学习算法在给定数据和参数空间上的实例化。</p>
-</blockquote>
-<p>​ 如果希望学得一个能够判断没剖开的是不是"好瓜"的模型，仅有前面的示例数据显然是不够的，要建立这样的关于<strong>"预测"（prediction）</strong>的模型，需要获得训练样本的"结果"信息，例如"((色泽=青绿；根蒂=蜷缩；敲声=浊响)，好瓜)"。这里关于实例结果的信息，例如"好瓜"，称为<strong>"标记"（label）</strong>；拥有了标记信息的示例，则成为<strong>"样例"（example)</strong>。一般地，用<span class="math inline">\((x_i,y_i)\)</span>表示第<span class="math inline">\(i\)</span>个样例，其中<span class="math inline">\(y_i \in Y\)</span>是示例<span class="math inline">\(x_i\)</span>的标记，<span class="math inline">\(Y\)</span> 是所有标记的集合，亦称为<strong>"标记空间"(label space)或"输出空间"</strong>。</p>
-<p>​ 若我们欲预测的是离散值，例如"好瓜"、"坏瓜"，此类任务被称为<strong>"分类"(classification)</strong>；若欲预测的是连续值，例如西瓜成熟度0.95，0.37，此类学习任务称为<strong>"回归"(regression)</strong>。对涉及两个类别的<strong>"二分类"(binary classification)</strong>任务，通常称其中一个类为<strong>"正类"(positive class)</strong>，另一个类称为<strong>"反类"(negative class)</strong>;涉及多个类别时，则成为<strong>"多分类"(multi-class classification)</strong>任务。一般地，预测任务是希望通过对训练集<span class="math inline">\(\{(x_1,y_1),(x_2,y_2),...,(x_m,y_m)\}\)</span>进行学习，建立一个从输入空间<span class="math inline">\(X\)</span>到输出空间<span class="math inline">\(Y\)</span>的映射<span class="math inline">\(f : X \to Y\)</span>。对于二分类任务，通常令<span class="math inline">\(Y=\\{-1,+1\\}\)</span>或<span class="math inline">\(\\{0,1\\}\)</span>；对多分类任务，<span class="math inline">\(|Y|&gt;2\)</span>；对于回归任务，<span class="math inline">\(Y=R\)</span>，<span class="math inline">\(R\)</span>为实数集。</p>
-<p>​ 学得模型后，使用其进行预测的过程称为<strong>"测试"(testing)</strong>，被预测的样本称为<strong>"测试样本"(testing sample)</strong>。例如在学得<span class="math inline">\(f\)</span>后，对测试例<span class="math inline">\(x\)</span>可得到其预测标记<span class="math inline">\(y=f(x)\)</span>。</p>
-<p>​ 还可以对西瓜做<strong>"聚类"(clustering)</strong>，即将训练集中的西瓜分成若干组，每组称为一个<strong>"簇"（cluster）</strong>；这些自动形成得簇可能对应一些潜在得概念划分，例如"浅色瓜"、"深色瓜"，甚至"本地瓜"、"外地瓜"。这样的学习过程有助于哦我们了解数据内在得规律，能为更深入地分析数据建立基础。需说明的是，在聚类分析中，"浅色瓜，本地瓜"这样得概念我们实现是不知道的，而且学习过程中使用的训练样本通常不拥有标记信息。</p>
-<p>​ 根据训练数据是否拥有标记信息，学习任务可大致分为两大类：<strong>"监督学习"(supervised learning)</strong>和<strong>"无监督学习"(unsupervised learning)</strong>。分类和回归是监督学习的代表，而聚类是无监督学习的代表。</p>
-<p>​ 需要注意的是，机器学习的目标是使学得的模型能很好地适用于"新样本"，而不是仅仅在训练样本上工作得很好；即便对聚类这样得无监督学习任务，我们也希望学得簇划分能适用于没在训练集中出现的样本。学得模型适用于新样本的能力，称为<strong>"泛化"(generalization)能力</strong>。具有强泛化能力的模型能够很好的适用于整个样本空间。尽管训练集通常只是样本空间的一个很小的采样，我们仍希望它能很好的反映出样本空间的特性，否则就很难再期望在训练集上学得的模型能在整个样本空间上都工作得很好。</p>
-<blockquote>
-<p>通常假设样本空间中全体样本服从一个未知<strong>"分布"(distribution)</strong><span class="math inline">\(\small D\)</span>，我们获得的每个样本都是<strong>"独立同分布"(independent and identically distributed，简称<span class="math inline">\(i.i.d\)</span>)</strong>。一般而言，训练样本越多，我们得到得关于<span class="math inline">\(D\)</span>的信息越多，这样就越有可能通过学习获得具有强泛化能力的模型。</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>机器学习基本概念02</title>
     <url>/p/Basic-Concepts-of-Machine-Learning-02/</url>
     <content><![CDATA[<p>机器学习中的假设空间。</p>
@@ -8740,6 +8701,45 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       <tags>
         <tag>Travel</tag>
         <tag>Hangzhou</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>机器学习基本概念01</title>
+    <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
+    <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
+<a id="more"></a>
+<h4 id="引言">引言</h4>
+<p>机器学习的经典定义：<strong>利用经验改善系统自身的性能。</strong></p>
+<p>机器学习所研究的主要内容，是关于在计算机上从数据中产生的模型的算法，即学习算法。有了学习算法，我们把经验数据提供给它，它就能基于这些数据产生模型。在面对新的情况时，模型会给我们相应的判断。</p>
+<blockquote>
+<p>【Mitchell,1997】给出了一个更形式化的定义：假设用<em>P</em>来评估计算机程序在某任务类<em>T</em>上的性能，若一个程序通过利用经验<em>E</em>在<em>T</em>中任务上获得了性能改善，则我们就说关于<em>T</em>和<em>P</em>，该程序对<em>E</em>进行了学习。</p>
+</blockquote>
+<p>模型：泛指从数据中学到的结果。有文献用"模型"指全局性结果(例如一颗决策树)，而用"模式"指局部性结果(例如一条规则).</p>
+<h4 id="基本术语">基本术语</h4>
+<p>要进行机器学习，首先要有数据。假定收集了一批关于西瓜的数据，例如（色泽=青绿；根蒂=蜷缩；敲声=浊响），（色泽=乌黑；根蒂=稍蜷；敲声=沉闷），（色泽=浅白；根蒂=硬挺；敲声=清脆），······，每对括号内是一条记录，"="的意思是"取值为".</p>
+<p>记录数据的集合称为一个<strong>"数据集"(data set)</strong>，其中每条记录是关于一个事件和对象的叙述，称为一个<strong>"示例"（instance)或"样本"（sample）</strong>。</p>
+<p>反应事件或对象在某方面的表现或者性质的事项，例如"色泽"，"根蒂"，"敲声"，称为<strong>"属性"（attribute)或"特征"（feature）</strong>。</p>
+<p>属性上的取值，例如"青绿"，"乌黑"，称为<strong>"属性值"（attribute value）</strong>。属性张成的空间称为<strong>"属性空间"（attribute space）、"样本空间"（sample space）或"输入空间"</strong>。</p>
+<p>例如，我们把"色泽"、"根蒂"和"敲声"作为三个坐标轴，则他们张成的一个用于描述西瓜的三维空间，每个西瓜都可在这个空间找到他们自己的坐标位置。由于空间中的每个点对应一个坐标向量，因此也把一个示例称为一个<strong>"特征向量"（feature vector）</strong>。</p>
+<p>​ 一般地，令$ D=\{x_1,x_2,...,x_m\} <span class="math inline">\(表示包含\)</span>m<span class="math inline">\(个实例的数据集，每个实例由\)</span>d<span class="math inline">\(个属性描述(例如上面的西瓜数据使用了3个属性)，则每个实例\)</span>x_i=\{x_{i1},x_{i2},...,x_{id}\}<span class="math inline">\(是\)</span>d$维样本空间 <span class="math inline">\(\chi\)</span> 中一个向量，<span class="math inline">\(x_i \in \chi\)</span>，其中<span class="math inline">\(x\_{ij}\)</span>是第<span class="math inline">\(j\)</span>个属性上的取值(例如上述第3个西瓜在第二个属性上的属性是"硬挺")，<span class="math inline">\(d\)</span>称为样本<span class="math inline">\(x_i\)</span>的<strong>"维数"(dimensionality)</strong>.</p>
+<p>​ 从数据中学得模型的过程称为<strong>"学习"（learning）</strong>或者<strong>"训练"（training）</strong>，这个过程通过执行某个学习算法来完成。训练过程使用的数据称为<strong>"训练数据"（training data）</strong>，其中每个样本称为一个<strong>"训练样本"（training sample)</strong>，训练样本组成的集合称为<strong>"训练集"（training set）</strong>。学得模型对应了关于数据的某种潜在的规律，因此亦称<strong>"假设"（hypothesis）</strong>；这种潜在规律本身，则称为<strong>"真相"或"真实"(ground-truth)</strong>，学习过程就是为了找出或逼近真相。</p>
+<blockquote>
+<p>训练样本亦称为"训练示例"（training instance）或者"训练例"。</p>
+<p>学习算法通常由参数需要设置，使用不同的参数值和(或)训练数据，将产生不同的结果。</p>
+<p>有时将模型称为"学习器"（learner)，可看作学习算法在给定数据和参数空间上的实例化。</p>
+</blockquote>
+<p>​ 如果希望学得一个能够判断没剖开的是不是"好瓜"的模型，仅有前面的示例数据显然是不够的，要建立这样的关于<strong>"预测"（prediction）</strong>的模型，需要获得训练样本的"结果"信息，例如"((色泽=青绿；根蒂=蜷缩；敲声=浊响)，好瓜)"。这里关于实例结果的信息，例如"好瓜"，称为<strong>"标记"（label）</strong>；拥有了标记信息的示例，则成为<strong>"样例"（example)</strong>。一般地，用<span class="math inline">\((x_i,y_i)\)</span>表示第<span class="math inline">\(i\)</span>个样例，其中<span class="math inline">\(y_i \in Y\)</span>是示例<span class="math inline">\(x_i\)</span>的标记，<span class="math inline">\(Y\)</span> 是所有标记的集合，亦称为<strong>"标记空间"(label space)或"输出空间"</strong>。</p>
+<p>​ 若我们欲预测的是离散值，例如"好瓜"、"坏瓜"，此类任务被称为<strong>"分类"(classification)</strong>；若欲预测的是连续值，例如西瓜成熟度0.95，0.37，此类学习任务称为<strong>"回归"(regression)</strong>。对涉及两个类别的<strong>"二分类"(binary classification)</strong>任务，通常称其中一个类为<strong>"正类"(positive class)</strong>，另一个类称为<strong>"反类"(negative class)</strong>;涉及多个类别时，则成为<strong>"多分类"(multi-class classification)</strong>任务。一般地，预测任务是希望通过对训练集<span class="math inline">\(\{(x_1,y_1),(x_2,y_2),...,(x_m,y_m)\}\)</span>进行学习，建立一个从输入空间<span class="math inline">\(X\)</span>到输出空间<span class="math inline">\(Y\)</span>的映射<span class="math inline">\(f : X \to Y\)</span>。对于二分类任务，通常令<span class="math inline">\(Y=\\{-1,+1\\}\)</span>或<span class="math inline">\(\\{0,1\\}\)</span>；对多分类任务，<span class="math inline">\(|Y|&gt;2\)</span>；对于回归任务，<span class="math inline">\(Y=R\)</span>，<span class="math inline">\(R\)</span>为实数集。</p>
+<p>​ 学得模型后，使用其进行预测的过程称为<strong>"测试"(testing)</strong>，被预测的样本称为<strong>"测试样本"(testing sample)</strong>。例如在学得<span class="math inline">\(f\)</span>后，对测试例<span class="math inline">\(x\)</span>可得到其预测标记<span class="math inline">\(y=f(x)\)</span>。</p>
+<p>​ 还可以对西瓜做<strong>"聚类"(clustering)</strong>，即将训练集中的西瓜分成若干组，每组称为一个<strong>"簇"（cluster）</strong>；这些自动形成得簇可能对应一些潜在得概念划分，例如"浅色瓜"、"深色瓜"，甚至"本地瓜"、"外地瓜"。这样的学习过程有助于哦我们了解数据内在得规律，能为更深入地分析数据建立基础。需说明的是，在聚类分析中，"浅色瓜，本地瓜"这样得概念我们实现是不知道的，而且学习过程中使用的训练样本通常不拥有标记信息。</p>
+<p>​ 根据训练数据是否拥有标记信息，学习任务可大致分为两大类：<strong>"监督学习"(supervised learning)</strong>和<strong>"无监督学习"(unsupervised learning)</strong>。分类和回归是监督学习的代表，而聚类是无监督学习的代表。</p>
+<p>​ 需要注意的是，机器学习的目标是使学得的模型能很好地适用于"新样本"，而不是仅仅在训练样本上工作得很好；即便对聚类这样得无监督学习任务，我们也希望学得簇划分能适用于没在训练集中出现的样本。学得模型适用于新样本的能力，称为<strong>"泛化"(generalization)能力</strong>。具有强泛化能力的模型能够很好的适用于整个样本空间。尽管训练集通常只是样本空间的一个很小的采样，我们仍希望它能很好的反映出样本空间的特性，否则就很难再期望在训练集上学得的模型能在整个样本空间上都工作得很好。</p>
+<blockquote>
+<p>通常假设样本空间中全体样本服从一个未知<strong>"分布"(distribution)</strong><span class="math inline">\(\small D\)</span>，我们获得的每个样本都是<strong>"独立同分布"(independent and identically distributed，简称<span class="math inline">\(i.i.d\)</span>)</strong>。一般而言，训练样本越多，我们得到得关于<span class="math inline">\(D\)</span>的信息越多，这样就越有可能通过学习获得具有强泛化能力的模型。</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
