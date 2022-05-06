@@ -713,62 +713,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Jenkins和持续集成</title>
-    <url>/p/jenkins-and-CI/</url>
-    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
-<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
-<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
-<p>关键词：<strong>jenkins，持续集成</strong></p>
-<a id="more"></a>
-<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
-<p>持续集成，Continuous Integration，简称CI。</p>
-<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
-<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
-<h3 id="持续集成的特点">持续集成的特点</h3>
-<ul>
-<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
-<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
-<li><p>需要代码托管工具支持</p></li>
-</ul>
-<h3 id="持续集成的作用">持续集成的作用</h3>
-<ul>
-<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
-<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
-</ul>
-<h2 id="如何实现持续集成">如何实现持续集成？</h2>
-<h3 id="jenkins介绍">Jenkins介绍</h3>
-<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
-<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
-<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
-<ul>
-<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
-<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
-<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
-<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
-</ul>
-<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
-<h3 id="jenkins特点">Jenkins特点</h3>
-<ul>
-<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
-<li><p>易配置：提供友好的GUI配置界面；</p></li>
-<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
-<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
-<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
-<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
-<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
-<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
-<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
-</ul>
-<h3 id="其他集成工具">其他集成工具</h3>
-<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
-<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
-]]></content>
-      <tags>
-        <tag>jenkins</tag>
-        <tag>CI/CD</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Jetson Xavier 开发实录</title>
     <url>/p/How-to-use-Jetson-Xavier/</url>
     <content><![CDATA[<p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavie NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
@@ -963,6 +907,62 @@
       <tags>
         <tag>Jetson</tag>
         <tag>CUDA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Jenkins和持续集成</title>
+    <url>/p/jenkins-and-CI/</url>
+    <content><![CDATA[<p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
+<p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
+<p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
+<p>关键词：<strong>jenkins，持续集成</strong></p>
+<a id="more"></a>
+<h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
+<p>持续集成，Continuous Integration，简称CI。</p>
+<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
+<p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
+<h3 id="持续集成的特点">持续集成的特点</h3>
+<ul>
+<li><p>持续集成是一个自动化的周期性的集成测试过程，从检出代码、编译构建、运行测试、结果记录和测试统计都是自动完成的，无需人工干预；</p></li>
+<li><p>持续集成需要专门的集成服务器来执行执行构建；</p></li>
+<li><p>需要代码托管工具支持</p></li>
+</ul>
+<h3 id="持续集成的作用">持续集成的作用</h3>
+<ul>
+<li>保证了团队开发人员提交代码的质量，减轻了软件发布时的压力；</li>
+<li>由于持续集成中的每一个环节都是自动完成的，无需人工干预，有利于减少重复过程以节省时间、费用、和工作量；</li>
+</ul>
+<h2 id="如何实现持续集成">如何实现持续集成？</h2>
+<h3 id="jenkins介绍">Jenkins介绍</h3>
+<p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
+<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
+<p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
+<ul>
+<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
+<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
+<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
+<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
+</ul>
+<p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
+<h3 id="jenkins特点">Jenkins特点</h3>
+<ul>
+<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
+<li><p>易配置：提供友好的GUI配置界面；</p></li>
+<li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
+<li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
+<li><p>集成E-Mail/RSS/IM：当完成一次集成时，可通过这些工具实时告诉你集成结果（据我所知，构建一次集成需要花费一定时间，有了这个功能，你就可以在等待结果过程中，干别的事情）；</p></li>
+<li><p>JUnit/TestNG测试报告：也就是用以图表等形式提供详细的测试报表功能；</p></li>
+<li><p>支持分布式构建：Jenkins可以把集成构建等工作分发到多台计算机中完成；</p></li>
+<li><p>文件指纹信息：Jenkins会保存哪次集成构建产生了哪些jars文件，哪一次集成构建使用了哪个版本的jars文件等构建记录；</p></li>
+<li><p>支持第三方插件：使得 Jenkins 变得越来越强大；</p></li>
+</ul>
+<h3 id="其他集成工具">其他集成工具</h3>
+<p>其它比较著名的持续集成工具有：CruiseControl，TeamCity，Continuum等。</p>
+<p>原文链接：https://wiki.eryajf.net/pages/56.html</p>
+]]></content>
+      <tags>
+        <tag>jenkins</tag>
+        <tag>CI/CD</tag>
       </tags>
   </entry>
   <entry>
@@ -2362,6 +2362,31 @@
       </tags>
   </entry>
   <entry>
+    <title>PyTorch中的Tensor</title>
+    <url>/p/Tensor-in-PyTorch/</url>
+    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
+<a id="more"></a>
+<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
+<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
+<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
+<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
+]]></content>
+      <tags>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PyTorch中对图像的操作</title>
     <url>/p/How-to-process-images-in-Pytorch/</url>
     <content><![CDATA[<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。</p>
@@ -2412,31 +2437,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PyTorch中的Tensor</title>
-    <url>/p/Tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>通过以下几个例子来了解以下PyTorch中的Tensor。</p>
-<a id="more"></a>
-<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line">print(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
-<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line">print(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line">print(y)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
-<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
-<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
-<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line">print(a) </span><br><span class="line">print(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
-<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PyTorch中的损失函数和优化器</title>
     <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
     <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
@@ -2451,6 +2451,25 @@
       <tags>
         <tag>PyTorch</tag>
         <tag>计算图</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python3中的正则表达式</title>
+    <url>/p/how-to-use-re-in-python/</url>
+    <content><![CDATA[<p>摘要：这个模块提供了正则表达式匹配操作。模式和被搜索的字符串既可以是unicode字符串(str类型)，也可以是8位字节串。但是两者不能混用。当进行替换操作时，替换字符串的类型也必须与所用的模式和搜索的字符串类型一致。</p>
+<p>关键字：Python，正则表达式</p>
+<a id="more"></a>
+<p>正则表达式使用反斜杠字符来表示特殊形式或是允许在使用特殊字符时不引发他们的特殊含义。例如，要匹配一个反斜杠字面值，用户可能必须写成 <code>'\\\\'</code> 来作为模式字符串，因为正则表达式必须为 <code>\\</code>，而每个反斜杠在普通 Python 字符串字面值中又必须表示为 <code>\\</code>。</p>
+<p>解决办法时对于正则表达式样式使用Python的原始字符串表达法；在带有<code>'r'</code>前缀的字符串字面值中，反斜杠不必做任何特殊处理。</p>
+<p>因此<code>r''\n</code>表示包含<code>\</code>和<code>n</code>的两个字符的字符串，而""则表示只包含一个换行符的字符串。样式在Python代码中通常都会使用这种原始字符串表示法来表示。</p>
+<p>绝大多数正则表达式操作都提供模块函数和方法，在编译正则表达式这些函数是一个途径，不需要先编译一个正则对象，但是损失了一些优化参数。</p>
+<h3 id="正则表达式语法">正则表达式语法</h3>
+<p>一个正则表达式指定了一系列与之匹配的字符串；模块内的函数可以检查某个字符串是否跟跟定的正则表达式相匹配（或者一个正则表达式是否匹配到一个字符串）。</p>
+<p>正则表达式可以拼接；如果A和B都是正则表达式，那么AN</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>re</tag>
       </tags>
   </entry>
   <entry>
@@ -2562,25 +2581,6 @@ y=x^2e^x
         <tag>Python</tag>
         <tag>decode</tag>
         <tag>encode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python3中的正则表达式</title>
-    <url>/p/how-to-use-re-in-python/</url>
-    <content><![CDATA[<p>摘要：这个模块提供了正则表达式匹配操作。模式和被搜索的字符串既可以是unicode字符串(str类型)，也可以是8位字节串。但是两者不能混用。当进行替换操作时，替换字符串的类型也必须与所用的模式和搜索的字符串类型一致。</p>
-<p>关键字：Python，正则表达式</p>
-<a id="more"></a>
-<p>正则表达式使用反斜杠字符来表示特殊形式或是允许在使用特殊字符时不引发他们的特殊含义。例如，要匹配一个反斜杠字面值，用户可能必须写成 <code>'\\\\'</code> 来作为模式字符串，因为正则表达式必须为 <code>\\</code>，而每个反斜杠在普通 Python 字符串字面值中又必须表示为 <code>\\</code>。</p>
-<p>解决办法时对于正则表达式样式使用Python的原始字符串表达法；在带有<code>'r'</code>前缀的字符串字面值中，反斜杠不必做任何特殊处理。</p>
-<p>因此<code>r''\n</code>表示包含<code>\</code>和<code>n</code>的两个字符的字符串，而""则表示只包含一个换行符的字符串。样式在Python代码中通常都会使用这种原始字符串表示法来表示。</p>
-<p>绝大多数正则表达式操作都提供模块函数和方法，在编译正则表达式这些函数是一个途径，不需要先编译一个正则对象，但是损失了一些优化参数。</p>
-<h3 id="正则表达式语法">正则表达式语法</h3>
-<p>一个正则表达式指定了一系列与之匹配的字符串；模块内的函数可以检查某个字符串是否跟跟定的正则表达式相匹配（或者一个正则表达式是否匹配到一个字符串）。</p>
-<p>正则表达式可以拼接；如果A和B都是正则表达式，那么AN</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>re</tag>
       </tags>
   </entry>
   <entry>
@@ -2718,57 +2718,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>requests</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python中下划线命名模式</title>
-    <url>/p/underscore-naming-pattern-in-python/</url>
-    <content><![CDATA[<p>直接上表格。</p>
-<a id="more"></a>
-<table>
-<colgroup>
-<col style="width: 22%" />
-<col style="width: 9%" />
-<col style="width: 68%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: center;">命名模式</th>
-<th style="text-align: center;">举例</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">单前导下划线</td>
-<td style="text-align: center;">_var</td>
-<td>命名约定，仅供内部使用。通常不会由Python解释器内部执行（通配符导入除外），只作为对程序员的提示。通配符导入时，_var代表的<strong>属性</strong>或者<strong>函数</strong>不会被导入。</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">单末尾下划线</td>
-<td style="text-align: center;">var_</td>
-<td>按照约定使用避免与Python关键字的命名冲突。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">双前导下划线</td>
-<td style="text-align: center;">__var</td>
-<td>当在类上下文使用时，触发名称修饰，由Python解释器强制执行。<br /><strong>Tips：</strong>可以理解为Python对象的<strong>私有属性</strong>。仅供<strong>Python内部成员函数</strong>使用。</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">双前导和双末尾下划线</td>
-<td style="text-align: center;">__var__</td>
-<td>表示Python语言定义的特殊方法，避免在你自己的属性中使用这种特殊方法。</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">单下划线</td>
-<td style="text-align: center;">_</td>
-<td>有时用作临时或者不关心的变量名称，也表示<strong>Python REPL</strong>最近的一个表达式的结果。</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -3479,6 +3428,57 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python中下划线命名模式</title>
+    <url>/p/underscore-naming-pattern-in-python/</url>
+    <content><![CDATA[<p>直接上表格。</p>
+<a id="more"></a>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 9%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">命名模式</th>
+<th style="text-align: center;">举例</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">单前导下划线</td>
+<td style="text-align: center;">_var</td>
+<td>命名约定，仅供内部使用。通常不会由Python解释器内部执行（通配符导入除外），只作为对程序员的提示。通配符导入时，_var代表的<strong>属性</strong>或者<strong>函数</strong>不会被导入。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">单末尾下划线</td>
+<td style="text-align: center;">var_</td>
+<td>按照约定使用避免与Python关键字的命名冲突。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">双前导下划线</td>
+<td style="text-align: center;">__var</td>
+<td>当在类上下文使用时，触发名称修饰，由Python解释器强制执行。<br /><strong>Tips：</strong>可以理解为Python对象的<strong>私有属性</strong>。仅供<strong>Python内部成员函数</strong>使用。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">双前导和双末尾下划线</td>
+<td style="text-align: center;">__var__</td>
+<td>表示Python语言定义的特殊方法，避免在你自己的属性中使用这种特殊方法。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">单下划线</td>
+<td style="text-align: center;">_</td>
+<td>有时用作临时或者不关心的变量名称，也表示<strong>Python REPL</strong>最近的一个表达式的结果。</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python中的map函数</title>
     <url>/p/how-map-functions-works-in-Python/</url>
     <content><![CDATA[<p>Python内建了map()函数。</p>
@@ -3936,21 +3936,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python装饰器abstractmethod</title>
-    <url>/p/how-to-use-python-abstractmethod/</url>
-    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
-<a id="more"></a>
-<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
-<p>将子类<code>get_urls</code>方法注释后无法运行</p>
-<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>abstractmethod</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ROS系统学习小记(一)</title>
     <url>/p/ROS-system-learning-notes-01/</url>
     <content><![CDATA[<p><strong>概述：</strong>以下是作者与2020年9月23日起在浙江理工大学读研究生一年级时研究ROS实时系统时的笔记。希望能帮到你。</p>
@@ -4193,6 +4178,21 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python装饰器abstractmethod</title>
+    <url>/p/how-to-use-python-abstractmethod/</url>
+    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
+<a id="more"></a>
+<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
+<p>将子类<code>get_urls</code>方法注释后无法运行</p>
+<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>abstractmethod</tag>
       </tags>
   </entry>
   <entry>
@@ -4487,6 +4487,133 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
+    <url>/p/install-and-configure-coturn-in-debian/</url>
+    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
+<p><strong>关键词</strong>：coturn，stun，turn</p>
+<a id="more"></a>
+<p>安装Coturn一般分为两步。</p>
+<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
+<p>第二步是安装Coturn。</p>
+<h2 id="安装libevent">安装libevent</h2>
+<p>相关地址：</p>
+<ul>
+<li>https://github.com/libevent/libevent</li>
+<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
+</ul>
+<p><strong>注意</strong></p>
+<p>libevent与openssl的版本对应关系如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>libevent</th>
+<th>openssl</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2.1.x</td>
+<td>1.1</td>
+</tr>
+<tr class="even">
+<td>2.0.x</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
+<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
+<h3 id="查看openssl版本">查看openssl版本</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
+<p>这里使用2.1.12的版本进行安装。</p>
+<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="安装openssl依赖">安装openssl依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
+<h3 id="编译">编译</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h3 id="打包">打包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211212133649851.png" /></p>
+<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
+<p><img src="image-20211212133609907.png" /></p>
+<h3 id="安装成功">安装成功</h3>
+<p><img src="image-20211212133729426.png" /></p>
+<h2 id="安装coturn">安装Coturn</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
+<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
+<h3 id="turn数据库配置">TURN数据库配置</h3>
+<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
+<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
+<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
+</ul>
+<p><strong>安装sqlite</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
+<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
+<p>需要安装libmysqlclient-dev：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
+<p><strong>查看当前的普通用户</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
+<p><strong>删除普通用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
+<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
+<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
+<p>一些常用的配置：</p>
+<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip&#x3D;172.17.62.224</span><br><span class="line">listening-device&#x3D;eth0</span><br><span class="line"># TURN服务器UDP&#x2F;TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port&#x3D;3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port&#x3D;5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device&#x3D;eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port&#x3D;49152</span><br><span class="line">max-port&#x3D;65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm&#x3D;deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#39;静态&#39; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert&#x3D;&#x2F;root&#x2F;ssl&#x2F;cert.pem </span><br><span class="line">pkey&#x3D;&#x2F;root&#x2F;ssl&#x2F;certs&#x2F;key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
+<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
+<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
+<h3 id="重启服务">重启服务</h3>
+<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
+<h2 id="配置docker">配置docker</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(id -u):$(id -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
+<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
+<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
+<p><img src="image-20211127213711931.png" style="zoom:33%;" /></p>
+<p><img src="image-20211127213631207.png" /></p>
+<p><img src="image-20211127214043008.png" /></p>
+]]></content>
+      <tags>
+        <tag>coturn</tag>
+        <tag>STUN</tag>
+        <tag>TURN</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>crontab定时任务不执行</title>
+    <url>/p/crontab-does-not-work/</url>
+    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
+<p><strong>关键词：crontab定时计划任务不执行</strong></p>
+<a id="more"></a>
+<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
+<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
+<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
+<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
+<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
+<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
+<h5 id="附录linux重定向">附录：linux重定向</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
+<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
+<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
+<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
+]]></content>
+      <tags>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能</title>
     <url>/p/WebRTC-study-notes-01/</url>
     <content><![CDATA[<p>实习公司一直开展的项目突然停滞了，因为一个老板的需求我们一直无法满足：</p>
@@ -4615,133 +4742,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>WebRTC</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
-    <url>/p/install-and-configure-coturn-in-debian/</url>
-    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
-<p><strong>关键词</strong>：coturn，stun，turn</p>
-<a id="more"></a>
-<p>安装Coturn一般分为两步。</p>
-<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
-<p>第二步是安装Coturn。</p>
-<h2 id="安装libevent">安装libevent</h2>
-<p>相关地址：</p>
-<ul>
-<li>https://github.com/libevent/libevent</li>
-<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
-</ul>
-<p><strong>注意</strong></p>
-<p>libevent与openssl的版本对应关系如下：</p>
-<table>
-<thead>
-<tr class="header">
-<th>libevent</th>
-<th>openssl</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2.1.x</td>
-<td>1.1</td>
-</tr>
-<tr class="even">
-<td>2.0.x</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
-<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
-<h3 id="查看openssl版本">查看openssl版本</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
-<p>这里使用2.1.12的版本进行安装。</p>
-<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="安装openssl依赖">安装openssl依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
-<h3 id="编译">编译</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
-<h3 id="打包">打包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211212133649851.png" /></p>
-<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
-<p><img src="image-20211212133609907.png" /></p>
-<h3 id="安装成功">安装成功</h3>
-<p><img src="image-20211212133729426.png" /></p>
-<h2 id="安装coturn">安装Coturn</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
-<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
-<h3 id="turn数据库配置">TURN数据库配置</h3>
-<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：</p>
-<ul>
-<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
-<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
-<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
-</ul>
-<p><strong>安装sqlite</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
-<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
-<p>需要安装libmysqlclient-dev：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
-<p><strong>查看当前的普通用户</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
-<p><strong>删除普通用户</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
-<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
-<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mv /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
-<p>一些常用的配置：</p>
-<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip&#x3D;172.17.62.224</span><br><span class="line">listening-device&#x3D;eth0</span><br><span class="line"># TURN服务器UDP&#x2F;TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port&#x3D;3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port&#x3D;5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device&#x3D;eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port&#x3D;49152</span><br><span class="line">max-port&#x3D;65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm&#x3D;deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#39;静态&#39; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert&#x3D;&#x2F;root&#x2F;ssl&#x2F;cert.pem </span><br><span class="line">pkey&#x3D;&#x2F;root&#x2F;ssl&#x2F;certs&#x2F;key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
-<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
-<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
-<h3 id="重启服务">重启服务</h3>
-<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
-<h2 id="配置docker">配置docker</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(id -u):$(id -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
-<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
-<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
-<p><img src="image-20211127213711931.png" style="zoom:33%;" /></p>
-<p><img src="image-20211127213631207.png" /></p>
-<p><img src="image-20211127214043008.png" /></p>
-]]></content>
-      <tags>
-        <tag>coturn</tag>
-        <tag>STUN</tag>
-        <tag>TURN</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>crontab定时任务不执行</title>
-    <url>/p/crontab-does-not-work/</url>
-    <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
-<p><strong>关键词：crontab定时计划任务不执行</strong></p>
-<a id="more"></a>
-<h4 id="查看crontab服务状态">查看crontab服务状态</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
-<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
-<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
-<p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
-<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
-<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
-<h5 id="附录linux重定向">附录：linux重定向</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; delimiter 　　把从标准输入中读入，直至遇到delimiter分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
-<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
-<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
-<p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
-]]></content>
-      <tags>
-        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
