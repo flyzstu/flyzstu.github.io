@@ -7478,6 +7478,41 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<a id="more"></a>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span> // 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣二叉树之二叉搜索树</title>
     <url>/p/binary-search-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -7594,41 +7629,6 @@ y=x^2e^x
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convertBST</span><span class="params">(root *TreeNode)</span> *<span class="title">TreeNode</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> root != <span class="literal">nil</span> &#123;</span><br><span class="line">        convertBST(root.Right)</span><br><span class="line">        sum += root.Val</span><br><span class="line">        root.Val = sum</span><br><span class="line">        convertBST(root.Left)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> root</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="拓展">拓展</h4>
 <p>递归函数是否需要返回值的问题？</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<a id="more"></a>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span> // 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span> <span class="params">(res []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
