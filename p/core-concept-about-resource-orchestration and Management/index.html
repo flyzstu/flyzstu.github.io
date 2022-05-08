@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="8asjqKj8nljgUycZFS4L-H9Ivw5U1DHaXAOrHxxnRUg">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="/lib/@fortawesome/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="/lib/animate.css/animate.min.css">
+  <link rel="stylesheet" href="/lib/pace-js/themes/blue/pace-theme-minimal.css">
+  <script src="/lib/pace-js/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="本文是CNCF × Alibaba 云原生技术公开课的第四章资源编排与管理：核心原理学习笔记。 关键词：k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="资源编排与管理：核心原理">
+<meta property="og:url" content="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="本文是CNCF × Alibaba 云原生技术公开课的第四章资源编排与管理：核心原理学习笔记。 关键词：k8s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/资源编排与管理：核心原理/image-20220507170230377.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/资源编排与管理：核心原理/image-20220507170750082.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/资源编排与管理：核心原理/image-20220507171530472.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/资源编排与管理：核心原理/image-20220507173513904.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/资源编排与管理：核心原理/image-20220507174246402.png">
+<meta property="article:published_time" content="2022-05-05T07:26:00.000Z">
+<meta property="article:modified_time" content="2022-05-05T07:26:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/资源编排与管理：核心原理/image-20220507170230377.png">
+
+
+<link rel="canonical" href="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>资源编排与管理：核心原理 | 个人随想</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">个人随想</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%85%83%E4%BF%A1%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">资源元信息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#labels"><span class="nav-number">1.1.</span> <span class="nav-text">Labels</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#selector"><span class="nav-number">1.2.</span> <span class="nav-text">Selector</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%B8%E7%AD%89%E5%9E%8Bselector"><span class="nav-number">1.2.1.</span> <span class="nav-text">相等型Selector</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E5%9E%8Bselector"><span class="nav-number">1.2.2.</span> <span class="nav-text">集合型Selector</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#annotations"><span class="nav-number">1.3.</span> <span class="nav-text">Annotations</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ownereference"><span class="nav-number">1.4.</span> <span class="nav-text">Ownereference</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%BC%94%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">操作演示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bpod"><span class="nav-number">2.1.</span> <span class="nav-text">查看Pod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BApod"><span class="nav-number">2.2.</span> <span class="nav-text">创建Pod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A0%87%E7%AD%BE"><span class="nav-number">2.3.</span> <span class="nav-text">查看标签</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%85%B7%E4%BD%93%E7%9A%84%E8%B5%84%E6%BA%90%E4%BF%A1%E6%81%AF"><span class="nav-number">2.4.</span> <span class="nav-text">查看具体的资源信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E6%9C%89%E7%9A%84%E8%B5%84%E6%BA%90%E6%A0%87%E7%AD%BE"><span class="nav-number">2.5.</span> <span class="nav-text">修改已有的资源标签</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%BB%E6%8E%89%E5%B7%B2%E6%9C%89%E7%9A%84%E6%A0%87%E7%AD%BE"><span class="nav-number">2.6.</span> <span class="nav-text">去掉已有的标签</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8selector%E5%AF%B9pod%E8%BF%9B%E8%A1%8C%E7%AD%9B%E9%80%89"><span class="nav-number">2.7.</span> <span class="nav-text">使用Selector对Pod进行筛选</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E6%B3%A8%E8%A7%A3"><span class="nav-number">2.8.</span> <span class="nav-text">增加注解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">控制器模式</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">145</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://flyzstu.github.io/" title="https:&#x2F;&#x2F;flyzstu.github.io" rel="noopener" target="_blank">个人随想</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://trying.fun/" title="http:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/core-concept-about-resource-orchestration%20and%20Management/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          资源编排与管理：核心原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-05 15:26:00" itemprop="dateCreated datePublished" datetime="2022-05-05T15:26:00+08:00">2022-05-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第四章资源编排与管理：核心原理</strong>学习笔记。</p>
+<p>关键词：<strong>k8s</strong></p>
+<a id="more"></a>
+<h3 id="资源元信息">资源元信息</h3>
+<p>kubernetes的资源组成主要包括<strong>Spec、Status两部分</strong>。其中Spec部分用来描述期望状态，Status部分用来表述观测状态。</p>
+<p>Kubernetes的元数据部分主要包括</p>
+<ul>
+<li>用来识别资源的<strong>标签：Labels</strong></li>
+<li>用来描述资源的<strong>注解：Annotation</strong></li>
+<li>用来描述多个资源关系之间相互部分的<strong>OwnerReference</strong></li>
+</ul>
+<h4 id="labels">Labels</h4>
+<p>资源标签是一<strong>种标识型的Key：Value</strong>元数据。</p>
+<p>以下是几个例子</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">enviroment:</span> <span class="string">production</span></span><br><span class="line"><span class="attr">release:</span> <span class="string">stable</span></span><br><span class="line"><span class="attr">app.kubernetes.io/version:</span> <span class="number">5.7</span><span class="number">.21</span></span><br><span class="line"><span class="attr">failure-domain.beta.kubernetes.io/region:</span> <span class="string">cn-hangzhou</span></span><br></pre></td></tr></table></figure>
+<p>前三个label都打在了Pod对象上，分别标识了<strong>对应的应用环境</strong>、<strong>发布的成熟度</strong>、<strong>和应用的版本</strong>。</p>
+<p>最后一个标签打在Node对象上，并在域名前面加了版本的标识和beta字符串。</p>
+<p>标签主要用来筛选资源和组合资源，可以使用<strong>类似SQL查询Select，来根据Label查询和相关的资源</strong>。</p>
+<p><img src="资源编排与管理：核心原理/image-20220507170230377.png" /></p>
+<h4 id="selector">Selector</h4>
+<p>Selector可以用来匹配Labels的资源。</p>
+<p>假设系统有以下Pod：</p>
+<h5 id="相等型selector">相等型Selector</h5>
+<p><img src="资源编排与管理：核心原理/image-20220507170750082.png" /></p>
+<p>通过<code>Tie=front</code>可以匹配左边栏的Pod。</p>
+<p>相等型的Selector可以包括<strong>多个相等条件即逻辑与</strong>的关系。</p>
+<p>通过<code>Tie=front, Env=dev</code>的Selector，可以筛选出左上角的Pod。</p>
+<h5 id="集合型selector">集合型Selector</h5>
+<p><img src="资源编排与管理：核心原理/image-20220507171530472.png" /></p>
+<ul>
+<li><strong>in操作</strong>
+<ul>
+<li>通过<code>Env in (test, gray)</code>可以<code>tie</code> 是<code>front</code>或者<code>back</code>的Pod</li>
+<li>通过<code>release</code>可以筛选出存在 <code>release</code>标签的Pod</li>
+</ul></li>
+<li><strong>notin操作</strong>：
+<ul>
+<li>通过<code>tie notin(front,back)</code>可以筛选出所有<code>tie</code> 不是<code>front</code>且不是<code>back</code>的Pod；</li>
+<li>通过<code>!release</code>可以筛选不存在 <code>release</code>标签的Pod</li>
+</ul></li>
+</ul>
+<p>Tips：集合型和相等型的Selector<strong>可以用<code>,</code>来连接，表示逻辑与</strong>的关系</p>
+<h4 id="annotations">Annotations</h4>
+<p>Annotations（注解）一般是系统或者工具用来存储资源的非标识信息，可以用来拓展资源的<strong>spec/status</strong>的描述。</p>
+<p>以下是几个例子</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deployment.kubernetes.io/revision:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">kubectl.kubernetes.io/last-applied-configuration:</span> <span class="string">|</span></span><br><span class="line">	&#123;<span class="string">&quot;apiVersion&quot;</span><span class="string">:&quot;apps/v1&quot;</span>,<span class="string">&quot;kind&quot;</span><span class="string">:&quot;Deployment&quot;</span>,<span class="string">&quot;metadata&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;annotations&quot;</span><span class="string">:</span>&#123;&#125;,<span class="string">&quot;name&quot;</span><span class="string">:&quot;busybox-deployment&quot;</span>,<span class="string">&quot;namespace&quot;</span><span class="string">:&quot;default&quot;</span>&#125;,<span class="string">&quot;spec&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;replicas&quot;</span><span class="string">:2</span>,<span class="string">&quot;selector&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;matchLabels&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;app&quot;</span><span class="string">:&quot;busybox&quot;</span>&#125;&#125;,<span class="string">&quot;template&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;metadata&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;labels&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;app&quot;</span><span class="string">:&quot;busybox&quot;</span>&#125;&#125;,<span class="string">&quot;spec&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;containers&quot;</span><span class="string">:</span>[&#123;<span class="string">&quot;args&quot;</span><span class="string">:</span>[<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;while true ; do continue ; done&quot;</span>],<span class="string">&quot;command&quot;</span><span class="string">:</span>[<span class="string">&quot;sh&quot;</span>],<span class="string">&quot;image&quot;</span><span class="string">:&quot;busybox&quot;</span>,<span class="string">&quot;name&quot;</span><span class="string">:&quot;busybox&quot;</span>,<span class="string">&quot;ports&quot;</span><span class="string">:</span>[&#123;<span class="string">&quot;containerPort&quot;</span><span class="string">:80</span>&#125;]&#125;]&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="资源编排与管理：核心原理/image-20220507173513904.png" /></p>
+<h4 id="ownereference">Ownereference</h4>
+<p>Ownereference（所有者）一般是指集合类的资源，比如说Pod集合，比如<strong>replicaset、statefulset</strong>等。</p>
+<p>集合类资源的控制器会创建对应的归属资源。</p>
+<p>比如：<strong>replicaset</strong>控制器在操作中会创建Pod，则被创建Pod的Ownerefence就指向了创建了Pod的replicaset。</p>
+<p>Ownereference可以使得用户可以<strong>方便的查找一个创建资源的对象</strong>，还可以<strong>实现级联删除</strong>的效果。</p>
+<p><img src="资源编排与管理：核心原理/image-20220507174246402.png" /></p>
+<h3 id="操作演示">操作演示</h3>
+<h4 id="查看pod">查看Pod</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods</span><br></pre></td></tr></table></figure>
+<h4 id="创建pod">创建Pod</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f pod1.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="查看标签">查看标签</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods --show-labels</span><br></pre></td></tr></table></figure>
+<h4 id="查看具体的资源信息">查看具体的资源信息</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods nginx1 -o yaml | less</span><br></pre></td></tr></table></figure>
+<h4 id="修改已有的资源标签">修改已有的资源标签</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label pods nginx1 env=<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<p>如果想覆盖已有的标签信息需要加上<code>--overwide</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label pods nginx1 env=<span class="built_in">test</span> --overwide</span><br></pre></td></tr></table></figure>
+<h4 id="去掉已有的标签">去掉已有的标签</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label pods nginx tie-</span><br></pre></td></tr></table></figure>
+<h4 id="使用selector对pod进行筛选">使用Selector对Pod进行筛选</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods --show-labels -l env=<span class="built_in">test</span></span><br><span class="line">kubectl get pods --show-labels -l env=test1,env=test2 <span class="comment"># 一个也筛选不出来</span></span><br><span class="line">kubectl get pods --show-labels -l env=dev,tie=front</span><br><span class="line">kubectl get pods --show-labels -l <span class="string">&#x27;env in (dev,test)&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="增加注解">增加注解</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate pods nginx1 my-annotate=<span class="string">&#x27;my annotate,ok&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="控制器模式">控制器模式</h3>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/core-concept-about-k8s/" rel="prev" title="K8s核心概念">
+                  <i class="fa fa-chevron-left"></i> K8s核心概念
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/container-design-patterns/" rel="next" title="理解Pod和容器设计模式">
+                  理解Pod和容器设计模式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="/lib/animejs/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
