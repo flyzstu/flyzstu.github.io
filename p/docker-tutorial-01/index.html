@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="/lib/@fortawesome/fontawesome-free/css/all.min.css">
-  <link rel="stylesheet" href="/lib/animate.css/animate.min.css">
-  <link rel="stylesheet" href="/lib/pace-js/themes/blue/pace-theme-minimal.css">
-  <script src="/lib/pace-js/pace.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1.0.2/themes/blue/pace-theme-minimal.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
@@ -27,12 +27,14 @@
 
   <meta name="description" content="本文介绍的是docker的安装及常见命令。 摘要：Docker 是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本。使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松。 关键词：Docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="初探docker(一)">
+<meta property="og:title" content="初探docker(一) | docker的安装及常见命令">
 <meta property="og:url" content="https://fly97.cn/p/docker-tutorial-01/index.html">
 <meta property="og:site_name" content="个人随想">
 <meta property="og:description" content="本文介绍的是docker的安装及常见命令。 摘要：Docker 是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本。使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松。 关键词：Docker">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fly97.cn/p/docker-tutorial-01/image-20200718170304988.png">
+<meta property="og:image" content="https://fly97.cn/p/docker-tutorial-01/image-20220513100039060.png">
+<meta property="og:image" content="https://fly97.cn/p/docker-tutorial-01/image-20220513100947538.png">
 <meta property="article:published_time" content="2020-07-17T08:56:00.000Z">
 <meta property="article:modified_time" content="2020-07-17T08:56:00.000Z">
 <meta property="article:author" content="fly97">
@@ -54,7 +56,7 @@
   };
 </script>
 
-  <title>初探docker(一) | 个人随想</title>
+  <title>初探docker(一) | docker的安装及常见命令 | 个人随想</title>
   
 
 
@@ -211,7 +213,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85docker"><span class="nav-number">1.</span> <span class="nav-text">安装Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8docker-ce"><span class="nav-number">2.</span> <span class="nav-text">启动Docker-CE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E9%9B%85%E7%9A%84%E5%88%A0%E9%99%A4docker"><span class="nav-number">3.</span> <span class="nav-text">优雅的删除docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-docker-%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%AD%A3%E7%A1%AE"><span class="nav-number">4.</span> <span class="nav-text">测试 Docker 是否安装正确</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">获取镜像加速器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#linux"><span class="nav-number">5.1.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#windows-10"><span class="nav-number">5.2.</span> <span class="nav-text">Windows 10</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81docker%E5%91%BD%E4%BB%A4"><span class="nav-number">6.</span> <span class="nav-text">常见docker命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E5%9B%9E%E5%AE%B9%E5%99%A8"><span class="nav-number">6.1.</span> <span class="nav-text">取回容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="nav-number">6.2.</span> <span class="nav-text">运行容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="nav-number">6.3.</span> <span class="nav-text">进入容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E8%BF%90%E8%A1%8C%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="nav-number">6.4.</span> <span class="nav-text">查看当前运行的容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8-1"><span class="nav-number">6.5.</span> <span class="nav-text">运行容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E5%AE%B9%E5%99%A8"><span class="nav-number">6.6.</span> <span class="nav-text">停止容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8"><span class="nav-number">6.7.</span> <span class="nav-text">删除容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="nav-number">6.8.</span> <span class="nav-text">查看镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="nav-number">6.9.</span> <span class="nav-text">删除镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%85%E7%90%86%E9%95%9C%E5%83%8F"><span class="nav-number">6.10.</span> <span class="nav-text">清理镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E9%83%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">6.11.</span> <span class="nav-text">全部命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3docker%E4%BD%BF%E7%94%A8sudo%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">解决docker使用sudo的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAdocker%E7%BB%84"><span class="nav-number">7.1.</span> <span class="nav-text">创建docker组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8A%A0%E5%85%A5docker%E7%BB%84"><span class="nav-number">7.2.</span> <span class="nav-text">将当前用户加入docker组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="nav-number">7.3.</span> <span class="nav-text">重启服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%B7%E6%96%B0docker%E7%BB%84%E6%88%90%E5%91%98"><span class="nav-number">7.4.</span> <span class="nav-text">刷新docker组成员</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BAdocker%E9%95%9C%E5%83%8F%E6%97%B6%E5%A4%84%E7%90%86configuring-tzdata%E4%BA%A4%E4%BA%92%E8%BE%93%E5%85%A5"><span class="nav-number">8.</span> <span class="nav-text">构建Docker镜像时处理&#39;Configuring tzdata&#39;交互输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%86%85%E4%BD%BF%E7%94%A8dpkg%E5%AE%89%E8%A3%85chrome%E6%B5%8F%E8%A7%88%E5%99%A8%E5%A4%B1%E8%B4%A5"><span class="nav-number">9.</span> <span class="nav-text">docker容器内使用dpkg安装chrome浏览器失败</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-%E8%AE%BF%E9%97%AE%E5%A4%96%E9%83%A8-https-%E7%9A%84%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E9%97%AE%E9%A2%98"><span class="nav-number">10.</span> <span class="nav-text">docker 访问外部 https 的数字证书验证问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9docker%E6%97%B6%E5%8C%BA"><span class="nav-number">11.</span> <span class="nav-text">修改docker时区</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85docker"><span class="nav-number">1.</span> <span class="nav-text">安装Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8docker-ce"><span class="nav-number">2.</span> <span class="nav-text">启动Docker-CE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E9%9B%85%E7%9A%84%E5%88%A0%E9%99%A4docker"><span class="nav-number">3.</span> <span class="nav-text">优雅的删除docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-docker-%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%AD%A3%E7%A1%AE"><span class="nav-number">4.</span> <span class="nav-text">测试 Docker 是否安装正确</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">获取镜像加速器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#linux"><span class="nav-number">5.1.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#windows-10"><span class="nav-number">5.2.</span> <span class="nav-text">Windows 10</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81docker%E5%91%BD%E4%BB%A4"><span class="nav-number">6.</span> <span class="nav-text">常见docker命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E5%9B%9E%E5%AE%B9%E5%99%A8"><span class="nav-number">6.1.</span> <span class="nav-text">取回容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="nav-number">6.2.</span> <span class="nav-text">运行容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="nav-number">6.3.</span> <span class="nav-text">进入容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E8%BF%90%E8%A1%8C%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="nav-number">6.4.</span> <span class="nav-text">查看当前运行的容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8-1"><span class="nav-number">6.5.</span> <span class="nav-text">运行容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E5%AE%B9%E5%99%A8"><span class="nav-number">6.6.</span> <span class="nav-text">停止容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8"><span class="nav-number">6.7.</span> <span class="nav-text">删除容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="nav-number">6.8.</span> <span class="nav-text">查看镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="nav-number">6.9.</span> <span class="nav-text">删除镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%85%E7%90%86%E9%95%9C%E5%83%8F"><span class="nav-number">6.10.</span> <span class="nav-text">清理镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E9%83%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">6.11.</span> <span class="nav-text">全部命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3docker%E4%BD%BF%E7%94%A8sudo%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">解决docker使用sudo的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAdocker%E7%BB%84"><span class="nav-number">7.1.</span> <span class="nav-text">创建docker组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8A%A0%E5%85%A5docker%E7%BB%84"><span class="nav-number">7.2.</span> <span class="nav-text">将当前用户加入docker组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="nav-number">7.3.</span> <span class="nav-text">重启服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%B7%E6%96%B0docker%E7%BB%84%E6%88%90%E5%91%98"><span class="nav-number">7.4.</span> <span class="nav-text">刷新docker组成员</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BAdocker%E9%95%9C%E5%83%8F%E6%97%B6%E5%A4%84%E7%90%86configuring-tzdata%E4%BA%A4%E4%BA%92%E8%BE%93%E5%85%A5"><span class="nav-number">8.</span> <span class="nav-text">构建Docker镜像时处理&#39;Configuring tzdata&#39;交互输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%86%85%E4%BD%BF%E7%94%A8dpkg%E5%AE%89%E8%A3%85chrome%E6%B5%8F%E8%A7%88%E5%99%A8%E5%A4%B1%E8%B4%A5"><span class="nav-number">9.</span> <span class="nav-text">docker容器内使用dpkg安装chrome浏览器失败</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-%E8%AE%BF%E9%97%AE%E5%A4%96%E9%83%A8-https-%E7%9A%84%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81%E9%97%AE%E9%A2%98"><span class="nav-number">10.</span> <span class="nav-text">docker 访问外部 https 的数字证书验证问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9docker%E6%97%B6%E5%8C%BA"><span class="nav-number">11.</span> <span class="nav-text">修改docker时区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-inspect%E5%91%BD%E4%BB%A4"><span class="nav-number">12.</span> <span class="nav-text">docker inspect命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8%E7%8A%B6%E6%80%81"><span class="nav-number">12.1.</span> <span class="nav-text">查看容器状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8%E6%98%AF%E5%90%A6%E6%AD%A3%E5%B8%B8%E8%BF%90%E8%A1%8C"><span class="nav-number">12.1.1.</span> <span class="nav-text">查看容器是否正常运行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8%E6%98%AF%E5%90%A6%E6%AD%A3%E5%9C%A8%E9%87%8D%E5%90%AF"><span class="nav-number">12.1.2.</span> <span class="nav-text">查看容器是否正在重启</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97%E5%AD%98%E6%94%BE%E8%B7%AF%E5%BE%84"><span class="nav-number">12.2.</span> <span class="nav-text">查看容器日志存放路径</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97%E5%A4%A7%E5%B0%8F"><span class="nav-number">13.</span> <span class="nav-text">设置容器日志大小</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E5%AE%B9%E5%99%A8"><span class="nav-number">13.1.</span> <span class="nav-text">指定容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E8%AE%BE%E7%BD%AE"><span class="nav-number">13.2.</span> <span class="nav-text">全局设置</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -253,10 +255,10 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="https://flyzstu.github.io/" title="https:&#x2F;&#x2F;flyzstu.github.io" rel="noopener" target="_blank">个人随想</a>
+          <a href="https://trying.fun/" title="https:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="http://trying.fun/" title="http:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
+          <a href="http://xieandong.top/" title="http:&#x2F;&#x2F;xieandong.top" rel="noopener" target="_blank">谢安东个人博客</a>
         </li>
     </ul>
   </div>
@@ -307,7 +309,7 @@
     
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          初探docker(一)
+          初探docker(一) | docker的安装及常见命令
         </h1>
 
         <div class="post-meta-container">
@@ -434,6 +436,31 @@
 <li><p>debian类镜像构建时指定环境变量</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TZ=<span class="string">&quot;Asia/Shanghai&quot;</span></span><br></pre></td></tr></table></figure></li>
 </ol>
+<h3 id="docker-inspect命令">docker inspect命令</h3>
+<h4 id="查看容器状态">查看容器状态</h4>
+<p>首先运行<code>docker inspect</code>查看容器信息</p>
+<p><img src="image-20220513100039060.png" /></p>
+<p>可以获取以下容器状态</p>
+<h5 id="查看容器是否正常运行">查看容器是否正常运行</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.State.Status&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
+<h5 id="查看容器是否正在重启">查看容器是否正在重启</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.State.Restarting&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
+<h4 id="查看容器日志存放路径">查看容器日志存放路径</h4>
+<p>某些情况下需要删除日志文件路径，因此可以通过这个命令查看。查看定义日志的字段：</p>
+<p><img src="image-20220513100947538.png" /></p>
+<p>运行以下命令获取日志的地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.LogPath&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
+<p>然后在操作就好了</p>
+<h3 id="设置容器日志大小">设置容器日志大小</h3>
+<p>一般情况下Docker容器业务日志很大，处理起来不是很方便</p>
+<h4 id="指定容器">指定容器</h4>
+<p>docker-compose</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">    <span class="attr">summary:</span>        </span><br><span class="line">        <span class="attr">logging:</span></span><br><span class="line">            <span class="attr">driver:</span> <span class="string">&quot;json-file&quot;</span> <span class="comment"># 日志驱动</span></span><br><span class="line">            <span class="attr">options:</span></span><br><span class="line">                <span class="attr">max-size:</span> <span class="string">&quot;50m&quot;</span> <span class="comment">#[0-9+][k|m|g] 【文件的大小】</span></span><br><span class="line">                <span class="attr">max-file:</span> <span class="string">&quot;3&quot;</span>   <span class="comment">#[0-9+] 【文件数量】</span></span><br></pre></td></tr></table></figure>
+<p>docker cli</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">--log-driver json-file  		  <span class="comment">#日志驱动</span></span><br><span class="line">--log-opt max-size=[0-9+][k|m|g]  <span class="comment">#文件的大小</span></span><br><span class="line">--log-opt max-file=[0-9+]		  <span class="comment">#文件数量</span></span><br></pre></td></tr></table></figure>
+<h4 id="全局设置">全局设置</h4>
+<p>编辑文件<code>/etc/docker/daemon.json</code>，增加以下日志的配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;log-driver&quot;</span>:<span class="string">&quot;json-file&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log-opts&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;max-size&quot;</span>:<span class="string">&quot;500m&quot;</span>,</span><br><span class="line">        <span class="string">&quot;max-file&quot;</span>:<span class="string">&quot;3&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -455,8 +482,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/docker-tutorial-02/" rel="next" title="初探Docker(二)">
-                  初探Docker(二) <i class="fa fa-chevron-right"></i>
+                <a href="/p/docker-tutorial-02/" rel="next" title="初探Docker(二) | 使用Dockerfile定制镜像">
+                  初探Docker(二) | 使用Dockerfile定制镜像 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -517,7 +544,7 @@
   </footer>
 
   
-  <script src="/lib/animejs/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
