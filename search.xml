@@ -1571,6 +1571,35 @@
       </tags>
   </entry>
   <entry>
+    <title>golang LogAgent 项目实战（三）</title>
+    <url>/p/LogAgent-project-action-in-golang-3/</url>
+    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
+<p><strong>关键词：日志收集项目</strong></p>
+<a id="more"></a>
+<h2 id="架构图">架构图</h2>
+<p><img src="image-20211130214306450.png" /></p>
+<h3 id="logagent工作流程">LogAgent工作流程</h3>
+<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="往kafka里写日志">往Kafka里写日志</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
+<h4 id="tail介绍">tail介绍</h4>
+<h3 id="第一版程序">第一版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
+<p><img src="image-20211201205643407.png" /></p>
+<p>设计包的入口函数时，要考虑上面的设计模式。</p>
+<h3 id="第二版程序">第二版程序</h3>
+<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
+<p>读取配置文件版本的logAgent</p>
+<h4 id="go-ini库的使用">go-ini库的使用</h4>
+<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang LogAgent 项目实战（二）</title>
     <url>/p/LogAgent-project-action-in-golang-2/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1683,35 +1712,6 @@
 <h2 id="zookeeper">Zookeeper</h2>
 <p>zookeeper是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby的一个开源实现，是集群的管理者，监视着集群中各个系欸但的状态，并根据节点提交的反馈进行下一步合理操作。最终将简单易用的接口和性能高效、功能稳定的系统提供给用户。</p>
 <p><img src="image-20211201190723113.png" /></p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang LogAgent 项目实战（三）</title>
-    <url>/p/LogAgent-project-action-in-golang-3/</url>
-    <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
-<p><strong>关键词：日志收集项目</strong></p>
-<a id="more"></a>
-<h2 id="架构图">架构图</h2>
-<p><img src="image-20211130214306450.png" /></p>
-<h3 id="logagent工作流程">LogAgent工作流程</h3>
-<h4 id="读日志tailf第三方库">读日志（<code>tailf</code>第三方库）</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName := <span class="string">&quot;./my.log&quot;</span></span><br><span class="line">	config := tail.Config&#123;</span><br><span class="line">		ReOpen:    <span class="literal">true</span>,                                 <span class="comment">// 重新打开重新创建的文件(失败了会尝试重新读取)</span></span><br><span class="line">		Follow:    <span class="literal">true</span>,                                 <span class="comment">// 继续寻找新行 (tail -f)</span></span><br><span class="line">		Location:  &amp;tail.SeekInfo&#123;Offset: <span class="number">0</span>, Whence: <span class="number">2</span>&#125;, <span class="comment">// 从哪个地方开始读取</span></span><br><span class="line">		MustExist: <span class="literal">false</span>,                                <span class="comment">// 日志文件是否必须存在</span></span><br><span class="line">		Poll:      <span class="literal">true</span>,                                 <span class="comment">// 轮询文件更改而不是使用inotify</span></span><br><span class="line">	&#125;</span><br><span class="line">	tails, err := tail.TailFile(fileName, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;tail file failed, err: %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		line *tail.Line</span><br><span class="line">		ok   <span class="keyword">bool</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		line, ok = &lt;-tails.Lines</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;tail file close reopen, finename :%s\n&quot;</span>, tails.Filename)</span><br><span class="line">			time.Sleep(time.Second)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;line: &quot;</span>, line.Text)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="往kafka里写日志">往Kafka里写日志</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 基于sarama第三方库开发kafka client</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	config := sarama.NewConfig()</span><br><span class="line">	<span class="comment">// tailf包使用</span></span><br><span class="line">	config.Producer.RequiredAcks = sarama.WaitForAll          <span class="comment">//发送完数据需要等待follow回复ack</span></span><br><span class="line">	config.Producer.Partitioner = sarama.NewRandomPartitioner <span class="comment">// 先选出一个partition</span></span><br><span class="line">	config.Producer.Return.Successes = <span class="literal">true</span>                   <span class="comment">// 成功交付的消息将在success channel中返回</span></span><br><span class="line">	<span class="comment">// 构造一个消息</span></span><br><span class="line">	msg := &amp;sarama.ProducerMessage&#123;&#125;</span><br><span class="line">	msg.Topic = <span class="string">&quot;web_log&quot;</span></span><br><span class="line">	msg.Value = sarama.StringEncoder(<span class="string">&quot;this is a test log&quot;</span>)</span><br><span class="line">	<span class="comment">// 链接kafka</span></span><br><span class="line">	client, err := sarama.NewSyncProducer([]<span class="keyword">string</span>&#123;<span class="string">&quot;192.168.31.103:9092&quot;</span>&#125;, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;producer closed, err :&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> client.Close()</span><br><span class="line">	<span class="comment">// 发送消息</span></span><br><span class="line">	pid, offset, err := client.SendMessage(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;send msg failed, err:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;pid: %v, offset:     %v\n&quot;</span>, pid, offset)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="kafka和zookeeper">Kafka和zookeeper</h4>
-<h4 id="tail介绍">tail介绍</h4>
-<h3 id="第一版程序">第一版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/4bd7e5ba6ba138958ae8dd2b030a7d96810709f9">第一版代码</a></p>
-<p><img src="image-20211201205643407.png" /></p>
-<p>设计包的入口函数时，要考虑上面的设计模式。</p>
-<h3 id="第二版程序">第二版程序</h3>
-<p><a href="https://github.com/flyzstu/logAgent/commit/a70343ffd668c059b4aabdecbaf518a64b9e22fa">第二版代码</a></p>
-<p>读取配置文件版本的logAgent</p>
-<h4 id="go-ini库的使用">go-ini库的使用</h4>
-<p><a href="https://github.com/go-ini/ini">go-ini</a></p>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -2772,6 +2772,84 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python中的map函数</title>
+    <url>/p/how-map-functions-works-in-Python/</url>
+    <content><![CDATA[<p>Python内建了map()函数。</p>
+<a id="more"></a>
+<p>Python内建了map()函数。</p>
+<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
+<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
+<p>下面来看Python代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
+<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
+<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
+<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
+<blockquote>
+<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
+</blockquote>
+<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
+<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
+<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
+<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>只需要一行代码。</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python列表生成式</title>
+    <url>/p/list-generation-in-python/</url>
+    <content><![CDATA[<p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。</p>
+<p><strong>关键词</strong>：Python，列表</p>
+<a id="more"></a>
+<h4 id="列表生成式">列表生成式</h4>
+<p>举个例子，要生成list<code>[1,2,3,4,5,6,7,8,9]</code>可以用<code>list(range(1, 11))</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">1</span>, <span class="number">11</span>))</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p>若想生成上述列表对应值的平方，应该怎么办？</p>
+<p>一种方法是循环：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>):</span><br><span class="line"><span class="meta">... </span>   	L.append(x * x)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>L</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ..., <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p>但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">11</span>)]</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ... , <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>写列表生成式时，把要生成的元素<code>x*x</code>放在前面，后面跟<code>for</code>循环，就可以创建对应的列表。</strong></p>
+<p>for循环后面还可以加上<code>if</code>判断，这样我们就可以筛选出仅偶数的平方：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">16</span>, <span class="number">26</span>, <span class="number">64</span>, <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p>还可以使用两层循环，可以生成全排列：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[m + n <span class="keyword">for</span> m <span class="keyword">in</span> <span class="string">&#x27;ABC&#x27;</span> <span class="keyword">for</span> n <span class="keyword">in</span> <span class="string">&#x27;XYZ&#x27;</span>]</span><br><span class="line">[<span class="string">&#x27;AX&#x27;</span>, <span class="string">&#x27;AY&#x27;</span>, <span class="string">&#x27;AZ&#x27;</span>, <span class="string">&#x27;BX&#x27;</span>, <span class="string">&#x27;BY&#x27;</span>, <span class="string">&#x27;BZ&#x27;</span>, <span class="string">&#x27;CX&#x27;</span>, <span class="string">&#x27;CY&#x27;</span>, <span class="string">&#x27;CZ&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>使用列表生成式，可以写出非常简洁的代码。例如列出当前目录下的所有文件和目录名，可以通过一行代码实现：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[d <span class="keyword">for</span> d <span class="keyword">in</span> os.listdir(<span class="string">&#x27;.&#x27;</span>)] </span><br><span class="line"><span class="comment"># 省略输出</span></span><br></pre></td></tr></table></figure>
+<p>Python的for循环可以使用两个甚至多个变量，比如<code>dict</code>的<code>items()</code>就可以同时迭代key和value：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> k, v <span class="keyword">in</span> d.items():</span><br><span class="line">...		print(k, <span class="string">&#x27;=&#x27;</span>, v)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line">x = A</span><br><span class="line">y = B</span><br><span class="line">z = C</span><br></pre></td></tr></table></figure>
+<p>因此列表生成式也可以用两个变量来生成list：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[k +<span class="string">&#x27;=&#x27;</span> v <span class="keyword">for</span> k, v <span class="keyword">in</span> d.items()]</span><br><span class="line">[<span class="string">&#x27;x=A&#x27;</span>, <span class="string">&#x27;y=B&#x27;</span>, <span class="string">&#x27;z=C&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>还可以使用列表生成式把所有的字符串变成小写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = [<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>, <span class="string">&#x27;IBM&#x27;</span>, <span class="string">&#x27;Apple&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L]</span><br><span class="line">[<span class="string">&#x27;hello&#x27;</span>, <span class="string">&#x27;world&#x27;</span>, <span class="string">&#x27;ibm&#x27;</span>, <span class="string">&#x27;apple&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="if-...-else">if ... else</h4>
+<p>使用列表生成式时，经常搞不清楚<code>if...else</code>的用法。</p>
+<p>例如，以下代码可以正常输出偶数：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>但是</strong>，我们无法在最后的<code>if</code>加上<code>else</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>这是因为跟在<code>for</code>后面的<code>if</code>是一个筛选条件，不能带<code>else</code>.</p>
+<p>如果把<code>if</code>写在<code>for</code> 前面必须加<code>else</code>，否则报错：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>这是因为<code>for</code>前面的部分是一个表达式，必须根据<code>x</code>计算出一个结果。因此，考察表达式：<code>x if x % 2 == 0</code>，它无法根据<code>x</code>计算出结果，因此必须加上<code>else</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line"><span class="number">-1</span>, <span class="number">2</span>, <span class="number">-3</span>, <span class="number">4</span>, <span class="number">-5</span>, <span class="number">6</span>, <span class="number">-7</span>, <span class="number">8</span>, <span class="number">-9</span>, <span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p>上述<code>for</code>前面的表达式<code>x if x % 2 == 0 else -x</code>才能根据<code>x</code>计算出确定的结果。</p>
+<p>可见，在一个列表生成式中，<code>for</code>前面的<code>if ... else</code>是表达式，而<code>for</code> 后面的<code>if</code>的过滤条件，不能带<code>else</code>.</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>list</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python中正则表达式用法</title>
     <url>/p/regular-expression-usage-in-python/</url>
     <content><![CDATA[<h4 id="正则表达式全集">正则表达式全集</h4>
@@ -3476,84 +3554,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>正则表达式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python中的map函数</title>
-    <url>/p/how-map-functions-works-in-Python/</url>
-    <content><![CDATA[<p>Python内建了map()函数。</p>
-<a id="more"></a>
-<p>Python内建了map()函数。</p>
-<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
-<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
-<p>下面来看Python代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
-<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
-<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
-<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
-<blockquote>
-<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
-</blockquote>
-<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
-<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
-<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
-<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
-<p>只需要一行代码。</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python列表生成式</title>
-    <url>/p/list-generation-in-python/</url>
-    <content><![CDATA[<p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。</p>
-<p><strong>关键词</strong>：Python，列表</p>
-<a id="more"></a>
-<h4 id="列表生成式">列表生成式</h4>
-<p>举个例子，要生成list<code>[1,2,3,4,5,6,7,8,9]</code>可以用<code>list(range(1, 11))</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">1</span>, <span class="number">11</span>))</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
-<p>若想生成上述列表对应值的平方，应该怎么办？</p>
-<p>一种方法是循环：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>):</span><br><span class="line"><span class="meta">... </span>   	L.append(x * x)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>L</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ..., <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p>但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">11</span>)]</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ... , <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>写列表生成式时，把要生成的元素<code>x*x</code>放在前面，后面跟<code>for</code>循环，就可以创建对应的列表。</strong></p>
-<p>for循环后面还可以加上<code>if</code>判断，这样我们就可以筛选出仅偶数的平方：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">16</span>, <span class="number">26</span>, <span class="number">64</span>, <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p>还可以使用两层循环，可以生成全排列：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[m + n <span class="keyword">for</span> m <span class="keyword">in</span> <span class="string">&#x27;ABC&#x27;</span> <span class="keyword">for</span> n <span class="keyword">in</span> <span class="string">&#x27;XYZ&#x27;</span>]</span><br><span class="line">[<span class="string">&#x27;AX&#x27;</span>, <span class="string">&#x27;AY&#x27;</span>, <span class="string">&#x27;AZ&#x27;</span>, <span class="string">&#x27;BX&#x27;</span>, <span class="string">&#x27;BY&#x27;</span>, <span class="string">&#x27;BZ&#x27;</span>, <span class="string">&#x27;CX&#x27;</span>, <span class="string">&#x27;CY&#x27;</span>, <span class="string">&#x27;CZ&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>使用列表生成式，可以写出非常简洁的代码。例如列出当前目录下的所有文件和目录名，可以通过一行代码实现：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[d <span class="keyword">for</span> d <span class="keyword">in</span> os.listdir(<span class="string">&#x27;.&#x27;</span>)] </span><br><span class="line"><span class="comment"># 省略输出</span></span><br></pre></td></tr></table></figure>
-<p>Python的for循环可以使用两个甚至多个变量，比如<code>dict</code>的<code>items()</code>就可以同时迭代key和value：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> k, v <span class="keyword">in</span> d.items():</span><br><span class="line">...		print(k, <span class="string">&#x27;=&#x27;</span>, v)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line">x = A</span><br><span class="line">y = B</span><br><span class="line">z = C</span><br></pre></td></tr></table></figure>
-<p>因此列表生成式也可以用两个变量来生成list：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[k +<span class="string">&#x27;=&#x27;</span> v <span class="keyword">for</span> k, v <span class="keyword">in</span> d.items()]</span><br><span class="line">[<span class="string">&#x27;x=A&#x27;</span>, <span class="string">&#x27;y=B&#x27;</span>, <span class="string">&#x27;z=C&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>还可以使用列表生成式把所有的字符串变成小写：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = [<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>, <span class="string">&#x27;IBM&#x27;</span>, <span class="string">&#x27;Apple&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L]</span><br><span class="line">[<span class="string">&#x27;hello&#x27;</span>, <span class="string">&#x27;world&#x27;</span>, <span class="string">&#x27;ibm&#x27;</span>, <span class="string">&#x27;apple&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h4 id="if-...-else">if ... else</h4>
-<p>使用列表生成式时，经常搞不清楚<code>if...else</code>的用法。</p>
-<p>例如，以下代码可以正常输出偶数：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>但是</strong>，我们无法在最后的<code>if</code>加上<code>else</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
-<p>这是因为跟在<code>for</code>后面的<code>if</code>是一个筛选条件，不能带<code>else</code>.</p>
-<p>如果把<code>if</code>写在<code>for</code> 前面必须加<code>else</code>，否则报错：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
-<p>这是因为<code>for</code>前面的部分是一个表达式，必须根据<code>x</code>计算出一个结果。因此，考察表达式：<code>x if x % 2 == 0</code>，它无法根据<code>x</code>计算出结果，因此必须加上<code>else</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line"><span class="number">-1</span>, <span class="number">2</span>, <span class="number">-3</span>, <span class="number">4</span>, <span class="number">-5</span>, <span class="number">6</span>, <span class="number">-7</span>, <span class="number">8</span>, <span class="number">-9</span>, <span class="number">10</span></span><br></pre></td></tr></table></figure>
-<p>上述<code>for</code>前面的表达式<code>x if x % 2 == 0 else -x</code>才能根据<code>x</code>计算出确定的结果。</p>
-<p>可见，在一个列表生成式中，<code>for</code>前面的<code>if ... else</code>是表达式，而<code>for</code> 后面的<code>if</code>的过滤条件，不能带<code>else</code>.</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>list</tag>
       </tags>
   </entry>
   <entry>
@@ -9199,7 +9199,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <a id="more"></a>
 <h3 id="需求来源">需求来源</h3>
 <p>假如我们直接管理集群中所有的Pod，应用A、B、C的Pod，其实是散乱的分布在集群中。</p>
-<p><img src="应用编排与管理：Deployment/image-20220513133334099.png" /></p>
+<p><img src="image-20220513133334099.png" /></p>
 <p>而且在使用过程中存在以上问题。然后就引入了今天课程的主题。</p>
 <h4 id="deployment管理部署发布的控制器">Deployment：管理部署发布的控制器</h4>
 <p>首先明确<strong>Doployment是管理部署发布的控制器</strong></p>
@@ -9209,14 +9209,10 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <li>配置Pod发布方式。<code>controller</code>会<strong>按照用户给定的策略来更新Pod</strong>，<strong>更新过程中可以设定不可用Pod的数量在多少范围</strong>内。</li>
 <li>如果更新过程中发生问题，支持一键回滚。<strong>Deployment在更新应用时不是一次性更新全部Pod，而是一个Pod一个Pod的进行更新</strong>。如果新的Pod无法起来，这样也不影响旧版本的Pod正常运行。</li>
 </ol>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513134455213.png" alt="image-20220513134455213" /><figcaption aria-hidden="true">image-20220513134455213</figcaption>
-</figure>
+<p><img src="image-20220513134455213.png" /></p>
 <h3 id="用法用例">用法用例</h3>
 <h4 id="deployment语法">Deployment语法</h4>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513134618739.png" alt="image-20220513134618739" /><figcaption aria-hidden="true">image-20220513134618739</figcaption>
-</figure>
+<p><img src="image-20220513134618739.png" /></p>
 <ul>
 <li>apiVersion：当前Deployment所属的组是apps，版本是v1</li>
 <li>metadata：当前Deployment的元信息。<code>.metedata.name</code>是nginx-deployment，<code>.metadata.labels</code>是app=nginx</li>
@@ -9224,9 +9220,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 </ul>
 <h4 id="查看deployment状态">查看Deployment状态</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$kubectl</span> get deployment </span><br></pre></td></tr></table></figure>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513135710806.png" alt="image-20220513135710806" /><figcaption aria-hidden="true">image-20220513135710806</figcaption>
-</figure>
+<p><img src="image-20220513135710806.png" /></p>
 <ul>
 <li>READY：期望的Pod数量/实际Pod的数量</li>
 <li>UP-TO-DATE：达到最新期望版本的Pod数量</li>
@@ -9235,9 +9229,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 </ul>
 <h4 id="查看pod状态">查看Pod状态</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$kubectl</span> get pods</span><br></pre></td></tr></table></figure>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513140522034.png" alt="image-20220513140522034" /><figcaption aria-hidden="true">image-20220513140522034</figcaption>
-</figure>
+<p><img src="image-20220513140522034.png" /></p>
 <ul>
 <li>Pod的名字格式是<code>&#123;deployment-name&#125;-&#123;pod模板的hash&#125;-&#123;随机字符串&#125;</code>，Pod的<strong>ownerReferences</strong>即<strong>Pod所属的controller资源不是Deployment而是ReplicaSet</strong>。这个
 <ul>
@@ -9247,28 +9239,28 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 </ul>
 <h4 id="更新镜像">更新镜像</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$kubectl</span> <span class="built_in">set</span> image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1</span><br></pre></td></tr></table></figure>
-<p><img src="应用编排与管理：Deployment/image-20220513145414786.png" /></p>
+<p><img src="image-20220513145414786.png" /></p>
 <h4 id="快速回滚">快速回滚</h4>
 <p>如果在发布过程中遇到了问题，支持快速回滚。</p>
 <p>快速回滚到Deployment上一个版本</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$kubectl</span> rollout undo deployment/nginx-deployment</span><br></pre></td></tr></table></figure>
 <p>回滚Deployment到上一个版本，需要先查询版本列表</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$kubectl</span> rollout <span class="built_in">history</span> deployment/nginx=deployment</span><br></pre></td></tr></table></figure>
-<p><img src="应用编排与管理：Deployment/image-20220513150000845.png" /></p>
+<p><img src="image-20220513150000845.png" /></p>
 <p>这里的CHANGE-CAUSE列全都是<code>&lt;none&gt;</code>，在应用资源清单时可以<strong>使用如下命令</strong>使得api-server记录：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$kubectl</span> apply -f nginx-deployment.yml --record</span><br></pre></td></tr></table></figure>
 <h5 id="设置历史版本保留">设置历史版本保留</h5>
 <p>通过<code>.spec.revisionHistoryLimit</code>字段可以设置保留历史版本的<code>replicaset</code>的数量，默认值是10</p>
 <h3 id="deploymentstatus">DeploymentStatus</h3>
 <p>每一个资源都有它的spec.Status，这里deploymentStatus中描述的是它的转换状态：也就是<strong>Processing、Complete、和Failed。</strong></p>
-<p><img src="应用编排与管理：Deployment/image-20220513151104847.png" /></p>
+<p><img src="image-20220513151104847.png" /></p>
 <ul>
 <li>以Processing为例：Processing指的是Deployment正在处于<strong>扩容和发布状态</strong>。当Processing状态的deployment所有的ReplicasSet以及Pod副本全部达到最新版本，而且是avilable，这样就会进入Complete状态。而Complete状态如果发生了一些扩缩容的话，也会进入Processing的状态。</li>
 <li>如果在处理过程中遇到一些问题：比如说<strong>拉取镜像失败了</strong>，或者<strong>就绪探针检查失败了</strong>，就会进入failed状态；如果在运行过程中即complete状态，中间运行时发生了一些<strong>探针检查失败</strong>，此时deployment也会进入failed状态。进入failed状态后，除非所有副本均变成available，而且是update到最新版本，deployment才会进入Complete状态。</li>
 </ul>
 <h3 id="架构设计">架构设计</h3>
 <h4 id="管理模式">管理模式</h4>
-<p><img src="应用编排与管理：Deployment/image-20220513165107394.png" /></p>
+<p><img src="image-20220513165107394.png" /></p>
 <ul>
 <li>Deployment负责管理不同版本的ReplicaSet，由ReplicaSet来管理具体的Pod副本数</li>
 <li>每个ReplicaSet对应Deployment template的一个版本。每修改一次template，都会生成一个新的ReplocaSet，这个ReplicaSet下的Pod其实是相同版本。</li>
@@ -9276,36 +9268,50 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <h4 id="deployment控制器">Deployment控制器</h4>
 <p>控制器实现原理</p>
 <p>所有的控制器都是通过Informer中的<strong>一些事件做处理和监听</strong>。Deployment控制器关注Deployment和ReplicaSet的事件，收到事件后加入队列。控制器从队列中取出来后，进行check paused的处理，paused其实是检查deployment是否需要新的发布，如果paused设置为true，就表示Deployment只会做副本数量上的维持而不是发布。</p>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513165749153.png" alt="image-20220513165749153" /><figcaption aria-hidden="true">image-20220513165749153</figcaption>
-</figure>
+<p><img src="image-20220513165749153.png" /></p>
 <ul>
 <li>当check paused为yes，那么控制器只会做<strong>同步副本</strong>，也就是说把副本同步到对应的ReplicaSet中，最后在更新Deployment的状态。</li>
 <li>当check paused为false，那么控制器会跟<strong>更新副本</strong>，也就是通过Create或者Rolling的方式来更新，更新方式也是通过Create/Update/Delete ReplicaSet来实现的</li>
 </ul>
 <h4 id="replicaset控制器">ReplicaSet控制器</h4>
 <p>当Deployment分配了ReplicaSet之后，ReplicaSet控制器也是通过Informer中监听一些事件，这些事件包含了ReplicaSet和Pod的事件。ReplicaSet控制器管理副本数，使得状态向spec规定的副本数无限靠近。</p>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513171158658.png" alt="image-20220513171158658" /><figcaption aria-hidden="true">image-20220513171158658</figcaption>
-</figure>
+<p><img src="image-20220513171158658.png" /></p>
 <p>Deployment控制器做了更复杂的时区，包含了版本管理。Deployment控制器把每一个版本的数量维持工作交给ReplicaSet控制器来做。</p>
 <h4 id="扩缩容模拟">扩/缩容模拟</h4>
-<p><img src="应用编排与管理：Deployment/image-20220513171437987.png" /></p>
+<p><img src="image-20220513171437987.png" /></p>
 <h4 id="发布模拟">发布模拟</h4>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513172101061.png" alt="image-20220513172101061" /><figcaption aria-hidden="true">image-20220513172101061</figcaption>
-</figure>
+<p><img src="image-20220513172101061.png" /></p>
 <ul>
 <li>若修改template中的一个容器的image，Deployment控制器会新建一个对应template2中的ReplicaSet，创建出来之后会<strong>逐渐增加ReplicaSet2 中 Pod 的数量，同时逐渐减少 ReplicaSet1 中的 Pod 数量。</strong></li>
 <li>最终新版本的Pod为Pod4、Pod5和Pod6，旧版本的Pod被删除，这里就完成了一次发布。</li>
 </ul>
 <h4 id="回滚模拟">回滚模拟</h4>
-<figure>
-<img src="应用编排与管理：Deployment/image-20220513175011929.png" alt="image-20220513175011929" /><figcaption aria-hidden="true">image-20220513175011929</figcaption>
-</figure>
+<p><img src="image-20220513175011929.png" /></p>
 <ul>
 <li>如果此时发现当前业务版本使用有问题时，此时需要回滚，不管是通过<code>rollout</code>命令还是通过回滚修改template，都是把当前的templete回滚为旧版本的templete</li>
 <li>此时Deployment会修改ReplicationSet1中Pod的期望数量，把期望数量修改为3个，而且会逐渐减少新版本 ReplicaSet2 中的 replica 数量，最终的效果就是把 Pod 从旧版本重新创建出来。<strong>回滚并不是把之前的 Pod 重新找出来，而是说重新创建出符合旧版本 template 的 Pod。</strong></li>
+</ul>
+<h4 id="spec字段解析">spec字段解析</h4>
+<ul>
+<li><p>MinReadySeconds：Deployment会根据Pod ready查看Pod是否可用，默认值是0。如果设置MinReadySeconds=30（秒），Deployment会等到超过30秒以后才认为Pod是avaliable的。Pod available的前提条件是Pod ready，但ready 的Pod不一定是available的。<strong>一定要超过MinReadySeconds之后才会判断为available</strong>；</p></li>
+<li><p>revisionHistoryLimit：保留历史revision，即保留历史ReplicaSet的数量，默认值为10个，这里可以设置为一个或者两个，如果回滚可能性比较大的话可以设置数量超过10；</p></li>
+<li><p>progressDeadlineSecond：当Deployment处于扩容或者发布状态时，pod会处于一个processing的状态，可以设置这个状态的超时时间，如果超过了这个超过时间还处于processing，那么可以认为这个Pod进入了failed的状态。</p></li>
+</ul>
+<h4 id="升级策略字段解析">升级策略字段解析</h4>
+<p>可以在<code>.spec.strategy</code>字段下设置升级策略。</p>
+<p><img src="image-20220513220124878.png" /></p>
+<ul>
+<li>maxUnavailable：滚动升级过程中最多有多少个Pod不可用；</li>
+<li>maxSurge：滚动升级过程中最多存在多少个Pod超过预期replica数量。</li>
+</ul>
+<p>当<code>.spec.replicas</code>=3的Deployment在发布时可能存在一种情况：新版本的ReplicaSet和旧版本的ReplicaSet加起来是4个，超过了期望数3个。这是因为<strong>默认的Max Unavailable和MaxSurge都是25%，</strong>默认Deployment在发布过程中，可能有25%的replicas是不可用的，也可能会有25%的replica是可用的，因此最高可以达到125%的replica数量。</p>
+<p>这里可以根据用户实际场景来设置：当用户的资源足够时，且更注重发布过程中的可用性，<strong>此时可以设置maxUnavailable较小，maxSurge较大</strong>。但是如果用户的资源比较紧张，此时可以设置MaxSurge较小，甚至设置为0。</p>
+<p><strong>maxUnavailable和maxSurge不能同时为0：</strong>当MaxSurge为0时，必须要删除Pod，才能扩容Pod；当maxUnavailable为0时，限制了升级过程中无法删除Pod，因为一旦删除就会有Pod不可用。两者产生了冲突。</p>
+<h3 id="小结">小结</h3>
+<ul>
+<li>Deployment时K8s中一种常见的工作负载，支持部署多版本的Pod</li>
+<li>Deployment时管理多版本的方式，是针对每个版本的模版创建一个ReplicaSet，由ReplicaSet维护一盒一定数量的Pod副本，而Deployment只需要关心不同版本的ReplicaSet要制定多少数量的Pod；</li>
+<li>因此Deployment发布部署的根本原理，就是Deployment调整不同版本的ReplicaSet的中期望副本数，以此来达到多版本Pod的升级和回滚</li>
 </ul>
 ]]></content>
       <tags>
@@ -10035,6 +10041,51 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
+    <title>线性回归中的基函数</title>
+    <url>/p/a-basis-function-in-linear-regression/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
+<p><strong>关键词：</strong>线性回归，基函数</p>
+<a id="more"></a>
+<h4 id="线性基函数模型">线性基函数模型</h4>
+<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
+y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
+\]</span> 其中 <span class="math display">\[
+x = (x_1,...,x_D)^T
+\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
+y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
+\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
+<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
+y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
+\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
+<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
+<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
+\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
+\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
+<h4 id="代码部分">代码部分</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
+\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
+\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
+\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
+<h5 id="python中的广播规则">python中的广播规则</h5>
+<p>举个例子：</p>
+<p>假设<code>x</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
+<p><code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
+<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
+<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
+<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>离线安装docker</title>
     <url>/p/offline-install-docker-offline/</url>
     <content><![CDATA[<p>最近在部署项目，甲方的部署环境有可能内网环境，而我们现在的项目是部署在docker中的，所以需要记录一下如何离线安装docker。这里的步骤对于其他需要离线安装的deb包也是适用的。</p>
@@ -10100,51 +10151,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>线性回归中的基函数</title>
-    <url>/p/a-basis-function-in-linear-regression/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
-<p><strong>关键词：</strong>线性回归，基函数</p>
-<a id="more"></a>
-<h4 id="线性基函数模型">线性基函数模型</h4>
-<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
-y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
-\]</span> 其中 <span class="math display">\[
-x = (x_1,...,x_D)^T
-\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
-y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
-\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
-<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
-y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
-\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
-<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
-<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
-\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
-\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
-<h4 id="代码部分">代码部分</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
-\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
-\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
-\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
-<h5 id="python中的广播规则">python中的广播规则</h5>
-<p>举个例子：</p>
-<p>假设<code>x</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
-<p><code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
-<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
-<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
-<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
