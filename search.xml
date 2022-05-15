@@ -316,6 +316,18 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang时间处理</title>
+    <url>/p/time-processing-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
+<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git常见操作</title>
     <url>/p/Git-common-operations/</url>
     <content><![CDATA[<p>不说废话，上教程。</p>
@@ -577,18 +589,6 @@
 ]]></content>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang时间处理</title>
-    <url>/p/time-processing-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
-<a id="more"></a>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -2804,52 +2804,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Python列表生成式</title>
-    <url>/p/list-generation-in-python/</url>
-    <content><![CDATA[<p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。</p>
-<p><strong>关键词</strong>：Python，列表</p>
-<a id="more"></a>
-<h4 id="列表生成式">列表生成式</h4>
-<p>举个例子，要生成list<code>[1,2,3,4,5,6,7,8,9]</code>可以用<code>list(range(1, 11))</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">1</span>, <span class="number">11</span>))</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
-<p>若想生成上述列表对应值的平方，应该怎么办？</p>
-<p>一种方法是循环：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>):</span><br><span class="line"><span class="meta">... </span>   	L.append(x * x)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>L</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ..., <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p>但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">11</span>)]</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ... , <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>写列表生成式时，把要生成的元素<code>x*x</code>放在前面，后面跟<code>for</code>循环，就可以创建对应的列表。</strong></p>
-<p>for循环后面还可以加上<code>if</code>判断，这样我们就可以筛选出仅偶数的平方：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">16</span>, <span class="number">26</span>, <span class="number">64</span>, <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
-<p>还可以使用两层循环，可以生成全排列：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[m + n <span class="keyword">for</span> m <span class="keyword">in</span> <span class="string">&#x27;ABC&#x27;</span> <span class="keyword">for</span> n <span class="keyword">in</span> <span class="string">&#x27;XYZ&#x27;</span>]</span><br><span class="line">[<span class="string">&#x27;AX&#x27;</span>, <span class="string">&#x27;AY&#x27;</span>, <span class="string">&#x27;AZ&#x27;</span>, <span class="string">&#x27;BX&#x27;</span>, <span class="string">&#x27;BY&#x27;</span>, <span class="string">&#x27;BZ&#x27;</span>, <span class="string">&#x27;CX&#x27;</span>, <span class="string">&#x27;CY&#x27;</span>, <span class="string">&#x27;CZ&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>使用列表生成式，可以写出非常简洁的代码。例如列出当前目录下的所有文件和目录名，可以通过一行代码实现：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[d <span class="keyword">for</span> d <span class="keyword">in</span> os.listdir(<span class="string">&#x27;.&#x27;</span>)] </span><br><span class="line"><span class="comment"># 省略输出</span></span><br></pre></td></tr></table></figure>
-<p>Python的for循环可以使用两个甚至多个变量，比如<code>dict</code>的<code>items()</code>就可以同时迭代key和value：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> k, v <span class="keyword">in</span> d.items():</span><br><span class="line">...		print(k, <span class="string">&#x27;=&#x27;</span>, v)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line">x = A</span><br><span class="line">y = B</span><br><span class="line">z = C</span><br></pre></td></tr></table></figure>
-<p>因此列表生成式也可以用两个变量来生成list：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[k +<span class="string">&#x27;=&#x27;</span> v <span class="keyword">for</span> k, v <span class="keyword">in</span> d.items()]</span><br><span class="line">[<span class="string">&#x27;x=A&#x27;</span>, <span class="string">&#x27;y=B&#x27;</span>, <span class="string">&#x27;z=C&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<p>还可以使用列表生成式把所有的字符串变成小写：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = [<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>, <span class="string">&#x27;IBM&#x27;</span>, <span class="string">&#x27;Apple&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L]</span><br><span class="line">[<span class="string">&#x27;hello&#x27;</span>, <span class="string">&#x27;world&#x27;</span>, <span class="string">&#x27;ibm&#x27;</span>, <span class="string">&#x27;apple&#x27;</span>]</span><br></pre></td></tr></table></figure>
-<h4 id="if-...-else">if ... else</h4>
-<p>使用列表生成式时，经常搞不清楚<code>if...else</code>的用法。</p>
-<p>例如，以下代码可以正常输出偶数：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
-<p><strong>但是</strong>，我们无法在最后的<code>if</code>加上<code>else</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
-<p>这是因为跟在<code>for</code>后面的<code>if</code>是一个筛选条件，不能带<code>else</code>.</p>
-<p>如果把<code>if</code>写在<code>for</code> 前面必须加<code>else</code>，否则报错：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
-<p>这是因为<code>for</code>前面的部分是一个表达式，必须根据<code>x</code>计算出一个结果。因此，考察表达式：<code>x if x % 2 == 0</code>，它无法根据<code>x</code>计算出结果，因此必须加上<code>else</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line"><span class="number">-1</span>, <span class="number">2</span>, <span class="number">-3</span>, <span class="number">4</span>, <span class="number">-5</span>, <span class="number">6</span>, <span class="number">-7</span>, <span class="number">8</span>, <span class="number">-9</span>, <span class="number">10</span></span><br></pre></td></tr></table></figure>
-<p>上述<code>for</code>前面的表达式<code>x if x % 2 == 0 else -x</code>才能根据<code>x</code>计算出确定的结果。</p>
-<p>可见，在一个列表生成式中，<code>for</code>前面的<code>if ... else</code>是表达式，而<code>for</code> 后面的<code>if</code>的过滤条件，不能带<code>else</code>.</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>list</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python中正则表达式用法</title>
     <url>/p/regular-expression-usage-in-python/</url>
     <content><![CDATA[<h4 id="正则表达式全集">正则表达式全集</h4>
@@ -3557,6 +3511,52 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python列表生成式</title>
+    <url>/p/list-generation-in-python/</url>
+    <content><![CDATA[<p>列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。</p>
+<p><strong>关键词</strong>：Python，列表</p>
+<a id="more"></a>
+<h4 id="列表生成式">列表生成式</h4>
+<p>举个例子，要生成list<code>[1,2,3,4,5,6,7,8,9]</code>可以用<code>list(range(1, 11))</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(range(<span class="number">1</span>, <span class="number">11</span>))</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p>若想生成上述列表对应值的平方，应该怎么办？</p>
+<p>一种方法是循环：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = []</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>):</span><br><span class="line"><span class="meta">... </span>   	L.append(x * x)</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>L</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ..., <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p>但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">11</span>)]</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, ... , <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>写列表生成式时，把要生成的元素<code>x*x</code>放在前面，后面跟<code>for</code>循环，就可以创建对应的列表。</strong></p>
+<p>for循环后面还可以加上<code>if</code>判断，这样我们就可以筛选出仅偶数的平方：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x * x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="number">16</span>, <span class="number">26</span>, <span class="number">64</span>, <span class="number">100</span>]</span><br></pre></td></tr></table></figure>
+<p>还可以使用两层循环，可以生成全排列：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[m + n <span class="keyword">for</span> m <span class="keyword">in</span> <span class="string">&#x27;ABC&#x27;</span> <span class="keyword">for</span> n <span class="keyword">in</span> <span class="string">&#x27;XYZ&#x27;</span>]</span><br><span class="line">[<span class="string">&#x27;AX&#x27;</span>, <span class="string">&#x27;AY&#x27;</span>, <span class="string">&#x27;AZ&#x27;</span>, <span class="string">&#x27;BX&#x27;</span>, <span class="string">&#x27;BY&#x27;</span>, <span class="string">&#x27;BZ&#x27;</span>, <span class="string">&#x27;CX&#x27;</span>, <span class="string">&#x27;CY&#x27;</span>, <span class="string">&#x27;CZ&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>使用列表生成式，可以写出非常简洁的代码。例如列出当前目录下的所有文件和目录名，可以通过一行代码实现：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> os </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[d <span class="keyword">for</span> d <span class="keyword">in</span> os.listdir(<span class="string">&#x27;.&#x27;</span>)] </span><br><span class="line"><span class="comment"># 省略输出</span></span><br></pre></td></tr></table></figure>
+<p>Python的for循环可以使用两个甚至多个变量，比如<code>dict</code>的<code>items()</code>就可以同时迭代key和value：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> k, v <span class="keyword">in</span> d.items():</span><br><span class="line">...		print(k, <span class="string">&#x27;=&#x27;</span>, v)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line">x = A</span><br><span class="line">y = B</span><br><span class="line">z = C</span><br></pre></td></tr></table></figure>
+<p>因此列表生成式也可以用两个变量来生成list：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;x&#x27;</span>:<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;y&#x27;</span>:<span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;z&#x27;</span>:<span class="string">&#x27;C&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[k +<span class="string">&#x27;=&#x27;</span> v <span class="keyword">for</span> k, v <span class="keyword">in</span> d.items()]</span><br><span class="line">[<span class="string">&#x27;x=A&#x27;</span>, <span class="string">&#x27;y=B&#x27;</span>, <span class="string">&#x27;z=C&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>还可以使用列表生成式把所有的字符串变成小写：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>L = [<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>, <span class="string">&#x27;IBM&#x27;</span>, <span class="string">&#x27;Apple&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[s.lower() <span class="keyword">for</span> s <span class="keyword">in</span> L]</span><br><span class="line">[<span class="string">&#x27;hello&#x27;</span>, <span class="string">&#x27;world&#x27;</span>, <span class="string">&#x27;ibm&#x27;</span>, <span class="string">&#x27;apple&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="if-...-else">if ... else</h4>
+<p>使用列表生成式时，经常搞不清楚<code>if...else</code>的用法。</p>
+<p>例如，以下代码可以正常输出偶数：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]</span><br><span class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>但是</strong>，我们无法在最后的<code>if</code>加上<code>else</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>这是因为跟在<code>for</code>后面的<code>if</code>是一个筛选条件，不能带<code>else</code>.</p>
+<p>如果把<code>if</code>写在<code>for</code> 前面必须加<code>else</code>，否则报错：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line">SyntaxError: invalid syntax</span><br></pre></td></tr></table></figure>
+<p>这是因为<code>for</code>前面的部分是一个表达式，必须根据<code>x</code>计算出一个结果。因此，考察表达式：<code>x if x % 2 == 0</code>，它无法根据<code>x</code>计算出结果，因此必须加上<code>else</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>[x <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -x <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>)]</span><br><span class="line"><span class="number">-1</span>, <span class="number">2</span>, <span class="number">-3</span>, <span class="number">4</span>, <span class="number">-5</span>, <span class="number">6</span>, <span class="number">-7</span>, <span class="number">8</span>, <span class="number">-9</span>, <span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p>上述<code>for</code>前面的表达式<code>x if x % 2 == 0 else -x</code>才能根据<code>x</code>计算出确定的结果。</p>
+<p>可见，在一个列表生成式中，<code>for</code>前面的<code>if ... else</code>是表达式，而<code>for</code> 后面的<code>if</code>的过滤条件，不能带<code>else</code>.</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>list</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python升级pip</title>
     <url>/p/how-to-upgrade%20pip-in-python/</url>
     <content><![CDATA[<p>安装pip：<code>apt install python3-pip</code></p>
@@ -3713,21 +3713,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python装饰器abstractmethod</title>
-    <url>/p/how-to-use-python-abstractmethod/</url>
-    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
-<a id="more"></a>
-<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
-<p>将子类<code>get_urls</code>方法注释后无法运行</p>
-<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>abstractmethod</tag>
       </tags>
   </entry>
   <entry>
@@ -3948,6 +3933,21 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>Numpy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python装饰器abstractmethod</title>
+    <url>/p/how-to-use-python-abstractmethod/</url>
+    <content><![CDATA[<p>利用Python装饰器abstractmethod实现纯虚函数</p>
+<a id="more"></a>
+<p><code>@abstractmethod</code>用于程序接口的控制，含有<code>@abstractmethod</code>修饰的父类不能被实例化，且继承的子类必须实现。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> abstractmethod, ABC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UploadTools</span>(<span class="params">ABC</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_urls</span>(<span class="params">self</span>) -&gt; str:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpyunTools</span>(<span class="params">UploadTools</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upyuntools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am upload method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools.&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self</span>):</span></span><br><span class="line">        print(<span class="string">&quot;I am delete method in UpyunTools&quot;</span>)</span><br><span class="line">    <span class="comment"># def get_urls(self) -&gt; str:</span></span><br><span class="line">    <span class="comment">#     print(&quot;I am get_urls method in UpyunTools.&quot;)</span></span><br><span class="line">    <span class="comment">#     return None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    upyun_tools = UpyunTools()</span><br><span class="line">    upyun_tools.upload()</span><br><span class="line">    upyun_tools.get_urls()</span><br><span class="line">    upyun_tools.delete()</span><br></pre></td></tr></table></figure>
+<p>将子类<code>get_urls</code>方法注释后无法运行</p>
+<p>将子类的<code>get_urls</code>方法修改后可以运行：</p>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>abstractmethod</tag>
       </tags>
   </entry>
   <entry>
@@ -5951,6 +5951,27 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>ssh-genkey参数</title>
+    <url>/p/ssh-genkey/</url>
+    <content><![CDATA[<p>什么是ssh-genkey？</p>
+<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
+<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
+<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
+<a id="more"></a>
+<h2 id="常用命令">常用命令</h2>
+<h3 id="生成密钥对">生成密钥对</h3>
+<p>默认生成 2048 位 RSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<p>生成 4096 位 RSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
+<p>生成 521 位 ECDSA 密钥</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ssh-genkey</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>selenium常用方法</title>
     <url>/p/Selenium-positioning-method/</url>
     <content><![CDATA[<p>Selenium 是一个综合性的项目，为web浏览器的自动化提供了各种工具和依赖包。本文主要介绍的是 selenium的常用方法。</p>
@@ -6010,27 +6031,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>Selenium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ssh-genkey参数</title>
-    <url>/p/ssh-genkey/</url>
-    <content><![CDATA[<p>什么是ssh-genkey？</p>
-<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
-<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
-<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
-<a id="more"></a>
-<h2 id="常用命令">常用命令</h2>
-<h3 id="生成密钥对">生成密钥对</h3>
-<p>默认生成 2048 位 RSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
-<p>生成 4096 位 RSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
-<p>生成 521 位 ECDSA 密钥</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ssh-genkey</tag>
       </tags>
   </entry>
   <entry>
@@ -6522,6 +6522,28 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>使用jsdelivrCDN加速github文件</title>
+    <url>/p/Use-jsdelivrCDN-to-accelerate-github-files/</url>
+    <content><![CDATA[<p>jsDelivr 是国外的一家优秀的公共 CDN 服务提供商，也是首个「打通中国大陆（网宿公司运营）与海外的免费 CDN 服务」。</p>
+<p><strong>更新：</strong>jsDelivr新增使用政策已经于8月15日生效。根据最新的使用政策，<strong>滥用服务及其资源或将jsDelivr用作通用文件或媒体托管服务，账户将会被BAN。</strong></p>
+<p>如果将Github+jsDelivr作为图床使用的话是算违规！！！ 相关链接：https://www.jsdelivr.com/terms/acceptable-use-policy-jsdelivr-net</p>
+<a id="more"></a>
+<h3 id="jsdelivr-配置">jsDelivr 配置</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;wf09&#x2F;upload@master&#x2F;1.png</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>gh</code> 表示来自 Github 的仓库</li>
+<li><code>wf09/upload</code> 指的是用户名/仓库名</li>
+<li><code>master</code> 仓库的分支</li>
+<li><code>1.png</code>仓库下的具体文件</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>github</tag>
+        <tag>jsdelivrCDN</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</title>
     <url>/p/use-wrap-unlock-ipv6/</url>
     <content><![CDATA[<p><strong>摘要：</strong>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</p>
@@ -6622,28 +6644,6 @@ y=x^2e^x
       <tags>
         <tag>cloudflare</tag>
         <tag>wrap</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用jsdelivrCDN加速github文件</title>
-    <url>/p/Use-jsdelivrCDN-to-accelerate-github-files/</url>
-    <content><![CDATA[<p>jsDelivr 是国外的一家优秀的公共 CDN 服务提供商，也是首个「打通中国大陆（网宿公司运营）与海外的免费 CDN 服务」。</p>
-<p><strong>更新：</strong>jsDelivr新增使用政策已经于8月15日生效。根据最新的使用政策，<strong>滥用服务及其资源或将jsDelivr用作通用文件或媒体托管服务，账户将会被BAN。</strong></p>
-<p>如果将Github+jsDelivr作为图床使用的话是算违规！！！ 相关链接：https://www.jsdelivr.com/terms/acceptable-use-policy-jsdelivr-net</p>
-<a id="more"></a>
-<h3 id="jsdelivr-配置">jsDelivr 配置</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;wf09&#x2F;upload@master&#x2F;1.png</span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>gh</code> 表示来自 Github 的仓库</li>
-<li><code>wf09/upload</code> 指的是用户名/仓库名</li>
-<li><code>master</code> 仓库的分支</li>
-<li><code>1.png</code>仓库下的具体文件</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>github</tag>
-        <tag>jsdelivrCDN</tag>
       </tags>
   </entry>
   <entry>
@@ -6864,6 +6864,65 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>使用密钥登陆linux服务器</title>
+    <url>/p/login-linux-with-ssh-key/</url>
+    <content><![CDATA[<p>为什么使用ssh-key登录服务器？因为这种方法更安全，可以确保我们的服务器不被hack。</p>
+<p><strong>关键词</strong>：服务器安全</p>
+<a id="more"></a>
+<h3 id="安全问题">安全问题</h3>
+<p>在登录服务器时，发现了一行提示：</p>
+<p><img src="image-20211117223431763.png" /></p>
+<p>心中一惊，赶紧查看<strong>失败登录记录</strong>，果然发现了有很多<strong>被爆破</strong>的记录：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lastb </span><br></pre></td></tr></table></figure>
+<p><img src="image-20211117223543481.png" /></p>
+<p>这让我意识到<strong>使用密码登陆服务器</strong>非常危险，于是乎便有了<strong>此文</strong>。</p>
+<h3 id="使用密钥登录ssh服务器">使用密钥登录ssh服务器</h3>
+<h4 id="生成公钥和私钥">生成公钥和私钥</h4>
+<p>任意路径下打开git bash，输入以下命令，邮箱请根据自己的需要填写：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@youremail.com&quot;</span></span><br></pre></td></tr></table></figure>
+<p><img src="image-20211117224126494.png" /></p>
+<p>默认情况下会在自己的用户名下的<code>.ssh</code>文件夹生成<strong>公钥</strong>和<strong>私钥</strong>，其中<code>.pub</code>结尾的是公钥</p>
+<p><img src="image-20211117224251406.png" /></p>
+<h4 id="将公钥拷贝到服务器">将公钥拷贝到服务器</h4>
+<p>一般情况下，当前目录都会有.ssh文件夹，并且文件夹下有<code>authorized_keys</code>文件，此时只需要将<strong>公钥</strong>文件的内容复制到该文件即可：</p>
+<p><img src="image-20211117225910505.png" /></p>
+<p>若没有则需要新建</p>
+<h5 id="新建.ssh文件夹">新建.ssh文件夹</h5>
+<p>使用当前用户并在当前用户名下新建<code>.ssh</code>文件夹</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
+<h5 id="使用xftp等软件拷贝">使用xftp等软件拷贝</h5>
+<p>将<strong>id_rsa.pub</strong>文件拷贝到当前用户的<strong>.ssh文件夹</strong>下：</p>
+<p><img src="image-20211117230405573.png" /></p>
+<h5 id="使用scp命令">使用scp命令</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">scp id_rsa.pub &lt;用户名&gt;@&lt;ip&gt;:&lt;用户名&gt;.ssh/</span><br></pre></td></tr></table></figure>
+<p><img src="image-20211117231239950.png" /></p>
+<h5 id="设置公钥权限">设置公钥权限</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 600 id_rsa.pub</span><br></pre></td></tr></table></figure>
+<h4 id="修改ssh配置">修改ssh配置</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<p>找到对应的片段，修改后面的内容即可。</p>
+<h5 id="修改端口">修改端口</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Port 65535</span><br></pre></td></tr></table></figure>
+<h5 id="修改公钥文件地址">修改公钥文件地址</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">AuthorizedKeysFile .ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<h5 id="允许公钥登录">允许公钥登录</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PubkeyAuthentication yes</span><br></pre></td></tr></table></figure>
+<h5 id="禁止密码登录">禁止密码登录</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PasswordAuthentication no</span><br></pre></td></tr></table></figure>
+<h4 id="重启ssh服务">重启SSH服务</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
+<h3 id="注意">注意</h3>
+<p>到此以后就可以用密钥登陆了，不过现在还不能<strong>关闭当前的终端窗口</strong>，万一你刚才修改的有问题或者修改错了，那么就无法登陆服务器了！！！</p>
+<p>这时候可以打开一个新的ssh窗口，检验以下刚才的设置有没有问题。</p>
+<p>登陆时私钥选择之前生成的<strong>id_rsa</strong>即可。</p>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>ssh</tag>
+        <tag>key</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用pip离线安装PyTorch-gpu</title>
     <url>/p/Use-pip-to-install-the-GPU-version-of-PyTorch-offline/</url>
     <content><![CDATA[<p>废话不多说，上教程。</p>
@@ -6929,65 +6988,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用密钥登陆linux服务器</title>
-    <url>/p/login-linux-with-ssh-key/</url>
-    <content><![CDATA[<p>为什么使用ssh-key登录服务器？因为这种方法更安全，可以确保我们的服务器不被hack。</p>
-<p><strong>关键词</strong>：服务器安全</p>
-<a id="more"></a>
-<h3 id="安全问题">安全问题</h3>
-<p>在登录服务器时，发现了一行提示：</p>
-<p><img src="image-20211117223431763.png" /></p>
-<p>心中一惊，赶紧查看<strong>失败登录记录</strong>，果然发现了有很多<strong>被爆破</strong>的记录：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lastb </span><br></pre></td></tr></table></figure>
-<p><img src="image-20211117223543481.png" /></p>
-<p>这让我意识到<strong>使用密码登陆服务器</strong>非常危险，于是乎便有了<strong>此文</strong>。</p>
-<h3 id="使用密钥登录ssh服务器">使用密钥登录ssh服务器</h3>
-<h4 id="生成公钥和私钥">生成公钥和私钥</h4>
-<p>任意路径下打开git bash，输入以下命令，邮箱请根据自己的需要填写：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;your_email@youremail.com&quot;</span></span><br></pre></td></tr></table></figure>
-<p><img src="image-20211117224126494.png" /></p>
-<p>默认情况下会在自己的用户名下的<code>.ssh</code>文件夹生成<strong>公钥</strong>和<strong>私钥</strong>，其中<code>.pub</code>结尾的是公钥</p>
-<p><img src="image-20211117224251406.png" /></p>
-<h4 id="将公钥拷贝到服务器">将公钥拷贝到服务器</h4>
-<p>一般情况下，当前目录都会有.ssh文件夹，并且文件夹下有<code>authorized_keys</code>文件，此时只需要将<strong>公钥</strong>文件的内容复制到该文件即可：</p>
-<p><img src="image-20211117225910505.png" /></p>
-<p>若没有则需要新建</p>
-<h5 id="新建.ssh文件夹">新建.ssh文件夹</h5>
-<p>使用当前用户并在当前用户名下新建<code>.ssh</code>文件夹</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
-<h5 id="使用xftp等软件拷贝">使用xftp等软件拷贝</h5>
-<p>将<strong>id_rsa.pub</strong>文件拷贝到当前用户的<strong>.ssh文件夹</strong>下：</p>
-<p><img src="image-20211117230405573.png" /></p>
-<h5 id="使用scp命令">使用scp命令</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">scp id_rsa.pub &lt;用户名&gt;@&lt;ip&gt;:&lt;用户名&gt;.ssh/</span><br></pre></td></tr></table></figure>
-<p><img src="image-20211117231239950.png" /></p>
-<h5 id="设置公钥权限">设置公钥权限</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod 600 id_rsa.pub</span><br></pre></td></tr></table></figure>
-<h4 id="修改ssh配置">修改ssh配置</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-<p>找到对应的片段，修改后面的内容即可。</p>
-<h5 id="修改端口">修改端口</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Port 65535</span><br></pre></td></tr></table></figure>
-<h5 id="修改公钥文件地址">修改公钥文件地址</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">AuthorizedKeysFile .ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<h5 id="允许公钥登录">允许公钥登录</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PubkeyAuthentication yes</span><br></pre></td></tr></table></figure>
-<h5 id="禁止密码登录">禁止密码登录</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PasswordAuthentication no</span><br></pre></td></tr></table></figure>
-<h4 id="重启ssh服务">重启SSH服务</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service sshd restart</span><br></pre></td></tr></table></figure>
-<h3 id="注意">注意</h3>
-<p>到此以后就可以用密钥登陆了，不过现在还不能<strong>关闭当前的终端窗口</strong>，万一你刚才修改的有问题或者修改错了，那么就无法登陆服务器了！！！</p>
-<p>这时候可以打开一个新的ssh窗口，检验以下刚才的设置有没有问题。</p>
-<p>登陆时私钥选择之前生成的<strong>id_rsa</strong>即可。</p>
-]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>ssh</tag>
-        <tag>key</tag>
       </tags>
   </entry>
   <entry>
@@ -7495,6 +7495,110 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>初探docker（四）| docker容器退出码</title>
+    <url>/p/docker-tutorial-04/</url>
+    <content><![CDATA[<p>本文主要介绍Docker容器退出状态码。</p>
+<p><strong>关键词：Docker</strong></p>
+<a id="more"></a>
+<h3 id="常见容器退出码解释">常见容器退出码解释</h3>
+<h4 id="exit-0">Exit 0</h4>
+<ul>
+<li>退出状态码表示特定容器没有附加前台进程</li>
+<li>该状态码表示<strong>容器正常退出</strong></li>
+<li>某些情况下，容器中的进程成功捕获到了外部收到的信号，并成功进程了处理，此时容器退出的状态码也是0。</li>
+</ul>
+<h4 id="exit-1">Exit 1</h4>
+<ul>
+<li>程序错误，例如Dockerfile引用了不存在的文件，如entrypoint引用了错误的包；</li>
+<li>程序错误可以很简单比如除以0，也可很复杂比如空引用和其他程序crash；</li>
+</ul>
+<h4 id="exit-137">Exit 137</h4>
+<ul>
+<li>表明容器收到了<code>SIGKILL</code>信号，表示进程被杀掉，对应<code>kill -9</code>；</li>
+<li>引发<code>SIGKILL</code>的通常是用户手动执行的<code>docker kill</code>或者由docker守护进程发起的；</li>
+<li>在k8s中，如果Pod的limit资源设置比较小，引发运行内存不足导致 <code>OOMKillered</code>，此时<code>state</code>的 <code>OOMKilled</code>设置为<code>true</code>。通过<code>dmesg -T</code>也可看到oom日志</li>
+</ul>
+<h4 id="exit-139">Exit 139</h4>
+<ul>
+<li>表明容器收到了<code>SIGENV</code>信号，表示无效的内存引用，对应<code>kill -11</code>；</li>
+<li>一般是代码或者基础镜像有问题</li>
+</ul>
+<h4 id="exit-143">Exit 143</h4>
+<ul>
+<li>表明容器收到了 <code>SIGTERM</code>信号，表示终端被关闭，对应<code>kill -15</code>；</li>
+<li>引发<code>SIGTERM</code>一般对应用户手动执行<code>docker stop</code>或者由docker守护进程发起的；</li>
+<li>有时<code>docker stop</code>命令也可能会导致<strong>Exit 137</strong>。在发生代码无法处理<code>SIGTERM</code>的情况下，docker守护进程等待10秒钟后发出<code>SIGKILL</code>强制退出。</li>
+</ul>
+<h4 id="不常用的一些-exit-code">不常用的一些 Exit Code</h4>
+<ul>
+<li><code>Exit 126</code>: 权限问题或命令不可执行</li>
+<li><code>Exit 127</code>: Shell脚本中可能出现错字且字符无法识别的情况</li>
+<li><code>Exit 1 或 255</code>：因为很多程序员写异常退出时习惯用 exit(1) 或 exit(-1)，-1 会根据转换规则转成 255。这个一般是自定义 code，要看具体逻辑。</li>
+</ul>
+<h3 id="附录具有特殊含义的退出代码">附录：具有特殊含义的退出代码</h3>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 25%" />
+<col style="width: 20%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>退出状态代码</th>
+<th>含义</th>
+<th>例子</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>捕获一般错误</td>
+<td>let "var1 = 1 / 0"</td>
+<td>各种各样的错误，例如“除以零”和其他不允许的操作</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>滥用shell内置函数（根据bash文档）</td>
+<td>empty_function() {}</td>
+<td>缺少关键字或命令，或权限问题（以及二进制文件比较失败的差异返回代码）</td>
+</tr>
+<tr class="odd">
+<td>126</td>
+<td>调用的命令无法执行</td>
+<td>/dev/null</td>
+<td>权限问题或命令不是可执行文件</td>
+</tr>
+<tr class="even">
+<td>127</td>
+<td>调用的命令找不到</td>
+<td>illegal_command</td>
+<td><span class="math inline">\(PATH 拼写错误或者可能有问题 | | 128 | 退出参数无效 | exit 3.14159 | exit 只接受 0 - 255 范围内的整数参数 | | 128+n | 致命错误信号 | *kill -9* `\)</span>PPID` of script</td>
+</tr>
+<tr class="odd">
+<td>130</td>
+<td>由 Ctrl-C 终止的脚本</td>
+<td>Ctrl-C</td>
+<td>Ctrl-C 是致命错误，错误信号是2</td>
+</tr>
+<tr class="even">
+<td>255*</td>
+<td>退出状态超出范围</td>
+<td>exit -1</td>
+<td>exit 只接受 0 - 255 范围内的整数</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>根据上表，退出代码 1 - 2、126 - 165 和 255 [1] 具有特殊含义，因此对于用户指定的退出参数应避免使用。 以退出 127 结束脚本肯定会在故障排除时引起混淆（错误代码是“找不到命令”还是用户定义的？）。 但是，许多脚本使用退出 1 作为一般的错误救助。 <strong>由于退出代码 1 表示许多可能的错误，因此它在调试中并不是特别有用。</strong></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>初探docker(三) | docker-compose 简介</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -7675,110 +7779,6 @@ y=x^2e^x
 <h4 id="build-1">build</h4>
 <p>在容器build时使用以下配置。</p>
 <p>未完待续。。。</p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初探docker(四) | docker容器退出码</title>
-    <url>/p/docker-tutorial-04/</url>
-    <content><![CDATA[<p>本文主要介绍Docker容器退出状态码。</p>
-<p><strong>关键词：Docker</strong></p>
-<a id="more"></a>
-<h3 id="常见容器退出码解释">常见容器退出码解释</h3>
-<h4 id="exit-0">Exit 0</h4>
-<ul>
-<li>退出状态码表示特定容器没有附加前台进程</li>
-<li>该状态码表示<strong>容器正常退出</strong></li>
-<li>某些情况下，容器中的进程成功捕获到了外部收到的信号，并成功进程了处理，此时容器退出的状态码也是0。</li>
-</ul>
-<h4 id="exit-1">Exit 1</h4>
-<ul>
-<li>程序错误，例如Dockerfile引用了不存在的文件，如entrypoint引用了错误的包；</li>
-<li>程序错误可以很简单比如除以0，也可很复杂比如空引用和其他程序crash；</li>
-</ul>
-<h4 id="exit-137">Exit 137</h4>
-<ul>
-<li>表明容器收到了<code>SIGKILL</code>信号，表示进程被杀掉，对应<code>kill -9</code>；</li>
-<li>引发<code>SIGKILL</code>的通常是用户手动执行的<code>docker kill</code>或者由docker守护进程发起的；</li>
-<li>在k8s中，如果Pod的limit资源设置比较小，引发运行内存不足导致 <code>OOMKillered</code>，此时<code>state</code>的 <code>OOMKilled</code>设置为<code>true</code>。通过<code>dmesg -T</code>也可看到oom日志</li>
-</ul>
-<h4 id="exit-139">Exit 139</h4>
-<ul>
-<li>表明容器收到了<code>SIGENV</code>信号，表示无效的内存引用，对应<code>kill -11</code>；</li>
-<li>一般是代码或者基础镜像有问题</li>
-</ul>
-<h4 id="exit-143">Exit 143</h4>
-<ul>
-<li>表明容器收到了 <code>SIGTERM</code>信号，表示终端被关闭，对应<code>kill -15</code>；</li>
-<li>引发<code>SIGTERM</code>一般对应用户手动执行<code>docker stop</code>或者由docker守护进程发起的；</li>
-<li>有时<code>docker stop</code>命令也可能会导致<strong>Exit 137</strong>。在发生代码无法处理<code>SIGTERM</code>的情况下，docker守护进程等待10秒钟后发出<code>SIGKILL</code>强制退出。</li>
-</ul>
-<h4 id="不常用的一些-exit-code">不常用的一些 Exit Code</h4>
-<ul>
-<li><code>Exit 126</code>: 权限问题或命令不可执行</li>
-<li><code>Exit 127</code>: Shell脚本中可能出现错字且字符无法识别的情况</li>
-<li><code>Exit 1 或 255</code>：因为很多程序员写异常退出时习惯用 exit(1) 或 exit(-1)，-1 会根据转换规则转成 255。这个一般是自定义 code，要看具体逻辑。</li>
-</ul>
-<h3 id="附录具有特殊含义的退出代码">附录：具有特殊含义的退出代码</h3>
-<table>
-<colgroup>
-<col style="width: 9%" />
-<col style="width: 25%" />
-<col style="width: 20%" />
-<col style="width: 45%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>退出状态代码</th>
-<th>含义</th>
-<th>例子</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>捕获一般错误</td>
-<td>let "var1 = 1 / 0"</td>
-<td>各种各样的错误，例如“除以零”和其他不允许的操作</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>滥用shell内置函数（根据bash文档）</td>
-<td>empty_function() {}</td>
-<td>缺少关键字或命令，或权限问题（以及二进制文件比较失败的差异返回代码）</td>
-</tr>
-<tr class="odd">
-<td>126</td>
-<td>调用的命令无法执行</td>
-<td>/dev/null</td>
-<td>权限问题或命令不是可执行文件</td>
-</tr>
-<tr class="even">
-<td>127</td>
-<td>调用的命令找不到</td>
-<td>illegal_command</td>
-<td><span class="math inline">\(PATH 拼写错误或者可能有问题 | | 128 | 退出参数无效 | exit 3.14159 | exit 只接受 0 - 255 范围内的整数参数 | | 128+n | 致命错误信号 | *kill -9* `\)</span>PPID` of script</td>
-</tr>
-<tr class="odd">
-<td>130</td>
-<td>由 Ctrl-C 终止的脚本</td>
-<td>Ctrl-C</td>
-<td>Ctrl-C 是致命错误，错误信号是2</td>
-</tr>
-<tr class="even">
-<td>255*</td>
-<td>退出状态超出范围</td>
-<td>exit -1</td>
-<td>exit 只接受 0 - 255 范围内的整数</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>根据上表，退出代码 1 - 2、126 - 165 和 255 [1] 具有特殊含义，因此对于用户指定的退出参数应避免使用。 以退出 127 结束脚本肯定会在故障排除时引起混淆（错误代码是“找不到命令”还是用户定义的？）。 但是，许多脚本使用退出 1 作为一般的错误救助。 <strong>由于退出代码 1 表示许多可能的错误，因此它在调试中并不是特别有用。</strong></li>
-</ul>
 ]]></content>
       <tags>
         <tag>docker</tag>
@@ -9645,6 +9645,40 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>大话数据结构（二） | 栈和队列</title>
+    <url>/p/stack-and-ground/</url>
+    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
+<p><strong>关键词：数据结构</strong></p>
+<a id="more"></a>
+<h3 id="栈的定义">栈的定义</h3>
+<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
+<ul>
+<li>允许插入和删除的一端称为栈顶</li>
+<li>另一端被称为栈底</li>
+<li>不含任何元素的栈称为空栈</li>
+<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
+<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
+</ul>
+<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
+<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
+<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
+<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
+<ol type="1">
+<li>1、2、3进，3、2、1出。出栈次序为321。</li>
+<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
+<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
+<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
+<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
+</ol>
+<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
+<h3 id="抽象数据类型">抽象数据类型</h3>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>数据结构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>梯度下降法</title>
     <url>/p/What&#39;s-the-Gradient-descent/</url>
     <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
@@ -10041,51 +10075,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
-    <title>线性回归中的基函数</title>
-    <url>/p/a-basis-function-in-linear-regression/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
-<p><strong>关键词：</strong>线性回归，基函数</p>
-<a id="more"></a>
-<h4 id="线性基函数模型">线性基函数模型</h4>
-<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
-y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
-\]</span> 其中 <span class="math display">\[
-x = (x_1,...,x_D)^T
-\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
-y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
-\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
-<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
-y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
-\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
-<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
-<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
-\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
-\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
-<h4 id="代码部分">代码部分</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
-\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
-\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
-\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
-<h5 id="python中的广播规则">python中的广播规则</h5>
-<p>举个例子：</p>
-<p>假设<code>x</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
-<p><code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
-<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
-<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
-<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>离线安装docker</title>
     <url>/p/offline-install-docker-offline/</url>
     <content><![CDATA[<p>最近在部署项目，甲方的部署环境有可能内网环境，而我们现在的项目是部署在docker中的，所以需要记录一下如何离线安装docker。这里的步骤对于其他需要离线安装的deb包也是适用的。</p>
@@ -10151,6 +10140,51 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>线性回归中的基函数</title>
+    <url>/p/a-basis-function-in-linear-regression/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
+<p><strong>关键词：</strong>线性回归，基函数</p>
+<a id="more"></a>
+<h4 id="线性基函数模型">线性基函数模型</h4>
+<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
+y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
+\]</span> 其中 <span class="math display">\[
+x = (x_1,...,x_D)^T
+\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
+y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
+\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
+<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
+y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
+\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
+<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
+<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
+\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
+\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
+<h4 id="代码部分">代码部分</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
+\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
+\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
+\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
+<h5 id="python中的广播规则">python中的广播规则</h5>
+<p>举个例子：</p>
+<p>假设<code>x</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
+<p><code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
+<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
+<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
+<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
