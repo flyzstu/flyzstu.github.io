@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。 有人可能会问了，为啥要这么麻烦，直接裸机跑容器不就完了吗？ 读完这篇文章，你应该会有所了解。 关键字：docker in docker">
@@ -348,19 +348,19 @@
 <p>还有一种方式是，启动一个<code>docker:dind</code> 容器A，再启动一个docker容器B，容器B指定DOCKER_HOST为A容器内的docker daemon。</p>
 <h3 id="使用宿主机的socket文件">使用宿主机的socket文件</h3>
 <p>本想着挂载宿主机的<code>docker.sock</code>文件和docker二进制文件到容器即可实现<code>dind</code>，无奈默认情况下<code>docker.sock</code>文件是经过tls证书加密的，而在默认情况下加密的根证书却没有找到，通过宿主机执行<code>docker info</code>命令会提示以下错误：</p>
-<p><img src="image-20220406163343550.png" /></p>
+<p><img data-src="image-20220406163343550.png" /></p>
 <p>翻阅资料知道<code>docker daemon</code>可以通过暴露tcp端口实现通信，而默认情况<strong>不是加密的</strong>，于是这个路就通了！！</p>
 <h3 id="通过暴露宿主机的tcp端口实现通信">通过暴露宿主机的tcp端口实现通信</h3>
 <ol type="1">
 <li>查看宿主机<code>docker</code>服务单元文件地址</li>
 </ol>
-<p><img src="image-20220406163920282.png" /></p>
+<p><img data-src="image-20220406163920282.png" /></p>
 <ol start="2" type="1">
 <li>修改宿主机<code>docker</code>服务单元文件</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /lib/systemd/system/docker.service</span><br></pre></td></tr></table></figure>
 <p>安全起见，指定IP地址为局域网内网地址即可。</p>
-<p><img src="image-20220406164257539.png" /></p>
+<p><img data-src="image-20220406164257539.png" /></p>
 <ol start="3" type="1">
 <li>重载服务单元文件</li>
 </ol>
@@ -377,7 +377,7 @@
 <li>测试</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220406165727628.png" /></p>
+<p><img data-src="image-20220406165727628.png" /></p>
 <p>通过上述方法，即可实现<strong>在jenkins容器中操作docker容器啦</strong></p>
 <h2 id="后记">后记</h2>
 <p>本来是想通过上述第一种方式来实现<strong>jenkins容器中操作docker容器</strong>，但是发现这种方法有点问题：</p>
@@ -479,7 +479,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

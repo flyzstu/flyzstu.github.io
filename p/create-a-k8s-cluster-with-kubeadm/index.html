@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="本文主要介绍如何使用一个kubeadm创建一个K8s集群。 关键词：docker，k8s">
@@ -371,7 +371,7 @@
 <h4 id="将两个脚本所在的目录添加到环境变量">将两个脚本所在的目录添加到环境变量</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export PATH=<span class="variable">$PATH</span>:~/.bin&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
 <h4 id="检查脚本是否正常运行">检查脚本是否正常运行</h4>
-<p><img src="image-20220504134400786.png" /></p>
+<p><img data-src="image-20220504134400786.png" /></p>
 <h3 id="安装kubeadm">安装kubeadm</h3>
 <h4 id="开始之前">开始之前</h4>
 <p>你需要准备：</p>
@@ -390,23 +390,23 @@
 <p>永久关闭</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure>
 <p>注释掉最后一行的swap</p>
-<p><img src="image-20220504135341965.png" /></p>
+<p><img data-src="image-20220504135341965.png" /></p>
 <h5 id="确保每个节点上-mac-地址和-product_uuid-的唯一性">确保每个节点上 MAC 地址和 product_uuid 的唯一性</h5>
 <p>这里直接使用xcall脚本执行命令。</p>
 <p>一般来讲，硬件设备会拥有唯一的地址，但是有些虚拟机的地址可能会重复。 Kubernetes 使用这些值来唯一确定集群中的节点。 如果这些值在每个节点上不唯一，可能会导致<strong>安装失败</strong>。</p>
 <p>检查mac地址</p>
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link</span><br></pre></td></tr></table></figure></p>
-<p><img src="image-20220504140036574.png" /></p>
+<p><img data-src="image-20220504140036574.png" /></p>
 <p>检查product_uuid</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cat /sys/class/dmi/id/product_uuid</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220504140019711.png" /></p>
+<p><img data-src="image-20220504140019711.png" /></p>
 <h5 id="检查网络适配器">检查网络适配器</h5>
 <p>如果<strong>有一个以上的网络适配器</strong>，同时K8s通过默认路由不可达，此时需要先添加默认IP路由规则。</p>
 <p>这里使用的是同一局域网的虚拟机，默认符合规则。</p>
 <h4 id="允许-iptables-检查桥接流量">允许 iptables 检查桥接流量</h4>
 <p>检查<code>br_netfilter</code>模块是否被加载</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsmod | grep br_netfilter</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220504140607226.png" /></p>
+<p><img data-src="image-20220504140607226.png" /></p>
 <p>这里没有加载，需要设置加载</p>
 <p>显式加载</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure>
@@ -452,12 +452,12 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/containerd</span><br><span class="line">containerd config default | sudo tee /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
 <p>重新启动 containerd</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220504143744362.png" /></p>
+<p><img data-src="image-20220504143744362.png" /></p>
 <h5 id="设置docker-hub镜像源">设置Docker Hub镜像源</h5>
 <p>默认containerd在Docker Hub拉取镜像，这样速度很慢</p>
-<p><img src="image-20220505115520415.png" /></p>
+<p><img data-src="image-20220505115520415.png" /></p>
 <p>在<code>/etc/containerd</code>创建mirrors.d文件夹</p>
-<p><img src="image-20220505115710174.png" /></p>
+<p><img data-src="image-20220505115710174.png" /></p>
 <p>编辑hosts.toml，这里使用daocloud的源</p>
 <figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server</span> = <span class="string">&quot;https://docker.io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[host.&quot;http://f1361db2.m.daocloud.io&quot;]</span></span><br><span class="line">  <span class="attr">capabilities</span> = [<span class="string">&quot;pull&quot;</span>, <span class="string">&quot;resolve&quot;</span>]</span><br></pre></td></tr></table></figure>
 <h5 id="使用-systemd-cgroup-驱动程序">使用 <code>systemd</code> cgroup 驱动程序</h5>
@@ -481,7 +481,7 @@
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y kubelet kubeadm kubectl</span><br><span class="line">sudo apt-mark hold kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
 <p>kubelet 现在每隔几秒就会重启，因为它陷入了一个等待 kubeadm 指令的死循环。</p>
-<p><img src="image-20220504145739260.png" /></p>
+<p><img data-src="image-20220504145739260.png" /></p>
 <h4 id="配置容器运行时-cgroup-驱动">配置容器运行时 cgroup 驱动</h4>
 <p>由于 kubeadm 把 kubelet 视为一个系统服务来管理，所以对基于 kubeadm 的安装， <strong>推荐使用 <code>systemd</code> 驱动</strong>，不推荐 <code>cgroupfs</code> 驱动。</p>
 <p>一个示例：</p>
@@ -499,9 +499,9 @@
 <p>如果在启动后控制平面以后出现错误，必须先<strong>删除控制平面</strong></p>
 <p>更详细的可以参考<a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#tear-down">卸载集群</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo kubeadm reset</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220505095239821.png" /></p>
+<p><img data-src="image-20220505095239821.png" /></p>
 <h3 id="控制节点启动成功">控制节点启动成功</h3>
-<p><img src="image-20220505101003030.png" /></p>
+<p><img data-src="image-20220505101003030.png" /></p>
 <p>如果使用非root用户运行kubectl，需要运行以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
 <p>如果使用root用户，则可以运行</p>
@@ -514,10 +514,10 @@
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">podSubnet:</span> <span class="string">&quot;10.244.0.0/16&quot;</span> <span class="comment"># --pod-network-cidr # 网络插件地址</span></span><br></pre></td></tr></table></figure>
 <p>这里使用<strong>flannel</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220505112506790.png" /></p>
+<p><img data-src="image-20220505112506790.png" /></p>
 <p>检查节点状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220505112608594.png" /></p>
+<p><img data-src="image-20220505112608594.png" /></p>
 <p>当STATUS状态为Ready时说明集群已经启动成功了。</p>
 <h3 id="设置master为可调度节点">设置Master为可调度节点</h3>
 <p>默认情况下，<code>Master</code> 不参与 <code>Pod</code> 调度，也就是说不会在 <code>Master</code> 节点上部署其他非系统 <code>Pod</code>。可以使用以下命令调整这个策略</p>
@@ -526,30 +526,30 @@
 <p>准备工作首先也需要完成<strong>安装kubeadm</strong>的步骤。</p>
 <p>剩下的步骤就比较简单了，找到上文中<strong>成功启动K8s控制节点</strong>中的token，在工作节点执行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo kubeadm join 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220505133657174.png" /></p>
+<p><img data-src="image-20220505133657174.png" /></p>
 <p>如果有类似的回显说明已经加入成功了。</p>
 <h3 id="集群启动成功">集群启动成功</h3>
-<p><img src="image-20220505141228217.png" /></p>
+<p><img data-src="image-20220505141228217.png" /></p>
 <h3 id="kubernetes排错">Kubernetes排错</h3>
 <h4 id="wait-control-plane-waiting-for-the-kubelet-to-boot-up-the-control-plane-as-static-pods-from-directory-etckubernetesmanifests.-this-can-take-up-to-4m0s">[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory “/etc/kubernetes/manifests”. This can take up to 4m0s</h4>
 <p>查看kubelet日志</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -xeu kubelet</span><br></pre></td></tr></table></figure>
 <p>出现频率较高的就是<strong>sandbox</strong>，应该和这个镜像有关</p>
-<p><img src="image-20220505094125196.png" /></p>
+<p><img data-src="image-20220505094125196.png" /></p>
 <p>查看<code>containerd</code>默认配置</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220505094253375.png" /></p>
+<p><img data-src="image-20220505094253375.png" /></p>
 <p>发现默认配置是<code>k8s.gcr.io</code>域的镜像，国内拉取不到。</p>
 <p>上文中已经拉取了阿里云的镜像，执行以下命令可以查看镜像的拉取地址</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crictl images</span><br></pre></td></tr></table></figure>
 <p>如果报错应该是权限问题，<strong>即<code>containerd</code> 的创建的unix socket文件权限是root</strong>，可以试试加上<code>sudo</code></p>
-<p><img src="image-20220505094820005.png" /></p>
+<p><img data-src="image-20220505094820005.png" /></p>
 <h5 id="解决方案">解决方案</h5>
 <p>将<code>k8s.gcr.io/pause</code>镜像更改为本地拉取的阿里云镜像即可。</p>
 <h4 id="加入节点时提示getting-status-of-runtime-rpc-error-code-unimplemented-desc-unknown-service-runtime.v1alpha2.runtimeservice">加入节点时，提示"getting status of runtime: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"</h4>
 <h5 id="解决方案-1">解决方案</h5>
 <p>检查<code>/etc/containerd/config.toml</code>文件，将SystemdCgroup设置为true</p>
-<p><img src="image-20220505140624811.png" /></p>
+<p><img data-src="image-20220505140624811.png" /></p>
 <p>重启containerd服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
 <h3 id="参考">参考</h3>
@@ -649,7 +649,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

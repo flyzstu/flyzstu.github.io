@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="给你一个字符串 s ，将该字符串中的大写字母转换成相同的小写字母，返回新的字符串。 当然我们可以用库函数解决这个问题，但是如果这个问题出现在面试里，那肯定是不能用库函数的。 这里我们使用位运算解决这个大小写转换问题。">
@@ -355,13 +355,13 @@
 </ul>
 <h3 id="大写转小写">大写转小写</h3>
 <p>在本题中，将二进制数的第5位从0变成1，那么只需要将该二进制数和二进制数<code>0100000</code><strong>按位或</strong>即可：</p>
-<p><img src="image-20211212174229278.png" /></p>
+<p><img data-src="image-20211212174229278.png" /></p>
 <p>而当该字母本身就是小写字母时，则二进制数不发生改变，即<strong>小写字母还是原来的小写字母</strong></p>
 <p>而二进制数00100000转换后得到十进制数32，因此如果需要将<strong>大写字母转换成小写字母，同时小写字母不变</strong>，只需要把这个字符按位或32即可：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b := <span class="string">&#x27;A&#x27;</span></span><br><span class="line">b |= <span class="number">32</span> <span class="comment">// &#x27;a&#x27;</span></span><br></pre></td></tr></table></figure>
 <h3 id="小写转大写">小写转大写</h3>
 <p>如果需要将小写转换成大写字母，需要将小写字母的二进制编码的第五位从1变成0，则需要将二进制数和二进制数<code>11011111</code><strong>按位与</strong>即可。</p>
-<p><img src="image-20211212174546766.png" /></p>
+<p><img data-src="image-20211212174546766.png" /></p>
 <p>而当该字母本身就是大写字母时，则二进制数不发生改变，即<strong>大写字母还是原来的大写字母</strong></p>
 <p>如何将<code>110111111</code>转换成十进制数呢？</p>
 <p>二进制中最高位表示符号位，最高位是1时是负数，0是负数。</p>
@@ -372,9 +372,9 @@
 <h3 id="大写转小写小写转大写">大写转小写，小写转大写</h3>
 <p>也就是二进制的<strong>第5位1变为0，同时0变为1</strong>.</p>
 <p>小写转大写：</p>
-<p><img src="image-20211212184452762.png" /></p>
+<p><img data-src="image-20211212184452762.png" /></p>
 <p>大写转小写：</p>
-<p><img src="image-20211212184320992.png" /></p>
+<p><img data-src="image-20211212184320992.png" /></p>
 <p>将00100000转换成十进制是32.</p>
 <p>如果需要将<strong>小写字母转换成大写字母，同时大写字母转换成小写字母</strong>，只需要把这个字符按位异或32即可：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b := <span class="string">&#x27;A&#x27;</span></span><br><span class="line">b ~= <span class="number">32</span></span><br></pre></td></tr></table></figure>
@@ -476,7 +476,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

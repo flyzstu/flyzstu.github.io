@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="在Pytorch中，数据加载可以通过自定义的数据集对象来实现。">
@@ -342,11 +342,11 @@
 <li><code>__len__():返回样本的数量.len(obj)等价于obj.__len__().</code></li>
 </ul>
 <p>这里我们以某学校结课项目为例，谈谈在PyTorch中处理图像的操作。</p>
-<p><img src="202011081130.png" style="zoom:50%;" /></p>
+<p><img data-src="202011081130.png" style="zoom:50%;" /></p>
 <p>第一步，首先要考虑的操作是将"绝缘子"文件夹下面的文件全部load到内存中，说干就干。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span>(<span class="params">data.Dataset</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, root</span>):</span></span><br><span class="line">        imgs = os.listdir(root)</span><br><span class="line">        <span class="comment"># 所有图片的绝对路径</span></span><br><span class="line">        <span class="comment"># 这里不实际加载图片, 只是指定路径</span></span><br><span class="line">        <span class="comment"># 当调用__getitem__才会真正读图片</span></span><br><span class="line">        self.imgs = [os.path.join(root, img) <span class="keyword">for</span> img <span class="keyword">in</span> imgs]</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span>(<span class="params">self, index</span>):</span></span><br><span class="line">        img_path = self.imgs[index]</span><br><span class="line">        label = <span class="string">&#x27;jueyuanzi&#x27;</span>               				<span class="comment">#这里的标签是随便指定的</span></span><br><span class="line">        pli_img = Image.open(img_path)</span><br><span class="line">        array = np.asarray(pli_img)</span><br><span class="line">        data = torch.from_numpy(array)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> data, label</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> len(self.imgs)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dataset  = Data(<span class="string">&#x27;..\\绝缘子&#x27;</span>)</span><br><span class="line">img, label = dataset[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img, label <span class="keyword">in</span> dataset:</span><br><span class="line">    print(img.size(), img.float().mean(), label)</span><br></pre></td></tr></table></figure>
 <p>实验结果：</p>
-<p><img src="image-20201108113830607.png" /></p>
+<p><img data-src="image-20201108113830607.png" /></p>
 <p>通过上面的代码，我们学习了如何自定义自己的数据集，并可以依次获取。但是这里的数据不适合实际使用，其具有以下问题：</p>
 <ol type="1">
 <li>返回的数据形状会因为样本的形状而变化，这里由于图片的大小是一致的，因此无需处理。<strong>但是如果每张图片的大小不一</strong>，返回的数据大小就会不一致，这对于需要取batch训练的神经网络来说非常不友好。</li>
@@ -465,7 +465,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

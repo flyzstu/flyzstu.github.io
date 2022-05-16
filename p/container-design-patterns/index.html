@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="本文是CNCF × Alibaba 云原生技术公开课的第四章理解 Pod 和容器设计模式学习笔记。 关键词：k8s">
@@ -354,14 +354,14 @@
 </ul>
 <p>容器里面PID=1的进程就是容器本身，这意味着<strong>管理容器等于直接管理应用本身</strong>。</p>
 <p>如果将Kubernetes类比于云时代的操作系统，那么容器的镜像就是这个操作系统的软件安装包。</p>
-<p><img src="image-20220505153649015.png" /></p>
+<p><img data-src="image-20220505153649015.png" /></p>
 <h4 id="真实操作系统的例子">真实操作系统的例子</h4>
 <p>假如有一个程序叫做helloworld，这个程序是由一组进程组成，这里说的进程等同于Linux线程。</p>
 <p>因为Linux线程是轻量级进程，所以如果从Linux中看helloword的pstree，会看到这个helloword程序由四个线程组成。四个线程<strong>相互协作</strong>，共享helloword程序的资源，组成了helloworld程序的<strong>真实工作情况</strong>。</p>
 <p>以上实际上是一个<strong>进程组</strong>的概念。</p>
-<p><img src="image-20220505154210244.png" /></p>
+<p><img data-src="image-20220505154210244.png" /></p>
 <p>真实的操作系统中，一个程序往往是根据进程组来进行管理的。类比到Kubernetes，由于Pod是Kubernetes进行资源调度的最小单位，那么<strong>Pod就可类比成操作系统的进程组</strong>。</p>
-<p><img src="image-20220505161515178.png" /></p>
+<p><img data-src="image-20220505161515178.png" /></p>
 <h4 id="进程组的概念">进程组的概念</h4>
 <p>还是原来的例子：hellowolrd程序由四个进程组成，这些进程会共享一些资源和文件。如果现在<strong>把helloworld程序用容器跑起来</strong>，应该怎么做？</p>
 <p>一个自然的想法是，启动一个docker容器，里面运行四个进程。</p>
@@ -376,13 +376,13 @@
 </blockquote></li>
 <li><p>如果在容器里运行一个systemd管理其他进程，这样会导<strong>致管理容器无法直接管理应用</strong>。应用被systemd接管了，此时<strong>应用状态的生命周期不等于容器的生命周期</strong>。</p></li>
 </ul>
-<p><img src="image-20220505161527738.png" /></p>
+<p><img data-src="image-20220505161527738.png" /></p>
 <h4 id="pod进程组">Pod=进程组</h4>
 <p>Pod是Kubernetes抽象出来的一个可以类比为进程组的概念。</p>
 <p>前文提到的这四个进程共同组成的一个应用helloworld，在kubenetes里面实际上会被定义<strong>为拥有四个容器的Pod</strong>。</p>
 <p>因为在一个容器里启动多个进程会遇到上面的问题，<strong>所以Kubernetes把四个相互协作的进程用四个独立的容器启动起来，然后定义在一个Pod里。</strong></p>
 <p>当Kubernetes把helloword给拉起来的时候，实际上会看到四个容器，他们共享了某些资源，这些<strong>资源都属于Pod</strong>，所以Pod在Kubernetes里只是一个<strong>逻辑单位</strong>。多个容器的组合就叫做Pod。<strong>Pod是Kubernetes资源分配的原子调度单位。</strong></p>
-<p><img src="image-20220505162400647.png" /></p>
+<p><img data-src="image-20220505162400647.png" /></p>
 <h4 id="为什么pod必须是原子调度单位">为什么Pod必须是原子调度单位</h4>
 <p>为什么要把Pod作为一个概念抽象出来呢？为什么不通过调度等方式把Pod这个抽象的概念去掉？为什么Pod必须是Kubernetes里的原子调度单位？</p>
 <p>通过一个例子来解释。</p>
@@ -404,7 +404,7 @@
 <li><p>另一种是Google的解法，他在Omega 系统中做了一个非常复杂且非常厉害的解法，被称为<strong>乐观调度</strong>：即不管冲突的异常情况，先调度，同时设置一个回滚机制，如果在调度过程中出现了冲突，即通过回滚来解决问题。这个方式来说更加优雅，也更加高效。<strong>但是实现机制非常复杂</strong>，因为<strong>悲观锁的设置一定要比乐观锁要简单</strong>。</p></li>
 </ul>
 <p>而像这样一个调度问题，在Kubernetes里，直接通过<strong>Pod</strong>一个概念解决了，因为在Kubernetes里，App容器和LogCollector容器是属于一个Pod的，在调度时必然是以一个Pod为单位进行调度，<strong>因此不存在这个问题</strong>。</p>
-<p><img src="image-20220505171036279.png" /></p>
+<p><img data-src="image-20220505171036279.png" /></p>
 <h4 id="再次理解pod">再次理解Pod</h4>
 <p>首先Pod里面的容器是<strong>超亲密关系</strong>。和超亲密关系相比，还有一种关系叫<strong>亲密关系</strong>，这个亲密关系一定是可用通过调度来解决的。</p>
 <p>比如现在有两个Pod，<strong>需要运行在同一台宿主机上</strong>，那么就属于亲密关系，调度器是可以去做的。</p>
@@ -416,7 +416,7 @@
 <li>两个容器或者微服务之间，会发生非常频繁的RPC调用，出于性能的考虑，也应该是超亲密关系；</li>
 <li>两个容器或者应用，他们需要<strong>共享某些Linux NameSpace</strong>。最常见的例子就是一个容器需要加入另外一个容器的Network Namespace，这样就可以看到另外一个容器的网络设备信息；</li>
 </ul>
-<p><img src="image-20220505193202869.png" /></p>
+<p><img data-src="image-20220505193202869.png" /></p>
 <p>Pod解决了两个问题</p>
 <ol type="1">
 <li>怎么去描述<strong>超亲密关系</strong>；</li>
@@ -433,12 +433,12 @@
 <p>因此一个Pod里面的所有容器网络视图是完全一样的，<strong>即他们看到的网络设备、IP地址、MAC地址等其他网络信息其实完全是一样的</strong>，这些都来自于Pod第一次创建这个Infra Container。</p>
 <p>在Pod里面一定有一个IP地址，是这个Pod的Network Namespace 对应的地址，也是Infra Container的IP地址。这个IP地址被Pod中的容器共享。这就是Pod的网络实现方式。</p>
 <p>在整个Pod里，必然是Infra Container第一个启动，而且整个Pod的生命周期等同于Infra Container的生命周期，与容器A和容器B是无关的。<strong>因此Kubernetes允许单独更新Pod里的某一个镜像，且更新时整个Pod也不会重建，也不会重启。</strong></p>
-<p><img src="image-20220505193219913.png" /></p>
+<p><img data-src="image-20220505193219913.png" /></p>
 <h5 id="共享存储">共享存储</h5>
 <p>现在有两个容器，一个是容器A，另一个是容器B。两个容器需要进行文件共享。</p>
 <p><strong>在一个Pod里，声明一个Volume，它是属于Pod的，同一个Pod访问的Volume是同一份Volume。</strong></p>
 <p>之前的例子，应用容器App写了日志，只要这个日志是在一个Volume中，只要声明挂载了同一个Volume，这个Volume就可以被另外一个LogCollector容器看到。</p>
-<p><img src="image-20220505194156672.png" /></p>
+<p><img data-src="image-20220505194156672.png" /></p>
 <h3 id="详解容器设计模式">详解容器设计模式</h3>
 <p>举个例子，现在需要发布一个应用，这个应用是用JAVA写的，打包完了以后需要把他放在Tomcat的web APP目录下面，这样就可以启动起来了。</p>
 <p>如果需要打包成镜像，通常有几种做法：</p>
@@ -455,7 +455,7 @@
 <p>由于一个Pod里面的容器是共享Volume的，tomcat容器启动的时候把Init Container操作的Volume挂载为自己的APP目录，<strong>此时APP目录下一定会找到Init Contaier操作的WAR包。</strong></p>
 <p>有了Init Container，这个Pod就是一个自包含的“容器组”。不用担心没有分布式存储，Volume不是持久化的，它一定是可以公布的。</p>
 <p>通过组合两种不同角色的容器，并且按照像Init Container 这样的一种编排方式，统一的去打包应用。像这样的一个概念，在Kubernetes里就是一个非常经典的容器设计模式，叫做：Sidecar</p>
-<p><img src="image-20220505203809412.png" /></p>
+<p><img data-src="image-20220505203809412.png" /></p>
 <h5 id="容器设计模式sidecar">容器设计模式：Sidecar</h5>
 <p><strong>在Pod里，定义一些专门的容器，用来执行主业务容器的一些辅助工作，这种容器设计模式被称为Sidecar。</strong></p>
 <p>还有一些其他操作：</p>
@@ -466,20 +466,20 @@
 <li><p>查看其他容器的工作状态，不需要登陆到容器里去看，只要把监控组件装到额外的小容器里就行了。<strong>业务监控</strong>也可以通过Sidecar方式来做。</p></li>
 </ul>
 <p><strong>通过Sidecar可以把辅助功能从业务容器解耦，这个能力还可以重用</strong>，即同样的一个Sidecar容器可以被全公司的人共用。这就是设计模式的威力。</p>
-<p><img src="image-20220505203837861.png" /></p>
+<p><img data-src="image-20220505203837861.png" /></p>
 <h4 id="sidecar应用与日志收集">Sidecar：应用与日志收集</h4>
 <p>前面提到的应用日志收集，业务容器将日志写在一个 Volume 里面，而由于 Volume 在 Pod 里面是被共享的，所以日志容器 —— 即 Sidecar 容器一定可以通过共享该 Volume，直接把日志文件读出来，然后存到远程存储里面，或者转发到另外一个例子。<strong>现在业界常用的 Fluentd 日志进程或日志组件，基本上都是这样的工作方式。</strong></p>
-<p><img src="image-20220505203853464.png" /></p>
+<p><img data-src="image-20220505203853464.png" /></p>
 <h4 id="sidecar代理容器">Sidecar：代理容器</h4>
 <p>假如现在有个 Pod 需要访问一个外部系统，或者一些外部服务，但是这些外部系统是一个集群，那么这个时候如何通过一个统一的、简单的方式，用一个 IP 地址，就把这些集群都访问到？有一种方法就是：修改代码。因为代码里记录了这些集群的地址；<strong>另外还有一种解耦的方法，即通过 Sidecar 代理容器。</strong></p>
 <p>简单说，<strong>单独写一个这么小的 Proxy，用来处理对接外部的服务集群，它对外暴露出来只有一个 IP 地址就可以了</strong>。所以接下来，业务容器主要访问 Proxy，然后由 Proxy 去连接这些服务集群，这里的关键在于 Pod 里面多个容器是通过 localhost 直接通信的，因为它们同属于一个 network Namespace，网络视图都一样，所以它们俩通信 localhost，并没有性能损耗。</p>
-<p><img src="image-20220505203959014.png" /></p>
+<p><img data-src="image-20220505203959014.png" /></p>
 <h4 id="sidecar适配器容器">Sidecar：适配器容器</h4>
 <p>现在业务暴露出来的 API，比如说有个 API 的一个格式是 A，但是现在有一个外部系统要去访问我的业务容器，它只知道的一种格式是 API B ,所以要做一个工作，就是把业务容器怎么想办法改掉，要去改业务代码。但实际上，你可以<strong>通过一个 Adapter 帮你来做这层转换。</strong></p>
 <p>现在有个例子：现在业务容器暴露出来的监控接口是 /metrics，访问这个这个容器的 metrics 的这个 URL 就可以拿到了。可是现在，这个监控系统升级了，它访问的 URL 是 /health，metrics 不认识。那这个怎么办？<strong>可以不去改代码，而是额外写一个 Adapter，用来把所有对 health 的这个请求转发给 metrics</strong>，所以这个 Adapter 对外暴露的是 health 这样一个监控的 URL，这就可以了，你的业务就又可以工作了。</p>
 <p>这样的关键还在于 Pod 之中的容器是通过 localhost 直接通信的，所以没有性能损耗，并且这样一个 <strong>Adapter 容器可以被全公司重用起来</strong>，这些都是设计模式给我们带来的好处。</p>
 <h3 id="总结">总结</h3>
-<p><img src="image-20220505204158684.png" /></p>
+<p><img data-src="image-20220505204158684.png" /></p>
 
     </div>
 
@@ -571,7 +571,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

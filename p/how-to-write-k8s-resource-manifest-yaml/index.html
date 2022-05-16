@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="本文主要介绍如何编写k8s资源清单yaml文件。 在K8s集群上进行资源配置通常都是通过yaml文件进行的，因此如何快速编写yaml文件就变得十分重要。 关键词：k8s">
@@ -341,7 +341,7 @@
 <h3 id="yaml资源清单基本格式">yaml资源清单基本格式</h3>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span> <span class="comment"># API版本</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span>    <span class="comment"># 资源类型</span></span><br><span class="line"><span class="attr">metadata:</span>           <span class="comment"># 资源元数据</span></span><br><span class="line"> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span>               <span class="comment"># 资源的期望值</span></span><br><span class="line"> <span class="attr">replicas:</span> <span class="number">3</span>        <span class="comment"># 副本实例数目</span></span><br><span class="line"> <span class="attr">selector:</span>          <span class="comment"># 资源选择器，与下面的metadata.labels保持一致</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">   <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">template:</span>          <span class="comment"># Pod模板</span></span><br><span class="line">  <span class="attr">metadata:</span>         <span class="comment"># Pod元数据</span></span><br><span class="line">  	<span class="attr">labels:</span>         </span><br><span class="line">  	 <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">spec:</span>             <span class="comment"># Pod资源的期望值</span></span><br><span class="line">   <span class="attr">containers:</span>      <span class="comment"># 容器配置</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">busybox</span> </span><br></pre></td></tr></table></figure>
 <h3 id="kubernetes-的-api"><strong>Kubernetes</strong> 的 <strong>API</strong></h3>
-<p><img src="image-20220506105442472.png" /></p>
+<p><img data-src="image-20220506105442472.png" /></p>
 <p>当我们去提交一个 Pod，或者 get 一个 Pod 的时候，它的 content 内容都是用 JSON 或者是 YAML 表达的。上图中有个 yaml 的例子，在这个 yaml file 中，对 Pod 资源的描述也分为几个部分。</p>
 <p>第一个部分，一般来讲会是 API 的 <strong>version</strong>。比如在这个例子中是 V1，它也会描述我在操作哪个资源；比如说我的 <strong>kind</strong> 如果是 pod，在 Metadata 中，就写上这个 Pod 的名字；比如说 nginx，我们也会给它打一些 <strong>label</strong>，我们等下会讲到 label 的概念。在 Metadata 中，有时候也会去写 <strong>annotation</strong>，也就是对资源的额外的一些用户层次的描述。</p>
 <p>比较重要的一个部分叫做 <strong>Spec</strong>，<strong>Spec 也就是我们希望 Pod 达到的一个预期的状态</strong>。比如说它内部需要有哪些 container 被运行；比如说这里面有一个 nginx 的 container，它的 image 是什么？它暴露的 port 是什么？</p>
@@ -349,7 +349,7 @@
 <p>刚刚在 API 之中，我们讲了一个比较有意思的 metadata 叫做“<strong>label</strong>”，这个 label 可以是一组<strong>键值对</strong>。</p>
 <p>比如下图的第一个 pod 中，label 就可能是一个 color 等于 red，即它的颜色是红颜色。当然你也可以加其他 label，比如说 size: big 就是大小，定义为大的，它可以是一组 label。</p>
 <p>这些 label 是可以被 selector，也就是选择器所查询的。这个能力实际上跟我们的 sql 类型的 select 语句是非常相似的，比如下图中的三个 Pod 资源中，我们就可以进行 select。name color 等于 red，就是它的颜色是红色的，我们也可以看到，只有两个被选中了，因为只有他们的 label 是红色的，另外一个 label 中写的 color 等于 yellow，也就是它的颜色是黄色，是不会被选中的。</p>
-<p><img src="image-20220506110134831.png" /></p>
+<p><img data-src="image-20220506110134831.png" /></p>
 <p>通过 label，kubernetes 的 API 层就可以对这些资源进行一个筛选，那这些筛选也是 kubernetes 对资源的集合所表达默认的一种方式。</p>
 <h3 id="使用yaml创建资源对象deployment">使用yaml创建资源对象Deployment</h3>
 <p>资源清单可以通过以下命令导出，会有很多冗余信息</p>
@@ -499,7 +499,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="实习公司一直开展的项目突然停滞了，因为一个老板的需求我们一直无法满足：  老板想用现有的WebRTC技术，我们使用了现有的技术，但是效果不够好； 使用别的公司的技术但是收费又太贵了，初创公司没有那么多钱； 初创公司没有技术leader，第一批员工大部分都是实习员工；  别问我为啥不跑路，说多了都是泪。 借着这个机会，好好学习一下webRTC技术，同时学会怎么阅读golang库的源码。">
@@ -351,7 +351,7 @@
 <h3 id="技术组成">技术组成</h3>
 <p>简单来说，WebRTC 是一个可以在 Web 应用程序中实现音频，视频和数据的实时通信的开源项目。在实时通信中，音视频的采集和处理是一个很复杂的过程。比如音视频流的编解码、降噪和回声消除等，但是在 WebRTC 中，这一切都交由浏览器的底层封装来完成。我们可以直接拿到优化后的媒体流，然后将其输出到本地屏幕和扬声器，或者转发给其对等端。</p>
 <figure>
-<img src="WebRTC学习笔记(一)/webp.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+<img data-src="WebRTC学习笔记(一)/webp.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
 </figure>
 <ul>
 <li>WebAPI层：面向开发者提供标准API（javascirpt），前端应用通过这一层接入使用WebRTC能力。</li>
@@ -414,11 +414,11 @@
 <li>反射候选者：表示的是获取NAT内主机的外网IP地址和端口，其优先级低于主机候选者。也就是说当WebRTC尝试本地连接不通时，会尝试通过反射候选者获得的IP地址和端口进行连接；</li>
 <li>中级候选者：表示的是中继服务器的IP地址和端，即通过服务器中转媒体数据，当WebRTC客户端通信双方无法穿越P2P时，为了保证双方可以通讯，此时只能通过服务器中转来保证服务质量。</li>
 </ul>
-<p><img src="WebRTC学习笔记(一)/110413q4zdfkzfemkmmfhk.png" /></p>
+<p><img data-src="WebRTC学习笔记(一)/110413q4zdfkzfemkmmfhk.png" /></p>
 <p>从上图可以看出：在非本地局域网内WebRTC通过STUN Server获得自己的外网IP和端口，然后通过信令服务器与远端的WebRTC交换网络信息，之后双方就可以尝试建立P2P连接了。当NAT穿越不成功时，则会通过Relay Server（TURN）中转。</p>
 <p>值得一提的是：在WebRTC中网络信息通常用candidate来描述，而上图中的STUN server和Replay server也可以同一个server。本文使用继承了STUN（打洞）和TURN（中继）的开源项目coturn。</p>
 <p>综上对三个问题的解释，我们可以用下图来说明WebRTC实现点对点的通信的基本原理。</p>
-<p><img src="WebRTC学习笔记(一)/110424jt8q1v49mqki3128.png" /></p>
+<p><img data-src="WebRTC学习笔记(一)/110424jt8q1v49mqki3128.png" /></p>
 <p>简而言之：就是通过WebRTC提供的API获取各段的媒体信息SDP以及网络信息candidate，并通过信令服务器交换，进而建立了两端的连接通道完成实时视频语音通话。</p>
 <h3 id="webrtc几个重要api">WebRTC几个重要API</h3>
 <h4 id="音视频采集api">音视频采集API</h4>
@@ -444,7 +444,7 @@
 </ul>
 <p>P2P通信中一个最重要的环节就是交换媒体信息。</p>
 <p>原理图：</p>
-<p><img src="WebRTC学习笔记(一)/115037opmgs8r3s5c5zycp.png" /></p>
+<p><img data-src="WebRTC学习笔记(一)/115037opmgs8r3s5c5zycp.png" /></p>
 <p>从上图不难发现，整个媒体协过程也可以简化为三个步骤对应上述四个媒体协商方法。</p>
 <ul>
 <li>呼叫端Amy<strong>创建Offer（createOffer）</strong>并将offer消息（内容是呼叫段Amy的SDP信息）通过信令服务器传送给接收端Bob，同时调用<strong>setLocalDescription</strong>将含有本地SDP的Offer保存起来；</li>
@@ -548,7 +548,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="摘要：英特尔® 实感™ 追踪摄像头 T265 是一款全新的独立同步定位与建图设备，可用于机器人、无人机等领域。本文主要介绍了如何在ubuntu系统上安装Intel Realsense T265追踪摄像头。 关键词：T265，ROS">
@@ -349,7 +349,7 @@
 <li>相机与IMU的参数都保存了传感器中，可以通过示例直接读取相机的内参和相机与IMU之间的外参；</li>
 <li>相机外形尺寸108x24.5x12.5mm</li>
 </ol>
-<p><img src="t265.png" /></p>
+<p><img data-src="t265.png" /></p>
 <h3 id="t265开发环境搭建">T265开发环境搭建</h3>
 <h4 id="注册公钥">注册公钥</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE</span><br></pre></td></tr></table></figure>
@@ -365,15 +365,15 @@
 <p>运行</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">realsense-viewer</span><br></pre></td></tr></table></figure>
 <p>系统会自动打开一个窗口</p>
-<p><img src="realsense-viewer.png" /></p>
+<p><img data-src="realsense-viewer.png" /></p>
 <p>一旦速度过快，T265输出的位姿就会飞掉。</p>
 <h3 id="读取t265内外参数信息">读取T265内外参数信息</h3>
 <p>T265在出厂前就对相机进行了标定，每个相机内部都带有相机的内参和外参，终端输入以下命令，即可读取T265的配置信息</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs-enumerate-devices</span><br></pre></td></tr></table></figure>
-<p><img src="rs-enumerate-devices.png" /></p>
+<p><img data-src="rs-enumerate-devices.png" /></p>
 <p>如果需要读取相机内参和外参，以及IMU的参数可以使用如下命令（添加 -c 参数）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs-enumerate-devices -c</span><br></pre></td></tr></table></figure>
-<p><img src="rs-enumerate-devices-c.png" /></p>
+<p><img data-src="rs-enumerate-devices-c.png" /></p>
 <h3 id="使用ros包读取t265数据">使用ROS包读取T265数据</h3>
 <p>使用环境ROS melodic 版本</p>
 <h4 id="安装依赖">安装依赖</h4>
@@ -382,12 +382,12 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/catkin_ws/src</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/IntelRealSense/realsense-ros.git</span><br><span class="line"><span class="built_in">cd</span> realsense-ros/</span><br><span class="line">git checkout `git tag | sort -V | grep -P <span class="string">&quot;^2.\d+\.\d+&quot;</span> | tail -1`</span><br><span class="line"><span class="built_in">cd</span>  ~/catkin_ws/</span><br><span class="line">catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release</span><br></pre></td></tr></table></figure>
 <h4 id="启动测试demo即可看到t265的位姿数据">启动测试demo，即可看到T265的位姿数据</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> devel/setup.bash</span><br><span class="line">roslaunch realsense2_camera demo_t265.launch</span><br></pre></td></tr></table></figure>
-<p><img src="demo_t265.jpg" /></p>
+<p><img data-src="demo_t265.jpg" /></p>
 <p>如果需要查看鱼眼相机图像数据，则需要对<code>rs_t265.launch</code>文件进行修改，使能图像输出</p>
-<p><img src="rs_t265.png" /></p>
+<p><img data-src="rs_t265.png" /></p>
 <p>运行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">roslaunch realsense2_camera demo_t265.launch</span><br></pre></td></tr></table></figure>
-<p><img src="demo_t265_2.png" /></p>
+<p><img data-src="demo_t265_2.png" /></p>
 
     </div>
 
@@ -480,7 +480,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="本文是CNCF × Alibaba 云原生技术公开课的第三章Kubernetes 核心概念学习笔记。 关键词：k8s">
@@ -344,10 +344,10 @@
 <h3 id="k8s的架构">k8s的架构</h3>
 <p>k8s的架构是比较典型的二层架构和server-client架构。Master作为中央的管控节点，会与Node进行一个链接。</p>
 <p>所有用户侧的组件，只会和Master进行连接，把希望的状态或者想执行的命令发给Master，Master会把这些命令发给相应的节点。</p>
-<p><img src="kubernetes-high-level-component-archtecture.jpg" /></p>
+<p><img data-src="kubernetes-high-level-component-archtecture.jpg" /></p>
 <h4 id="master">Master</h4>
 <p>Master节点主要包含四个主要的组件：API Server、Controller、Scheduler以及etcd：</p>
-<p><img src="image-20220429212540202.png" /></p>
+<p><img data-src="image-20220429212540202.png" /></p>
 <ul>
 <li>API Server：用来处理API操作，k8s的所有组件都会和API Server进行连接，组件和组件之间一般不进行独立链接，都要依赖API Server进行消息的传送。</li>
 <li>Controller：控制器。用来完成对集群状态的一些管理。例如<strong>自动对容器进行修复，或者自动进行水平扩张</strong>。</li>
@@ -356,12 +356,12 @@
 </ul>
 <h4 id="node">Node</h4>
 <p>Node是真正运行业务负载的，每个业务负载以<strong>Pod</strong>的形式运行。一个Pod中运行一个或者多个容器，真正运行这些Pod组件的是<strong>kubelet</strong>，也就是Node上面最关键的组件，它通过API Server接收到需要Pod运行的状态，然后提交到Container Runtime组件中，在OS上创建容器所需要的环境，最终把容器或者Pod运行起来。Node需要对存储和网络进行管理。K8s不直接管理存储和网络，K8s通过Storage Plugin或者Network Plugin进行管理，完成存储和网络操作。</p>
-<p><img src="image-20220429213903847.png" /></p>
+<p><img data-src="image-20220429213903847.png" /></p>
 <p>在K8s自己的环境里，也会有k8s的Network，他是为了提供Service Network来进行组网。真正完成组网的组件是Kube-proxy。Kube-proxy利用iptable的能力来组建k8s集群的网络。以上就是Node上面的四个组件（Container Runtime、Storage Plugin、Network Plugin、Kube-proxy）。</p>
 <p>注意：K8s上的Node不会直接和用户进行交互，Node和用户之间的交互只会通过Master节点。用户通过Master节点下发这些信息。K8s上的每个Node，都会运行上面的这几个组件。</p>
 <h5 id="例子">例子</h5>
 <p>通过一个例子看K8s架构中的这些组件是如何进行交互的。</p>
-<p><img src="image-20220429220138689.png" /></p>
+<p><img data-src="image-20220429220138689.png" /></p>
 <p>用户通过UI或者CLI提交一个Pod到K8s进行部署，这个Pod请求会首先通过UI或者CLI提交给K8s API Server，下一步API Server会把这个信息写入到存储系统etcd，之后Scheduler会通过API Server的watch机制得到这个信息：有一个Pod需要被调度。</p>
 <p>此时Scheduler会根据这个内存状态进行一次调度决策，在完成这次调度以后，Scheduler向API Server报告。此时API Server接收到消息以后，把这次结果写入etcd，然后API Server会通知相应的节点。相应节点的Kubelet会得到这个通知，Kubelet调用Container Runtime来启动配置这个容器和这个容器的运行环境，去调度Storage Plugin来配置存储，Network Plugin去配置网络。</p>
 <h3 id="核心概念">核心概念</h3>
@@ -369,7 +369,7 @@
 <p>Pod是K8s的一个最小调度和属性单元，用户可以通过K8s的Pod API来生产一个Pod，让K8s对这个Pod进行调度，也就是把他放到另一个K8s管理的节点上运行起来。</p>
 <p>一个Pod简单来说是一组容器的抽象，它包含一个或者多个容器。</p>
 <p>Pod包含一些其他所需要的资源，比如卷。</p>
-<p><img src="image-20220430130241945.png" /></p>
+<p><img data-src="image-20220430130241945.png" /></p>
 <p>Pod的共享上下文包括一组Linux命名空间，控制组和可能一些其他的隔离方面，这些都是用来隔离Docker容器的技术。在Pod的上下文中，每个独立的应用可能会进一步实施隔离。</p>
 <p>就Docker使用的概念术语来说，<strong>Pod类似于共享名字空间和文件系统卷的一组Docker容器</strong>。</p>
 <p>Pod给这些容器提供了一个共享的运行环境，他们会共享同一个网络环境，这些容器可以用localhost来进行直接的连接。</p>
@@ -382,7 +382,7 @@
 <p>Volume用来管理K8s存储，Volume声明容器中的容器可以访问文件的目录。</p>
 <p>一个卷可以被挂载Pod中一个或者多个容器指定的路径下面。</p>
 <p>Volume本身是一个<strong>抽象</strong>的概念，一个Volume可以支持多种后端存储。K8s的Volume就支持了很多存储插件，可以支持<strong>本地的存储</strong>，也可以支持<strong>分布式存储</strong>。它也可以支持云存储，例如阿里云上的云盘、AWS上的云盘、Google上的云盘等。</p>
-<p><img src="image-20220430132644760.png" /></p>
+<p><img data-src="image-20220430132644760.png" /></p>
 <p>Docker 也有 <a target="_blank" rel="noopener" href="https://docs.docker.com/storage/">卷（Volume）</a> 的概念，但对它只有少量且松散的管理。 Docker 卷是磁盘上或者另外一个容器内的一个目录。 Docker 提供卷驱动程序，但是其功能非常有限。</p>
 <p>Kubernetes 支持很多类型的卷。 <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">Pod</a> 可以同时使用任意数目的卷类型。 临时卷类型的生命周期与 Pod 相同，但持久卷可以比 Pod 的存活期长。 当 Pod 不再存在时，Kubernetes 也会销毁临时卷；不过 Kubernetes 不会销毁<strong>持久卷</strong>。 对于给定 Pod 中任何类型的卷，在容器重启期间数据都不会丢失。</p>
 <h5 id="挂载本地卷">挂载本地卷</h5>
@@ -393,7 +393,7 @@
 <p>Deployment为<strong>Pod和ReplicaSet（副本）</strong>提供声明式的更新能力。</p>
 <p>Deployment是在Pod上层的抽象，用Deployment这个抽象来做应用的真正管理，而Pod是组成Deployment的最小单元。</p>
 <p>K8s通过Controller也就是控制器去维护Deployment中Pod的数目，帮助Deployment自动恢复失败的Pod。</p>
-<p><img src="image-20220430135024552.png" /></p>
+<p><img data-src="image-20220430135024552.png" /></p>
 <p>例如可以定义一个Deployment，这个Deployment需要两个Pod，当一个Pod失败后，控制器会检测到，他会重新把Deployment中的Pod数据从一个恢复到两个，然后再去重新生成一个Pod。</p>
 <p>通过控制器，还可以完成发布的策略，例如进行滚动升级，或者版本回滚等。</p>
 <h5 id="创建deployment">创建Deployment</h5>
@@ -422,7 +422,7 @@
 <p>由于Pod本身可能会终止，如果一个Pod失败了，可能会换成另外一个新的。</p>
 <p>对于外部用户来说，提供了多个具体的Pod地址，这个用户需要不停的去更新Pod地址。<strong>K8s的Service把所有Pod的访问能力抽象成一个第三方的IP地址。</strong></p>
 <p>实现Service有多种方式，K8s支持Cluster IP，上面讲过的kuber-proxy组网，也支持nodePort，LoadBalancer等其他的一些访问能力。</p>
-<p><img src="image-20220430153116204.png" /></p>
+<p><img data-src="image-20220430153116204.png" /></p>
 <h5 id="使用service">使用Service</h5>
 <p>例如，假定有一组Pod，他们对外暴露了9376端口，同时还被打上了app=Myapp标签</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">MyApp</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">9376</span></span><br></pre></td></tr></table></figure>
@@ -518,7 +518,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   

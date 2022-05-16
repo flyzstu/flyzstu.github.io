@@ -15,14 +15,14 @@
 
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
-  <link rel="stylesheet" href="https://fly97.cn/css/pace-theme-minimal.css">
-  <script src="https://fly97.cn/js/pace.min.js"></script>
+<link rel="stylesheet" href="https://fly97.cn/css/all.min.css">
+  <link rel="stylesheet" href="https://fly97.cn/css/animate.min.css">
+  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
+  <script src="/js/pace.min.js"></script>
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
   <meta name="description" content="在搭建服务时，时不时需要使用https证书。而内网环境最好是使用自签名证书，便于管理。 至于为什么要生成ECC证书而不是用RSA证书：ECC证书相对于RSA证书来说，体积小且速度快，而且内网使用不需要考虑兼容性。 本文主要介绍如何使用OpenSSL创建自签名ecc证书。 关键词：openssl，https">
@@ -357,7 +357,7 @@
 <li>LibreSSL 2.8.3</li>
 </ul>
 <p>这里还需要修改一下openssl的默认配置，使其可以生成版本v3的证书：</p>
-<p><img src="image-20220508170638980.png" /></p>
+<p><img data-src="image-20220508170638980.png" /></p>
 <h3 id="生成ca根证书">生成CA根证书</h3>
 <p>为什么要使用CA根证书呢？</p>
 <p>使用自定义CA签发本地使用的https证书，便于管理：<strong>只需要把导入CA根证书，主机就可以正常使用自签名的证书。</strong></p>
@@ -368,7 +368,7 @@
 <p>这里的C=CN指的是国别代码，CN=Root CA的含义是CA根证书的名称是Root CA。</p>
 <h4 id="查看根证书详细信息">查看根证书详细信息</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> ca.crt -text -noout</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220508171315027.png" /></p>
+<p><img data-src="image-20220508171315027.png" /></p>
 <h3 id="生成域名证书">生成域名证书</h3>
 <h4 id="生成域名证书的私钥">生成域名证书的私钥</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl ecparam -genkey -name prime256v1 -out harbor.key</span><br></pre></td></tr></table></figure>
@@ -378,7 +378,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 7305 -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> harbor.local.csr -out harbor.crt -extensions v3_ca</span><br></pre></td></tr></table></figure>
 <h4 id="查看域名证书详细信息">查看域名证书详细信息</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> harbor.crt -text -noout</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220508172238988.png" /></p>
+<p><img data-src="image-20220508172238988.png" /></p>
 <p>此时发现生成的证书版本并不是V3，需要一些信息修正。</p>
 <p>创建<code>v3.ext</code>文件，输入以下内容</p>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">authorityKeyIdentifier</span>=keyid,issuer</span><br><span class="line"><span class="attr">basicConstraints</span>=CA:<span class="literal">FALSE</span></span><br><span class="line"><span class="attr">keyUsage</span> = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment</span><br><span class="line"><span class="attr">subjectAltName</span> = @alt_names</span><br><span class="line"></span><br><span class="line"><span class="section">[alt_names]</span></span><br><span class="line"><span class="attr">DNS.1</span> = localhost</span><br></pre></td></tr></table></figure>
@@ -386,43 +386,43 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 7305 -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> harbor.local.csr -out harbor.crt -extfile v3.ext</span><br></pre></td></tr></table></figure>
 <h4 id="再次查看生成域名证书的详细信息">再次查看生成域名证书的详细信息</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> harbor.crt -text -noout</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220508172652252.png" /></p>
+<p><img data-src="image-20220508172652252.png" /></p>
 <p>此时成功创建版本v3的ecc域名证书。</p>
 <h3 id="导入ca证书">导入CA证书</h3>
 <h4 id="mac-os">Mac OS</h4>
 <ol type="1">
 <li>打开钥匙串，找到证书</li>
 </ol>
-<p><img src="image-20220508173309850.png" /></p>
+<p><img data-src="image-20220508173309850.png" /></p>
 <ol start="2" type="1">
 <li>将需要导入的CA证书移动到空白处，此时会发现证书未被信任</li>
 </ol>
-<p><img src="image-20220508173356932.png" /></p>
+<p><img data-src="image-20220508173356932.png" /></p>
 <ol start="3" type="1">
 <li>右键此证书，查看简介，选择信任，修改选项使用此证书为<strong>始终信任</strong></li>
 </ol>
-<p><img src="image-20220508173609105.png" /></p>
+<p><img data-src="image-20220508173609105.png" /></p>
 <ol start="4" type="1">
 <li>在钥匙串打开该CA签发域名证书的证书，会发现<strong>域名证书已经被信任</strong>。</li>
 </ol>
-<p><img src="image-20220508173744194.png" /></p>
+<p><img data-src="image-20220508173744194.png" /></p>
 <h4 id="windows">Windows</h4>
 <ol type="1">
 <li>右键需要导入的根证书，选择安装，选择<strong>导入本地计算机</strong></li>
 </ol>
-<p><img src="image-20220508174220492.png" /></p>
+<p><img data-src="image-20220508174220492.png" /></p>
 <ol start="2" type="1">
 <li>选择<strong>将证书放入下列存储</strong>，选择<strong>受信任的证书颁发机构</strong></li>
 </ol>
-<p><img src="image-20220508174340109.png" /></p>
+<p><img data-src="image-20220508174340109.png" /></p>
 <ol start="3" type="1">
 <li>完成向导</li>
 </ol>
-<p><img src="image-20220508174403758.png" /></p>
+<p><img data-src="image-20220508174403758.png" /></p>
 <ol start="4" type="1">
 <li>右键该CA签发的证书，此时发现证书没有问题。</li>
 </ol>
-<p><img src="image-20220508174651903.png" /></p>
+<p><img data-src="image-20220508174651903.png" /></p>
 <h4 id="linux">Linux</h4>
 <p>大部分情况下我们都是在Linux系统上操作导入根证书的。</p>
 <p>这里以Ubuntu为例</p>
@@ -433,13 +433,13 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp ca.crt /usr/share/ca-certificates/<span class="built_in">local</span>/</span><br></pre></td></tr></table></figure></li>
 <li><p>执行以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg-reconfigure ca-certificates</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220508175418532.png" /></p></li>
+<p><img data-src="image-20220508175418532.png" /></p></li>
 </ol>
 <p>​ 选择yes，然后会提示选择证书，敲一下回车，ca证书就被选中</p>
-<p>​ <img src="image-20220508175641724.png" /></p>
+<p>​ <img data-src="image-20220508175641724.png" /></p>
 <ol start="4" type="1">
 <li><p>导入成功</p>
-<p><img src="image-20220508175724957.png" /></p></li>
+<p><img data-src="image-20220508175724957.png" /></p></li>
 </ol>
 
     </div>
@@ -533,7 +533,8 @@
   </footer>
 
   
-  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="https://fly97.cn/js/anime.min.js"></script>
+  <script src="https://fly97.cn/js/lozad.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
