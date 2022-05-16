@@ -4245,6 +4245,18 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu安装php指南</title>
+    <url>/p/How-to-install-php-on-Ubuntu/</url>
+    <content><![CDATA[<h4 id="ubuntu安装php指南">Ubuntu安装php指南</h4>
+<p>由于自带的apt源中不包含php，所以在安装php之前需要给apt添加第三方源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo add-apt-repository ppa:ondrej/php</span><br><span class="line"><span class="comment">#sudo add-apt-repository -r ppa:ondrej/php              #删除</span></span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y php7.3</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Linux运维</tag>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu服务管理</title>
     <url>/p/How-to-manage-services-on-ubuntu/</url>
     <content><![CDATA[<p>Linux 服务管理两种方式service和systemctl的用法</p>
@@ -4472,18 +4484,6 @@ y=x^2e^x
         <tag>ubuntu</tag>
         <tag>service</tag>
         <tag>systemctl</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu安装php指南</title>
-    <url>/p/How-to-install-php-on-Ubuntu/</url>
-    <content><![CDATA[<h4 id="ubuntu安装php指南">Ubuntu安装php指南</h4>
-<p>由于自带的apt源中不包含php，所以在安装php之前需要给apt添加第三方源</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo add-apt-repository ppa:ondrej/php</span><br><span class="line"><span class="comment">#sudo add-apt-repository -r ppa:ondrej/php              #删除</span></span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y php7.3</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Linux运维</tag>
-        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -5300,6 +5300,64 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>kafaka学习笔记之绪论</title>
+    <url>/p/introduction-to-kafaka-study-notes/</url>
+    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
+<p>关键词：<strong>kafaka</strong></p>
+<a id="more"></a>
+<h2 id="定义">定义</h2>
+<h3 id="传统定义">传统定义</h3>
+<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
+<h4 id="发布订阅">发布/订阅</h4>
+<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
+<h3 id="kafka最新定义">kafka最新定义</h3>
+<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
+<h2 id="应用场景">应用场景</h2>
+<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
+<ul>
+<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
+</ul>
+<p><img src="image-20220419165347641.png" /></p>
+<h3 id="解耦">解耦</h3>
+<ul>
+<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
+</ul>
+<p><img src="image-20220419165511301.png" /></p>
+<h3 id="异步通信">异步通信</h3>
+<ul>
+<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
+</ul>
+<p><img src="image-20220419165706773.png" /></p>
+<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
+<h3 id="点对点方式">点对点方式</h3>
+<ul>
+<li>消费者主动拉取数据，消息收到后清除消息</li>
+</ul>
+<p><img src="image-20220419165858779.png" /></p>
+<h3 id="发布订阅方式">发布订阅方式</h3>
+<ul>
+<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
+<li>消费者消费以后不删除数据</li>
+<li>每个消费者相互独立，都可以消费到数据</li>
+</ul>
+<p><img src="image-20220419170024390.png" /></p>
+<h2 id="基础架构">基础架构</h2>
+<p><img src="image-20220419170301160.png" /></p>
+<ol type="1">
+<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
+<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
+<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
+<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
+<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
+<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
+<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>kafaka</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kafaka学习笔记之快速入门</title>
     <url>/p/introduction-to-kafaka-study-notes-02/</url>
     <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
@@ -5466,64 +5524,6 @@ y=x^2e^x
 </table>
 <h3 id="消费消息">消费消息</h3>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --topic first</span><br><span class="line"><span class="comment"># 从主题的开始消费消息</span></span><br><span class="line">bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginning --topic first</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>kafaka</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>kafaka学习笔记之绪论</title>
-    <url>/p/introduction-to-kafaka-study-notes/</url>
-    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
-<p>关键词：<strong>kafaka</strong></p>
-<a id="more"></a>
-<h2 id="定义">定义</h2>
-<h3 id="传统定义">传统定义</h3>
-<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
-<h4 id="发布订阅">发布/订阅</h4>
-<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
-<h3 id="kafka最新定义">kafka最新定义</h3>
-<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
-<h2 id="应用场景">应用场景</h2>
-<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
-<ul>
-<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
-</ul>
-<p><img src="image-20220419165347641.png" /></p>
-<h3 id="解耦">解耦</h3>
-<ul>
-<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
-</ul>
-<p><img src="image-20220419165511301.png" /></p>
-<h3 id="异步通信">异步通信</h3>
-<ul>
-<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
-</ul>
-<p><img src="image-20220419165706773.png" /></p>
-<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
-<h3 id="点对点方式">点对点方式</h3>
-<ul>
-<li>消费者主动拉取数据，消息收到后清除消息</li>
-</ul>
-<p><img src="image-20220419165858779.png" /></p>
-<h3 id="发布订阅方式">发布订阅方式</h3>
-<ul>
-<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
-<li>消费者消费以后不删除数据</li>
-<li>每个消费者相互独立，都可以消费到数据</li>
-</ul>
-<p><img src="image-20220419170024390.png" /></p>
-<h2 id="基础架构">基础架构</h2>
-<p><img src="image-20220419170301160.png" /></p>
-<ol type="1">
-<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
-<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
-<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
-<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
-<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
-<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
-<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
-</ol>
 ]]></content>
       <tags>
         <tag>kafaka</tag>
@@ -6148,60 +6148,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用Docker Compose搭建Harbor镜像仓库</title>
-    <url>/p/build-harbor-mirror-warehouse-with-docker-compose/</url>
-    <content><![CDATA[<p>Docker容器应用的开发和运行离不开可靠的镜像管理，虽然docker官方提供了公共的镜像仓库（Docker Hub），但是从安全和效率等方面考虑，部署我们私有环境内的Registry也是非常必要的。Harbor是由VMware公司开源的企业级的Docker Registry管理项目，它包括权限管理（RBAC）、LDAP、日志审核、界面管理、自我注册、镜像复制和中文支持等功能。</p>
-<p>本文主要介绍如何使用Docker Compose搭建Harbor镜像仓库。</p>
-<p>关键词：<strong>docker，harbor</strong></p>
-<a id="more"></a>
-<h3 id="准备工作">准备工作</h3>
-<ul>
-<li>Mac mini</li>
-<li>Docker Desktop For Mac</li>
-<li>docker-compose</li>
-</ul>
-<h3 id="下载安装文件">下载安装文件</h3>
-<h4 id="选择离线安装文件">选择离线安装文件</h4>
-<blockquote>
-<p>https://github.com/goharbor/harbor/releases/download/v2.5.0/harbor-offline-installer-v2.5.0.tgz</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/goharbor/harbor/releases/download/v2.5.0/harbor-offline-installer-v2.5.0.tgz</span><br></pre></td></tr></table></figure>
-<p>解压文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf harbor-offline-installer-v2.5.0.tgz</span><br></pre></td></tr></table></figure>
-<h3 id="修改配置">修改配置</h3>
-<h4 id="配置hosts">配置hosts</h4>
-<p>harbor要求使用https，因此需要生成本地可信的https证书。这里已经生成好了。</p>
-<p>因为是本地使用，所以无需修改DNS，只需要修改hosts。</p>
-<p><img src="image-20220508201150693.png" /></p>
-<h4 id="修改配置文件">修改配置文件</h4>
-<p>将模版配置文件修改为配置文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp harbor.yml.tmpl harbor.yml</span><br></pre></td></tr></table></figure>
-<p>修改配置文件，主要是修改https和持久化目录，其他的还没研究。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Configuration file of Harbor</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The IP address or hostname to access admin UI and registry service.</span></span><br><span class="line"><span class="comment"># DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.</span></span><br><span class="line"><span class="attr">hostname:</span> <span class="string">harbor.local</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># http related config</span></span><br><span class="line"><span class="comment"># http:</span></span><br><span class="line"><span class="comment">#   # port for http, default is 80. If https enabled, this port will redirect to https port</span></span><br><span class="line"><span class="comment">#   port: 80</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># https related config</span></span><br><span class="line"><span class="attr">https:</span></span><br><span class="line">  <span class="comment"># https port for harbor, default is 443</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">  <span class="comment"># The path of cert and key files for nginx</span></span><br><span class="line">  <span class="attr">certificate:</span> <span class="string">harbor.crt</span></span><br><span class="line">  <span class="attr">private_key:</span> <span class="string">harbor.key</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># # Uncomment following will enable tls communication between all harbor components</span></span><br><span class="line"><span class="comment"># internal_tls:</span></span><br><span class="line"><span class="comment">#   # set enabled to true means internal tls is enabled</span></span><br><span class="line"><span class="comment">#   enabled: true</span></span><br><span class="line"><span class="comment">#   # put your cert and key files on dir</span></span><br><span class="line"><span class="comment">#   dir: /etc/harbor/tls/internal</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment external_url if you want to enable external proxy</span></span><br><span class="line"><span class="comment"># And when it enabled the hostname will no longer used</span></span><br><span class="line"><span class="comment"># external_url: https://reg.mydomain.com:8433</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The initial password of Harbor admin</span></span><br><span class="line"><span class="comment"># It only works in first time to install harbor</span></span><br><span class="line"><span class="comment"># Remember Change the admin password from UI after launching Harbor.</span></span><br><span class="line"><span class="attr">harbor_admin_password:</span> <span class="string">Harbor12345</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Harbor DB configuration</span></span><br><span class="line"><span class="attr">database:</span></span><br><span class="line">  <span class="comment"># The password for the root user of Harbor DB. Change this before any production use.</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">root123</span></span><br><span class="line">  <span class="comment"># The maximum number of connections in the idle connection pool. If it &lt;=0, no idle connections are retained.</span></span><br><span class="line">  <span class="attr">max_idle_conns:</span> <span class="number">100</span></span><br><span class="line">  <span class="comment"># The maximum number of open connections to the database. If it &lt;= 0, then there is no limit on the number of open connections.</span></span><br><span class="line">  <span class="comment"># <span class="doctag">Note:</span> the default number of connections is 1024 for postgres of harbor.</span></span><br><span class="line">  <span class="attr">max_open_conns:</span> <span class="number">900</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The default data volume</span></span><br><span class="line"><span class="attr">data_volume:</span> <span class="string">/Users/wf09/Desktop/docker/harbor/data</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Harbor Storage settings by default is using /data dir on local filesystem</span></span><br><span class="line"><span class="comment"># Uncomment storage_service setting If you want to using external storage</span></span><br><span class="line"><span class="comment"># storage_service:</span></span><br><span class="line"><span class="comment">#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore</span></span><br><span class="line"><span class="comment">#   # of registry&#x27;s and chart repository&#x27;s containers.  This is usually needed when the user hosts a internal storage with self signed certificate.</span></span><br><span class="line"><span class="comment">#   ca_bundle:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss</span></span><br><span class="line"><span class="comment">#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/</span></span><br><span class="line"><span class="comment">#   filesystem:</span></span><br><span class="line"><span class="comment">#     maxthreads: 100</span></span><br><span class="line"><span class="comment">#   # set disable to true when you want to disable registry redirect</span></span><br><span class="line"><span class="comment">#   redirect:</span></span><br><span class="line"><span class="comment">#     disabled: false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Trivy configuration</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.</span></span><br><span class="line"><span class="comment"># It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached</span></span><br><span class="line"><span class="comment"># in the local file system. In addition, the database contains the update timestamp so Trivy can detect whether it</span></span><br><span class="line"><span class="comment"># should download a newer version from the Internet or use the cached one. Currently, the database is updated every</span></span><br><span class="line"><span class="comment"># 12 hours and published as a new release to GitHub.</span></span><br><span class="line"><span class="attr">trivy:</span></span><br><span class="line">  <span class="comment"># ignoreUnfixed The flag to display only fixed vulnerabilities</span></span><br><span class="line">  <span class="attr">ignore_unfixed:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># skipUpdate The flag to enable or disable Trivy DB downloads from GitHub</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># You might want to enable this flag in test or CI/CD environments to avoid GitHub rate limiting issues.</span></span><br><span class="line">  <span class="comment"># If the flag is enabled you have to download the `trivy-offline.tar.gz` archive manually, extract `trivy.db` and</span></span><br><span class="line">  <span class="comment"># `metadata.json` files and mount them in the `/home/scanner/.cache/trivy/db` path.</span></span><br><span class="line">  <span class="attr">skip_update:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># The offline_scan option prevents Trivy from sending API requests to identify dependencies.</span></span><br><span class="line">  <span class="comment"># Scanning JAR files and pom.xml may require Internet access for better detection, but this option tries to avoid it.</span></span><br><span class="line">  <span class="comment"># For example, the offline mode will not try to resolve transitive dependencies in pom.xml when the dependency doesn&#x27;t</span></span><br><span class="line">  <span class="comment"># exist in the local repositories. It means a number of detected vulnerabilities might be fewer in offline mode.</span></span><br><span class="line">  <span class="comment"># It would work if all the dependencies are in local.</span></span><br><span class="line">  <span class="comment"># This option doesn’t affect DB download. You need to specify &quot;skip-update&quot; as well as &quot;offline-scan&quot; in an air-gapped environment.</span></span><br><span class="line">  <span class="attr">offline_scan:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># insecure The flag to skip verifying registry certificate</span></span><br><span class="line">  <span class="attr">insecure:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># github_token The GitHub access token to download Trivy DB</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># Anonymous downloads from GitHub are subject to the limit of 60 requests per hour. Normally such rate limit is enough</span></span><br><span class="line">  <span class="comment"># for production operations. If, for any reason, it&#x27;s not enough, you could increase the rate limit to 5000</span></span><br><span class="line">  <span class="comment"># requests per hour by specifying the GitHub access token. For more details on GitHub rate limiting please consult</span></span><br><span class="line">  <span class="comment"># https://developer.github.com/v3/#rate-limiting</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># You can create a GitHub token by following the instructions in</span></span><br><span class="line">  <span class="comment"># https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># github_token: xxx</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobservice:</span></span><br><span class="line">  <span class="comment"># Maximum number of job workers in job service</span></span><br><span class="line">  <span class="attr">max_job_workers:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="attr">notification:</span></span><br><span class="line">  <span class="comment"># Maximum retry count for webhook job</span></span><br><span class="line">  <span class="attr">webhook_job_max_retry:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="attr">chart:</span></span><br><span class="line">  <span class="comment"># Change the value of absolute_url to enabled can enable absolute url in chart</span></span><br><span class="line">  <span class="attr">absolute_url:</span> <span class="string">disabled</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Log configurations</span></span><br><span class="line"><span class="attr">log:</span></span><br><span class="line">  <span class="comment"># options are debug, info, warning, error, fatal</span></span><br><span class="line">  <span class="attr">level:</span> <span class="string">info</span></span><br><span class="line">  <span class="comment"># configs for logs in local storage</span></span><br><span class="line">  <span class="attr">local:</span></span><br><span class="line">    <span class="comment"># Log files are rotated log_rotate_count times before being removed. If count is 0, old versions are removed rather than rotated.</span></span><br><span class="line">    <span class="attr">rotate_count:</span> <span class="number">50</span></span><br><span class="line">    <span class="comment"># Log files are rotated only if they grow bigger than log_rotate_size bytes. If size is followed by k, the size is assumed to be in kilobytes.</span></span><br><span class="line">    <span class="comment"># If the M is used, the size is in megabytes, and if G is used, the size is in gigabytes. So size 100, size 100k, size 100M and size 100G</span></span><br><span class="line">    <span class="comment"># are all valid.</span></span><br><span class="line">    <span class="attr">rotate_size:</span> <span class="string">200M</span></span><br><span class="line">    <span class="comment"># The directory on your host that store log</span></span><br><span class="line">    <span class="attr">location:</span> <span class="string">/var/log/harbor</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Uncomment following lines to enable external syslog endpoint.</span></span><br><span class="line">  <span class="comment"># external_endpoint:</span></span><br><span class="line">  <span class="comment">#   # protocol used to transmit log to external endpoint, options is tcp or udp</span></span><br><span class="line">  <span class="comment">#   protocol: tcp</span></span><br><span class="line">  <span class="comment">#   # The host of external endpoint</span></span><br><span class="line">  <span class="comment">#   host: localhost</span></span><br><span class="line">  <span class="comment">#   # Port of external endpoint</span></span><br><span class="line">  <span class="comment">#   port: 5140</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!</span></span><br><span class="line"><span class="attr">_version:</span> <span class="number">2.5</span><span class="number">.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment external_database if using external database.</span></span><br><span class="line"><span class="comment"># external_database:</span></span><br><span class="line"><span class="comment">#   harbor:</span></span><br><span class="line"><span class="comment">#     host: harbor_db_host</span></span><br><span class="line"><span class="comment">#     port: harbor_db_port</span></span><br><span class="line"><span class="comment">#     db_name: harbor_db_name</span></span><br><span class="line"><span class="comment">#     username: harbor_db_username</span></span><br><span class="line"><span class="comment">#     password: harbor_db_password</span></span><br><span class="line"><span class="comment">#     ssl_mode: disable</span></span><br><span class="line"><span class="comment">#     max_idle_conns: 2</span></span><br><span class="line"><span class="comment">#     max_open_conns: 0</span></span><br><span class="line"><span class="comment">#   notary_signer:</span></span><br><span class="line"><span class="comment">#     host: notary_signer_db_host</span></span><br><span class="line"><span class="comment">#     port: notary_signer_db_port</span></span><br><span class="line"><span class="comment">#     db_name: notary_signer_db_name</span></span><br><span class="line"><span class="comment">#     username: notary_signer_db_username</span></span><br><span class="line"><span class="comment">#     password: notary_signer_db_password</span></span><br><span class="line"><span class="comment">#     ssl_mode: disable</span></span><br><span class="line"><span class="comment">#   notary_server:</span></span><br><span class="line"><span class="comment">#     host: notary_server_db_host</span></span><br><span class="line"><span class="comment">#     port: notary_server_db_port</span></span><br><span class="line"><span class="comment">#     db_name: notary_server_db_name</span></span><br><span class="line"><span class="comment">#     username: notary_server_db_username</span></span><br><span class="line"><span class="comment">#     password: notary_server_db_password</span></span><br><span class="line"><span class="comment">#     ssl_mode: disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment external_redis if using external Redis server</span></span><br><span class="line"><span class="comment"># external_redis:</span></span><br><span class="line"><span class="comment">#   # support redis, redis+sentinel</span></span><br><span class="line"><span class="comment">#   # host for redis: &lt;host_redis&gt;:&lt;port_redis&gt;</span></span><br><span class="line"><span class="comment">#   # host for redis+sentinel:</span></span><br><span class="line"><span class="comment">#   #  &lt;host_sentinel1&gt;:&lt;port_sentinel1&gt;,&lt;host_sentinel2&gt;:&lt;port_sentinel2&gt;,&lt;host_sentinel3&gt;:&lt;port_sentinel3&gt;</span></span><br><span class="line"><span class="comment">#   host: redis:6379</span></span><br><span class="line"><span class="comment">#   password: </span></span><br><span class="line"><span class="comment">#   # sentinel_master_set must be set to support redis+sentinel</span></span><br><span class="line"><span class="comment">#   #sentinel_master_set:</span></span><br><span class="line"><span class="comment">#   # db_index 0 is for core, it&#x27;s unchangeable</span></span><br><span class="line"><span class="comment">#   registry_db_index: 1</span></span><br><span class="line"><span class="comment">#   jobservice_db_index: 2</span></span><br><span class="line"><span class="comment">#   chartmuseum_db_index: 3</span></span><br><span class="line"><span class="comment">#   trivy_db_index: 5</span></span><br><span class="line"><span class="comment">#   idle_timeout_seconds: 30</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment uaa for trusting the certificate of uaa instance that is hosted via self-signed cert.</span></span><br><span class="line"><span class="comment"># uaa:</span></span><br><span class="line"><span class="comment">#   ca_file: /path/to/ca</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Global proxy</span></span><br><span class="line"><span class="comment"># Config http proxy for components, e.g. http://my.proxy.com:3128</span></span><br><span class="line"><span class="comment"># Components doesn&#x27;t need to connect to each others via http proxy.</span></span><br><span class="line"><span class="comment"># Remove component from `components` array if want disable proxy</span></span><br><span class="line"><span class="comment"># for it. If you want use proxy for replication, MUST enable proxy</span></span><br><span class="line"><span class="comment"># for core and jobservice, and set `http_proxy` and `https_proxy`.</span></span><br><span class="line"><span class="comment"># Add domain to the `no_proxy` field, when you want disable proxy</span></span><br><span class="line"><span class="comment"># for some special registry.</span></span><br><span class="line"><span class="attr">proxy:</span></span><br><span class="line">  <span class="attr">http_proxy:</span></span><br><span class="line">  <span class="attr">https_proxy:</span></span><br><span class="line">  <span class="attr">no_proxy:</span></span><br><span class="line">  <span class="attr">components:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">core</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">jobservice</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">trivy</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># metric:</span></span><br><span class="line"><span class="comment">#   enabled: false</span></span><br><span class="line"><span class="comment">#   port: 9090</span></span><br><span class="line"><span class="comment">#   path: /metrics</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Trace related config</span></span><br><span class="line"><span class="comment"># only can enable one trace provider(jaeger or otel) at the same time,</span></span><br><span class="line"><span class="comment"># and when using jaeger as provider, can only enable it with agent mode or collector mode.</span></span><br><span class="line"><span class="comment"># if using jaeger collector mode, uncomment endpoint and uncomment username, password if needed</span></span><br><span class="line"><span class="comment"># if using jaeger agetn mode uncomment agent_host and agent_port</span></span><br><span class="line"><span class="comment"># trace:</span></span><br><span class="line"><span class="comment">#   enabled: true</span></span><br><span class="line"><span class="comment">#   # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth</span></span><br><span class="line"><span class="comment">#   sample_rate: 1</span></span><br><span class="line"><span class="comment">#   # # namespace used to differenciate different harbor services</span></span><br><span class="line"><span class="comment">#   # namespace:</span></span><br><span class="line"><span class="comment">#   # # attributes is a key value dict contains user defined attributes used to initialize trace provider</span></span><br><span class="line"><span class="comment">#   # attributes:</span></span><br><span class="line"><span class="comment">#   #   application: harbor</span></span><br><span class="line"><span class="comment">#   # # jaeger should be 1.26 or newer.</span></span><br><span class="line"><span class="comment">#   # jaeger:</span></span><br><span class="line"><span class="comment">#   #   endpoint: http://hostname:14268/api/traces</span></span><br><span class="line"><span class="comment">#   #   username:</span></span><br><span class="line"><span class="comment">#   #   password:</span></span><br><span class="line"><span class="comment">#   #   agent_host: hostname</span></span><br><span class="line"><span class="comment">#   #   # export trace data by jaeger.thrift in compact mode</span></span><br><span class="line"><span class="comment">#   #   agent_port: 6831</span></span><br><span class="line"><span class="comment">#   # otel:</span></span><br><span class="line"><span class="comment">#   #   endpoint: hostname:4318</span></span><br><span class="line"><span class="comment">#   #   url_path: /v1/traces</span></span><br><span class="line"><span class="comment">#   #   compression: false</span></span><br><span class="line"><span class="comment">#   #   insecure: true</span></span><br><span class="line"><span class="comment">#   #   timeout: 10s</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># enable purge _upload directories</span></span><br><span class="line"><span class="attr">upload_purging:</span></span><br><span class="line">  <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># remove files in _upload directories which exist for a period of time, default is one week.</span></span><br><span class="line">  <span class="attr">age:</span> <span class="string">168h</span></span><br><span class="line">  <span class="comment"># the interval of the purge operations</span></span><br><span class="line">  <span class="attr">interval:</span> <span class="string">24h</span></span><br><span class="line">  <span class="attr">dryrun:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h3 id="安装运行">安装运行</h3>
-<p>harbor目录下执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
-<p>有下图所示说明启动成功</p>
-<p><img src="image-20220508212557479.png" /></p>
-<h3 id="排错">排错</h3>
-<h4 id="filenotfounderror-errno-2-no-such-file-or-directory-hostfsharbor.key">FileNotFoundError: [Errno 2] No such file or directory: '/hostfs/harbor.key'</h4>
-<p><img src="image-20220508205215581.png" /></p>
-<p>好像是<code>./prepare</code>脚本编写错误，按照下面issus提到的修改</p>
-<blockquote>
-<p>https://github.com/goharbor/harbor/issues/13465</p>
-</blockquote>
-<p><img src="image-20220508205501816.png" /></p>
-<p>再次运行<code>./prepare</code>，成功</p>
-<p><img src="image-20220508205609714.png" /></p>
-<h4 id="浏览器访问过慢">浏览器访问过慢</h4>
-<p>考虑和SSL证书的OCSP装订有关。</p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-        <tag>harbor</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用OpenSSL创建自签名ecc证书</title>
     <url>/p/create-a-self-signed-certificate-with-openSSL/</url>
     <content><![CDATA[<p>在搭建服务时，时不时需要使用https证书。而内网环境最好是使用自签名证书，便于管理。</p>
@@ -6332,6 +6278,60 @@ y=x^2e^x
         <tag>PyTorch</tag>
         <tag>CNN</tag>
         <tag>MNIST</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Docker Compose搭建Harbor镜像仓库</title>
+    <url>/p/build-harbor-mirror-warehouse-with-docker-compose/</url>
+    <content><![CDATA[<p>Docker容器应用的开发和运行离不开可靠的镜像管理，虽然docker官方提供了公共的镜像仓库（Docker Hub），但是从安全和效率等方面考虑，部署我们私有环境内的Registry也是非常必要的。Harbor是由VMware公司开源的企业级的Docker Registry管理项目，它包括权限管理（RBAC）、LDAP、日志审核、界面管理、自我注册、镜像复制和中文支持等功能。</p>
+<p>本文主要介绍如何使用Docker Compose搭建Harbor镜像仓库。</p>
+<p>关键词：<strong>docker，harbor</strong></p>
+<a id="more"></a>
+<h3 id="准备工作">准备工作</h3>
+<ul>
+<li>Mac mini</li>
+<li>Docker Desktop For Mac</li>
+<li>docker-compose</li>
+</ul>
+<h3 id="下载安装文件">下载安装文件</h3>
+<h4 id="选择离线安装文件">选择离线安装文件</h4>
+<blockquote>
+<p>https://github.com/goharbor/harbor/releases/download/v2.5.0/harbor-offline-installer-v2.5.0.tgz</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/goharbor/harbor/releases/download/v2.5.0/harbor-offline-installer-v2.5.0.tgz</span><br></pre></td></tr></table></figure>
+<p>解压文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf harbor-offline-installer-v2.5.0.tgz</span><br></pre></td></tr></table></figure>
+<h3 id="修改配置">修改配置</h3>
+<h4 id="配置hosts">配置hosts</h4>
+<p>harbor要求使用https，因此需要生成本地可信的https证书。这里已经生成好了。</p>
+<p>因为是本地使用，所以无需修改DNS，只需要修改hosts。</p>
+<p><img src="image-20220508201150693.png" /></p>
+<h4 id="修改配置文件">修改配置文件</h4>
+<p>将模版配置文件修改为配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp harbor.yml.tmpl harbor.yml</span><br></pre></td></tr></table></figure>
+<p>修改配置文件，主要是修改https和持久化目录，其他的还没研究。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Configuration file of Harbor</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The IP address or hostname to access admin UI and registry service.</span></span><br><span class="line"><span class="comment"># DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.</span></span><br><span class="line"><span class="attr">hostname:</span> <span class="string">harbor.local</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># http related config</span></span><br><span class="line"><span class="comment"># http:</span></span><br><span class="line"><span class="comment">#   # port for http, default is 80. If https enabled, this port will redirect to https port</span></span><br><span class="line"><span class="comment">#   port: 80</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># https related config</span></span><br><span class="line"><span class="attr">https:</span></span><br><span class="line">  <span class="comment"># https port for harbor, default is 443</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">  <span class="comment"># The path of cert and key files for nginx</span></span><br><span class="line">  <span class="attr">certificate:</span> <span class="string">harbor.crt</span></span><br><span class="line">  <span class="attr">private_key:</span> <span class="string">harbor.key</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># # Uncomment following will enable tls communication between all harbor components</span></span><br><span class="line"><span class="comment"># internal_tls:</span></span><br><span class="line"><span class="comment">#   # set enabled to true means internal tls is enabled</span></span><br><span class="line"><span class="comment">#   enabled: true</span></span><br><span class="line"><span class="comment">#   # put your cert and key files on dir</span></span><br><span class="line"><span class="comment">#   dir: /etc/harbor/tls/internal</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment external_url if you want to enable external proxy</span></span><br><span class="line"><span class="comment"># And when it enabled the hostname will no longer used</span></span><br><span class="line"><span class="comment"># external_url: https://reg.mydomain.com:8433</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The initial password of Harbor admin</span></span><br><span class="line"><span class="comment"># It only works in first time to install harbor</span></span><br><span class="line"><span class="comment"># Remember Change the admin password from UI after launching Harbor.</span></span><br><span class="line"><span class="attr">harbor_admin_password:</span> <span class="string">Harbor12345</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Harbor DB configuration</span></span><br><span class="line"><span class="attr">database:</span></span><br><span class="line">  <span class="comment"># The password for the root user of Harbor DB. Change this before any production use.</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">root123</span></span><br><span class="line">  <span class="comment"># The maximum number of connections in the idle connection pool. If it &lt;=0, no idle connections are retained.</span></span><br><span class="line">  <span class="attr">max_idle_conns:</span> <span class="number">100</span></span><br><span class="line">  <span class="comment"># The maximum number of open connections to the database. If it &lt;= 0, then there is no limit on the number of open connections.</span></span><br><span class="line">  <span class="comment"># <span class="doctag">Note:</span> the default number of connections is 1024 for postgres of harbor.</span></span><br><span class="line">  <span class="attr">max_open_conns:</span> <span class="number">900</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The default data volume</span></span><br><span class="line"><span class="attr">data_volume:</span> <span class="string">/Users/wf09/Desktop/docker/harbor/data</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Harbor Storage settings by default is using /data dir on local filesystem</span></span><br><span class="line"><span class="comment"># Uncomment storage_service setting If you want to using external storage</span></span><br><span class="line"><span class="comment"># storage_service:</span></span><br><span class="line"><span class="comment">#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore</span></span><br><span class="line"><span class="comment">#   # of registry&#x27;s and chart repository&#x27;s containers.  This is usually needed when the user hosts a internal storage with self signed certificate.</span></span><br><span class="line"><span class="comment">#   ca_bundle:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss</span></span><br><span class="line"><span class="comment">#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/</span></span><br><span class="line"><span class="comment">#   filesystem:</span></span><br><span class="line"><span class="comment">#     maxthreads: 100</span></span><br><span class="line"><span class="comment">#   # set disable to true when you want to disable registry redirect</span></span><br><span class="line"><span class="comment">#   redirect:</span></span><br><span class="line"><span class="comment">#     disabled: false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Trivy configuration</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.</span></span><br><span class="line"><span class="comment"># It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached</span></span><br><span class="line"><span class="comment"># in the local file system. In addition, the database contains the update timestamp so Trivy can detect whether it</span></span><br><span class="line"><span class="comment"># should download a newer version from the Internet or use the cached one. Currently, the database is updated every</span></span><br><span class="line"><span class="comment"># 12 hours and published as a new release to GitHub.</span></span><br><span class="line"><span class="attr">trivy:</span></span><br><span class="line">  <span class="comment"># ignoreUnfixed The flag to display only fixed vulnerabilities</span></span><br><span class="line">  <span class="attr">ignore_unfixed:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># skipUpdate The flag to enable or disable Trivy DB downloads from GitHub</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># You might want to enable this flag in test or CI/CD environments to avoid GitHub rate limiting issues.</span></span><br><span class="line">  <span class="comment"># If the flag is enabled you have to download the `trivy-offline.tar.gz` archive manually, extract `trivy.db` and</span></span><br><span class="line">  <span class="comment"># `metadata.json` files and mount them in the `/home/scanner/.cache/trivy/db` path.</span></span><br><span class="line">  <span class="attr">skip_update:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># The offline_scan option prevents Trivy from sending API requests to identify dependencies.</span></span><br><span class="line">  <span class="comment"># Scanning JAR files and pom.xml may require Internet access for better detection, but this option tries to avoid it.</span></span><br><span class="line">  <span class="comment"># For example, the offline mode will not try to resolve transitive dependencies in pom.xml when the dependency doesn&#x27;t</span></span><br><span class="line">  <span class="comment"># exist in the local repositories. It means a number of detected vulnerabilities might be fewer in offline mode.</span></span><br><span class="line">  <span class="comment"># It would work if all the dependencies are in local.</span></span><br><span class="line">  <span class="comment"># This option doesn’t affect DB download. You need to specify &quot;skip-update&quot; as well as &quot;offline-scan&quot; in an air-gapped environment.</span></span><br><span class="line">  <span class="attr">offline_scan:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># insecure The flag to skip verifying registry certificate</span></span><br><span class="line">  <span class="attr">insecure:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># github_token The GitHub access token to download Trivy DB</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># Anonymous downloads from GitHub are subject to the limit of 60 requests per hour. Normally such rate limit is enough</span></span><br><span class="line">  <span class="comment"># for production operations. If, for any reason, it&#x27;s not enough, you could increase the rate limit to 5000</span></span><br><span class="line">  <span class="comment"># requests per hour by specifying the GitHub access token. For more details on GitHub rate limiting please consult</span></span><br><span class="line">  <span class="comment"># https://developer.github.com/v3/#rate-limiting</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># You can create a GitHub token by following the instructions in</span></span><br><span class="line">  <span class="comment"># https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line</span></span><br><span class="line">  <span class="comment">#</span></span><br><span class="line">  <span class="comment"># github_token: xxx</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobservice:</span></span><br><span class="line">  <span class="comment"># Maximum number of job workers in job service</span></span><br><span class="line">  <span class="attr">max_job_workers:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="attr">notification:</span></span><br><span class="line">  <span class="comment"># Maximum retry count for webhook job</span></span><br><span class="line">  <span class="attr">webhook_job_max_retry:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="attr">chart:</span></span><br><span class="line">  <span class="comment"># Change the value of absolute_url to enabled can enable absolute url in chart</span></span><br><span class="line">  <span class="attr">absolute_url:</span> <span class="string">disabled</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Log configurations</span></span><br><span class="line"><span class="attr">log:</span></span><br><span class="line">  <span class="comment"># options are debug, info, warning, error, fatal</span></span><br><span class="line">  <span class="attr">level:</span> <span class="string">info</span></span><br><span class="line">  <span class="comment"># configs for logs in local storage</span></span><br><span class="line">  <span class="attr">local:</span></span><br><span class="line">    <span class="comment"># Log files are rotated log_rotate_count times before being removed. If count is 0, old versions are removed rather than rotated.</span></span><br><span class="line">    <span class="attr">rotate_count:</span> <span class="number">50</span></span><br><span class="line">    <span class="comment"># Log files are rotated only if they grow bigger than log_rotate_size bytes. If size is followed by k, the size is assumed to be in kilobytes.</span></span><br><span class="line">    <span class="comment"># If the M is used, the size is in megabytes, and if G is used, the size is in gigabytes. So size 100, size 100k, size 100M and size 100G</span></span><br><span class="line">    <span class="comment"># are all valid.</span></span><br><span class="line">    <span class="attr">rotate_size:</span> <span class="string">200M</span></span><br><span class="line">    <span class="comment"># The directory on your host that store log</span></span><br><span class="line">    <span class="attr">location:</span> <span class="string">/var/log/harbor</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Uncomment following lines to enable external syslog endpoint.</span></span><br><span class="line">  <span class="comment"># external_endpoint:</span></span><br><span class="line">  <span class="comment">#   # protocol used to transmit log to external endpoint, options is tcp or udp</span></span><br><span class="line">  <span class="comment">#   protocol: tcp</span></span><br><span class="line">  <span class="comment">#   # The host of external endpoint</span></span><br><span class="line">  <span class="comment">#   host: localhost</span></span><br><span class="line">  <span class="comment">#   # Port of external endpoint</span></span><br><span class="line">  <span class="comment">#   port: 5140</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!</span></span><br><span class="line"><span class="attr">_version:</span> <span class="number">2.5</span><span class="number">.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment external_database if using external database.</span></span><br><span class="line"><span class="comment"># external_database:</span></span><br><span class="line"><span class="comment">#   harbor:</span></span><br><span class="line"><span class="comment">#     host: harbor_db_host</span></span><br><span class="line"><span class="comment">#     port: harbor_db_port</span></span><br><span class="line"><span class="comment">#     db_name: harbor_db_name</span></span><br><span class="line"><span class="comment">#     username: harbor_db_username</span></span><br><span class="line"><span class="comment">#     password: harbor_db_password</span></span><br><span class="line"><span class="comment">#     ssl_mode: disable</span></span><br><span class="line"><span class="comment">#     max_idle_conns: 2</span></span><br><span class="line"><span class="comment">#     max_open_conns: 0</span></span><br><span class="line"><span class="comment">#   notary_signer:</span></span><br><span class="line"><span class="comment">#     host: notary_signer_db_host</span></span><br><span class="line"><span class="comment">#     port: notary_signer_db_port</span></span><br><span class="line"><span class="comment">#     db_name: notary_signer_db_name</span></span><br><span class="line"><span class="comment">#     username: notary_signer_db_username</span></span><br><span class="line"><span class="comment">#     password: notary_signer_db_password</span></span><br><span class="line"><span class="comment">#     ssl_mode: disable</span></span><br><span class="line"><span class="comment">#   notary_server:</span></span><br><span class="line"><span class="comment">#     host: notary_server_db_host</span></span><br><span class="line"><span class="comment">#     port: notary_server_db_port</span></span><br><span class="line"><span class="comment">#     db_name: notary_server_db_name</span></span><br><span class="line"><span class="comment">#     username: notary_server_db_username</span></span><br><span class="line"><span class="comment">#     password: notary_server_db_password</span></span><br><span class="line"><span class="comment">#     ssl_mode: disable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment external_redis if using external Redis server</span></span><br><span class="line"><span class="comment"># external_redis:</span></span><br><span class="line"><span class="comment">#   # support redis, redis+sentinel</span></span><br><span class="line"><span class="comment">#   # host for redis: &lt;host_redis&gt;:&lt;port_redis&gt;</span></span><br><span class="line"><span class="comment">#   # host for redis+sentinel:</span></span><br><span class="line"><span class="comment">#   #  &lt;host_sentinel1&gt;:&lt;port_sentinel1&gt;,&lt;host_sentinel2&gt;:&lt;port_sentinel2&gt;,&lt;host_sentinel3&gt;:&lt;port_sentinel3&gt;</span></span><br><span class="line"><span class="comment">#   host: redis:6379</span></span><br><span class="line"><span class="comment">#   password: </span></span><br><span class="line"><span class="comment">#   # sentinel_master_set must be set to support redis+sentinel</span></span><br><span class="line"><span class="comment">#   #sentinel_master_set:</span></span><br><span class="line"><span class="comment">#   # db_index 0 is for core, it&#x27;s unchangeable</span></span><br><span class="line"><span class="comment">#   registry_db_index: 1</span></span><br><span class="line"><span class="comment">#   jobservice_db_index: 2</span></span><br><span class="line"><span class="comment">#   chartmuseum_db_index: 3</span></span><br><span class="line"><span class="comment">#   trivy_db_index: 5</span></span><br><span class="line"><span class="comment">#   idle_timeout_seconds: 30</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment uaa for trusting the certificate of uaa instance that is hosted via self-signed cert.</span></span><br><span class="line"><span class="comment"># uaa:</span></span><br><span class="line"><span class="comment">#   ca_file: /path/to/ca</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Global proxy</span></span><br><span class="line"><span class="comment"># Config http proxy for components, e.g. http://my.proxy.com:3128</span></span><br><span class="line"><span class="comment"># Components doesn&#x27;t need to connect to each others via http proxy.</span></span><br><span class="line"><span class="comment"># Remove component from `components` array if want disable proxy</span></span><br><span class="line"><span class="comment"># for it. If you want use proxy for replication, MUST enable proxy</span></span><br><span class="line"><span class="comment"># for core and jobservice, and set `http_proxy` and `https_proxy`.</span></span><br><span class="line"><span class="comment"># Add domain to the `no_proxy` field, when you want disable proxy</span></span><br><span class="line"><span class="comment"># for some special registry.</span></span><br><span class="line"><span class="attr">proxy:</span></span><br><span class="line">  <span class="attr">http_proxy:</span></span><br><span class="line">  <span class="attr">https_proxy:</span></span><br><span class="line">  <span class="attr">no_proxy:</span></span><br><span class="line">  <span class="attr">components:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">core</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">jobservice</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">trivy</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># metric:</span></span><br><span class="line"><span class="comment">#   enabled: false</span></span><br><span class="line"><span class="comment">#   port: 9090</span></span><br><span class="line"><span class="comment">#   path: /metrics</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Trace related config</span></span><br><span class="line"><span class="comment"># only can enable one trace provider(jaeger or otel) at the same time,</span></span><br><span class="line"><span class="comment"># and when using jaeger as provider, can only enable it with agent mode or collector mode.</span></span><br><span class="line"><span class="comment"># if using jaeger collector mode, uncomment endpoint and uncomment username, password if needed</span></span><br><span class="line"><span class="comment"># if using jaeger agetn mode uncomment agent_host and agent_port</span></span><br><span class="line"><span class="comment"># trace:</span></span><br><span class="line"><span class="comment">#   enabled: true</span></span><br><span class="line"><span class="comment">#   # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth</span></span><br><span class="line"><span class="comment">#   sample_rate: 1</span></span><br><span class="line"><span class="comment">#   # # namespace used to differenciate different harbor services</span></span><br><span class="line"><span class="comment">#   # namespace:</span></span><br><span class="line"><span class="comment">#   # # attributes is a key value dict contains user defined attributes used to initialize trace provider</span></span><br><span class="line"><span class="comment">#   # attributes:</span></span><br><span class="line"><span class="comment">#   #   application: harbor</span></span><br><span class="line"><span class="comment">#   # # jaeger should be 1.26 or newer.</span></span><br><span class="line"><span class="comment">#   # jaeger:</span></span><br><span class="line"><span class="comment">#   #   endpoint: http://hostname:14268/api/traces</span></span><br><span class="line"><span class="comment">#   #   username:</span></span><br><span class="line"><span class="comment">#   #   password:</span></span><br><span class="line"><span class="comment">#   #   agent_host: hostname</span></span><br><span class="line"><span class="comment">#   #   # export trace data by jaeger.thrift in compact mode</span></span><br><span class="line"><span class="comment">#   #   agent_port: 6831</span></span><br><span class="line"><span class="comment">#   # otel:</span></span><br><span class="line"><span class="comment">#   #   endpoint: hostname:4318</span></span><br><span class="line"><span class="comment">#   #   url_path: /v1/traces</span></span><br><span class="line"><span class="comment">#   #   compression: false</span></span><br><span class="line"><span class="comment">#   #   insecure: true</span></span><br><span class="line"><span class="comment">#   #   timeout: 10s</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># enable purge _upload directories</span></span><br><span class="line"><span class="attr">upload_purging:</span></span><br><span class="line">  <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># remove files in _upload directories which exist for a period of time, default is one week.</span></span><br><span class="line">  <span class="attr">age:</span> <span class="string">168h</span></span><br><span class="line">  <span class="comment"># the interval of the purge operations</span></span><br><span class="line">  <span class="attr">interval:</span> <span class="string">24h</span></span><br><span class="line">  <span class="attr">dryrun:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h3 id="安装运行">安装运行</h3>
+<p>harbor目录下执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
+<p>有下图所示说明启动成功</p>
+<p><img src="image-20220508212557479.png" /></p>
+<h3 id="排错">排错</h3>
+<h4 id="filenotfounderror-errno-2-no-such-file-or-directory-hostfsharbor.key">FileNotFoundError: [Errno 2] No such file or directory: '/hostfs/harbor.key'</h4>
+<p><img src="image-20220508205215581.png" /></p>
+<p>好像是<code>./prepare</code>脚本编写错误，按照下面issus提到的修改</p>
+<blockquote>
+<p>https://github.com/goharbor/harbor/issues/13465</p>
+</blockquote>
+<p><img src="image-20220508205501816.png" /></p>
+<p>再次运行<code>./prepare</code>，成功</p>
+<p><img src="image-20220508205609714.png" /></p>
+<h4 id="浏览器访问过慢">浏览器访问过慢</h4>
+<p>考虑和SSL证书的OCSP装订有关。</p>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+        <tag>harbor</tag>
       </tags>
   </entry>
   <entry>
@@ -8610,79 +8610,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>在Docker Destop启用k8s服务</title>
-    <url>/p/enable-k8s-in-docker-desktop/</url>
-    <content><![CDATA[<p>作为目前事实上的容器编排系统标准，K8s 无疑是现代应用的基石。</p>
-<p>本文主要是开启Docker Desktop for Win/Mac 的K8s服务。</p>
-<p>关键词：<strong>docker，k8s</strong></p>
-<a id="more"></a>
-<h3 id="确定k8s版本">确定k8s版本</h3>
-<ul>
-<li>需安装 Docker Desktop 的 Mac 或者 Windows 版本，如果没有请下载<a href="https://store.docker.com/search?type=edition&amp;offering=community">下载 Docker CE最新版本</a></li>
-<li>当前 master 分支已经在 Docker for Mac/Windows 4.4.2 (包含 Docker CE 20.10.12 和 Kubernetes 1.22.5) 版本测试通过</li>
-<li>如果需要测试其他版本，请查看 Docker Desktop版本，Docker -&gt; About Docker Desktop</li>
-</ul>
-<p><img src="image-20220429163406392.png" /></p>
-<h3 id="切换到对应分支">切换到对应分支</h3>
-<p>在任意目录下clone<a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop">k8s-for-docker-desktop</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/AliyunContainerService/k8s-for-docker-desktop.git</span><br></pre></td></tr></table></figure>
-<p>这里的Kubernetes版本为 v1.22.5, 故使用 <a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop/tree/v1.22.5">v1.22.5 分支</a> <code>git checkout v1.22.5</code></p>
-<h3 id="开启k8s">开启K8s</h3>
-<p>为 Docker daemon 配置镜像加速，参考<a href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">阿里云镜像服务</a> 或中科大镜像加速地址<code>https://docker.mirrors.ustc.edu.cn</code></p>
-<p><img src="image-20220429163857048.png" /></p>
-<p>从阿里云镜像服务下载 Kubernetes 所需要的镜像</p>
-<p>在 Mac 上执行如下脚本</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;load_images.sh</span><br></pre></td></tr></table></figure>
-<p>在Windows上，使用 PowerShell</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.\load_images.ps1</span><br></pre></td></tr></table></figure>
-<p>说明:</p>
-<ul>
-<li>如果因为安全策略无法执行 PowerShell 脚本，请在 “以管理员身份运行” 的 PowerShell 中执行 <code>Set-ExecutionPolicy RemoteSigned</code> 命令。</li>
-<li>如果需要，可以通过修改 <code>images.properties</code> 文件自行加载你自己需要的镜像</li>
-</ul>
-<p><img src="image-20220429164553018.png" /></p>
-<p>开启 Kubernetes，并等待 Kubernetes 开始运行</p>
-<p><img src="image-20220429164629527.png" /></p>
-<p>当左下角出现k8s的图标时，说明开启成功</p>
-<p><img src="image-20220429165336573.png" /></p>
-<p>TIPS：</p>
-<p>在Mac上:</p>
-<p>如果在Kubernetes部署的过程中出现问题，可以通过docker desktop应用日志获得实时日志信息：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pred&#x3D;&#39;process matches &quot;.*(ocker|vpnkit).*&quot;</span><br><span class="line">  || (process in &#123;&quot;taskgated-helper&quot;, &quot;launchservicesd&quot;, &quot;kernel&quot;&#125; &amp;&amp; eventMessage contains[c] &quot;docker&quot;)&#39;</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;log stream --style syslog --level&#x3D;debug --color&#x3D;always --predicate &quot;$pred&quot;</span><br></pre></td></tr></table></figure>
-<p>在Windows上:</p>
-<p>如果在Kubernetes部署的过程中出现问题，可以在 <code>C:\ProgramData\DockerDesktop</code>下的service.txt 查看Docker日志, 在 <code>C:\Users\yourUserName\AppData\Local\Docker</code>下的log.txt 查看Kubernetes日志。</p>
-<h3 id="配置k8s">配置K8s</h3>
-<p>验证k8s集群状态</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl cluster-info</span><br><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220429170726815.png" /></p>
-<p>配置K8s控制台</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create -f kubernetes-dashboard.yaml</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220429170904942.png" /></p>
-<p>检查 kubernetes-dashboard 应用状态</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pod -n kubernetes-dashboard</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220429171026647.png" /></p>
-<p>开启API Server 访问代理</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl proxy</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220429171129620.png" /></p>
-<p>通过如下URL访问kubernetes-dashboard</p>
-<p>http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/</p>
-<p>配置Mac环境</p>
-<p>配置控制台访问令牌</p>
-<p>对于Mac环境</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">TOKEN&#x3D;$(kubectl -n kube-system describe secret default| awk &#39;$1&#x3D;&#x3D;&quot;token:&quot;&#123;print $2&#125;&#39;)</span><br><span class="line">kubectl config set-credentials docker-desktop --token&#x3D;&quot;$&#123;TOKEN&#125;&quot;</span><br><span class="line">echo $TOKEN</span><br></pre></td></tr></table></figure>
-<p>对于Windows环境</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$TOKEN&#x3D;((kubectl -n kube-system describe secret default | Select-String &quot;token:&quot;) -split &quot; +&quot;)[1]</span><br><span class="line">kubectl config set-credentials docker-desktop --token&#x3D;&quot;$&#123;TOKEN&#125;&quot;</span><br><span class="line">echo $TOKEN</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220429171807293.png" /></p>
-<p>登录dashboard的时候选择令牌，输入上文控制台输出中的内容。</p>
-<p>或者选择kubeconfig，路径如下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Mac: <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">Win: %UserProfile%\.kube\config</span><br></pre></td></tr></table></figure>
-<p>点击登陆，进入Kubernetes Dashboard</p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>奥卡姆剃刀和没有免费的午餐定理</title>
     <url>/p/Occam&#39;s-razor-and-no-free-lunch-theorem/</url>
     <content><![CDATA[<p>本文原载于<a href="https://imlogm.github.io/">https://imlogm.github.io</a>，转载请注明出处！</p>
@@ -8878,6 +8805,79 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在Docker Destop启用k8s服务</title>
+    <url>/p/enable-k8s-in-docker-desktop/</url>
+    <content><![CDATA[<p>作为目前事实上的容器编排系统标准，K8s 无疑是现代应用的基石。</p>
+<p>本文主要是开启Docker Desktop for Win/Mac 的K8s服务。</p>
+<p>关键词：<strong>docker，k8s</strong></p>
+<a id="more"></a>
+<h3 id="确定k8s版本">确定k8s版本</h3>
+<ul>
+<li>需安装 Docker Desktop 的 Mac 或者 Windows 版本，如果没有请下载<a href="https://store.docker.com/search?type=edition&amp;offering=community">下载 Docker CE最新版本</a></li>
+<li>当前 master 分支已经在 Docker for Mac/Windows 4.4.2 (包含 Docker CE 20.10.12 和 Kubernetes 1.22.5) 版本测试通过</li>
+<li>如果需要测试其他版本，请查看 Docker Desktop版本，Docker -&gt; About Docker Desktop</li>
+</ul>
+<p><img src="image-20220429163406392.png" /></p>
+<h3 id="切换到对应分支">切换到对应分支</h3>
+<p>在任意目录下clone<a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop">k8s-for-docker-desktop</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/AliyunContainerService/k8s-for-docker-desktop.git</span><br></pre></td></tr></table></figure>
+<p>这里的Kubernetes版本为 v1.22.5, 故使用 <a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop/tree/v1.22.5">v1.22.5 分支</a> <code>git checkout v1.22.5</code></p>
+<h3 id="开启k8s">开启K8s</h3>
+<p>为 Docker daemon 配置镜像加速，参考<a href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">阿里云镜像服务</a> 或中科大镜像加速地址<code>https://docker.mirrors.ustc.edu.cn</code></p>
+<p><img src="image-20220429163857048.png" /></p>
+<p>从阿里云镜像服务下载 Kubernetes 所需要的镜像</p>
+<p>在 Mac 上执行如下脚本</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;load_images.sh</span><br></pre></td></tr></table></figure>
+<p>在Windows上，使用 PowerShell</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.\load_images.ps1</span><br></pre></td></tr></table></figure>
+<p>说明:</p>
+<ul>
+<li>如果因为安全策略无法执行 PowerShell 脚本，请在 “以管理员身份运行” 的 PowerShell 中执行 <code>Set-ExecutionPolicy RemoteSigned</code> 命令。</li>
+<li>如果需要，可以通过修改 <code>images.properties</code> 文件自行加载你自己需要的镜像</li>
+</ul>
+<p><img src="image-20220429164553018.png" /></p>
+<p>开启 Kubernetes，并等待 Kubernetes 开始运行</p>
+<p><img src="image-20220429164629527.png" /></p>
+<p>当左下角出现k8s的图标时，说明开启成功</p>
+<p><img src="image-20220429165336573.png" /></p>
+<p>TIPS：</p>
+<p>在Mac上:</p>
+<p>如果在Kubernetes部署的过程中出现问题，可以通过docker desktop应用日志获得实时日志信息：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pred&#x3D;&#39;process matches &quot;.*(ocker|vpnkit).*&quot;</span><br><span class="line">  || (process in &#123;&quot;taskgated-helper&quot;, &quot;launchservicesd&quot;, &quot;kernel&quot;&#125; &amp;&amp; eventMessage contains[c] &quot;docker&quot;)&#39;</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;log stream --style syslog --level&#x3D;debug --color&#x3D;always --predicate &quot;$pred&quot;</span><br></pre></td></tr></table></figure>
+<p>在Windows上:</p>
+<p>如果在Kubernetes部署的过程中出现问题，可以在 <code>C:\ProgramData\DockerDesktop</code>下的service.txt 查看Docker日志, 在 <code>C:\Users\yourUserName\AppData\Local\Docker</code>下的log.txt 查看Kubernetes日志。</p>
+<h3 id="配置k8s">配置K8s</h3>
+<p>验证k8s集群状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl cluster-info</span><br><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429170726815.png" /></p>
+<p>配置K8s控制台</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create -f kubernetes-dashboard.yaml</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429170904942.png" /></p>
+<p>检查 kubernetes-dashboard 应用状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pod -n kubernetes-dashboard</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429171026647.png" /></p>
+<p>开启API Server 访问代理</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl proxy</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429171129620.png" /></p>
+<p>通过如下URL访问kubernetes-dashboard</p>
+<p>http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/</p>
+<p>配置Mac环境</p>
+<p>配置控制台访问令牌</p>
+<p>对于Mac环境</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">TOKEN&#x3D;$(kubectl -n kube-system describe secret default| awk &#39;$1&#x3D;&#x3D;&quot;token:&quot;&#123;print $2&#125;&#39;)</span><br><span class="line">kubectl config set-credentials docker-desktop --token&#x3D;&quot;$&#123;TOKEN&#125;&quot;</span><br><span class="line">echo $TOKEN</span><br></pre></td></tr></table></figure>
+<p>对于Windows环境</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$TOKEN&#x3D;((kubectl -n kube-system describe secret default | Select-String &quot;token:&quot;) -split &quot; +&quot;)[1]</span><br><span class="line">kubectl config set-credentials docker-desktop --token&#x3D;&quot;$&#123;TOKEN&#125;&quot;</span><br><span class="line">echo $TOKEN</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220429171807293.png" /></p>
+<p>登录dashboard的时候选择令牌，输入上文控制台输出中的内容。</p>
+<p>或者选择kubeconfig，路径如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Mac: <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">Win: %UserProfile%\.kube\config</span><br></pre></td></tr></table></figure>
+<p>点击登陆，进入Kubernetes Dashboard</p>
+]]></content>
+      <tags>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
@@ -9679,50 +9679,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>梯度下降法</title>
-    <url>/p/What&#39;s-the-Gradient-descent/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
-<p><strong>关键词：</strong>Deep Learning</p>
-<a id="more"></a>
-<h3 id="核心">核心</h3>
-<p>梯度下降法的核心，是最小化目标函数。方法是在每一次迭代中，对每个变量，按照目标函数在该变量梯度的相反方向，更新对应的参数值，其中，学习率决定了函数到达局部最小值的迭代次数。<strong>我们在目标函数的超平面上，沿着斜率下降的方向前进，直到我们遇到了超平面构成的"谷底"。</strong></p>
-<h3 id="梯度下降法的变体">梯度下降法的变体</h3>
-<p>梯度下降法有三种变体，它们的区别在于用多少数据来计算目标函数的梯度。根据数据量的不同，我们需要权衡参数更新的准确性和执行一次所需要的时间。</p>
-<h4 id="batch-gradient-descent-批量梯度下降">Batch gradient descent 批量梯度下降</h4>
-<p>批量梯度下降又称<strong>Vanilla梯度下降法</strong>，也就是所谓的批量梯度下降法，在整个数据集上对每个参数求目标函数的偏导数。 <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta)
-\]</span> 翻译成白话文就是：用整个训练集计算目标函数的梯度参数。</p>
-<p>由于我们需要计算整个数据集的梯度来执行一次更新，因此批量梯度下降可能非常缓慢。而且需要把数据集放入内存。批量梯度下降也不允许我们在线更新我们的的模型。</p>
-<p>代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    params_grad = evaluate_gradient(loss_function, data, params)</span><br><span class="line">    params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<p>对于预先定义的多个epoch，我们首先计算关于整个数据集的损失函数的梯度向量<code>param_grad</code>.当前的一些深度学习库提供了自动求导的函数，可以有效的计算一些参数梯度。</p>
-<p>按照梯度的反方向更新参数，学习速率决定我们执行的更新的大小。保证了批梯度下降收敛于凸误差曲面的全局最小值和非凸曲面的全局最小值。</p>
-<h4 id="stochastic-gradient-descent-随机梯度下降">Stochastic gradient descent 随机梯度下降</h4>
-<p>相比之下，随机梯度下降(SGD)对每个训练示例和标号进行参数更新： <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i)};y^{(i)})
-\]</span> 批量梯度下降对大数据集会有一些冗余计算，因此它在每次参数更新前重新计算类似的梯度。</p>
-<p><strong>随机梯度下降</strong>会以一个较大的方差执行频繁的更新，导致目标函数剧烈波动，如下图所示。</p>
-<p><img src="sgd_fluctuation.png" /></p>
-<p>当批量梯度下降法收敛到参数的盆地时，SGD的波动一方面会使其跳跃到新的、可能的更好的局部极小值。另一方面，这最终会使让收敛到特定最小值的过程复杂化，因为该方法可能持续的波动而不停止。但是，当我们慢慢降低学习率时，SGD表现出了与批量梯度下降法相似的收敛过程，也就是说，对非凸函数和凸函数，必然会分别收敛到他们的极小值和最小值。</p>
-<p>相比批量梯度下降法的代码，在如下的代码中，我们仅仅加入了一个循环，用以遍历所以的训练样本并求出相应的梯度值。值得注意的是，我们在每个阶段都要重新打乱训练数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> example <span class="keyword">in</span> data:</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, example, params)</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<h4 id="mini-batch-gradient-descent-小批量梯度下降">Mini-batch gradient descent 小批量梯度下降</h4>
-<p>小批量梯度下降具有以上两者的优点。在每次更新中，对<code>n</code>个样本构成的一批数据，计算损失函数，并对相应的参数求导： <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i:i+n)};y^{(i:i+n)})
-\]</span> 这种方法，1. 降低了参数更新的方差，使得收敛过程更加稳定；</p>
-<p>​ 2. 能够利用最新的深度学习程序库中高度优化的矩阵运算器，能够高效的求出每小批数据的梯度。通常一小批数据含有的样本数量在50至256之间，但对于不同的用途也会有所变化。例如，当你的显存不够时，就把<code>batch_size</code>调小。</p>
-<p>小批量梯度下降法，通常是我们训练神经网络的首选算法。同时，有时候我们也会使用<strong>随机梯度下降法</strong>，来称呼<strong>小批量梯度下降法</strong>。</p>
-<p>在代码中，不再迭代每个示例，而是迭代大小为50的小批量样本。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> batch <span class="keyword">in</span> get_batches(data, batch_size=<span class="number">50</span>):</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, batch, params) / batch_size</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<h3 id="sgd的缺点">SGD的缺点</h3>
-<p>然而，小批量梯度下降法并不能保证良好地收敛，仍然存在一些问题。</p>
-<p>1.选择一个适当的学习率是一个难题太小的学习率会导致较慢的收敛速度，而太大的学习率则会阻碍收敛，并会引起损失函数在最小值处波动，甚至发散。 2. 学习率计划表(learning_rate_schedule)试图在训练过程中调整学习率，例如退火，即很具预先定义的计划表减少学习率，或当各时期之间的目标变换低于阈值时。但是，这些调度和阈值必须提前定义，因此无法适应数据集的特征。 3. 此外，我们对所有的参数都采用了相同的学习率。但如果我们的数据是稀疏的，同时特征有着不同的出现频率，那么我们不希望以相同的学习率来更新这些变量，我们希望对较少出现的特征有更大的学习率。 4. 会无数次的陷入最小值或<strong>鞍点</strong>。鞍点是在一个方向上斜率是正的、在一个方向上斜率是负的点。鞍点周围各个方向的梯度值都为0，所以<strong>SGD</strong>很难从这些鞍点中脱开。</p>
-]]></content>
-      <tags>
-        <tag>Deep Learning</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>深度学习常见损失函数</title>
     <url>/p/common-loss-functions-for-deep-learning/</url>
     <content><![CDATA[<p>我们所说的优化，即优化网络权值使得损失函数值变小。但是，损失函数值变小是否能代表模型的分类/回归精度变高呢？那么多种损失函数，应该如何选择呢？</p>
@@ -9801,6 +9757,50 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>梯度下降法</title>
+    <url>/p/What&#39;s-the-Gradient-descent/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
+<p><strong>关键词：</strong>Deep Learning</p>
+<a id="more"></a>
+<h3 id="核心">核心</h3>
+<p>梯度下降法的核心，是最小化目标函数。方法是在每一次迭代中，对每个变量，按照目标函数在该变量梯度的相反方向，更新对应的参数值，其中，学习率决定了函数到达局部最小值的迭代次数。<strong>我们在目标函数的超平面上，沿着斜率下降的方向前进，直到我们遇到了超平面构成的"谷底"。</strong></p>
+<h3 id="梯度下降法的变体">梯度下降法的变体</h3>
+<p>梯度下降法有三种变体，它们的区别在于用多少数据来计算目标函数的梯度。根据数据量的不同，我们需要权衡参数更新的准确性和执行一次所需要的时间。</p>
+<h4 id="batch-gradient-descent-批量梯度下降">Batch gradient descent 批量梯度下降</h4>
+<p>批量梯度下降又称<strong>Vanilla梯度下降法</strong>，也就是所谓的批量梯度下降法，在整个数据集上对每个参数求目标函数的偏导数。 <span class="math display">\[
+\theta=\theta-\eta{\nabla_\theta}J(\theta)
+\]</span> 翻译成白话文就是：用整个训练集计算目标函数的梯度参数。</p>
+<p>由于我们需要计算整个数据集的梯度来执行一次更新，因此批量梯度下降可能非常缓慢。而且需要把数据集放入内存。批量梯度下降也不允许我们在线更新我们的的模型。</p>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    params_grad = evaluate_gradient(loss_function, data, params)</span><br><span class="line">    params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
+<p>对于预先定义的多个epoch，我们首先计算关于整个数据集的损失函数的梯度向量<code>param_grad</code>.当前的一些深度学习库提供了自动求导的函数，可以有效的计算一些参数梯度。</p>
+<p>按照梯度的反方向更新参数，学习速率决定我们执行的更新的大小。保证了批梯度下降收敛于凸误差曲面的全局最小值和非凸曲面的全局最小值。</p>
+<h4 id="stochastic-gradient-descent-随机梯度下降">Stochastic gradient descent 随机梯度下降</h4>
+<p>相比之下，随机梯度下降(SGD)对每个训练示例和标号进行参数更新： <span class="math display">\[
+\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i)};y^{(i)})
+\]</span> 批量梯度下降对大数据集会有一些冗余计算，因此它在每次参数更新前重新计算类似的梯度。</p>
+<p><strong>随机梯度下降</strong>会以一个较大的方差执行频繁的更新，导致目标函数剧烈波动，如下图所示。</p>
+<p><img src="sgd_fluctuation.png" /></p>
+<p>当批量梯度下降法收敛到参数的盆地时，SGD的波动一方面会使其跳跃到新的、可能的更好的局部极小值。另一方面，这最终会使让收敛到特定最小值的过程复杂化，因为该方法可能持续的波动而不停止。但是，当我们慢慢降低学习率时，SGD表现出了与批量梯度下降法相似的收敛过程，也就是说，对非凸函数和凸函数，必然会分别收敛到他们的极小值和最小值。</p>
+<p>相比批量梯度下降法的代码，在如下的代码中，我们仅仅加入了一个循环，用以遍历所以的训练样本并求出相应的梯度值。值得注意的是，我们在每个阶段都要重新打乱训练数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> example <span class="keyword">in</span> data:</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, example, params)</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
+<h4 id="mini-batch-gradient-descent-小批量梯度下降">Mini-batch gradient descent 小批量梯度下降</h4>
+<p>小批量梯度下降具有以上两者的优点。在每次更新中，对<code>n</code>个样本构成的一批数据，计算损失函数，并对相应的参数求导： <span class="math display">\[
+\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i:i+n)};y^{(i:i+n)})
+\]</span> 这种方法，1. 降低了参数更新的方差，使得收敛过程更加稳定；</p>
+<p>​ 2. 能够利用最新的深度学习程序库中高度优化的矩阵运算器，能够高效的求出每小批数据的梯度。通常一小批数据含有的样本数量在50至256之间，但对于不同的用途也会有所变化。例如，当你的显存不够时，就把<code>batch_size</code>调小。</p>
+<p>小批量梯度下降法，通常是我们训练神经网络的首选算法。同时，有时候我们也会使用<strong>随机梯度下降法</strong>，来称呼<strong>小批量梯度下降法</strong>。</p>
+<p>在代码中，不再迭代每个示例，而是迭代大小为50的小批量样本。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> batch <span class="keyword">in</span> get_batches(data, batch_size=<span class="number">50</span>):</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, batch, params) / batch_size</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
+<h3 id="sgd的缺点">SGD的缺点</h3>
+<p>然而，小批量梯度下降法并不能保证良好地收敛，仍然存在一些问题。</p>
+<p>1.选择一个适当的学习率是一个难题太小的学习率会导致较慢的收敛速度，而太大的学习率则会阻碍收敛，并会引起损失函数在最小值处波动，甚至发散。 2. 学习率计划表(learning_rate_schedule)试图在训练过程中调整学习率，例如退火，即很具预先定义的计划表减少学习率，或当各时期之间的目标变换低于阈值时。但是，这些调度和阈值必须提前定义，因此无法适应数据集的特征。 3. 此外，我们对所有的参数都采用了相同的学习率。但如果我们的数据是稀疏的，同时特征有着不同的出现频率，那么我们不希望以相同的学习率来更新这些变量，我们希望对较少出现的特征有更大的学习率。 4. 会无数次的陷入最小值或<strong>鞍点</strong>。鞍点是在一个方向上斜率是正的、在一个方向上斜率是负的点。鞍点周围各个方向的梯度值都为0，所以<strong>SGD</strong>很难从这些鞍点中脱开。</p>
+]]></content>
+      <tags>
+        <tag>Deep Learning</tag>
       </tags>
   </entry>
   <entry>
