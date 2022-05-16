@@ -290,32 +290,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker的网络模式</title>
-    <url>/p/Docker-network-mode/</url>
-    <content><![CDATA[<p><code>docker</code>目前支持以下5种网络模式：</p>
-<p>使用<code>docker run</code> 创建 <code>Docker</code> 容器时，可以用 <code>--network</code> 选项指定容器的网络模式。</p>
-<a id="more"></a>
-<h3 id="host模式">host模式</h3>
-<p>​ 使用 <code>--netrork=host</code> 指定。与宿主机共享网络，此时容器没有使用网络的namespace，宿主机的所有设备，如Dbus会暴露到容器中，因此存在安全隐患。容器将不会虚拟出自己的网卡，配置自己的 IP 等，而是使用宿主机的 IP 和端口。</p>
-<h3 id="container模式">container模式</h3>
-<p>使用 <code>--network=container:NAME or ID</code> 指定。指定与某个容器实例共享网络。这个模式指定新创建的容器和已经存在的一个容器共享一个 Network Namespace，而不是和宿主机共享。新创建的容器不会创建自己的网卡，配置自己的 IP，而是和一个指定的容器共享 IP、端口范围等。同样，两个容器除了网络方面，其他的如文件系统、进程列表等还是隔离的。两个容器的进程可以通过 lo 网卡设备通信。</p>
-<h3 id="none模式">none模式</h3>
-<p>使用 <code>--network=none</code> 指定。不设置网络，相当于容器内没有配置网卡，用户可以手动配置。</p>
-<h3 id="bridge模式-默认设置">bridge模式 （默认设置）</h3>
-<p>使用 <code>--network=bridge</code> 指定，默认设置。</p>
-<p>bridge 模式是 Docker 默认的网络设置，此模式会为每一个容器分配 Network Namespace、设置 IP 等，并将一个主机上的 Docker 容器连接到一个虚拟网桥上。</p>
-<p>当 Docker server 启动时，会在主机上创建一个名为 docker0 的虚拟网桥，此主机上启动的 Docker 容器会连接到这个虚拟网桥上。虚拟网桥的工作方式和物理交换机类似，这样主机上的所有容器就通过交换机连在了一个二层网络中。</p>
-<p>接下来就要为容器分配 IP 了，Docker 会从 RFC1918 所定义的私有 IP 网段中，选择一个和宿主机不同的IP地址和子网分配给 docker0，连接到 docker0 的容器就从这个子网中选择一个未占用的 IP 使用。如一般 Docker 会使用 172.17.0.0/16 这个网段，并将 172.17.42.1/16 分配给 docker0 网桥（在主机上使用 ifconfig 命令是可以看到 docker0 的，可以认为它是网桥的管理接口，在宿主机上作为一块虚拟网卡使用）</p>
-<p>当创建一个 Docker 容器的时候，同时会创建了一对 veth pair 接口（当数据包发送到一个接口时，另外一个接口也可以收到相同的数据包）。这对接口一端在容器内，即 eth0；另一端在本地并被挂载到 docker0 网桥，名称以 veth 开头（例如 vethAQI2QT）。通过这种方式，主机可以跟容器通信，容器之间也可以相互通信。Docker 就创建了在主机和所有容器之间一个虚拟共享网络。</p>
-<p><strong>默认是桥接模式，网络地址为172.17.0.0/16，同一主机的容器实例能够通信，但不能跨主机通信。</strong></p>
-<h3 id="自定义模式">自定义模式</h3>
-<p>使用自定义网络，可以使用docker network create创建，并且默认支持多种网络驱动，用户可以自由创建桥接网络或者overlay网络。</p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Git常见操作</title>
     <url>/p/Git-common-operations/</url>
     <content><![CDATA[<p>不说废话，上教程。</p>
@@ -577,6 +551,32 @@
 ]]></content>
       <tags>
         <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker的网络模式</title>
+    <url>/p/Docker-network-mode/</url>
+    <content><![CDATA[<p><code>docker</code>目前支持以下5种网络模式：</p>
+<p>使用<code>docker run</code> 创建 <code>Docker</code> 容器时，可以用 <code>--network</code> 选项指定容器的网络模式。</p>
+<a id="more"></a>
+<h3 id="host模式">host模式</h3>
+<p>​ 使用 <code>--netrork=host</code> 指定。与宿主机共享网络，此时容器没有使用网络的namespace，宿主机的所有设备，如Dbus会暴露到容器中，因此存在安全隐患。容器将不会虚拟出自己的网卡，配置自己的 IP 等，而是使用宿主机的 IP 和端口。</p>
+<h3 id="container模式">container模式</h3>
+<p>使用 <code>--network=container:NAME or ID</code> 指定。指定与某个容器实例共享网络。这个模式指定新创建的容器和已经存在的一个容器共享一个 Network Namespace，而不是和宿主机共享。新创建的容器不会创建自己的网卡，配置自己的 IP，而是和一个指定的容器共享 IP、端口范围等。同样，两个容器除了网络方面，其他的如文件系统、进程列表等还是隔离的。两个容器的进程可以通过 lo 网卡设备通信。</p>
+<h3 id="none模式">none模式</h3>
+<p>使用 <code>--network=none</code> 指定。不设置网络，相当于容器内没有配置网卡，用户可以手动配置。</p>
+<h3 id="bridge模式-默认设置">bridge模式 （默认设置）</h3>
+<p>使用 <code>--network=bridge</code> 指定，默认设置。</p>
+<p>bridge 模式是 Docker 默认的网络设置，此模式会为每一个容器分配 Network Namespace、设置 IP 等，并将一个主机上的 Docker 容器连接到一个虚拟网桥上。</p>
+<p>当 Docker server 启动时，会在主机上创建一个名为 docker0 的虚拟网桥，此主机上启动的 Docker 容器会连接到这个虚拟网桥上。虚拟网桥的工作方式和物理交换机类似，这样主机上的所有容器就通过交换机连在了一个二层网络中。</p>
+<p>接下来就要为容器分配 IP 了，Docker 会从 RFC1918 所定义的私有 IP 网段中，选择一个和宿主机不同的IP地址和子网分配给 docker0，连接到 docker0 的容器就从这个子网中选择一个未占用的 IP 使用。如一般 Docker 会使用 172.17.0.0/16 这个网段，并将 172.17.42.1/16 分配给 docker0 网桥（在主机上使用 ifconfig 命令是可以看到 docker0 的，可以认为它是网桥的管理接口，在宿主机上作为一块虚拟网卡使用）</p>
+<p>当创建一个 Docker 容器的时候，同时会创建了一对 veth pair 接口（当数据包发送到一个接口时，另外一个接口也可以收到相同的数据包）。这对接口一端在容器内，即 eth0；另一端在本地并被挂载到 docker0 网桥，名称以 veth 开头（例如 vethAQI2QT）。通过这种方式，主机可以跟容器通信，容器之间也可以相互通信。Docker 就创建了在主机和所有容器之间一个虚拟共享网络。</p>
+<p><strong>默认是桥接模式，网络地址为172.17.0.0/16，同一主机的容器实例能够通信，但不能跨主机通信。</strong></p>
+<h3 id="自定义模式">自定义模式</h3>
+<p>使用自定义网络，可以使用docker network create创建，并且默认支持多种网络驱动，用户可以自由创建桥接网络或者overlay网络。</p>
+]]></content>
+      <tags>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
@@ -2081,120 +2081,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PyQt5教程</title>
-    <url>/p/PyQt5-Chinese-tutorial/</url>
-    <content><![CDATA[<p>学习PyQt的基本功能。</p>
-<a id="more"></a>
-<h3 id="例1-简单的窗口">例1 简单的窗口</h3>
-<p>这个简单的小例子展示的是一个小窗口。但是我们可以在这个小窗口上面很多事情，改变大小，最大化，最小化等。这需要很多代码能实现。这在很多应用中很常见，没必要每次都要重写这一部分代码，Qt已经提供了这些功能。PyQt5是一个高级的工具集合，相比使用低级的工具，能省略上百行代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    </span><br><span class="line">    w = QWidget()</span><br><span class="line">    w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">    w.move(<span class="number">300</span>, <span class="number">300</span>)</span><br><span class="line">    w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br><span class="line">    w.show()</span><br><span class="line">    </span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>运行上面的代码，能展示出一个小窗口。</p>
-<p>分步讲解：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br></pre></td></tr></table></figure>
-<p>这里引入了PyQt5.QtWidgets这个模块，这个模块包含了基本的组件。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">app &#x3D; QApplication(sys.argv)</span><br></pre></td></tr></table></figure>
-<p>每个PyQt5应用都必须创建这样的一个应用对象。sys.argv是一组命令行参数的列表。<strong>Python可以在shell里运行，这个参数提供了对脚本控制的功能。</strong></p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">w &#x3D; QWidget()</span><br></pre></td></tr></table></figure>
-<p>QWidget控件是一个用户界面的<strong>基本控件</strong>，它提供了基本的应用构造器。默认情况下，构造器是没有父级的，<strong>没有父级的构造器被称为窗口(window)。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br></pre></td></tr></table></figure>
-<p>resize()方法能改变控件的大小，这里的意思是窗口宽250px，高150px.</p>
-<hr />
-<p>move()是修改控件位置的方法，它把控件放置到屏幕坐标的(300, 300)的位置。<strong>屏幕坐标系的原点是屏幕的左上角。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>我们给这个窗口添加了一个标题，标题在标题栏展示。<strong>虽然这看起来是一句废话，但是后面还有各种栏，还是要重点说一下。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.show()</span><br></pre></td></tr></table></figure>
-<p>show()能让控件在桌面上显示出来。控件在内存里创建，调用这个函数才能在操作系统上显示出来。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>最后，我们进入了应用的主循环中，事件处理器这个时候开始工作。主循环从窗口上接收事件，并把事件派发到应用控件里。当调用<code>exit()</code>方法或直接销毁主控件时，主循环就会结束。<code>sys.exit()</code>方法能确保主循环安全退出。外部环境会收到主控件如何结束的信息。</p>
-<p><code>exec_()</code>之所以有个下划线，是因为<code>exec</code>是Python的一个关键字。</p>
-<p>程序预览：</p>
-<h3 id="例2-带窗口图标">例2 带窗口图标</h3>
-<p>窗口图标通常是显示一个窗口的左上角，标题栏的最左边。下面的例子就是怎么用PyQt5创建一个这样的窗口。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QIcon</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">220</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Icon&#x27;</span>)</span><br><span class="line">        self.setWindowIcon(Qicon(<span class="string">&#x27;web.png&#x27;</span>))</span><br><span class="line">        </span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>此处用到了Python面向对象编程：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">	super().__init__()</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-<p>面向对象编程最重要的三个部分是类(class)、数据和方法。<code>class Example:</code>创建了一个类的调用，这个类继承自<code>QWidget</code>类。调用了两个构造器，一个是这个类本身的，一个是这个类继承的。super()构造器方法返回父级的对象。<code>_\_init__()</code>方法是构造器的一个方法。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">self.initUI()</span><br></pre></td></tr></table></figure>
-<p>使用<code>initUI()</code>方法创建一个GUI。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 自己准备一个web.png</span><br><span class="line">self.setGeometry(300, 300, 300, 220)</span><br><span class="line">self.setWindowTitle(&#39;Icon&#39;)</span><br><span class="line">self.setWindowIcon(QIcon(&#39;web.png&#39;))</span><br></pre></td></tr></table></figure>
-<p>上面的三个方法都继承自<code>QWidget</code>类。<code>setGeometry()</code>有三个作用：把窗口放到屏幕上并设置窗口大小。参数分别代表屏幕坐标的x、y和窗口大小的宽、高。也就是说这个方法是<code>resize()</code>和<code>move()</code>的合体。最后一个方法是添加了图标。也创建了一个<code>QIcon</code>对象，然后接受一个路径作为参数显示图标。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(ex.exec_())</span><br></pre></td></tr></table></figure>
-<h3 id="例3-提示框">例3 提示框</h3>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QToolTip, QPushButton, QApplication)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QFont</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br><span class="line">        </span><br><span class="line">        self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">        btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        btn.resize(btn.sizeHint())</span><br><span class="line">        btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Tooltips&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>在这个例子中, 我们为应用创建了一个提示框.</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
-<p>这个静态方法设置了提示框的字体。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; wighet&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>调用<code>setToolTip()</code>创建提示框可以使用<strong>富文本格式</strong>的内容。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>创建一个按钮，并且为按钮添加了一个提示框。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn.resize(btn.sizeHint())</span><br><span class="line">btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br></pre></td></tr></table></figure>
-<p>调整按钮大小, 并且让按钮在屏幕上显示出来，sizeHint()方法提供了一个默认的按钮大小。</p>
-<h3 id="例4-关闭窗口">例4 关闭窗口</h3>
-<p>关闭窗口最直观的方式就是点击标题栏的叉叉，在这个例子里，我们展示的是如何用程序关闭一个窗口。这里我们将接触到一点<strong>信号(signal)和槽(slots)</strong>的知识。</p>
-<p>本例使用的是<code>QPushButton</code>组件类。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QPushButton(string text, QWidget parent &#x3D; None)</span><br></pre></td></tr></table></figure>
-<p>text参数是想要显示的按钮名称，parent参数是放在按钮上的组件，在我们的例子里，这个参数是QWidget。应用中的组件都是经过一层层的继承来的。在这个层里，大部分的组件都有自己的父级，没有父级的组件被称为<strong>顶级窗口</strong>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QPushButton, QApplication</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QCoreApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        self.initUI()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        qbtn = QPushButton(<span class="string">&#x27;Quit&#x27;</span>, self)</span><br><span class="line">        qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br><span class="line">        qbtn.resize(qbtn.sizeHint())</span><br><span class="line">        qbtn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line"></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">500</span>, <span class="number">250</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Quit button&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>上述代码创建了一个点击之后就推出窗口的按钮。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from PyQt5.QtCore import QCoreApplication</span><br></pre></td></tr></table></figure>
-<p>程序需要<code>QtCore</code>对象。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn &#x3D; QPushButton(&#39;Quit&#39;, self)</span><br></pre></td></tr></table></figure>
-<p>创建一个<code>QPushButton</code>按钮。第一个参数是按钮的文本，第二个参数是按钮的父级组件，这个例子中，父级组件就是我们创建的继承自<code>QWidget</code>的<code>Example</code>类。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br></pre></td></tr></table></figure>
-<p>创建了<strong>信号(singal)和槽(slot)</strong>的连接。点击按钮之后，信号会被捕捉并给出既定的反应。<code>QCoreApplication</code>包含了时间的主循环，它能添加和删除所有的事件。<code>instance()</code>创建了一个它的实例。<code>QCoreApplication</code>是在<code>QApplication</code>里创建的。点击事件和能终止进程并推出应用的quit函数绑定在了一起。在发送者和接收者之间建立了通讯，发送者就是按钮，接收者就是应用对象。</p>
-<p>点击一下<code>Quit</code>，程序就会自动退出。</p>
-<h3 id="例5-消息盒子">例5 消息盒子</h3>
-<p>默认情况下，我们点击标题栏的x按钮，QWidget就会关闭。但是有时候，我们需要修改这个默认行为。例如，我们打开的是一个文件编辑器，并且做了一些修改，这个时候就需要在关闭按钮的时候让用户进一步确认操作。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QMessageBox, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        </span><br><span class="line">        self.initUI()</span><br><span class="line">        </span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.setWidnowTitle(<span class="string">&#x27;Message box&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closeEvent</span>(<span class="params">self, event</span>) -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">       </span><br><span class="line">    	reply = QMessageBox.question(self, <span class="string">&#x27;Message&#x27;</span>, <span class="string">&quot;Are you sure to quit?&quot;</span>, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br><span class="line">        <span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">            event.accept()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            event.ignore()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>如果关闭<code>QWidget</code>，就会产生一个<code>QCloseEvent</code>，并且把它传入到<code>closeEvent</code>函数的event参数中。改变控件的默认行为，就是替换掉默认的事件处理。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">reply &#x3D; QMessageBox.question(self, &#39;Message&#39;,&quot;Are you sure to quit?&quot;, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br></pre></td></tr></table></figure>
-<p>上述代码创建了一个消息框，上面有两个按钮：<code>Yes</code>和<code>No</code>。第一个字符串显示在消息框的标题，第二个字符串显示在对话框，第三个参数是消息框的两个按钮，最后一个参数是默认按钮，这个按钮是默选中的。返回值在变量<code>reply</code>里。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">	event.accept()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	event.ignore()</span><br></pre></td></tr></table></figure>
-<p>这里判断返回值，如果点击的是Yes按钮，就关闭组件和应用，否则就忽略关闭事件。</p>
-<p>程序预览：</p>
-<p>例6 窗口居中</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QDestopWidget, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        </span><br><span class="line">        self.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.center()</span><br><span class="line">        </span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Center&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span>(<span class="params">self</span>):</span></span><br><span class="line">        qr = self.frameGeometry()</span><br><span class="line">        cp = QDesktopWidget().availableGeometry().center()</span><br><span class="line">        qr.moveCenter(cp)</span><br><span class="line">        self.move(qr.topLeft())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    </span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<hr />
-<p><code>QtGui.QDesktopWidget</code>提供了用户的桌面信息，包括屏幕的大小。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.center()</span><br></pre></td></tr></table></figure>
-<p>这个方法调用下面实现对话框居中的方法。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qr &#x3D; self.frameGeometry()</span><br></pre></td></tr></table></figure>
-<p>获得主窗口所在的框架。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cp = QDesktopWidget().availableGeometry().center()</span><br></pre></td></tr></table></figure>
-<p>获得显示器的分辨率，然后得到屏幕中心点的位置。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qr.moveCenter(cp)</span><br></pre></td></tr></table></figure>
-<p>然后把主窗口框架中心点位置放置到屏幕的中心位置。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.move(qr.topLeft())</span><br></pre></td></tr></table></figure>
-<p>然后通过move函数把主窗口的左上角移动到其框架的左上角，这样就把窗口居中了。</p>
-<p>程序预览：</p>
-]]></content>
-      <tags>
-        <tag>PyQt5</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Pandas学习小记(一)</title>
     <url>/p/Pandas-learning-notes-01/</url>
     <content><![CDATA[<p>Pandas是什么？</p>
@@ -2335,6 +2221,120 @@
 ]]></content>
       <tags>
         <tag>PandasPandas</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyQt5教程</title>
+    <url>/p/PyQt5-Chinese-tutorial/</url>
+    <content><![CDATA[<p>学习PyQt的基本功能。</p>
+<a id="more"></a>
+<h3 id="例1-简单的窗口">例1 简单的窗口</h3>
+<p>这个简单的小例子展示的是一个小窗口。但是我们可以在这个小窗口上面很多事情，改变大小，最大化，最小化等。这需要很多代码能实现。这在很多应用中很常见，没必要每次都要重写这一部分代码，Qt已经提供了这些功能。PyQt5是一个高级的工具集合，相比使用低级的工具，能省略上百行代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    </span><br><span class="line">    w = QWidget()</span><br><span class="line">    w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">    w.move(<span class="number">300</span>, <span class="number">300</span>)</span><br><span class="line">    w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br><span class="line">    w.show()</span><br><span class="line">    </span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>运行上面的代码，能展示出一个小窗口。</p>
+<p>分步讲解：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br></pre></td></tr></table></figure>
+<p>这里引入了PyQt5.QtWidgets这个模块，这个模块包含了基本的组件。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">app &#x3D; QApplication(sys.argv)</span><br></pre></td></tr></table></figure>
+<p>每个PyQt5应用都必须创建这样的一个应用对象。sys.argv是一组命令行参数的列表。<strong>Python可以在shell里运行，这个参数提供了对脚本控制的功能。</strong></p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">w &#x3D; QWidget()</span><br></pre></td></tr></table></figure>
+<p>QWidget控件是一个用户界面的<strong>基本控件</strong>，它提供了基本的应用构造器。默认情况下，构造器是没有父级的，<strong>没有父级的构造器被称为窗口(window)。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br></pre></td></tr></table></figure>
+<p>resize()方法能改变控件的大小，这里的意思是窗口宽250px，高150px.</p>
+<hr />
+<p>move()是修改控件位置的方法，它把控件放置到屏幕坐标的(300, 300)的位置。<strong>屏幕坐标系的原点是屏幕的左上角。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>我们给这个窗口添加了一个标题，标题在标题栏展示。<strong>虽然这看起来是一句废话，但是后面还有各种栏，还是要重点说一下。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.show()</span><br></pre></td></tr></table></figure>
+<p>show()能让控件在桌面上显示出来。控件在内存里创建，调用这个函数才能在操作系统上显示出来。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>最后，我们进入了应用的主循环中，事件处理器这个时候开始工作。主循环从窗口上接收事件，并把事件派发到应用控件里。当调用<code>exit()</code>方法或直接销毁主控件时，主循环就会结束。<code>sys.exit()</code>方法能确保主循环安全退出。外部环境会收到主控件如何结束的信息。</p>
+<p><code>exec_()</code>之所以有个下划线，是因为<code>exec</code>是Python的一个关键字。</p>
+<p>程序预览：</p>
+<h3 id="例2-带窗口图标">例2 带窗口图标</h3>
+<p>窗口图标通常是显示一个窗口的左上角，标题栏的最左边。下面的例子就是怎么用PyQt5创建一个这样的窗口。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QIcon</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">220</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Icon&#x27;</span>)</span><br><span class="line">        self.setWindowIcon(Qicon(<span class="string">&#x27;web.png&#x27;</span>))</span><br><span class="line">        </span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>此处用到了Python面向对象编程：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">	super().__init__()</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>面向对象编程最重要的三个部分是类(class)、数据和方法。<code>class Example:</code>创建了一个类的调用，这个类继承自<code>QWidget</code>类。调用了两个构造器，一个是这个类本身的，一个是这个类继承的。super()构造器方法返回父级的对象。<code>_\_init__()</code>方法是构造器的一个方法。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">self.initUI()</span><br></pre></td></tr></table></figure>
+<p>使用<code>initUI()</code>方法创建一个GUI。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 自己准备一个web.png</span><br><span class="line">self.setGeometry(300, 300, 300, 220)</span><br><span class="line">self.setWindowTitle(&#39;Icon&#39;)</span><br><span class="line">self.setWindowIcon(QIcon(&#39;web.png&#39;))</span><br></pre></td></tr></table></figure>
+<p>上面的三个方法都继承自<code>QWidget</code>类。<code>setGeometry()</code>有三个作用：把窗口放到屏幕上并设置窗口大小。参数分别代表屏幕坐标的x、y和窗口大小的宽、高。也就是说这个方法是<code>resize()</code>和<code>move()</code>的合体。最后一个方法是添加了图标。也创建了一个<code>QIcon</code>对象，然后接受一个路径作为参数显示图标。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(ex.exec_())</span><br></pre></td></tr></table></figure>
+<h3 id="例3-提示框">例3 提示框</h3>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QToolTip, QPushButton, QApplication)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QFont</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br><span class="line">        </span><br><span class="line">        self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">        btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        btn.resize(btn.sizeHint())</span><br><span class="line">        btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Tooltips&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>在这个例子中, 我们为应用创建了一个提示框.</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
+<p>这个静态方法设置了提示框的字体。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; wighet&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>调用<code>setToolTip()</code>创建提示框可以使用<strong>富文本格式</strong>的内容。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>创建一个按钮，并且为按钮添加了一个提示框。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn.resize(btn.sizeHint())</span><br><span class="line">btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br></pre></td></tr></table></figure>
+<p>调整按钮大小, 并且让按钮在屏幕上显示出来，sizeHint()方法提供了一个默认的按钮大小。</p>
+<h3 id="例4-关闭窗口">例4 关闭窗口</h3>
+<p>关闭窗口最直观的方式就是点击标题栏的叉叉，在这个例子里，我们展示的是如何用程序关闭一个窗口。这里我们将接触到一点<strong>信号(signal)和槽(slots)</strong>的知识。</p>
+<p>本例使用的是<code>QPushButton</code>组件类。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QPushButton(string text, QWidget parent &#x3D; None)</span><br></pre></td></tr></table></figure>
+<p>text参数是想要显示的按钮名称，parent参数是放在按钮上的组件，在我们的例子里，这个参数是QWidget。应用中的组件都是经过一层层的继承来的。在这个层里，大部分的组件都有自己的父级，没有父级的组件被称为<strong>顶级窗口</strong>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QPushButton, QApplication</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QCoreApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        self.initUI()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        qbtn = QPushButton(<span class="string">&#x27;Quit&#x27;</span>, self)</span><br><span class="line">        qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br><span class="line">        qbtn.resize(qbtn.sizeHint())</span><br><span class="line">        qbtn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line"></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">500</span>, <span class="number">250</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Quit button&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>上述代码创建了一个点击之后就推出窗口的按钮。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from PyQt5.QtCore import QCoreApplication</span><br></pre></td></tr></table></figure>
+<p>程序需要<code>QtCore</code>对象。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn &#x3D; QPushButton(&#39;Quit&#39;, self)</span><br></pre></td></tr></table></figure>
+<p>创建一个<code>QPushButton</code>按钮。第一个参数是按钮的文本，第二个参数是按钮的父级组件，这个例子中，父级组件就是我们创建的继承自<code>QWidget</code>的<code>Example</code>类。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br></pre></td></tr></table></figure>
+<p>创建了<strong>信号(singal)和槽(slot)</strong>的连接。点击按钮之后，信号会被捕捉并给出既定的反应。<code>QCoreApplication</code>包含了时间的主循环，它能添加和删除所有的事件。<code>instance()</code>创建了一个它的实例。<code>QCoreApplication</code>是在<code>QApplication</code>里创建的。点击事件和能终止进程并推出应用的quit函数绑定在了一起。在发送者和接收者之间建立了通讯，发送者就是按钮，接收者就是应用对象。</p>
+<p>点击一下<code>Quit</code>，程序就会自动退出。</p>
+<h3 id="例5-消息盒子">例5 消息盒子</h3>
+<p>默认情况下，我们点击标题栏的x按钮，QWidget就会关闭。但是有时候，我们需要修改这个默认行为。例如，我们打开的是一个文件编辑器，并且做了一些修改，这个时候就需要在关闭按钮的时候让用户进一步确认操作。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QMessageBox, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        </span><br><span class="line">        self.initUI()</span><br><span class="line">        </span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.setWidnowTitle(<span class="string">&#x27;Message box&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closeEvent</span>(<span class="params">self, event</span>) -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">       </span><br><span class="line">    	reply = QMessageBox.question(self, <span class="string">&#x27;Message&#x27;</span>, <span class="string">&quot;Are you sure to quit?&quot;</span>, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br><span class="line">        <span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">            event.accept()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            event.ignore()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>如果关闭<code>QWidget</code>，就会产生一个<code>QCloseEvent</code>，并且把它传入到<code>closeEvent</code>函数的event参数中。改变控件的默认行为，就是替换掉默认的事件处理。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">reply &#x3D; QMessageBox.question(self, &#39;Message&#39;,&quot;Are you sure to quit?&quot;, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br></pre></td></tr></table></figure>
+<p>上述代码创建了一个消息框，上面有两个按钮：<code>Yes</code>和<code>No</code>。第一个字符串显示在消息框的标题，第二个字符串显示在对话框，第三个参数是消息框的两个按钮，最后一个参数是默认按钮，这个按钮是默选中的。返回值在变量<code>reply</code>里。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">	event.accept()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	event.ignore()</span><br></pre></td></tr></table></figure>
+<p>这里判断返回值，如果点击的是Yes按钮，就关闭组件和应用，否则就忽略关闭事件。</p>
+<p>程序预览：</p>
+<p>例6 窗口居中</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QDestopWidget, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        </span><br><span class="line">        self.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.center()</span><br><span class="line">        </span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Center&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span>(<span class="params">self</span>):</span></span><br><span class="line">        qr = self.frameGeometry()</span><br><span class="line">        cp = QDesktopWidget().availableGeometry().center()</span><br><span class="line">        qr.moveCenter(cp)</span><br><span class="line">        self.move(qr.topLeft())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    </span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<hr />
+<p><code>QtGui.QDesktopWidget</code>提供了用户的桌面信息，包括屏幕的大小。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.center()</span><br></pre></td></tr></table></figure>
+<p>这个方法调用下面实现对话框居中的方法。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qr &#x3D; self.frameGeometry()</span><br></pre></td></tr></table></figure>
+<p>获得主窗口所在的框架。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cp = QDesktopWidget().availableGeometry().center()</span><br></pre></td></tr></table></figure>
+<p>获得显示器的分辨率，然后得到屏幕中心点的位置。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qr.moveCenter(cp)</span><br></pre></td></tr></table></figure>
+<p>然后把主窗口框架中心点位置放置到屏幕的中心位置。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.move(qr.topLeft())</span><br></pre></td></tr></table></figure>
+<p>然后通过move函数把主窗口的左上角移动到其框架的左上角，这样就把窗口居中了。</p>
+<p>程序预览：</p>
+]]></content>
+      <tags>
+        <tag>PyQt5</tag>
       </tags>
   </entry>
   <entry>
@@ -2766,6 +2766,38 @@ y=x^2e^x
 </tr>
 </tbody>
 </table>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python中的map函数</title>
+    <url>/p/how-map-functions-works-in-Python/</url>
+    <content><![CDATA[<p>Python内建了map()函数。</p>
+<a id="more"></a>
+<p>Python内建了map()函数。</p>
+<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
+<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
+<p>下面来看Python代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
+<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
+<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
+<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
+<blockquote>
+<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
+</blockquote>
+<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
+<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
+<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
+<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
+<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>只需要一行代码。</p>
 ]]></content>
       <tags>
         <tag>Python</tag>
@@ -3476,38 +3508,6 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>正则表达式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python中的map函数</title>
-    <url>/p/how-map-functions-works-in-Python/</url>
-    <content><![CDATA[<p>Python内建了map()函数。</p>
-<a id="more"></a>
-<p>Python内建了map()函数。</p>
-<p>map函数接受了两个参数，一个是函数，一个是<strong>Iterable</strong>(可迭代对象)。map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。</p>
-<p>举个栗子，例如我们有一个函数f(x)=x^2，要把这个函数作用在一个list[1, 2, 3, 4, 5, 6, 7, 8, 9]上，就可以用map函数实现。</p>
-<p>下面来看Python代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment"># [1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p><code>map()</code>传入的第一个参数是f，即函数对象本身。</p>
-<p>返回结果r是一个<strong>Iterator</strong>(迭代器)，<strong>Iterator</strong>是一个<strong>惰性序列</strong>，因此通过<code>list()</code>函数让他把整个序列都计算出来并返回一个list。</p>
-<p>那什么是惰性序列呢？首先我们要知道什么是惰性求值</p>
-<p>引自维基百科：https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC</p>
-<blockquote>
-<p>在编程语言中，惰性求值又译为惰性计算、懒惰求值，也成为传需求调用。是一个计算机编程中的概念，目的是最小化计算机要做的工作。惰性求值的相反是及早求值，这是一个大多数编程所以拥有的普通计算方式。</p>
-</blockquote>
-<p>Python的惰性序列多指<strong>iterator</strong>，其特点如上文所述，具有惰性计算特点的序列被称为惰性序列。</p>
-<p>我的理解：你不主动去遍历它，就不会计算其中元素的值。</p>
-<p>如果你试图输出map对象，系统只会告诉你当前map对象在内存里的地址，而不会打印map对象自身。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line">r = map(f, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line">print(r)</span><br><span class="line"><span class="comment">#&lt;map object at 0x7faa2ddd97c0&gt;</span></span><br><span class="line">print(list(r))</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>继续说map函数。你可能会想，不需要map()函数，写一个循环，也可以计算出结果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">L = []</span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]:</span><br><span class="line">    L.append(f(n))</span><br><span class="line">print(L)</span><br><span class="line"><span class="comment">#[1, 4, 9, 16, 25]</span></span><br></pre></td></tr></table></figure>
-<p>的确可以。但是，从上面的循环代码，能一眼看明白<strong>把f(x)作用在list的每一个元素并把结果生成一个新的list</strong>吗？</p>
-<p>map作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的f(x)=x^2，还可以计算任意复杂的函数，比如，把这个list所有数字转成字符串：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list(map(str, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]))</span><br><span class="line"><span class="comment">#[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;, &#x27;5&#x27;]</span></span><br></pre></td></tr></table></figure>
-<p>只需要一行代码。</p>
-]]></content>
-      <tags>
-        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4959,6 +4959,28 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>使用Github Action定时重启IBM cloud foundry</title>
+    <url>/p/ibm-cloud-auto-restart/</url>
+    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
+<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
+<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
+<a id="more"></a>
+<h3 id="yml配置文件">yml配置文件</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">wget</span> <span class="string">-q</span> <span class="string">-O</span> <span class="bullet">-</span> <span class="string">https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">apt-key</span> <span class="string">add</span> <span class="bullet">-</span></span><br><span class="line">        <span class="string">echo</span> <span class="string">&quot;deb https://packages.cloudfoundry.org/debian stable main&quot;</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">tee</span> <span class="string">/etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">update</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">install</span> <span class="string">cf-cli</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">login</span> <span class="string">-a</span> <span class="string">https://api.us-south.cf.cloud.ibm.com</span> <span class="string">-u</span> <span class="string">$IBM_ACCOUNT</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line">        <span class="string">$IBM_PASSWORD</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">a</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用方法">使用方法</h3>
+<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
+<h4 id="设置环境变量">设置环境变量</h4>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
+<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
+<h4 id="效果图">效果图</h4>
+<p><img src="image-20200827193322808.png" /></p>
+<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
+]]></content>
+      <tags>
+        <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>go语言设计与实现之反射</title>
     <url>/p/Reflections-in-go-language-base/</url>
     <content><![CDATA[<p>写日志收集项目的时候遇到了一个关于<code>reflect</code>的问题，于是有了这一篇文章。</p>
@@ -5178,28 +5200,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用Github Action定时重启IBM cloud foundry</title>
-    <url>/p/ibm-cloud-auto-restart/</url>
-    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
-<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
-<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
-<a id="more"></a>
-<h3 id="yml配置文件">yml配置文件</h3>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">wget</span> <span class="string">-q</span> <span class="string">-O</span> <span class="bullet">-</span> <span class="string">https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">apt-key</span> <span class="string">add</span> <span class="bullet">-</span></span><br><span class="line">        <span class="string">echo</span> <span class="string">&quot;deb https://packages.cloudfoundry.org/debian stable main&quot;</span> <span class="string">|</span> <span class="string">sudo</span> <span class="string">tee</span> <span class="string">/etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">update</span></span><br><span class="line">        <span class="string">sudo</span> <span class="string">apt-get</span> <span class="string">install</span> <span class="string">cf-cli</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">login</span> <span class="string">-a</span> <span class="string">https://api.us-south.cf.cloud.ibm.com</span> <span class="string">-u</span> <span class="string">$IBM_ACCOUNT</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line">        <span class="string">$IBM_PASSWORD</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">a</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用方法">使用方法</h3>
-<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
-<h4 id="设置环境变量">设置环境变量</h4>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
-<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
-<h4 id="效果图">效果图</h4>
-<p><img src="image-20200827193322808.png" /></p>
-<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
-]]></content>
-      <tags>
-        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -10143,51 +10143,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
-    <title>线性回归中的基函数</title>
-    <url>/p/a-basis-function-in-linear-regression/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
-<p><strong>关键词：</strong>线性回归，基函数</p>
-<a id="more"></a>
-<h4 id="线性基函数模型">线性基函数模型</h4>
-<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
-y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
-\]</span> 其中 <span class="math display">\[
-x = (x_1,...,x_D)^T
-\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
-y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
-\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
-<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
-y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
-\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
-<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
-<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
-\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
-\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
-<h4 id="代码部分">代码部分</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
-\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
-\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
-\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
-<h5 id="python中的广播规则">python中的广播规则</h5>
-<p>举个例子：</p>
-<p>假设<code>x</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
-<p><code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
-<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
-<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
-<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记MT7621平台刷入OpenWRT</title>
     <url>/p/how-to-config-OpenWRT/</url>
     <content><![CDATA[<p>什么是OpenWRT？</p>
@@ -10237,6 +10192,51 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       <tags>
         <tag>MT7621</tag>
         <tag>OpenWRT</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>线性回归中的基函数</title>
+    <url>/p/a-basis-function-in-linear-regression/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
+<p><strong>关键词：</strong>线性回归，基函数</p>
+<a id="more"></a>
+<h4 id="线性基函数模型">线性基函数模型</h4>
+<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
+y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
+\]</span> 其中 <span class="math display">\[
+x = (x_1,...,x_D)^T
+\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
+y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
+\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
+<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
+y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
+\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
+<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
+<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
+\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
+\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
+<h4 id="代码部分">代码部分</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
+\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(<span class="number">-0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
+\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
+\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
+<h5 id="python中的广播规则">python中的广播规则</h5>
+<p>举个例子：</p>
+<p>假设<code>x</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
+<p><code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
+<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
+<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
+<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
