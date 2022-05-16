@@ -2081,6 +2081,120 @@
       </tags>
   </entry>
   <entry>
+    <title>PyQt5教程</title>
+    <url>/p/PyQt5-Chinese-tutorial/</url>
+    <content><![CDATA[<p>学习PyQt的基本功能。</p>
+<a id="more"></a>
+<h3 id="例1-简单的窗口">例1 简单的窗口</h3>
+<p>这个简单的小例子展示的是一个小窗口。但是我们可以在这个小窗口上面很多事情，改变大小，最大化，最小化等。这需要很多代码能实现。这在很多应用中很常见，没必要每次都要重写这一部分代码，Qt已经提供了这些功能。PyQt5是一个高级的工具集合，相比使用低级的工具，能省略上百行代码。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    </span><br><span class="line">    w = QWidget()</span><br><span class="line">    w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">    w.move(<span class="number">300</span>, <span class="number">300</span>)</span><br><span class="line">    w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br><span class="line">    w.show()</span><br><span class="line">    </span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>运行上面的代码，能展示出一个小窗口。</p>
+<p>分步讲解：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br></pre></td></tr></table></figure>
+<p>这里引入了PyQt5.QtWidgets这个模块，这个模块包含了基本的组件。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">app &#x3D; QApplication(sys.argv)</span><br></pre></td></tr></table></figure>
+<p>每个PyQt5应用都必须创建这样的一个应用对象。sys.argv是一组命令行参数的列表。<strong>Python可以在shell里运行，这个参数提供了对脚本控制的功能。</strong></p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">w &#x3D; QWidget()</span><br></pre></td></tr></table></figure>
+<p>QWidget控件是一个用户界面的<strong>基本控件</strong>，它提供了基本的应用构造器。默认情况下，构造器是没有父级的，<strong>没有父级的构造器被称为窗口(window)。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br></pre></td></tr></table></figure>
+<p>resize()方法能改变控件的大小，这里的意思是窗口宽250px，高150px.</p>
+<hr />
+<p>move()是修改控件位置的方法，它把控件放置到屏幕坐标的(300, 300)的位置。<strong>屏幕坐标系的原点是屏幕的左上角。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>我们给这个窗口添加了一个标题，标题在标题栏展示。<strong>虽然这看起来是一句废话，但是后面还有各种栏，还是要重点说一下。</strong></p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.show()</span><br></pre></td></tr></table></figure>
+<p>show()能让控件在桌面上显示出来。控件在内存里创建，调用这个函数才能在操作系统上显示出来。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>最后，我们进入了应用的主循环中，事件处理器这个时候开始工作。主循环从窗口上接收事件，并把事件派发到应用控件里。当调用<code>exit()</code>方法或直接销毁主控件时，主循环就会结束。<code>sys.exit()</code>方法能确保主循环安全退出。外部环境会收到主控件如何结束的信息。</p>
+<p><code>exec_()</code>之所以有个下划线，是因为<code>exec</code>是Python的一个关键字。</p>
+<p>程序预览：</p>
+<h3 id="例2-带窗口图标">例2 带窗口图标</h3>
+<p>窗口图标通常是显示一个窗口的左上角，标题栏的最左边。下面的例子就是怎么用PyQt5创建一个这样的窗口。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QIcon</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">220</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Icon&#x27;</span>)</span><br><span class="line">        self.setWindowIcon(Qicon(<span class="string">&#x27;web.png&#x27;</span>))</span><br><span class="line">        </span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>此处用到了Python面向对象编程：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">	super().__init__()</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>面向对象编程最重要的三个部分是类(class)、数据和方法。<code>class Example:</code>创建了一个类的调用，这个类继承自<code>QWidget</code>类。调用了两个构造器，一个是这个类本身的，一个是这个类继承的。super()构造器方法返回父级的对象。<code>_\_init__()</code>方法是构造器的一个方法。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">self.initUI()</span><br></pre></td></tr></table></figure>
+<p>使用<code>initUI()</code>方法创建一个GUI。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 自己准备一个web.png</span><br><span class="line">self.setGeometry(300, 300, 300, 220)</span><br><span class="line">self.setWindowTitle(&#39;Icon&#39;)</span><br><span class="line">self.setWindowIcon(QIcon(&#39;web.png&#39;))</span><br></pre></td></tr></table></figure>
+<p>上面的三个方法都继承自<code>QWidget</code>类。<code>setGeometry()</code>有三个作用：把窗口放到屏幕上并设置窗口大小。参数分别代表屏幕坐标的x、y和窗口大小的宽、高。也就是说这个方法是<code>resize()</code>和<code>move()</code>的合体。最后一个方法是添加了图标。也创建了一个<code>QIcon</code>对象，然后接受一个路径作为参数显示图标。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(ex.exec_())</span><br></pre></td></tr></table></figure>
+<h3 id="例3-提示框">例3 提示框</h3>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QToolTip, QPushButton, QApplication)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QFont</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br><span class="line">        </span><br><span class="line">        self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">        btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        btn.resize(btn.sizeHint())</span><br><span class="line">        btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Tooltips&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>在这个例子中, 我们为应用创建了一个提示框.</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
+<p>这个静态方法设置了提示框的字体。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; wighet&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>调用<code>setToolTip()</code>创建提示框可以使用<strong>富文本格式</strong>的内容。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>创建一个按钮，并且为按钮添加了一个提示框。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn.resize(btn.sizeHint())</span><br><span class="line">btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br></pre></td></tr></table></figure>
+<p>调整按钮大小, 并且让按钮在屏幕上显示出来，sizeHint()方法提供了一个默认的按钮大小。</p>
+<h3 id="例4-关闭窗口">例4 关闭窗口</h3>
+<p>关闭窗口最直观的方式就是点击标题栏的叉叉，在这个例子里，我们展示的是如何用程序关闭一个窗口。这里我们将接触到一点<strong>信号(signal)和槽(slots)</strong>的知识。</p>
+<p>本例使用的是<code>QPushButton</code>组件类。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QPushButton(string text, QWidget parent &#x3D; None)</span><br></pre></td></tr></table></figure>
+<p>text参数是想要显示的按钮名称，parent参数是放在按钮上的组件，在我们的例子里，这个参数是QWidget。应用中的组件都是经过一层层的继承来的。在这个层里，大部分的组件都有自己的父级，没有父级的组件被称为<strong>顶级窗口</strong>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QPushButton, QApplication</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QCoreApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        self.initUI()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        qbtn = QPushButton(<span class="string">&#x27;Quit&#x27;</span>, self)</span><br><span class="line">        qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br><span class="line">        qbtn.resize(qbtn.sizeHint())</span><br><span class="line">        qbtn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line"></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">500</span>, <span class="number">250</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Quit button&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>上述代码创建了一个点击之后就推出窗口的按钮。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from PyQt5.QtCore import QCoreApplication</span><br></pre></td></tr></table></figure>
+<p>程序需要<code>QtCore</code>对象。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn &#x3D; QPushButton(&#39;Quit&#39;, self)</span><br></pre></td></tr></table></figure>
+<p>创建一个<code>QPushButton</code>按钮。第一个参数是按钮的文本，第二个参数是按钮的父级组件，这个例子中，父级组件就是我们创建的继承自<code>QWidget</code>的<code>Example</code>类。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br></pre></td></tr></table></figure>
+<p>创建了<strong>信号(singal)和槽(slot)</strong>的连接。点击按钮之后，信号会被捕捉并给出既定的反应。<code>QCoreApplication</code>包含了时间的主循环，它能添加和删除所有的事件。<code>instance()</code>创建了一个它的实例。<code>QCoreApplication</code>是在<code>QApplication</code>里创建的。点击事件和能终止进程并推出应用的quit函数绑定在了一起。在发送者和接收者之间建立了通讯，发送者就是按钮，接收者就是应用对象。</p>
+<p>点击一下<code>Quit</code>，程序就会自动退出。</p>
+<h3 id="例5-消息盒子">例5 消息盒子</h3>
+<p>默认情况下，我们点击标题栏的x按钮，QWidget就会关闭。但是有时候，我们需要修改这个默认行为。例如，我们打开的是一个文件编辑器，并且做了一些修改，这个时候就需要在关闭按钮的时候让用户进一步确认操作。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QMessageBox, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        </span><br><span class="line">        self.initUI()</span><br><span class="line">        </span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.setWidnowTitle(<span class="string">&#x27;Message box&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closeEvent</span>(<span class="params">self, event</span>) -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">       </span><br><span class="line">    	reply = QMessageBox.question(self, <span class="string">&#x27;Message&#x27;</span>, <span class="string">&quot;Are you sure to quit?&quot;</span>, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br><span class="line">        <span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">            event.accept()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            event.ignore()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>如果关闭<code>QWidget</code>，就会产生一个<code>QCloseEvent</code>，并且把它传入到<code>closeEvent</code>函数的event参数中。改变控件的默认行为，就是替换掉默认的事件处理。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">reply &#x3D; QMessageBox.question(self, &#39;Message&#39;,&quot;Are you sure to quit?&quot;, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br></pre></td></tr></table></figure>
+<p>上述代码创建了一个消息框，上面有两个按钮：<code>Yes</code>和<code>No</code>。第一个字符串显示在消息框的标题，第二个字符串显示在对话框，第三个参数是消息框的两个按钮，最后一个参数是默认按钮，这个按钮是默选中的。返回值在变量<code>reply</code>里。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">	event.accept()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	event.ignore()</span><br></pre></td></tr></table></figure>
+<p>这里判断返回值，如果点击的是Yes按钮，就关闭组件和应用，否则就忽略关闭事件。</p>
+<p>程序预览：</p>
+<p>例6 窗口居中</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QDestopWidget, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        </span><br><span class="line">        self.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.center()</span><br><span class="line">        </span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Center&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span>(<span class="params">self</span>):</span></span><br><span class="line">        qr = self.frameGeometry()</span><br><span class="line">        cp = QDesktopWidget().availableGeometry().center()</span><br><span class="line">        qr.moveCenter(cp)</span><br><span class="line">        self.move(qr.topLeft())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    </span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<hr />
+<p><code>QtGui.QDesktopWidget</code>提供了用户的桌面信息，包括屏幕的大小。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.center()</span><br></pre></td></tr></table></figure>
+<p>这个方法调用下面实现对话框居中的方法。</p>
+<hr />
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qr &#x3D; self.frameGeometry()</span><br></pre></td></tr></table></figure>
+<p>获得主窗口所在的框架。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cp = QDesktopWidget().availableGeometry().center()</span><br></pre></td></tr></table></figure>
+<p>获得显示器的分辨率，然后得到屏幕中心点的位置。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qr.moveCenter(cp)</span><br></pre></td></tr></table></figure>
+<p>然后把主窗口框架中心点位置放置到屏幕的中心位置。</p>
+<hr />
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.move(qr.topLeft())</span><br></pre></td></tr></table></figure>
+<p>然后通过move函数把主窗口的左上角移动到其框架的左上角，这样就把窗口居中了。</p>
+<p>程序预览：</p>
+]]></content>
+      <tags>
+        <tag>PyQt5</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Pandas学习小记(一)</title>
     <url>/p/Pandas-learning-notes-01/</url>
     <content><![CDATA[<p>Pandas是什么？</p>
@@ -2221,120 +2335,6 @@
 ]]></content>
       <tags>
         <tag>PandasPandas</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyQt5教程</title>
-    <url>/p/PyQt5-Chinese-tutorial/</url>
-    <content><![CDATA[<p>学习PyQt的基本功能。</p>
-<a id="more"></a>
-<h3 id="例1-简单的窗口">例1 简单的窗口</h3>
-<p>这个简单的小例子展示的是一个小窗口。但是我们可以在这个小窗口上面很多事情，改变大小，最大化，最小化等。这需要很多代码能实现。这在很多应用中很常见，没必要每次都要重写这一部分代码，Qt已经提供了这些功能。PyQt5是一个高级的工具集合，相比使用低级的工具，能省略上百行代码。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    </span><br><span class="line">    w = QWidget()</span><br><span class="line">    w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">    w.move(<span class="number">300</span>, <span class="number">300</span>)</span><br><span class="line">    w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br><span class="line">    w.show()</span><br><span class="line">    </span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>运行上面的代码，能展示出一个小窗口。</p>
-<p>分步讲解：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br></pre></td></tr></table></figure>
-<p>这里引入了PyQt5.QtWidgets这个模块，这个模块包含了基本的组件。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">app &#x3D; QApplication(sys.argv)</span><br></pre></td></tr></table></figure>
-<p>每个PyQt5应用都必须创建这样的一个应用对象。sys.argv是一组命令行参数的列表。<strong>Python可以在shell里运行，这个参数提供了对脚本控制的功能。</strong></p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">w &#x3D; QWidget()</span><br></pre></td></tr></table></figure>
-<p>QWidget控件是一个用户界面的<strong>基本控件</strong>，它提供了基本的应用构造器。默认情况下，构造器是没有父级的，<strong>没有父级的构造器被称为窗口(window)。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br></pre></td></tr></table></figure>
-<p>resize()方法能改变控件的大小，这里的意思是窗口宽250px，高150px.</p>
-<hr />
-<p>move()是修改控件位置的方法，它把控件放置到屏幕坐标的(300, 300)的位置。<strong>屏幕坐标系的原点是屏幕的左上角。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.setWindowTitle(<span class="string">&#x27;Simple&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>我们给这个窗口添加了一个标题，标题在标题栏展示。<strong>虽然这看起来是一句废话，但是后面还有各种栏，还是要重点说一下。</strong></p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">w.show()</span><br></pre></td></tr></table></figure>
-<p>show()能让控件在桌面上显示出来。控件在内存里创建，调用这个函数才能在操作系统上显示出来。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>最后，我们进入了应用的主循环中，事件处理器这个时候开始工作。主循环从窗口上接收事件，并把事件派发到应用控件里。当调用<code>exit()</code>方法或直接销毁主控件时，主循环就会结束。<code>sys.exit()</code>方法能确保主循环安全退出。外部环境会收到主控件如何结束的信息。</p>
-<p><code>exec_()</code>之所以有个下划线，是因为<code>exec</code>是Python的一个关键字。</p>
-<p>程序预览：</p>
-<h3 id="例2-带窗口图标">例2 带窗口图标</h3>
-<p>窗口图标通常是显示一个窗口的左上角，标题栏的最左边。下面的例子就是怎么用PyQt5创建一个这样的窗口。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QApplication, QWidget</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QIcon</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">220</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Icon&#x27;</span>)</span><br><span class="line">        self.setWindowIcon(Qicon(<span class="string">&#x27;web.png&#x27;</span>))</span><br><span class="line">        </span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>此处用到了Python面向对象编程：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">	super().__init__()</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-<p>面向对象编程最重要的三个部分是类(class)、数据和方法。<code>class Example:</code>创建了一个类的调用，这个类继承自<code>QWidget</code>类。调用了两个构造器，一个是这个类本身的，一个是这个类继承的。super()构造器方法返回父级的对象。<code>_\_init__()</code>方法是构造器的一个方法。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">self.initUI()</span><br></pre></td></tr></table></figure>
-<p>使用<code>initUI()</code>方法创建一个GUI。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 自己准备一个web.png</span><br><span class="line">self.setGeometry(300, 300, 300, 220)</span><br><span class="line">self.setWindowTitle(&#39;Icon&#39;)</span><br><span class="line">self.setWindowIcon(QIcon(&#39;web.png&#39;))</span><br></pre></td></tr></table></figure>
-<p>上面的三个方法都继承自<code>QWidget</code>类。<code>setGeometry()</code>有三个作用：把窗口放到屏幕上并设置窗口大小。参数分别代表屏幕坐标的x、y和窗口大小的宽、高。也就是说这个方法是<code>resize()</code>和<code>move()</code>的合体。最后一个方法是添加了图标。也创建了一个<code>QIcon</code>对象，然后接受一个路径作为参数显示图标。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(ex.exec_())</span><br></pre></td></tr></table></figure>
-<h3 id="例3-提示框">例3 提示框</h3>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QToolTip, QPushButton, QApplication)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QFont</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.initUI()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br><span class="line">        </span><br><span class="line">        self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">        btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br><span class="line">        btn.resize(btn.sizeHint())</span><br><span class="line">        btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Tooltips&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>在这个例子中, 我们为应用创建了一个提示框.</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">QToolTip.setFont(QFont(<span class="string">&#x27;SansSerif&#x27;</span>, <span class="number">10</span>))</span><br></pre></td></tr></table></figure>
-<p>这个静态方法设置了提示框的字体。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QWidget&lt;/b&gt; wighet&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>调用<code>setToolTip()</code>创建提示框可以使用<strong>富文本格式</strong>的内容。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn = QPushButton(<span class="string">&#x27;Button&#x27;</span>, self)</span><br><span class="line">btn.setToolTip(<span class="string">&#x27;This is a &lt;b&gt;QPushButton&lt;/b&gt; widget&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>创建一个按钮，并且为按钮添加了一个提示框。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">btn.resize(btn.sizeHint())</span><br><span class="line">btn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br></pre></td></tr></table></figure>
-<p>调整按钮大小, 并且让按钮在屏幕上显示出来，sizeHint()方法提供了一个默认的按钮大小。</p>
-<h3 id="例4-关闭窗口">例4 关闭窗口</h3>
-<p>关闭窗口最直观的方式就是点击标题栏的叉叉，在这个例子里，我们展示的是如何用程序关闭一个窗口。这里我们将接触到一点<strong>信号(signal)和槽(slots)</strong>的知识。</p>
-<p>本例使用的是<code>QPushButton</code>组件类。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QPushButton(string text, QWidget parent &#x3D; None)</span><br></pre></td></tr></table></figure>
-<p>text参数是想要显示的按钮名称，parent参数是放在按钮上的组件，在我们的例子里，这个参数是QWidget。应用中的组件都是经过一层层的继承来的。在这个层里，大部分的组件都有自己的父级，没有父级的组件被称为<strong>顶级窗口</strong>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QPushButton, QApplication</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QCoreApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        self.initUI()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        qbtn = QPushButton(<span class="string">&#x27;Quit&#x27;</span>, self)</span><br><span class="line">        qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br><span class="line">        qbtn.resize(qbtn.sizeHint())</span><br><span class="line">        qbtn.move(<span class="number">50</span>, <span class="number">50</span>)</span><br><span class="line"></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">500</span>, <span class="number">250</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Quit button&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>上述代码创建了一个点击之后就推出窗口的按钮。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from PyQt5.QtCore import QCoreApplication</span><br></pre></td></tr></table></figure>
-<p>程序需要<code>QtCore</code>对象。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn &#x3D; QPushButton(&#39;Quit&#39;, self)</span><br></pre></td></tr></table></figure>
-<p>创建一个<code>QPushButton</code>按钮。第一个参数是按钮的文本，第二个参数是按钮的父级组件，这个例子中，父级组件就是我们创建的继承自<code>QWidget</code>的<code>Example</code>类。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qbtn.clicked.connect(QCoreApplication.instance().quit)</span><br></pre></td></tr></table></figure>
-<p>创建了<strong>信号(singal)和槽(slot)</strong>的连接。点击按钮之后，信号会被捕捉并给出既定的反应。<code>QCoreApplication</code>包含了时间的主循环，它能添加和删除所有的事件。<code>instance()</code>创建了一个它的实例。<code>QCoreApplication</code>是在<code>QApplication</code>里创建的。点击事件和能终止进程并推出应用的quit函数绑定在了一起。在发送者和接收者之间建立了通讯，发送者就是按钮，接收者就是应用对象。</p>
-<p>点击一下<code>Quit</code>，程序就会自动退出。</p>
-<h3 id="例5-消息盒子">例5 消息盒子</h3>
-<p>默认情况下，我们点击标题栏的x按钮，QWidget就会关闭。但是有时候，我们需要修改这个默认行为。例如，我们打开的是一个文件编辑器，并且做了一些修改，这个时候就需要在关闭按钮的时候让用户进一步确认操作。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QMessageBox, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        </span><br><span class="line">        self.initUI()</span><br><span class="line">        </span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.setWidnowTitle(<span class="string">&#x27;Message box&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closeEvent</span>(<span class="params">self, event</span>) -&gt; <span class="keyword">None</span>:</span></span><br><span class="line">       </span><br><span class="line">    	reply = QMessageBox.question(self, <span class="string">&#x27;Message&#x27;</span>, <span class="string">&quot;Are you sure to quit?&quot;</span>, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br><span class="line">        <span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">            event.accept()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            event.ignore()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>如果关闭<code>QWidget</code>，就会产生一个<code>QCloseEvent</code>，并且把它传入到<code>closeEvent</code>函数的event参数中。改变控件的默认行为，就是替换掉默认的事件处理。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">reply &#x3D; QMessageBox.question(self, &#39;Message&#39;,&quot;Are you sure to quit?&quot;, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br></pre></td></tr></table></figure>
-<p>上述代码创建了一个消息框，上面有两个按钮：<code>Yes</code>和<code>No</code>。第一个字符串显示在消息框的标题，第二个字符串显示在对话框，第三个参数是消息框的两个按钮，最后一个参数是默认按钮，这个按钮是默选中的。返回值在变量<code>reply</code>里。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">	event.accept()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	event.ignore()</span><br></pre></td></tr></table></figure>
-<p>这里判断返回值，如果点击的是Yes按钮，就关闭组件和应用，否则就忽略关闭事件。</p>
-<p>程序预览：</p>
-<p>例6 窗口居中</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QWidget, QDestopWidget, QApplication</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span>(<span class="params">QWidget</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.initUI()</span><br><span class="line">   	<span class="function"><span class="keyword">def</span> <span class="title">initUI</span>(<span class="params">self</span>):</span></span><br><span class="line">        </span><br><span class="line">        self.resize(<span class="number">250</span>, <span class="number">150</span>)</span><br><span class="line">        self.center()</span><br><span class="line">        </span><br><span class="line">        self.setWindowTitle(<span class="string">&#x27;Center&#x27;</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span>(<span class="params">self</span>):</span></span><br><span class="line">        qr = self.frameGeometry()</span><br><span class="line">        cp = QDesktopWidget().availableGeometry().center()</span><br><span class="line">        qr.moveCenter(cp)</span><br><span class="line">        self.move(qr.topLeft())</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    </span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<hr />
-<p><code>QtGui.QDesktopWidget</code>提供了用户的桌面信息，包括屏幕的大小。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.center()</span><br></pre></td></tr></table></figure>
-<p>这个方法调用下面实现对话框居中的方法。</p>
-<hr />
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">qr &#x3D; self.frameGeometry()</span><br></pre></td></tr></table></figure>
-<p>获得主窗口所在的框架。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cp = QDesktopWidget().availableGeometry().center()</span><br></pre></td></tr></table></figure>
-<p>获得显示器的分辨率，然后得到屏幕中心点的位置。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">qr.moveCenter(cp)</span><br></pre></td></tr></table></figure>
-<p>然后把主窗口框架中心点位置放置到屏幕的中心位置。</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.move(qr.topLeft())</span><br></pre></td></tr></table></figure>
-<p>然后通过move函数把主窗口的左上角移动到其框架的左上角，这样就把窗口居中了。</p>
-<p>程序预览：</p>
-]]></content>
-      <tags>
-        <tag>PyQt5</tag>
       </tags>
   </entry>
   <entry>
@@ -9910,27 +9910,6 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
       </tags>
   </entry>
   <entry>
-    <title>理解Python</title>
-    <url>/p/how-to-use-python-abstractmethod/</url>
-    <content><![CDATA[<p>聊聊Python的装饰器</p>
-<a id="more"></a>
-<p>谈装饰器之前，首先要明白一件事，Python中的函数和Java，C++不太一样，Python中的函数可以通过普通变量一样当作参数传入另一个参数：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&quot;foo&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span>(<span class="params">func</span>):</span></span><br><span class="line">	func()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">	bar(foo)</span><br></pre></td></tr></table></figure>
-<p>装饰器本质上是一个Pythob函数或者类，它可以让其他函数或类在不需要做任何代码修改的前提下增加额外功能，装饰器的返回值也是一个函数/类对象。他经常用于有切面需求的场景，比如：插入日志，性能测试，事务处理，缓存，权限校验等场景，装饰器是解决这类问题的绝佳设计。有了装饰器，我们就可以抽离出大量与函数功能本身无关的雷同代码到装饰器继续重用。</p>
-<p>一句话，<strong>装饰器就是为已经存在的对象添加额外的功能</strong>。</p>
-<p>一个简单例子：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&#x27;i am foo&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>现在有一个新需求，希望可以记录下函数的执行日志，于是在函数中添加日志代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&#x27;i am foo&#x27;</span>)</span><br><span class="line">	logging.info(<span class="string">&quot;foo is runing&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>如果函数bar()，bar()也有类似的需求，怎么做？再写一个logging日志在bar函数里？这样就造成了大量雷同代码，为了减少业务量，我们需要重新定义一个新的函数，专门处理日志，日志处理完再执行真正的业务代码</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">use_logging</span>(<span class="params">func</span>):</span></span><br><span class="line">	logging.warn(<span class="string">&quot;%s is running&quot;</span> % func.__name__)</span><br><span class="line">	func()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&#x27;i am foo&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;main&#x27;</span>:</span><br><span class="line">    use_logging(foo)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>abstractmethod</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>理解Pod和容器设计模式</title>
     <url>/p/container-design-patterns/</url>
     <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第四章理解 Pod 和容器设计模式</strong>学习笔记。</p>
@@ -10072,6 +10051,27 @@ loss(x,y)=max(0,-y*(x1-x2)+margin)
 ]]></content>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>理解Python</title>
+    <url>/p/how-to-use-python-abstractmethod/</url>
+    <content><![CDATA[<p>聊聊Python的装饰器</p>
+<a id="more"></a>
+<p>谈装饰器之前，首先要明白一件事，Python中的函数和Java，C++不太一样，Python中的函数可以通过普通变量一样当作参数传入另一个参数：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&quot;foo&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span>(<span class="params">func</span>):</span></span><br><span class="line">	func()</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">	bar(foo)</span><br></pre></td></tr></table></figure>
+<p>装饰器本质上是一个Pythob函数或者类，它可以让其他函数或类在不需要做任何代码修改的前提下增加额外功能，装饰器的返回值也是一个函数/类对象。他经常用于有切面需求的场景，比如：插入日志，性能测试，事务处理，缓存，权限校验等场景，装饰器是解决这类问题的绝佳设计。有了装饰器，我们就可以抽离出大量与函数功能本身无关的雷同代码到装饰器继续重用。</p>
+<p>一句话，<strong>装饰器就是为已经存在的对象添加额外的功能</strong>。</p>
+<p>一个简单例子：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&#x27;i am foo&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>现在有一个新需求，希望可以记录下函数的执行日志，于是在函数中添加日志代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&#x27;i am foo&#x27;</span>)</span><br><span class="line">	logging.info(<span class="string">&quot;foo is runing&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>如果函数bar()，bar()也有类似的需求，怎么做？再写一个logging日志在bar函数里？这样就造成了大量雷同代码，为了减少业务量，我们需要重新定义一个新的函数，专门处理日志，日志处理完再执行真正的业务代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">use_logging</span>(<span class="params">func</span>):</span></span><br><span class="line">	logging.warn(<span class="string">&quot;%s is running&quot;</span> % func.__name__)</span><br><span class="line">	func()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span>():</span></span><br><span class="line">	print(<span class="string">&#x27;i am foo&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;main&#x27;</span>:</span><br><span class="line">    use_logging(foo)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>abstractmethod</tag>
       </tags>
   </entry>
   <entry>
@@ -10240,112 +10240,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
-    <title>应用编排与管理：核心原理</title>
-    <url>/p/core-concept-about-resource-orchestration-and-management/</url>
-    <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第五章应用编排与管理：核心原理</strong>学习笔记。</p>
-<p>关键词：<strong>k8s</strong></p>
-<a id="more"></a>
-<h3 id="资源元信息">资源元信息</h3>
-<p>kubernetes的资源组成主要包括<strong>Spec、Status两部分</strong>。其中Spec部分用来描述期望状态，Status部分用来表述观测状态。</p>
-<p>Kubernetes的元数据部分主要包括</p>
-<ul>
-<li>用来识别资源的<strong>标签：Labels</strong></li>
-<li>用来描述资源的<strong>注解：Annotation</strong></li>
-<li>用来描述多个资源关系之间相互部分的<strong>OwnerReference</strong></li>
-</ul>
-<h4 id="labels">Labels</h4>
-<p>资源标签是一<strong>种标识型的Key：Value</strong>元数据。</p>
-<p>以下是几个例子</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">enviroment:</span> <span class="string">production</span></span><br><span class="line"><span class="attr">release:</span> <span class="string">stable</span></span><br><span class="line"><span class="attr">app.kubernetes.io/version:</span> <span class="number">5.7</span><span class="number">.21</span></span><br><span class="line"><span class="attr">failure-domain.beta.kubernetes.io/region:</span> <span class="string">cn-hangzhou</span></span><br></pre></td></tr></table></figure>
-<p>前三个label都打在了Pod对象上，分别标识了<strong>对应的应用环境</strong>、<strong>发布的成熟度</strong>、<strong>和应用的版本</strong>。</p>
-<p>最后一个标签打在Node对象上，并在域名前面加了版本的标识和beta字符串。</p>
-<p>标签主要用来筛选资源和组合资源，可以使用<strong>类似SQL查询Select，来根据Label查询和相关的资源</strong>。</p>
-<p><img src="image-20220507170230377.png" /></p>
-<h4 id="selector">Selector</h4>
-<p>Selector可以用来匹配Labels的资源。</p>
-<p>假设系统有以下Pod：</p>
-<h5 id="相等型selector">相等型Selector</h5>
-<p><img src="image-20220507170750082.png" /></p>
-<p>通过<code>Tie=front</code>可以匹配左边栏的Pod。</p>
-<p>相等型的Selector可以包括<strong>多个相等条件即逻辑与</strong>的关系。</p>
-<p>通过<code>Tie=front, Env=dev</code>的Selector，可以筛选出左上角的Pod。</p>
-<h5 id="集合型selector">集合型Selector</h5>
-<p><img src="image-20220507171530472.png" /></p>
-<ul>
-<li><strong>in操作</strong>
-<ul>
-<li>通过<code>Env in (test, gray)</code>可以<code>tie</code> 是<code>front</code>或者<code>back</code>的Pod</li>
-<li>通过<code>release</code>可以筛选出存在 <code>release</code>标签的Pod</li>
-</ul></li>
-<li><strong>notin操作</strong>：
-<ul>
-<li>通过<code>tie notin(front,back)</code>可以筛选出所有<code>tie</code> 不是<code>front</code>且不是<code>back</code>的Pod；</li>
-<li>通过<code>!release</code>可以筛选不存在 <code>release</code>标签的Pod</li>
-</ul></li>
-</ul>
-<p>Tips：集合型和相等型的Selector<strong>可以用<code>,</code>来连接，表示逻辑与</strong>的关系</p>
-<h4 id="annotations">Annotations</h4>
-<p>Annotations（注解）一般是系统或者工具用来存储资源的非标识信息，可以用来拓展资源的<strong>spec/status</strong>的描述。</p>
-<p>以下是几个例子</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deployment.kubernetes.io/revision:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">kubectl.kubernetes.io/last-applied-configuration:</span> <span class="string">|</span></span><br><span class="line">	&#123;<span class="string">&quot;apiVersion&quot;</span><span class="string">:&quot;apps/v1&quot;</span>,<span class="string">&quot;kind&quot;</span><span class="string">:&quot;Deployment&quot;</span>,<span class="string">&quot;metadata&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;annotations&quot;</span><span class="string">:</span>&#123;&#125;,<span class="string">&quot;name&quot;</span><span class="string">:&quot;busybox-deployment&quot;</span>,<span class="string">&quot;namespace&quot;</span><span class="string">:&quot;default&quot;</span>&#125;,<span class="string">&quot;spec&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;replicas&quot;</span><span class="string">:2</span>,<span class="string">&quot;selector&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;matchLabels&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;app&quot;</span><span class="string">:&quot;busybox&quot;</span>&#125;&#125;,<span class="string">&quot;template&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;metadata&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;labels&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;app&quot;</span><span class="string">:&quot;busybox&quot;</span>&#125;&#125;,<span class="string">&quot;spec&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;containers&quot;</span><span class="string">:</span>[&#123;<span class="string">&quot;args&quot;</span><span class="string">:</span>[<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;while true ; do continue ; done&quot;</span>],<span class="string">&quot;command&quot;</span><span class="string">:</span>[<span class="string">&quot;sh&quot;</span>],<span class="string">&quot;image&quot;</span><span class="string">:&quot;busybox&quot;</span>,<span class="string">&quot;name&quot;</span><span class="string">:&quot;busybox&quot;</span>,<span class="string">&quot;ports&quot;</span><span class="string">:</span>[&#123;<span class="string">&quot;containerPort&quot;</span><span class="string">:80</span>&#125;]&#125;]&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="image-20220507173513904.png" /></p>
-<h4 id="ownereference">Ownereference</h4>
-<p>Ownereference（所有者）一般是指集合类的资源，比如说Pod集合，比如<strong>replicaset、statefulset</strong>等。</p>
-<p>集合类资源的控制器会创建对应的归属资源。</p>
-<p>比如：<strong>replicaset</strong>控制器在操作中会创建Pod，则被创建Pod的Ownerefence就指向了创建了Pod的replicaset。</p>
-<p>Ownereference可以使得用户可以<strong>方便的查找一个创建资源的对象</strong>，还可以<strong>实现级联删除</strong>的效果。</p>
-<p><img src="image-20220507174246402.png" /></p>
-<h3 id="操作演示">操作演示</h3>
-<h4 id="查看pod">查看Pod</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods</span><br></pre></td></tr></table></figure>
-<h4 id="创建pod">创建Pod</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f pod1.yaml</span><br></pre></td></tr></table></figure>
-<h4 id="查看标签">查看标签</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods --show-labels</span><br></pre></td></tr></table></figure>
-<h4 id="查看具体的资源信息">查看具体的资源信息</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods nginx1 -o yaml | less</span><br></pre></td></tr></table></figure>
-<h4 id="修改已有的资源标签">修改已有的资源标签</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl label pods nginx1 env=<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-<p>如果想覆盖已有的标签信息需要加上<code>--overwide</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl label pods nginx1 env=<span class="built_in">test</span> --overwide</span><br></pre></td></tr></table></figure>
-<h4 id="去掉已有的标签">去掉已有的标签</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl label pods nginx tie-</span><br></pre></td></tr></table></figure>
-<h4 id="使用selector对pod进行筛选">使用Selector对Pod进行筛选</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods --show-labels -l env=<span class="built_in">test</span></span><br><span class="line">kubectl get pods --show-labels -l env=test1,env=test2 <span class="comment"># 一个也筛选不出来</span></span><br><span class="line">kubectl get pods --show-labels -l env=dev,tie=front</span><br><span class="line">kubectl get pods --show-labels -l <span class="string">&#x27;env in (dev,test)&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="增加注解">增加注解</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl annotate pods nginx1 my-annotate=<span class="string">&#x27;my annotate,ok&#x27;</span></span><br></pre></td></tr></table></figure>
-<h3 id="控制器模式">控制器模式</h3>
-<h4 id="控制循环">控制循环</h4>
-<p>控制型模式最核心的就是控制循环的概念。在控制循环中包括了控制器，被控制的系统，以及能够观测系统的传感器，三个逻辑组件。</p>
-<p>这些<strong>组件都是逻辑</strong>的，外界通过修改资源 spec 来控制资源，控制器比较资源 spec 和 status，从而计算一个 diff，diff 最后会用来决定执行对系统进行什么样的控制操作，控制操作会使得系统产生新的输出，并被传感器以资源 status 形式上报，控制器的各个组件将都会是独立自主地运行，不断使系统向 spec 表示终态趋近。</p>
-<p><img src="image-20220508160446196.png" /></p>
-<h4 id="传感器">传感器</h4>
-<p>控制循环中逻辑的传感器主要由 Reflector、Informer、Indexer 三个组件构成。</p>
-<ul>
-<li>Reflector 通过 List 和 Watch K8s server 来获取资源的数据；
-<ul>
-<li>List 用来在 Controller 重启以及 Watch 中断的情况下，进行系统资源的全量更新；</li>
-<li>Watch 则在多次 List 之间进行增量的资源更新；</li>
-</ul></li>
-<li>Reflector 在获取新的资源数据后，会在 Delta 队列中塞入一个包括资源对象信息本身以及资源对象事件类型的 Delta 记录；</li>
-<li>Delta 队列中可以保证同一个对象在队列中仅有一条记录，从而避免 Reflector 重新 List 和 Watch 的时候产生重复的记录。</li>
-<li>Informer 组件不断地从 Delta 队列中弹出 delta 记录，然后把资源对象交给 indexer，让 indexer 把资源记录在一个缓存中，缓存在默认设置下是用资源的命名空间来做索引的，并且可以被 Controller Manager 或多个 Controller 所共享。之后，再把这个事件交给事件的回调函数</li>
-</ul>
-<p><img src="image-20220508161637650.png" /></p>
-<p>控制循环中的控制器组件主要由事件处理函数以及 worker 组成，事件处理函数之间会相互关注资源的新增、更新、删除的事件，并根据控制器的逻辑去决定是否需要处理。对需要处理的事件，会把事件关联资源的命名空间以及名字塞入一个工作队列中，并且由后续的 worker 池中的一个 Worker 来处理，工作队列会对存储的对象进行去重，从而避免多个 Woker 处理同一个资源的情况。</p>
-<p>Worker 在处理资源对象时，一般需要用资源的名字来重新获得最新的资源数据，用来创建或者更新资源对象，或者调用其他的外部服务，Worker 如果处理失败的时候，一般情况下会把资源的名字重新加入到工作队列中，从而方便之后进行重试。</p>
-<p><img src="image-20220508161830611.png" /></p>
-<h3 id="控制器模式总结">控制器模式总结</h3>
-<h4 id="两种api设计方法">两种API设计方法</h4>
-<p>Kubernetes 控制器模式<strong>依赖声明式的 API</strong>。另外一种常见的 API 类型是命令式 API。</p>
-<p><img src="image-20220508161904833.png" /></p>
-<p><img src="image-20220508161848698.png" /></p>
-]]></content>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记一次重装系统</title>
     <url>/p/an-experience-of-reinstalling-win10/</url>
     <content><![CDATA[<p>本文主要介绍了如何使用U盘进行重装系统，主要面向电脑小白用户。</p>
@@ -10472,6 +10366,112 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
       </tags>
   </entry>
   <entry>
+    <title>应用编排与管理：核心原理</title>
+    <url>/p/core-concept-about-resource-orchestration-and-management/</url>
+    <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第五章应用编排与管理：核心原理</strong>学习笔记。</p>
+<p>关键词：<strong>k8s</strong></p>
+<a id="more"></a>
+<h3 id="资源元信息">资源元信息</h3>
+<p>kubernetes的资源组成主要包括<strong>Spec、Status两部分</strong>。其中Spec部分用来描述期望状态，Status部分用来表述观测状态。</p>
+<p>Kubernetes的元数据部分主要包括</p>
+<ul>
+<li>用来识别资源的<strong>标签：Labels</strong></li>
+<li>用来描述资源的<strong>注解：Annotation</strong></li>
+<li>用来描述多个资源关系之间相互部分的<strong>OwnerReference</strong></li>
+</ul>
+<h4 id="labels">Labels</h4>
+<p>资源标签是一<strong>种标识型的Key：Value</strong>元数据。</p>
+<p>以下是几个例子</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">enviroment:</span> <span class="string">production</span></span><br><span class="line"><span class="attr">release:</span> <span class="string">stable</span></span><br><span class="line"><span class="attr">app.kubernetes.io/version:</span> <span class="number">5.7</span><span class="number">.21</span></span><br><span class="line"><span class="attr">failure-domain.beta.kubernetes.io/region:</span> <span class="string">cn-hangzhou</span></span><br></pre></td></tr></table></figure>
+<p>前三个label都打在了Pod对象上，分别标识了<strong>对应的应用环境</strong>、<strong>发布的成熟度</strong>、<strong>和应用的版本</strong>。</p>
+<p>最后一个标签打在Node对象上，并在域名前面加了版本的标识和beta字符串。</p>
+<p>标签主要用来筛选资源和组合资源，可以使用<strong>类似SQL查询Select，来根据Label查询和相关的资源</strong>。</p>
+<p><img src="image-20220507170230377.png" /></p>
+<h4 id="selector">Selector</h4>
+<p>Selector可以用来匹配Labels的资源。</p>
+<p>假设系统有以下Pod：</p>
+<h5 id="相等型selector">相等型Selector</h5>
+<p><img src="image-20220507170750082.png" /></p>
+<p>通过<code>Tie=front</code>可以匹配左边栏的Pod。</p>
+<p>相等型的Selector可以包括<strong>多个相等条件即逻辑与</strong>的关系。</p>
+<p>通过<code>Tie=front, Env=dev</code>的Selector，可以筛选出左上角的Pod。</p>
+<h5 id="集合型selector">集合型Selector</h5>
+<p><img src="image-20220507171530472.png" /></p>
+<ul>
+<li><strong>in操作</strong>
+<ul>
+<li>通过<code>Env in (test, gray)</code>可以<code>tie</code> 是<code>front</code>或者<code>back</code>的Pod</li>
+<li>通过<code>release</code>可以筛选出存在 <code>release</code>标签的Pod</li>
+</ul></li>
+<li><strong>notin操作</strong>：
+<ul>
+<li>通过<code>tie notin(front,back)</code>可以筛选出所有<code>tie</code> 不是<code>front</code>且不是<code>back</code>的Pod；</li>
+<li>通过<code>!release</code>可以筛选不存在 <code>release</code>标签的Pod</li>
+</ul></li>
+</ul>
+<p>Tips：集合型和相等型的Selector<strong>可以用<code>,</code>来连接，表示逻辑与</strong>的关系</p>
+<h4 id="annotations">Annotations</h4>
+<p>Annotations（注解）一般是系统或者工具用来存储资源的非标识信息，可以用来拓展资源的<strong>spec/status</strong>的描述。</p>
+<p>以下是几个例子</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deployment.kubernetes.io/revision:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="attr">kubectl.kubernetes.io/last-applied-configuration:</span> <span class="string">|</span></span><br><span class="line">	&#123;<span class="string">&quot;apiVersion&quot;</span><span class="string">:&quot;apps/v1&quot;</span>,<span class="string">&quot;kind&quot;</span><span class="string">:&quot;Deployment&quot;</span>,<span class="string">&quot;metadata&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;annotations&quot;</span><span class="string">:</span>&#123;&#125;,<span class="string">&quot;name&quot;</span><span class="string">:&quot;busybox-deployment&quot;</span>,<span class="string">&quot;namespace&quot;</span><span class="string">:&quot;default&quot;</span>&#125;,<span class="string">&quot;spec&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;replicas&quot;</span><span class="string">:2</span>,<span class="string">&quot;selector&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;matchLabels&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;app&quot;</span><span class="string">:&quot;busybox&quot;</span>&#125;&#125;,<span class="string">&quot;template&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;metadata&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;labels&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;app&quot;</span><span class="string">:&quot;busybox&quot;</span>&#125;&#125;,<span class="string">&quot;spec&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;containers&quot;</span><span class="string">:</span>[&#123;<span class="string">&quot;args&quot;</span><span class="string">:</span>[<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;while true ; do continue ; done&quot;</span>],<span class="string">&quot;command&quot;</span><span class="string">:</span>[<span class="string">&quot;sh&quot;</span>],<span class="string">&quot;image&quot;</span><span class="string">:&quot;busybox&quot;</span>,<span class="string">&quot;name&quot;</span><span class="string">:&quot;busybox&quot;</span>,<span class="string">&quot;ports&quot;</span><span class="string">:</span>[&#123;<span class="string">&quot;containerPort&quot;</span><span class="string">:80</span>&#125;]&#125;]&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="image-20220507173513904.png" /></p>
+<h4 id="ownereference">Ownereference</h4>
+<p>Ownereference（所有者）一般是指集合类的资源，比如说Pod集合，比如<strong>replicaset、statefulset</strong>等。</p>
+<p>集合类资源的控制器会创建对应的归属资源。</p>
+<p>比如：<strong>replicaset</strong>控制器在操作中会创建Pod，则被创建Pod的Ownerefence就指向了创建了Pod的replicaset。</p>
+<p>Ownereference可以使得用户可以<strong>方便的查找一个创建资源的对象</strong>，还可以<strong>实现级联删除</strong>的效果。</p>
+<p><img src="image-20220507174246402.png" /></p>
+<h3 id="操作演示">操作演示</h3>
+<h4 id="查看pod">查看Pod</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods</span><br></pre></td></tr></table></figure>
+<h4 id="创建pod">创建Pod</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f pod1.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="查看标签">查看标签</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods --show-labels</span><br></pre></td></tr></table></figure>
+<h4 id="查看具体的资源信息">查看具体的资源信息</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods nginx1 -o yaml | less</span><br></pre></td></tr></table></figure>
+<h4 id="修改已有的资源标签">修改已有的资源标签</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl label pods nginx1 env=<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<p>如果想覆盖已有的标签信息需要加上<code>--overwide</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl label pods nginx1 env=<span class="built_in">test</span> --overwide</span><br></pre></td></tr></table></figure>
+<h4 id="去掉已有的标签">去掉已有的标签</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl label pods nginx tie-</span><br></pre></td></tr></table></figure>
+<h4 id="使用selector对pod进行筛选">使用Selector对Pod进行筛选</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods --show-labels -l env=<span class="built_in">test</span></span><br><span class="line">kubectl get pods --show-labels -l env=test1,env=test2 <span class="comment"># 一个也筛选不出来</span></span><br><span class="line">kubectl get pods --show-labels -l env=dev,tie=front</span><br><span class="line">kubectl get pods --show-labels -l <span class="string">&#x27;env in (dev,test)&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="增加注解">增加注解</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl annotate pods nginx1 my-annotate=<span class="string">&#x27;my annotate,ok&#x27;</span></span><br></pre></td></tr></table></figure>
+<h3 id="控制器模式">控制器模式</h3>
+<h4 id="控制循环">控制循环</h4>
+<p>控制型模式最核心的就是控制循环的概念。在控制循环中包括了控制器，被控制的系统，以及能够观测系统的传感器，三个逻辑组件。</p>
+<p>这些<strong>组件都是逻辑</strong>的，外界通过修改资源 spec 来控制资源，控制器比较资源 spec 和 status，从而计算一个 diff，diff 最后会用来决定执行对系统进行什么样的控制操作，控制操作会使得系统产生新的输出，并被传感器以资源 status 形式上报，控制器的各个组件将都会是独立自主地运行，不断使系统向 spec 表示终态趋近。</p>
+<p><img src="image-20220508160446196.png" /></p>
+<h4 id="传感器">传感器</h4>
+<p>控制循环中逻辑的传感器主要由 Reflector、Informer、Indexer 三个组件构成。</p>
+<ul>
+<li>Reflector 通过 List 和 Watch K8s server 来获取资源的数据；
+<ul>
+<li>List 用来在 Controller 重启以及 Watch 中断的情况下，进行系统资源的全量更新；</li>
+<li>Watch 则在多次 List 之间进行增量的资源更新；</li>
+</ul></li>
+<li>Reflector 在获取新的资源数据后，会在 Delta 队列中塞入一个包括资源对象信息本身以及资源对象事件类型的 Delta 记录；</li>
+<li>Delta 队列中可以保证同一个对象在队列中仅有一条记录，从而避免 Reflector 重新 List 和 Watch 的时候产生重复的记录。</li>
+<li>Informer 组件不断地从 Delta 队列中弹出 delta 记录，然后把资源对象交给 indexer，让 indexer 把资源记录在一个缓存中，缓存在默认设置下是用资源的命名空间来做索引的，并且可以被 Controller Manager 或多个 Controller 所共享。之后，再把这个事件交给事件的回调函数</li>
+</ul>
+<p><img src="image-20220508161637650.png" /></p>
+<p>控制循环中的控制器组件主要由事件处理函数以及 worker 组成，事件处理函数之间会相互关注资源的新增、更新、删除的事件，并根据控制器的逻辑去决定是否需要处理。对需要处理的事件，会把事件关联资源的命名空间以及名字塞入一个工作队列中，并且由后续的 worker 池中的一个 Worker 来处理，工作队列会对存储的对象进行去重，从而避免多个 Woker 处理同一个资源的情况。</p>
+<p>Worker 在处理资源对象时，一般需要用资源的名字来重新获得最新的资源数据，用来创建或者更新资源对象，或者调用其他的外部服务，Worker 如果处理失败的时候，一般情况下会把资源的名字重新加入到工作队列中，从而方便之后进行重试。</p>
+<p><img src="image-20220508161830611.png" /></p>
+<h3 id="控制器模式总结">控制器模式总结</h3>
+<h4 id="两种api设计方法">两种API设计方法</h4>
+<p>Kubernetes 控制器模式<strong>依赖声明式的 API</strong>。另外一种常见的 API 类型是命令式 API。</p>
+<p><img src="image-20220508161904833.png" /></p>
+<p><img src="image-20220508161848698.png" /></p>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>零基础入门ROS(一)</title>
     <url>/p/ros-tutorial-01/</url>
     <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
@@ -10507,6 +10507,59 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础入门ROS(三)</title>
+    <url>/p/ros-tutorial-03/</url>
+    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
+<p>今天写的主要是使用opencv进行相机标定（Camera Calibration）的步骤。</p>
+<a id="more"></a>
+<h3 id="下载opencv源码">下载opencv源码</h3>
+<p>这里用到的源码版本是opencv3.2.0，操作环境是Ubuntu 18.04 LTS。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/opencv/opencv/archive/refs/tags/3.2.0.tar.gz</span><br><span class="line">tar -xvf 3.2.0.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="使用已有的图片进行标定">使用已有的图片进行标定</h3>
+<h4 id="编译camera_calibration.cpp">编译camera_calibration.cpp</h4>
+<h5 id="进入指定目录">进入指定目录</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.2.0</span><br><span class="line">cd samples&#x2F;cpp&#x2F;tutorial_code&#x2F;calib3d&#x2F;camera_calibration</span><br></pre></td></tr></table></figure>
+<h5 id="创建cmakelist.txt文件">创建CMakeList.txt文件</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim CMakeLists.txt</span><br></pre></td></tr></table></figure>
+<p>复制下列代码到文件.</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( camera_calibration camera_calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( camera_calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
+<h5 id="编译">编译</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir build </span><br><span class="line">cd build </span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
+<p><img src="calibration01.png" /></p>
+<h5 id="修改参数">修改参数</h5>
+<p>编辑同级目录下的<code>in_VID5.xml</code>文件，根据标定靶的行数和列数来修改参数。这里的使用的标定靶一共有<strong>6</strong>行，每一行有8个内部角点。</p>
+<p><img src="calibration02.png" /></p>
+<p><img src="calibration03.png" /></p>
+<p>其中<code>VID5.xml</code>存放的是标定图片路径，一般图片应不少于3张，图片越多标定效果越好。</p>
+<p><img src="calibration04.png" /></p>
+<h5 id="标定">标定</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mv build&#x2F;camera_calibration .</span><br><span class="line">.&#x2F;camera_calibration .&#x2F;in_VID5.xml</span><br></pre></td></tr></table></figure>
+<p><img src="calibration05.png" /></p>
+<p>生成的out_camera_data.xml就是标定后得到的参数文件。</p>
+<h3 id="使用视频对摄像头进行标定">使用视频对摄像头进行标定</h3>
+<h4 id="编译calibration.cpp">编译calibration.cpp</h4>
+<h5 id="进入指定目录-1">进入指定目录</h5>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.4.3</span><br><span class="line">mkdir -p ..&#x2F;calibration_ws</span><br><span class="line">cp samples&#x2F;cpp&#x2F;calibration.cpp ..&#x2F;calibration_ws</span><br><span class="line">cd ..&#x2F;calibration_ws</span><br></pre></td></tr></table></figure>
+<h5 id="创建cmakelists.txt文件">创建CMakeLists.txt文件</h5>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( calibration calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
+<h5 id="编译-1">编译</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
+<p><img src="calibration06.png" /></p>
+<h5 id="标定-1">标定</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod +x calibration</span><br><span class="line">./calibration -w=8 -h=6</span><br></pre></td></tr></table></figure>
+<p>这里的h指的是标定靶一共有<strong>6</strong>行，w指的是每一行有<strong>8</strong>个内部角点。</p>
+<p>按g键开始标定。</p>
+<p><img src="calibration07.png" /></p>
+<p>标定完毕。</p>
+<p><img src="calibration08.png" /></p>
+<p><img src="calibration09.png" /></p>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+        <tag>camera calibration</tag>
       </tags>
   </entry>
   <entry>
@@ -10600,59 +10653,6 @@ y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
 ]]></content>
       <tags>
         <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>零基础入门ROS(三)</title>
-    <url>/p/ros-tutorial-03/</url>
-    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
-<p>今天写的主要是使用opencv进行相机标定（Camera Calibration）的步骤。</p>
-<a id="more"></a>
-<h3 id="下载opencv源码">下载opencv源码</h3>
-<p>这里用到的源码版本是opencv3.2.0，操作环境是Ubuntu 18.04 LTS。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/opencv/opencv/archive/refs/tags/3.2.0.tar.gz</span><br><span class="line">tar -xvf 3.2.0.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="使用已有的图片进行标定">使用已有的图片进行标定</h3>
-<h4 id="编译camera_calibration.cpp">编译camera_calibration.cpp</h4>
-<h5 id="进入指定目录">进入指定目录</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.2.0</span><br><span class="line">cd samples&#x2F;cpp&#x2F;tutorial_code&#x2F;calib3d&#x2F;camera_calibration</span><br></pre></td></tr></table></figure>
-<h5 id="创建cmakelist.txt文件">创建CMakeList.txt文件</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim CMakeLists.txt</span><br></pre></td></tr></table></figure>
-<p>复制下列代码到文件.</p>
-<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( camera_calibration camera_calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( camera_calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
-<h5 id="编译">编译</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir build </span><br><span class="line">cd build </span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
-<p><img src="calibration01.png" /></p>
-<h5 id="修改参数">修改参数</h5>
-<p>编辑同级目录下的<code>in_VID5.xml</code>文件，根据标定靶的行数和列数来修改参数。这里的使用的标定靶一共有<strong>6</strong>行，每一行有8个内部角点。</p>
-<p><img src="calibration02.png" /></p>
-<p><img src="calibration03.png" /></p>
-<p>其中<code>VID5.xml</code>存放的是标定图片路径，一般图片应不少于3张，图片越多标定效果越好。</p>
-<p><img src="calibration04.png" /></p>
-<h5 id="标定">标定</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mv build&#x2F;camera_calibration .</span><br><span class="line">.&#x2F;camera_calibration .&#x2F;in_VID5.xml</span><br></pre></td></tr></table></figure>
-<p><img src="calibration05.png" /></p>
-<p>生成的out_camera_data.xml就是标定后得到的参数文件。</p>
-<h3 id="使用视频对摄像头进行标定">使用视频对摄像头进行标定</h3>
-<h4 id="编译calibration.cpp">编译calibration.cpp</h4>
-<h5 id="进入指定目录-1">进入指定目录</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd opencv-3.4.3</span><br><span class="line">mkdir -p ..&#x2F;calibration_ws</span><br><span class="line">cp samples&#x2F;cpp&#x2F;calibration.cpp ..&#x2F;calibration_ws</span><br><span class="line">cd ..&#x2F;calibration_ws</span><br></pre></td></tr></table></figure>
-<h5 id="创建cmakelists.txt文件">创建CMakeLists.txt文件</h5>
-<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="keyword">find_package</span>( OpenCV REQUIRED )</span><br><span class="line"><span class="keyword">include_directories</span>( <span class="variable">$&#123;OpenCV_INCLUDE_DIRS&#125;</span> )</span><br><span class="line"><span class="keyword">add_executable</span>( calibration calibration.cpp )</span><br><span class="line"><span class="keyword">target_link_libraries</span>( calibration <span class="variable">$&#123;OpenCV_LIBS&#125;</span> )</span><br></pre></td></tr></table></figure>
-<h5 id="编译-1">编译</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make </span><br></pre></td></tr></table></figure>
-<p><img src="calibration06.png" /></p>
-<h5 id="标定-1">标定</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chmod +x calibration</span><br><span class="line">./calibration -w=8 -h=6</span><br></pre></td></tr></table></figure>
-<p>这里的h指的是标定靶一共有<strong>6</strong>行，w指的是每一行有<strong>8</strong>个内部角点。</p>
-<p>按g键开始标定。</p>
-<p><img src="calibration07.png" /></p>
-<p>标定完毕。</p>
-<p><img src="calibration08.png" /></p>
-<p><img src="calibration09.png" /></p>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-        <tag>camera calibration</tag>
       </tags>
   </entry>
 </search>
