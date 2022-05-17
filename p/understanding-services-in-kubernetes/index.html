@@ -39,9 +39,11 @@
 <meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/image-20220517094610322.png">
 <meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/58174ac44fdbacbbc89cec648260fcdf.png">
 <meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/d8631b315a7acdd6926ec5405ed1043f.png">
-<meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/image-20220517101421542.png">
 <meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/services-userspace-overview-16527573586443.svg">
 <meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/image-20220517112401720.png">
+<meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/services-iptables-overview.svg">
+<meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/services-ipvs-overview.svg">
+<meta property="og:image" content="https://fly97.cn/p/understanding-services-in-kubernetes/image-20220517101421542.png">
 <meta property="article:published_time" content="2022-05-16T07:26:00.000Z">
 <meta property="article:modified_time" content="2022-05-16T07:26:00.000Z">
 <meta property="article:author" content="fly97">
@@ -220,7 +222,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E6%9D%A5%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">需求来源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要服务发现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#servicek8s%E4%B8%AD%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.</span> <span class="nav-text">Service：K8s中服务发现和负载均衡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E8%A7%A3%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">用例解读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#service%E8%AF%AD%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Service语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.</span> <span class="nav-text">创建和查看Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAservice"><span class="nav-number">2.2.1.</span> <span class="nav-text">创建Service</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.2.</span> <span class="nav-text">查看Service</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%86%85%E9%83%A8%E8%AE%BF%E9%97%AEservice"><span class="nav-number">2.3.</span> <span class="nav-text">集群内部访问Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#headless-service"><span class="nav-number">2.4.</span> <span class="nav-text">Headless Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%91%E9%9B%86%E7%BE%A4%E5%A4%96%E9%83%A8%E6%9A%B4%E9%9C%B2service"><span class="nav-number">2.5.</span> <span class="nav-text">向集群外部暴露Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#nodeport"><span class="nav-number">2.5.1.</span> <span class="nav-text">NodePort</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#loadbalancer"><span class="nav-number">2.5.2.</span> <span class="nav-text">LoadBalancer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#external-ip"><span class="nav-number">2.5.3.</span> <span class="nav-text">External IP</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.</span> <span class="nav-text">架构设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9Fip%E5%92%8Cservice%E4%BB%A3%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">虚拟IP和Service代理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%BD%BF%E7%94%A8dns%E8%BD%AE%E8%AF%A2"><span class="nav-number">4.1.</span> <span class="nav-text">为什么不使用DNS轮询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#userspace%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">userspace代理模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.3.</span> <span class="nav-text">iptables代理模式</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E6%9D%A5%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">需求来源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要服务发现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#servicek8s%E4%B8%AD%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.</span> <span class="nav-text">Service：K8s中服务发现和负载均衡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E8%A7%A3%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">用例解读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#service%E8%AF%AD%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Service语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.</span> <span class="nav-text">创建和查看Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAservice"><span class="nav-number">2.2.1.</span> <span class="nav-text">创建Service</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.2.</span> <span class="nav-text">查看Service</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%86%85%E9%83%A8%E8%AE%BF%E9%97%AEservice"><span class="nav-number">2.3.</span> <span class="nav-text">集群内部访问Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#headless-service"><span class="nav-number">2.4.</span> <span class="nav-text">Headless Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%91%E9%9B%86%E7%BE%A4%E5%A4%96%E9%83%A8%E6%9A%B4%E9%9C%B2service"><span class="nav-number">2.5.</span> <span class="nav-text">向集群外部暴露Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#nodeport"><span class="nav-number">2.5.1.</span> <span class="nav-text">NodePort</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#loadbalancer"><span class="nav-number">2.5.2.</span> <span class="nav-text">LoadBalancer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#external-ip"><span class="nav-number">2.5.3.</span> <span class="nav-text">External IP</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9Fip%E5%92%8Cservice%E4%BB%A3%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">虚拟IP和Service代理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%BD%BF%E7%94%A8dns%E8%BD%AE%E8%AF%A2"><span class="nav-number">3.1.</span> <span class="nav-text">为什么不使用DNS轮询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#userspace%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">userspace代理模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">iptables代理模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipvs%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">IPVS代理模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.</span> <span class="nav-text">架构设计</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -345,7 +347,7 @@
 <a id="more"></a>
 <h3 id="需求来源">需求来源</h3>
 <h4 id="为什么需要服务发现">为什么需要服务发现</h4>
-<p>传统的应用部署实在特定的机器上面部署，此时知道怎么去调用别的机器的IP地址。但是在K8s集群中应该是通过Pod去部署额，而Pod的生命周期过程中，比如创建或者销毁，此时<strong>IP地址都会发生变化</strong>，<strong>不能指定IP去访问指定的应用。</strong></p>
+<p>传统的应用部署实在特定的机器上面部署，此时知道怎么去调用别的机器的IP地址。但是在K8s集群中应该是通过Pod去部署，而Pod的生命周期过程中，比如创建或者销毁，此时<strong>IP地址都会发生变化</strong>，<strong>不能指定IP去访问指定的应用。</strong></p>
 <p>K8s的应用部署中需要创建一个Pod组，而这些Pod组合需要一个统一的访问接口，以及怎么去控制流量负载均衡在这个组里，比如<strong>测试环境、预发环境和线上环境</strong>。部署过程中需要<strong>保持同样的部署模板以及访问方式</strong>，这样就可以用同一套应用的模板在不同的环境中直接发布。</p>
 <p><img data-src="image-20220516164957086.png" /></p>
 <h4 id="servicek8s中服务发现和负载均衡">Service：K8s中服务发现和负载均衡</h4>
@@ -407,18 +409,6 @@
 <blockquote>
 <p><code>externalIPs</code> 不会被 Kubernetes 管理，它属于集群管理员的职责范畴。</p>
 </blockquote>
-<h3 id="架构设计">架构设计</h3>
-<p><img data-src="image-20220517101421542.png" /></p>
-<p>K8s服务发现以及K8s Service是如上的一个整体架构。</p>
-<p>K8s的master节点里面有API Server，API Server统一管理K8s所有对象，所有的组件都会注册到API Server上去监听对象的变化。</p>
-<p>这里面有三个关键组件：</p>
-<ul>
-<li>Cloud Controller Manager，CCM：负责配置LoadBalancer的一个负载均衡器提供给外部访问；</li>
-<li>CoreDNS：K8s集群的DNS组件，通过CoreDNS观测API Server里面的Service后端Pod的变化，配置Service的DNS解析，实现通过Service的名字直接访问到Service的虚拟IP，或者Headless类型的Service中的IP列表解析；</li>
-<li>Kube-proxy：K8s网络节点代理，代理通过监听Service以及Pod变化，然后配置集群中的Node、Pod或者ClusterIP的访问；</li>
-</ul>
-<p>例如Client Pod去访问Service，首先Pod拿Service IP请求，请求到了宿主机网络后，就被kube-proxy所配置的iptables或者IPVS做拦截处理，之后负载均衡到每一个实际的后端Pod，这样就<strong>实现了负载均衡和服务发现</strong>。</p>
-<p>对于来自外部的流量，通过外部负载均衡器管理器（CCM）监听Service的变化，配置LoadBalancer，然后转发到节点的NodePort上，NodePort通过Kube-proxy配置iptables规则，把NodePort的流量转换成ClusterIP，然后转换成后端Pod的IP地址，<strong>这样就实现了负载均衡和服务发现。</strong></p>
 <h3 id="虚拟ip和service代理">虚拟IP和Service代理</h3>
 <p>在K8s集群中，每个Node运行一个<strong>kube-proxy</strong>进程，kube-proxy负责为Service实现了一种虚拟IP的形式。</p>
 <h4 id="为什么不使用dns轮询">为什么不使用DNS轮询</h4>
@@ -447,6 +437,41 @@
 <p>默认的策略是，kube-proxy在iptables模式下<strong>随机选择一个后端</strong>。</p>
 <p>注意：如果kube-proxy在iptables模式下运行，若<strong>选中的第一个Pod没有响应，则连接失败</strong>。<font color="red">而在userspace模式下，kube-proxy检测到无法链接到第一个Pod时，<strong>会自动使用其他后端Pod重试</strong>。</font></p>
 <p>可使用Pod就绪探测器验证后端Pod可以正常工作，使得iptables模式下的kube-proxy仅看到测试正常的后端。这样意味着可以避免将流量通过kube-proxy发送到失败的Pod。</p>
+<p><img data-src="services-iptables-overview.svg" /></p>
+<h4 id="ipvs代理模式">IPVS代理模式</h4>
+<p>在<code>ipvs</code>模式下，kube-proxy监视kubernetes服务和端点，调用<code>netlink</code>接口相应的创建IPVS规则，定期将IPVS规则与Kubernetes服务和端点同步。</p>
+<p>控制循环确保IPVS状态和所需状态匹配，访问服务时，IPVS将流量定向到Pod之一。</p>
+<p>IPVS代理基于类似iptables模式下的netfilter挂钩函数，但是使用<strong>哈希表</strong>作为基础数据结构，并且在内核空间工作</p>
+<p>与iptables模式下的kube-proxy相比，<strong>IPVS模式下的kube-proxy重定向通信的延迟要短，并且在同步规则时具有更好的性能。</strong>与其他代理模式相比。IPVS模式还支持更高的网络流量吞吐量。</p>
+<p>IPVS还提供了更多选项来平衡后端Pod的流量：</p>
+<ul>
+<li>rr：轮替（Round-Robin）</li>
+<li>lc：最小链接（Least Connection），即打开数量最少者优先</li>
+<li>dh：目标地址哈希（Destination Hashing）</li>
+<li>sh：源地址哈希（Source Hashing）</li>
+<li>sed：最短预期延迟（Shortest Expected Delay）</li>
+<li>nq：从不排队（Never Queue）</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>：</p>
+<p>要在IPVS模式下运行kube-proxy，必须在启动kube-proxy之前使IPVS在节点上可用。</p>
+<p>当kube-proxy以IPVS代理模式启动时。他将验证IPVS内核模块是否可用。如果未检测到IPVS内核模块，则Kube-proxy回退到以iptables代理模式运行。</p>
+</blockquote>
+<p><img data-src="services-ipvs-overview.svg" /></p>
+<p>在这些代理模型中，绑定到服务IP的流量：在客户端不了解kubernetes或服务或Pod的任何信息的情况下，将Pod代理到适合的后端。</p>
+<p>如果需要确保每次来自特定客户端的链接传递到同一个Pod，则可以通过将<code>.spec.sessionAffinity</code>设置<strong>ClientIP</strong>（默认值是<strong>None</strong>），来<strong>基于客户端的IP地址选择会话关联</strong>。还可以通过适当设置<code>.spec.sessionAffinityConfig.clientIP.timeoutSeconds</code>设置最大会话停留时间（默认时间为10800秒，即3小时）。</p>
+<h3 id="架构设计">架构设计</h3>
+<p><img data-src="image-20220517101421542.png" /></p>
+<p>K8s服务发现以及K8s Service是如上的一个整体架构。</p>
+<p>K8s的master节点里面有API Server，API Server统一管理K8s所有对象，所有的组件都会注册到API Server上去监听对象的变化。</p>
+<p>这里面有三个关键组件：</p>
+<ul>
+<li>Cloud Controller Manager，CCM：负责配置LoadBalancer的一个负载均衡器提供给外部访问；</li>
+<li>CoreDNS：K8s集群的DNS组件，通过CoreDNS观测API Server里面的Service后端Pod的变化，配置Service的DNS解析，实现通过Service的名字直接访问到Service的虚拟IP，或者Headless类型的Service中的IP列表解析；</li>
+<li>Kube-proxy：K8s网络节点代理，代理通过监听Service以及Pod变化，然后配置集群中的Node、Pod或者ClusterIP的访问；</li>
+</ul>
+<p>例如Client Pod去访问Service，首先Pod拿Service IP请求，请求到了宿主机网络后，就被kube-proxy所配置的iptables或者IPVS做拦截处理，之后负载均衡到每一个实际的后端Pod，这样就<strong>实现了负载均衡和服务发现</strong>。</p>
+<p>对于来自外部的流量，通过外部负载均衡器管理器（CCM）监听Service的变化，配置LoadBalancer，然后转发到节点的NodePort上，NodePort通过Kube-proxy配置iptables规则，把NodePort的流量转换成ClusterIP，然后转换成后端Pod的IP地址，<strong>这样就实现了负载均衡和服务发现。</strong></p>
 
     </div>
 
