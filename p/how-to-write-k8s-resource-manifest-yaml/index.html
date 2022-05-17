@@ -226,14 +226,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">152</span>
+          <span class="site-state-item-count">153</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-count">92</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -342,15 +342,10 @@
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span> <span class="comment"># API版本</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span>    <span class="comment"># 资源类型</span></span><br><span class="line"><span class="attr">metadata:</span>           <span class="comment"># 资源元数据</span></span><br><span class="line"> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span>               <span class="comment"># 资源的期望值</span></span><br><span class="line"> <span class="attr">replicas:</span> <span class="number">3</span>        <span class="comment"># 副本实例数目</span></span><br><span class="line"> <span class="attr">selector:</span>          <span class="comment"># 资源选择器，与下面的metadata.labels保持一致</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">   <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">template:</span>          <span class="comment"># Pod模板</span></span><br><span class="line">  <span class="attr">metadata:</span>         <span class="comment"># Pod元数据</span></span><br><span class="line">  	<span class="attr">labels:</span>         </span><br><span class="line">  	 <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">spec:</span>             <span class="comment"># Pod资源的期望值</span></span><br><span class="line">   <span class="attr">containers:</span>      <span class="comment"># 容器配置</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">busybox</span> </span><br></pre></td></tr></table></figure>
 <h3 id="kubernetes-的-api"><strong>Kubernetes</strong> 的 <strong>API</strong></h3>
 <p><img data-src="image-20220506105442472.png" /></p>
-<p>当我们去提交一个 Pod，或者 get 一个 Pod 的时候，它的 content 内容都是用 JSON 或者是 YAML 表达的。上图中有个 yaml 的例子，在这个 yaml file 中，对 Pod 资源的描述也分为几个部分。</p>
-<p>第一个部分，一般来讲会是 API 的 <strong>version</strong>。比如在这个例子中是 V1，它也会描述我在操作哪个资源；比如说我的 <strong>kind</strong> 如果是 pod，在 Metadata 中，就写上这个 Pod 的名字；比如说 nginx，我们也会给它打一些 <strong>label</strong>，我们等下会讲到 label 的概念。在 Metadata 中，有时候也会去写 <strong>annotation</strong>，也就是对资源的额外的一些用户层次的描述。</p>
-<p>比较重要的一个部分叫做 <strong>Spec</strong>，<strong>Spec 也就是我们希望 Pod 达到的一个预期的状态</strong>。比如说它内部需要有哪些 container 被运行；比如说这里面有一个 nginx 的 container，它的 image 是什么？它暴露的 port 是什么？</p>
-<p>当我们从 Kubernetes API 中去获取这个资源的时候，一般来讲在 Spec 下面会有一个项目叫 <strong>status</strong>，它表达了这个资源当前的状态；比如说一个 Pod 的状态可能是正在被调度、或者是已经 running、或者是已经被 terminates，就是被执行完毕了。</p>
-<p>刚刚在 API 之中，我们讲了一个比较有意思的 metadata 叫做“<strong>label</strong>”，这个 label 可以是一组<strong>键值对</strong>。</p>
-<p>比如下图的第一个 pod 中，label 就可能是一个 color 等于 red，即它的颜色是红颜色。当然你也可以加其他 label，比如说 size: big 就是大小，定义为大的，它可以是一组 label。</p>
-<p>这些 label 是可以被 selector，也就是选择器所查询的。这个能力实际上跟我们的 sql 类型的 select 语句是非常相似的，比如下图中的三个 Pod 资源中，我们就可以进行 select。name color 等于 red，就是它的颜色是红色的，我们也可以看到，只有两个被选中了，因为只有他们的 label 是红色的，另外一个 label 中写的 color 等于 yellow，也就是它的颜色是黄色，是不会被选中的。</p>
+<p>当我们去提交一个Pod，或者get一个Pod的时候，它的content内容都是用JSON或者是YAML表达的。上图中有个yaml的例子，在这个yamlfile中，对Pod资源的描述也分为几个部分。</p>
+<p>第一个部分，一般来讲会是API的<strong>version</strong>。比如在这个例子中是V1，它也会描述我在操作哪个资源；比如说我的<strong>kind</strong>如果是pod，在Metadata中，就写上这个Pod的名字；比如说nginx，我们也会给它打一些<strong>label</strong>，我们等下会讲到label的概念。在Metadata中，有时候也会去写<strong>annotation</strong>，也就是对资源的额外的一些用户层次的描述。比较重要的一个部分叫做<strong>Spec</strong>，<strong>Spec也就是我们希望Pod达到的一个预期的状态</strong>。比如说它内部需要有哪些container被运行；比如说这里面有一个nginx的container，它的image是什么？它暴露的port是什么？当我们从KubernetesAPI中去获取这个资源的时候，一般来讲在Spec下面会有一个项目叫<strong>status</strong>，它表达了这个资源当前的状态；比如说一个Pod的状态可能是正在被调度、或者是已经running、或者是已经被terminates，就是被执行完毕了。刚刚在API之中，我们讲了一个比较有意思的metadata叫做“<strong>label</strong>”，这个label可以是一组<strong>键值对</strong>。比如下图的第一个pod中，label就可能是一个color等于red，即它的颜色是红颜色。当然你也可以加其他label，比如说size:big就是大小，定义为大的，它可以是一组label。这些label是可以被selector，也就是选择器所查询的。这个能力实际上跟我们的sql类型的select语句是非常相似的，比如下图中的三个Pod资源中，我们就可以进行select。namecolor等于red，就是它的颜色是红色的，我们也可以看到，只有两个被选中了，因为只有他们的label是红色的，另外一个label中写的color等于yellow，也就是它的颜色是黄色，是不会被选中的。</p>
 <p><img data-src="image-20220506110134831.png" /></p>
-<p>通过 label，kubernetes 的 API 层就可以对这些资源进行一个筛选，那这些筛选也是 kubernetes 对资源的集合所表达默认的一种方式。</p>
+<p>通过label，kubernetes的API层就可以对这些资源进行一个筛选，那这些筛选也是kubernetes对资源的集合所表达默认的一种方式。</p>
 <h3 id="使用yaml创建资源对象deployment">使用yaml创建资源对象Deployment</h3>
 <p>资源清单可以通过以下命令导出，会有很多冗余信息</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get 资源类型 -n 命名空间 -o yaml</span><br></pre></td></tr></table></figure>
