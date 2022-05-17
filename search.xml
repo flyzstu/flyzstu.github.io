@@ -607,24 +607,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Go语言读取json文件</title>
-    <url>/p/read-json-file-in-golang/</url>
-    <content><![CDATA[<p>使用golang内置库<code>encoding/json</code>读取json格式文件</p>
-<p><strong>关键词</strong>：golang</p>
-<a id="more"></a>
-<h2 id="json反序列化json文件到结构体">json反序列化：json文件到结构体</h2>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://xxxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;usersInfo&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xxxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">        &#125;, </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xx&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="代码">代码</h3>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID       <span class="keyword">string</span> <span class="string">`json:&quot;zstuID&quot;`</span> <span class="comment">// 结构体Tag, 指定json的Key</span></span><br><span class="line">	Name     <span class="keyword">string</span> <span class="string">`json:&quot;zstuName&quot;`</span></span><br><span class="line">	Password <span class="keyword">string</span> <span class="string">`json:&quot;zstuPassword&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Users <span class="keyword">struct</span> &#123;</span><br><span class="line">	ZstuUsers []User <span class="string">`json:&quot;usersInfo&quot;`</span></span><br><span class="line">	ZstuUrl   <span class="keyword">string</span> <span class="string">`json:&quot;url&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jsonData, err := os.ReadFile(fileName)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;读取json文件失败，错误：%v\n&quot;</span>, err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">err = json.Unmarshal(jsonData, &amp;userInfo)  <span class="comment">// 注意是传地址</span></span><br></pre></td></tr></table></figure>
-<h2 id="json序列化结构体到json格式的字符串">json序列化：结构体到json格式的字符串</h2>
-<h3 id="代码-1">代码</h3>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">users := []User&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    user := User&#123;</span><br><span class="line">        ID:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Name: <span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Password:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    users = <span class="built_in">append</span>(users, user)</span><br><span class="line">u := &amp;Users&#123;</span><br><span class="line">    ZstuUrl:<span class="string">&quot;https://google.com&quot;</span>,</span><br><span class="line">    ZstuUsers: users</span><br><span class="line">&#125;</span><br><span class="line">jsonData, err := json.Marshal(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;json序列化失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;json:%s\n&quot;</span>, jsonData)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go语言中的切片、Map和Channel</title>
     <url>/p/slice-map-and-channel-in-golang/</url>
     <content><![CDATA[<p>虽然go语言中函数传参方式都是<strong>值传递</strong>，但以下几种类型可以认为是"引用传递"。</p>
@@ -648,6 +630,24 @@
 <li>主函数最后要执行<code>wg.Wait()</code>，阻塞直到子协程</li>
 </ol>
 <p>退出。</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go语言读取json文件</title>
+    <url>/p/read-json-file-in-golang/</url>
+    <content><![CDATA[<p>使用golang内置库<code>encoding/json</code>读取json格式文件</p>
+<p><strong>关键词</strong>：golang</p>
+<a id="more"></a>
+<h2 id="json反序列化json文件到结构体">json反序列化：json文件到结构体</h2>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;http://xxxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;usersInfo&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xxxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xxx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">        &#125;, </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;zstuID&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuName&quot;</span>: <span class="string">&quot;xx&quot;</span>, </span><br><span class="line">            <span class="attr">&quot;zstuPassword&quot;</span>: <span class="string">&quot;xx&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="代码">代码</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID       <span class="keyword">string</span> <span class="string">`json:&quot;zstuID&quot;`</span> <span class="comment">// 结构体Tag, 指定json的Key</span></span><br><span class="line">	Name     <span class="keyword">string</span> <span class="string">`json:&quot;zstuName&quot;`</span></span><br><span class="line">	Password <span class="keyword">string</span> <span class="string">`json:&quot;zstuPassword&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Users <span class="keyword">struct</span> &#123;</span><br><span class="line">	ZstuUsers []User <span class="string">`json:&quot;usersInfo&quot;`</span></span><br><span class="line">	ZstuUrl   <span class="keyword">string</span> <span class="string">`json:&quot;url&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jsonData, err := os.ReadFile(fileName)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;读取json文件失败，错误：%v\n&quot;</span>, err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">err = json.Unmarshal(jsonData, &amp;userInfo)  <span class="comment">// 注意是传地址</span></span><br></pre></td></tr></table></figure>
+<h2 id="json序列化结构体到json格式的字符串">json序列化：结构体到json格式的字符串</h2>
+<h3 id="代码-1">代码</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">users := []User&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    user := User&#123;</span><br><span class="line">        ID:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Name: <span class="string">&quot;xx&quot;</span>,</span><br><span class="line">        Password:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    users = <span class="built_in">append</span>(users, user)</span><br><span class="line">u := &amp;Users&#123;</span><br><span class="line">    ZstuUrl:<span class="string">&quot;https://google.com&quot;</span>,</span><br><span class="line">    ZstuUsers: users</span><br><span class="line">&#125;</span><br><span class="line">jsonData, err := json.Marshal(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;json序列化失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;json:%s\n&quot;</span>, jsonData)</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -6986,25 +6986,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>修改Pip镜像源</title>
-    <url>/p/Modify-pip-mirror-source/</url>
-    <content><![CDATA[<p>修改pip镜像源</p>
-<a id="more"></a>
-<p>清华源：https://pypi.tuna.tsinghua.edu.cn/simple/</p>
-<p>豆瓣源：https://pypi.doubanio.com/simple/</p>
-<p>使用方法</p>
-<p>临时使用：可以在使用pip的时候加参数-i https://pypi.tuna.tsinghua.edu.cn/simple</p>
-<p>例如：<code>pip install numpy -i https://pypi.tuna.tsinghua.edu.cn/simple</code></p>
-<p>永久修改：linux下，修改 <code>~/.pip/pip.conf</code>，设置为以下内容：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
-<p>windows下，直接在user目录中创建一个pip目录，如：C:\.pip，新建文件pip.ini，内容如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>pip</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探Tkinter(一)</title>
     <url>/p/tkinter-tutorial-02/</url>
     <content><![CDATA[<p>基于 Python 的 Tkinter 常用于UI界面开发。</p>
@@ -7189,6 +7170,25 @@ y=x^2e^x
       <tags>
         <tag>Python</tag>
         <tag>Tkinter</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>修改Pip镜像源</title>
+    <url>/p/Modify-pip-mirror-source/</url>
+    <content><![CDATA[<p>修改pip镜像源</p>
+<a id="more"></a>
+<p>清华源：https://pypi.tuna.tsinghua.edu.cn/simple/</p>
+<p>豆瓣源：https://pypi.doubanio.com/simple/</p>
+<p>使用方法</p>
+<p>临时使用：可以在使用pip的时候加参数-i https://pypi.tuna.tsinghua.edu.cn/simple</p>
+<p>例如：<code>pip install numpy -i https://pypi.tuna.tsinghua.edu.cn/simple</code></p>
+<p>永久修改：linux下，修改 <code>~/.pip/pip.conf</code>，设置为以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
+<p>windows下，直接在user目录中创建一个pip目录，如：C:\.pip，新建文件pip.ini，内容如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>pip</tag>
       </tags>
   </entry>
   <entry>
@@ -8046,23 +8046,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>力扣数组基础之双指针有序数组的平方</title>
-    <url>/p/minimum-size-subarray-sum/</url>
-    <content><![CDATA[<p>题目：给你一个按 <strong>非递减顺序</strong> 排序的整数数组 <code>nums</code>，返回 <strong>每个数字的平方</strong> 组成的新数组，要求也按 <strong>非递减顺序</strong> 排序。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p><img data-src="双指针03.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣数组基础之双指针移除元素</title>
     <url>/p/remove-element/</url>
     <content><![CDATA[<p>题目：给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。</p>
@@ -8096,6 +8079,23 @@ y=x^2e^x
 <p><img data-src="双指针02.png" /></p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之双指针有序数组的平方</title>
+    <url>/p/minimum-size-subarray-sum/</url>
+    <content><![CDATA[<p>题目：给你一个按 <strong>非递减顺序</strong> 排序的整数数组 <code>nums</code>，返回 <strong>每个数字的平方</strong> 组成的新数组，要求也按 <strong>非递减顺序</strong> 排序。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：target &#x3D; 7, nums &#x3D; [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p><img data-src="双指针03.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="keyword">int</span>, nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="keyword">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -8405,6 +8405,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <url>/p/swap-nodes-in-pairs/</url>
+    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+<a id="more"></a>
+<p><strong>示例</strong></p>
+<p><img data-src="swap_ex1.jpg" /></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
+<p><img data-src="image-20220214194056147.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣每日一题之适龄的朋友</title>
     <url>/p/friends-of-appropriate-ages/</url>
     <content><![CDATA[<p>在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。</p>
@@ -8441,25 +8460,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <url>/p/swap-nodes-in-pairs/</url>
-    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
-<a id="more"></a>
-<p><strong>示例</strong></p>
-<p><img data-src="swap_ex1.jpg" /></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
-<p><img data-src="image-20220214194056147.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -8711,6 +8711,85 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>Kubernetes集群实践（二）| 如何编写k8s资源清单yaml文件</title>
+    <url>/p/how-to-write-k8s-resource-manifest-yaml/</url>
+    <content><![CDATA[<p>本文主要介绍如何编写k8s资源清单yaml文件。</p>
+<p>在K8s集群上进行资源配置通常都是通过yaml文件进行的，因此如何快速编写yaml文件就变得十分重要。</p>
+<p>关键词：<strong>k8s</strong></p>
+<a id="more"></a>
+<h3 id="yaml文件格式">yaml文件格式</h3>
+<p>这个可以参考我的上一篇文章。</p>
+<h3 id="yaml资源清单基本格式">yaml资源清单基本格式</h3>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span> <span class="comment"># API版本</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span>    <span class="comment"># 资源类型</span></span><br><span class="line"><span class="attr">metadata:</span>           <span class="comment"># 资源元数据</span></span><br><span class="line"> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span>               <span class="comment"># 资源的期望值</span></span><br><span class="line"> <span class="attr">replicas:</span> <span class="number">3</span>        <span class="comment"># 副本实例数目</span></span><br><span class="line"> <span class="attr">selector:</span>          <span class="comment"># 资源选择器，与下面的metadata.labels保持一致</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">   <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">template:</span>          <span class="comment"># Pod模板</span></span><br><span class="line">  <span class="attr">metadata:</span>         <span class="comment"># Pod元数据</span></span><br><span class="line">  	<span class="attr">labels:</span>         </span><br><span class="line">  	 <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">spec:</span>             <span class="comment"># Pod资源的期望值</span></span><br><span class="line">   <span class="attr">containers:</span>      <span class="comment"># 容器配置</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">busybox</span> </span><br></pre></td></tr></table></figure>
+<h3 id="kubernetes-的-api"><strong>Kubernetes</strong> 的 <strong>API</strong></h3>
+<p><img data-src="image-20220506105442472.png" /></p>
+<p>当我们去提交一个Pod，或者get一个Pod的时候，它的content内容都是用JSON或者是YAML表达的。上图中有个yaml的例子，在这个yamlfile中，对Pod资源的描述也分为几个部分。</p>
+<p>第一个部分，一般来讲会是API的<strong>version</strong>。比如在这个例子中是V1，它也会描述我在操作哪个资源；比如说我的<strong>kind</strong>如果是pod，在Metadata中，就写上这个Pod的名字；比如说nginx，我们也会给它打一些<strong>label</strong>，我们等下会讲到label的概念。在Metadata中，有时候也会去写<strong>annotation</strong>，也就是对资源的额外的一些用户层次的描述。比较重要的一个部分叫做<strong>Spec</strong>，<strong>Spec也就是我们希望Pod达到的一个预期的状态</strong>。比如说它内部需要有哪些container被运行；比如说这里面有一个nginx的container，它的image是什么？它暴露的port是什么？当我们从KubernetesAPI中去获取这个资源的时候，一般来讲在Spec下面会有一个项目叫<strong>status</strong>，它表达了这个资源当前的状态；比如说一个Pod的状态可能是正在被调度、或者是已经running、或者是已经被terminates，就是被执行完毕了。刚刚在API之中，我们讲了一个比较有意思的metadata叫做“<strong>label</strong>”，这个label可以是一组<strong>键值对</strong>。比如下图的第一个pod中，label就可能是一个color等于red，即它的颜色是红颜色。当然你也可以加其他label，比如说size:big就是大小，定义为大的，它可以是一组label。这些label是可以被selector，也就是选择器所查询的。这个能力实际上跟我们的sql类型的select语句是非常相似的，比如下图中的三个Pod资源中，我们就可以进行select。namecolor等于red，就是它的颜色是红色的，我们也可以看到，只有两个被选中了，因为只有他们的label是红色的，另外一个label中写的color等于yellow，也就是它的颜色是黄色，是不会被选中的。</p>
+<p><img data-src="image-20220506110134831.png" /></p>
+<p>通过label，kubernetes的API层就可以对这些资源进行一个筛选，那这些筛选也是kubernetes对资源的集合所表达默认的一种方式。</p>
+<h3 id="使用yaml创建资源对象deployment">使用yaml创建资源对象Deployment</h3>
+<p>资源清单可以通过以下命令导出，会有很多冗余信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get 资源类型 -n 命名空间 -o yaml</span><br></pre></td></tr></table></figure>
+<p>省略<code>-n</code>参数将<strong>导出默认命名空间<code>default</code></strong>的资源信息</p>
+<blockquote>
+<p>以上名字在查看<strong>配置文件其他字段含义</strong>时十分有用！</p>
+</blockquote>
+<p>使用以下命令可查看所有pod的命名空间</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods -o wide --all-namespaces</span><br></pre></td></tr></table></figure>
+<p>apiVersion字段可以通过以下命令查询</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl api-resources |grep 资源类型</span><br></pre></td></tr></table></figure>
+<h4 id="资源对象文件">资源对象文件</h4>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span>		<span class="comment"># API版本【必需字段】</span></span><br><span class="line"><span class="attr">Kind:</span> <span class="string">Deployment</span>        <span class="comment"># 资源对象【必需字段】</span></span><br><span class="line"><span class="attr">metedata:</span>               <span class="comment"># 资源元数据【必须字段】</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web</span>             <span class="comment"># 资源名称</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span>    <span class="comment"># 资源所在的命名空间</span></span><br><span class="line"><span class="attr">spec:</span>                   <span class="comment"># deployment的期望状态</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span>           <span class="comment"># 副本实例数量</span></span><br><span class="line">  <span class="attr">selector:</span>  		    <span class="comment"># 标签选择器，与下文中的metadata.labels保持一致</span></span><br><span class="line">    <span class="attr">matchLabels:</span>                </span><br><span class="line">      <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">template:</span>   			<span class="comment"># Pod模板</span></span><br><span class="line">    <span class="attr">metedata:</span> 			<span class="comment"># Pod元数据</span></span><br><span class="line">      <span class="attr">labels:</span> 			<span class="comment"># 定义标签</span></span><br><span class="line">      <span class="comment"># 标签一般根据项目属性去写</span></span><br><span class="line">      <span class="comment"># 例如 project: ms</span></span><br><span class="line">      	<span class="attr">app:</span> <span class="string">web</span> <span class="comment"># 标签</span></span><br><span class="line">    <span class="attr">spec:</span>    <span class="comment"># Pod规格</span></span><br><span class="line">      <span class="attr">containers:</span>  		<span class="comment"># 容器配置</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span>  		<span class="comment"># 容器名</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">busybox</span>  <span class="comment"># 镜像名</span></span><br><span class="line">        <span class="comment">#command: [&quot;sh&quot;]     # 容器执行命令</span></span><br><span class="line">        <span class="comment">#args: [&quot;-c&quot;, &quot;while true ; do continue ; done&quot;] # 命令执行的参数</span></span><br></pre></td></tr></table></figure>
+<p>以上资源清单等同于</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create deployment web --image=busybox --replicas=3 -n default</span><br></pre></td></tr></table></figure>
+<h3 id="使用yaml创建资源对象service">使用yaml创建资源对象Service</h3>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span>              <span class="comment"># api版本【必需字段】</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span>               <span class="comment"># 资源类型【必需字段】</span></span><br><span class="line"><span class="attr">metedata:</span>                   <span class="comment"># 资源元数据【必需字段】</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span>        <span class="comment"># 资源所在namespace</span></span><br><span class="line"><span class="attr">spec:</span>                       <span class="comment"># 期望的资源配置</span></span><br><span class="line">  <span class="attr">ports:</span> <span class="number">80</span>                 <span class="comment"># Service端口，通过Cluster IP访问时使用的端口</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span>             <span class="comment"># 通信协议</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8080</span>          <span class="comment"># 容器内部的通信端口</span></span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">app:</span> <span class="string">web</span>                  <span class="comment"># 标签</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>            <span class="comment"># Service暴露类型，NodePort允许集群外部访问</span></span><br></pre></td></tr></table></figure>
+<p>以上资源清单等同于：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl expose sevice web --port=80 --target-port=8080 --<span class="built_in">type</span>=NodePort -n default</span><br></pre></td></tr></table></figure>
+<p>可以将以上两个资源清单合并成一个yaml文件，两个文件中间需要有<code>---</code>分割线，否则<strong>kubectl只识别最后一个yaml的内容</strong>。</p>
+<h3 id="快速编写k8s资源清单">快速编写K8s资源清单</h3>
+<h4 id="用create命令生成deployment的yaml">用create命令生成deployment的yaml</h4>
+<blockquote>
+<p>导出的yaml文件有很多冗余字段，不需要可以删除</p>
+<p>如：creationTimestamp和status可以删除</p>
+</blockquote>
+<p>使用<code>--dry-run</code>可以检查是否有错误</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create deployment nginx --image=nginx -o yaml --dry-run=client &gt; deployment.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="用expose命令生成service的yaml">用expose命令生成service的yaml</h4>
+<blockquote>
+<p>导出的yaml文件有很多冗余字段，不需要可以删除</p>
+<p>如：creationTimestamp和status可以删除</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl expose servcie nginx --port=80 --target-port=8080 --<span class="built_in">type</span>=NodePort -o yaml --dry-run=client &gt; service.yaml</span><br></pre></td></tr></table></figure>
+<h4 id="用get命令导出yaml">用get命令导出yaml</h4>
+<blockquote>
+<p>这种方式导出的yaml存在很多冗余</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get deployment nginx -o yaml &gt; deployment.yml</span><br></pre></td></tr></table></figure>
+<h3 id="怎么查询资源清单文件的指定字段">怎么查询资源清单文件的指定字段</h3>
+<p>以下命令能查到pod.spec.containers下的所有字段</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl explain pods.spec.containers</span><br></pre></td></tr></table></figure>
+<h3 id="如何查询资源所有字段">如何查询资源所有字段</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl explain deployment</span><br></pre></td></tr></table></figure>
+<h3 id="模糊查询资源类型">模糊查询资源类型</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl api-resources | grep 资源类型的模糊字母</span><br></pre></td></tr></table></figure>
+<h3 id="检查yaml语法是否有误">检查yaml语法是否有误</h3>
+<p>可以使用<strong>kube-linter</strong>来检查yaml语法是否有误</p>
+<blockquote>
+<p>https://github.com/stackrox/kube-linter</p>
+</blockquote>
+<h4 id="执行检测">执行检测</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kube-linter lint pod.yaml</span><br></pre></td></tr></table></figure>
+<h3 id="参考">参考</h3>
+<ul>
+<li>https://blog.csdn.net/omaidb/article/details/121855353</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kubernetes集群实践（四）| 如何在集群中使用网络存储系统NFS</title>
     <url>/p/how-to-use-nfs-in-k8s/</url>
     <content><![CDATA[<p>由于需要在Pods中共享文件，直接挂载到宿主机肯定不行的。因此需要有一套网络存储系统。</p>
@@ -8870,85 +8949,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 </tr>
 </tbody>
 </table>
-]]></content>
-      <tags>
-        <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Kubernetes集群实践（二）| 如何编写k8s资源清单yaml文件</title>
-    <url>/p/how-to-write-k8s-resource-manifest-yaml/</url>
-    <content><![CDATA[<p>本文主要介绍如何编写k8s资源清单yaml文件。</p>
-<p>在K8s集群上进行资源配置通常都是通过yaml文件进行的，因此如何快速编写yaml文件就变得十分重要。</p>
-<p>关键词：<strong>k8s</strong></p>
-<a id="more"></a>
-<h3 id="yaml文件格式">yaml文件格式</h3>
-<p>这个可以参考我的上一篇文章。</p>
-<h3 id="yaml资源清单基本格式">yaml资源清单基本格式</h3>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span> <span class="comment"># API版本</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span>    <span class="comment"># 资源类型</span></span><br><span class="line"><span class="attr">metadata:</span>           <span class="comment"># 资源元数据</span></span><br><span class="line"> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span>               <span class="comment"># 资源的期望值</span></span><br><span class="line"> <span class="attr">replicas:</span> <span class="number">3</span>        <span class="comment"># 副本实例数目</span></span><br><span class="line"> <span class="attr">selector:</span>          <span class="comment"># 资源选择器，与下面的metadata.labels保持一致</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">   <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line"> <span class="attr">template:</span>          <span class="comment"># Pod模板</span></span><br><span class="line">  <span class="attr">metadata:</span>         <span class="comment"># Pod元数据</span></span><br><span class="line">  	<span class="attr">labels:</span>         </span><br><span class="line">  	 <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">spec:</span>             <span class="comment"># Pod资源的期望值</span></span><br><span class="line">   <span class="attr">containers:</span>      <span class="comment"># 容器配置</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">busybox</span> </span><br></pre></td></tr></table></figure>
-<h3 id="kubernetes-的-api"><strong>Kubernetes</strong> 的 <strong>API</strong></h3>
-<p><img data-src="image-20220506105442472.png" /></p>
-<p>当我们去提交一个Pod，或者get一个Pod的时候，它的content内容都是用JSON或者是YAML表达的。上图中有个yaml的例子，在这个yamlfile中，对Pod资源的描述也分为几个部分。</p>
-<p>第一个部分，一般来讲会是API的<strong>version</strong>。比如在这个例子中是V1，它也会描述我在操作哪个资源；比如说我的<strong>kind</strong>如果是pod，在Metadata中，就写上这个Pod的名字；比如说nginx，我们也会给它打一些<strong>label</strong>，我们等下会讲到label的概念。在Metadata中，有时候也会去写<strong>annotation</strong>，也就是对资源的额外的一些用户层次的描述。比较重要的一个部分叫做<strong>Spec</strong>，<strong>Spec也就是我们希望Pod达到的一个预期的状态</strong>。比如说它内部需要有哪些container被运行；比如说这里面有一个nginx的container，它的image是什么？它暴露的port是什么？当我们从KubernetesAPI中去获取这个资源的时候，一般来讲在Spec下面会有一个项目叫<strong>status</strong>，它表达了这个资源当前的状态；比如说一个Pod的状态可能是正在被调度、或者是已经running、或者是已经被terminates，就是被执行完毕了。刚刚在API之中，我们讲了一个比较有意思的metadata叫做“<strong>label</strong>”，这个label可以是一组<strong>键值对</strong>。比如下图的第一个pod中，label就可能是一个color等于red，即它的颜色是红颜色。当然你也可以加其他label，比如说size:big就是大小，定义为大的，它可以是一组label。这些label是可以被selector，也就是选择器所查询的。这个能力实际上跟我们的sql类型的select语句是非常相似的，比如下图中的三个Pod资源中，我们就可以进行select。namecolor等于red，就是它的颜色是红色的，我们也可以看到，只有两个被选中了，因为只有他们的label是红色的，另外一个label中写的color等于yellow，也就是它的颜色是黄色，是不会被选中的。</p>
-<p><img data-src="image-20220506110134831.png" /></p>
-<p>通过label，kubernetes的API层就可以对这些资源进行一个筛选，那这些筛选也是kubernetes对资源的集合所表达默认的一种方式。</p>
-<h3 id="使用yaml创建资源对象deployment">使用yaml创建资源对象Deployment</h3>
-<p>资源清单可以通过以下命令导出，会有很多冗余信息</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get 资源类型 -n 命名空间 -o yaml</span><br></pre></td></tr></table></figure>
-<p>省略<code>-n</code>参数将<strong>导出默认命名空间<code>default</code></strong>的资源信息</p>
-<blockquote>
-<p>以上名字在查看<strong>配置文件其他字段含义</strong>时十分有用！</p>
-</blockquote>
-<p>使用以下命令可查看所有pod的命名空间</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods -o wide --all-namespaces</span><br></pre></td></tr></table></figure>
-<p>apiVersion字段可以通过以下命令查询</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl api-resources |grep 资源类型</span><br></pre></td></tr></table></figure>
-<h4 id="资源对象文件">资源对象文件</h4>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span>		<span class="comment"># API版本【必需字段】</span></span><br><span class="line"><span class="attr">Kind:</span> <span class="string">Deployment</span>        <span class="comment"># 资源对象【必需字段】</span></span><br><span class="line"><span class="attr">metedata:</span>               <span class="comment"># 资源元数据【必须字段】</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web</span>             <span class="comment"># 资源名称</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span>    <span class="comment"># 资源所在的命名空间</span></span><br><span class="line"><span class="attr">spec:</span>                   <span class="comment"># deployment的期望状态</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span>           <span class="comment"># 副本实例数量</span></span><br><span class="line">  <span class="attr">selector:</span>  		    <span class="comment"># 标签选择器，与下文中的metadata.labels保持一致</span></span><br><span class="line">    <span class="attr">matchLabels:</span>                </span><br><span class="line">      <span class="attr">app:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">template:</span>   			<span class="comment"># Pod模板</span></span><br><span class="line">    <span class="attr">metedata:</span> 			<span class="comment"># Pod元数据</span></span><br><span class="line">      <span class="attr">labels:</span> 			<span class="comment"># 定义标签</span></span><br><span class="line">      <span class="comment"># 标签一般根据项目属性去写</span></span><br><span class="line">      <span class="comment"># 例如 project: ms</span></span><br><span class="line">      	<span class="attr">app:</span> <span class="string">web</span> <span class="comment"># 标签</span></span><br><span class="line">    <span class="attr">spec:</span>    <span class="comment"># Pod规格</span></span><br><span class="line">      <span class="attr">containers:</span>  		<span class="comment"># 容器配置</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span>  		<span class="comment"># 容器名</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">busybox</span>  <span class="comment"># 镜像名</span></span><br><span class="line">        <span class="comment">#command: [&quot;sh&quot;]     # 容器执行命令</span></span><br><span class="line">        <span class="comment">#args: [&quot;-c&quot;, &quot;while true ; do continue ; done&quot;] # 命令执行的参数</span></span><br></pre></td></tr></table></figure>
-<p>以上资源清单等同于</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create deployment web --image=busybox --replicas=3 -n default</span><br></pre></td></tr></table></figure>
-<h3 id="使用yaml创建资源对象service">使用yaml创建资源对象Service</h3>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span>              <span class="comment"># api版本【必需字段】</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span>               <span class="comment"># 资源类型【必需字段】</span></span><br><span class="line"><span class="attr">metedata:</span>                   <span class="comment"># 资源元数据【必需字段】</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span>        <span class="comment"># 资源所在namespace</span></span><br><span class="line"><span class="attr">spec:</span>                       <span class="comment"># 期望的资源配置</span></span><br><span class="line">  <span class="attr">ports:</span> <span class="number">80</span>                 <span class="comment"># Service端口，通过Cluster IP访问时使用的端口</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span>             <span class="comment"># 通信协议</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8080</span>          <span class="comment"># 容器内部的通信端口</span></span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">app:</span> <span class="string">web</span>                  <span class="comment"># 标签</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>            <span class="comment"># Service暴露类型，NodePort允许集群外部访问</span></span><br></pre></td></tr></table></figure>
-<p>以上资源清单等同于：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl expose sevice web --port=80 --target-port=8080 --<span class="built_in">type</span>=NodePort -n default</span><br></pre></td></tr></table></figure>
-<p>可以将以上两个资源清单合并成一个yaml文件，两个文件中间需要有<code>---</code>分割线，否则<strong>kubectl只识别最后一个yaml的内容</strong>。</p>
-<h3 id="快速编写k8s资源清单">快速编写K8s资源清单</h3>
-<h4 id="用create命令生成deployment的yaml">用create命令生成deployment的yaml</h4>
-<blockquote>
-<p>导出的yaml文件有很多冗余字段，不需要可以删除</p>
-<p>如：creationTimestamp和status可以删除</p>
-</blockquote>
-<p>使用<code>--dry-run</code>可以检查是否有错误</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create deployment nginx --image=nginx -o yaml --dry-run=client &gt; deployment.yaml</span><br></pre></td></tr></table></figure>
-<h4 id="用expose命令生成service的yaml">用expose命令生成service的yaml</h4>
-<blockquote>
-<p>导出的yaml文件有很多冗余字段，不需要可以删除</p>
-<p>如：creationTimestamp和status可以删除</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl expose servcie nginx --port=80 --target-port=8080 --<span class="built_in">type</span>=NodePort -o yaml --dry-run=client &gt; service.yaml</span><br></pre></td></tr></table></figure>
-<h4 id="用get命令导出yaml">用get命令导出yaml</h4>
-<blockquote>
-<p>这种方式导出的yaml存在很多冗余</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get deployment nginx -o yaml &gt; deployment.yml</span><br></pre></td></tr></table></figure>
-<h3 id="怎么查询资源清单文件的指定字段">怎么查询资源清单文件的指定字段</h3>
-<p>以下命令能查到pod.spec.containers下的所有字段</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl explain pods.spec.containers</span><br></pre></td></tr></table></figure>
-<h3 id="如何查询资源所有字段">如何查询资源所有字段</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl explain deployment</span><br></pre></td></tr></table></figure>
-<h3 id="模糊查询资源类型">模糊查询资源类型</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl api-resources | grep 资源类型的模糊字母</span><br></pre></td></tr></table></figure>
-<h3 id="检查yaml语法是否有误">检查yaml语法是否有误</h3>
-<p>可以使用<strong>kube-linter</strong>来检查yaml语法是否有误</p>
-<blockquote>
-<p>https://github.com/stackrox/kube-linter</p>
-</blockquote>
-<h4 id="执行检测">执行检测</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kube-linter lint pod.yaml</span><br></pre></td></tr></table></figure>
-<h3 id="参考">参考</h3>
-<ul>
-<li>https://blog.csdn.net/omaidb/article/details/121855353</li>
-</ul>
 ]]></content>
       <tags>
         <tag>k8s</tag>
@@ -9516,6 +9516,34 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>机器学习基本概念02</title>
+    <url>/p/Basic-Concepts-of-Machine-Learning-02/</url>
+    <content><![CDATA[<p>机器学习中的假设空间。</p>
+<a id="more"></a>
+<h4 id="假设空间">假设空间</h4>
+<p>​ <strong>归纳(induction)和演绎(deduction)</strong>是科学推理的两大基本手段。归纳是从特殊到一般的"泛化"(generalization)过程。即从具体的事实归结出一般性规律；演绎则是从一般到特殊的"特化"(specialization)过程，即从基础原理推演出具体状况。例如，在数学公理系统中，基于一组公理和推理规则推导出与之相恰的定理，这是演绎；而"从样例中学习"显然是一个归纳的过程，因此亦称为<strong>"归纳学习"(inductive learning)</strong></p>
+<p>​ 归纳学习有狭义和广义之分，广义的归纳学习大体相当于从样例中学习，而狭义的归纳学习则要求从训练数据中学得概念(concept),因此亦称为<strong>"概念学习"或"概念形成"</strong>.概念学习技术目前应用、研究都比较少，因为要学得泛化性能好而且语义明确的概念实在是太难了，现实常用的技术大多数产生"黑箱"模型.然而，对概念学习有所理解，有助于理解机器学习的一些基础思想。</p>
+<p>​ 概念学习中最基本的是<strong>布尔概念学习</strong>，即对"是""不是"这样的可表示为0/1布尔值的目标概念的学习.举一个简单的例子，假定我们获得了这样的一个训练数据集：</p>
+<p><img data-src="image-20200806202414852.png" style="zoom:50%;" /></p>
+<p>​ 这里要学习的目标是"好瓜"，暂且假设"好瓜"可由"色泽""根蒂""敲声”这三个因素完全确定，换言之，只要某个瓜的三个属性取值明确了，我们就能判断出它是不是好瓜，于是，我们学到的将是"好瓜是某种色泽、某种根蒂、某种敲声的瓜"这样的概念，用布尔表达式写出来则是<strong>"好瓜$ $(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>，这里"?"表示尚未确定的取值，而我们的任务就是通过对上表的训练集进行学习，把"?"确定下来.</p>
+<p>​ 读者可能马上发现，上表第一行：<strong>"(色泽=青绿)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>不就是好瓜吗？是的，但这是一个已见过的瓜，不要忘记学习的目的是<strong>"泛化"</strong>，即通过对训练集中的瓜的学习以获得对没见过瓜进行判断的能力.如果仅仅把训练集中的瓜"记住"，今后再见到一模一样的瓜当然可以判断，但是，对没见过的瓜，例如<strong>"(色泽=浅白)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>怎么办呢？</p>
+<p>​ 我们可以把学习过程看作一个在<strong>所有假设组成的空间</strong>中进行搜索的过程，搜索目标是找到与训练集<strong>"匹配(fit)"</strong>的假设，即能够将训练集中的瓜判断正确的假设.假设的表示一旦确定，假设空间及其规模大小就确定了.这里我们的假设空间由形如<strong>"(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>的可能取值所形成的假设组成.例如色泽有"青绿""乌黑""浅白"这三种可能取值；还需考虑到，也许色泽无论取什么值都合适，我们用通配符"*"来表示，例如**"好瓜$ <span class="math inline">\((色泽=\*)^(根蒂=蜷缩)^(敲声=浊响)&quot;**，即&quot;好瓜是根蒂蜷缩、敲声浊响的瓜，什么色泽都行&quot;.此外，还需要考虑极端情况，有可能&quot;好瓜&quot;这个概念根本不成立，世界上没有&quot;好瓜&quot;这种东西，我们用\)</span> $表示这个假设。这样，若"色泽""根蒂""敲声"分别有3、2、2种可能取值，则我们面临的假设空间规模大小为<span class="math inline">\(4 \times 3 \times 3+1=37\)</span>.下图直观地显示了这个西瓜空间假设问题。</p>
+<blockquote>
+<p>这里我们假定训练样本不含噪声，而且不考虑"非青绿"这样的<span class="math inline">\(\not\subset A\)</span>操作，由于训练集包含正例，因此$ $假设自然不出现。</p>
+</blockquote>
+<p><img data-src="image-20200806202019247.png" /></p>
+<p>​ 可以有许多策略对这个假设空间进行搜索，例如自顶向下、从一般到特殊，或是自底向上、从特殊到一般，搜索过程种可以不断删除与正例不一致的假设和(或)与反例一致的假设.最终将会获得<strong>与训练集一致(即对所有训练样本能够进行正确判断)</strong>的假设，这就是我们学习的结果。</p>
+<blockquote>
+<p>有很多可能的选择，如在路径上自顶向下与自底向上同时进行，在操作上只删除与正例不一致的假设等。</p>
+</blockquote>
+<p>​ 需注意的是，现实问题种我们常面临很大的假设空间，但学习过程是基于有限样本训练集进行的，因此，可能有多个假设与训练集一致，即存在一个<strong>与训练集一致的"假设集合"</strong>，我们称之为<strong>"版本空间"(version space).</strong>例如，在西瓜问题中，与表1.1训练集所对应的版本空间如图1.2所示.</p>
+<p><img data-src="image-20200806203152041.png"/></p>
+]]></content>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>机器学习基本概念01</title>
     <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
     <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
@@ -9549,34 +9577,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <blockquote>
 <p>通常假设样本空间中全体样本服从一个未知<strong>"分布"(distribution)</strong><span class="math inline">\(\small D\)</span>，我们获得的每个样本都是<strong>"独立同分布"(independent and identically distributed，简称<span class="math inline">\(i.i.d\)</span>)</strong>。一般而言，训练样本越多，我们得到得关于<span class="math inline">\(D\)</span>的信息越多，这样就越有可能通过学习获得具有强泛化能力的模型。</p>
 </blockquote>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念02</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-02/</url>
-    <content><![CDATA[<p>机器学习中的假设空间。</p>
-<a id="more"></a>
-<h4 id="假设空间">假设空间</h4>
-<p>​ <strong>归纳(induction)和演绎(deduction)</strong>是科学推理的两大基本手段。归纳是从特殊到一般的"泛化"(generalization)过程。即从具体的事实归结出一般性规律；演绎则是从一般到特殊的"特化"(specialization)过程，即从基础原理推演出具体状况。例如，在数学公理系统中，基于一组公理和推理规则推导出与之相恰的定理，这是演绎；而"从样例中学习"显然是一个归纳的过程，因此亦称为<strong>"归纳学习"(inductive learning)</strong></p>
-<p>​ 归纳学习有狭义和广义之分，广义的归纳学习大体相当于从样例中学习，而狭义的归纳学习则要求从训练数据中学得概念(concept),因此亦称为<strong>"概念学习"或"概念形成"</strong>.概念学习技术目前应用、研究都比较少，因为要学得泛化性能好而且语义明确的概念实在是太难了，现实常用的技术大多数产生"黑箱"模型.然而，对概念学习有所理解，有助于理解机器学习的一些基础思想。</p>
-<p>​ 概念学习中最基本的是<strong>布尔概念学习</strong>，即对"是""不是"这样的可表示为0/1布尔值的目标概念的学习.举一个简单的例子，假定我们获得了这样的一个训练数据集：</p>
-<p><img data-src="image-20200806202414852.png" style="zoom:50%;" /></p>
-<p>​ 这里要学习的目标是"好瓜"，暂且假设"好瓜"可由"色泽""根蒂""敲声”这三个因素完全确定，换言之，只要某个瓜的三个属性取值明确了，我们就能判断出它是不是好瓜，于是，我们学到的将是"好瓜是某种色泽、某种根蒂、某种敲声的瓜"这样的概念，用布尔表达式写出来则是<strong>"好瓜$ $(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>，这里"?"表示尚未确定的取值，而我们的任务就是通过对上表的训练集进行学习，把"?"确定下来.</p>
-<p>​ 读者可能马上发现，上表第一行：<strong>"(色泽=青绿)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>不就是好瓜吗？是的，但这是一个已见过的瓜，不要忘记学习的目的是<strong>"泛化"</strong>，即通过对训练集中的瓜的学习以获得对没见过瓜进行判断的能力.如果仅仅把训练集中的瓜"记住"，今后再见到一模一样的瓜当然可以判断，但是，对没见过的瓜，例如<strong>"(色泽=浅白)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>怎么办呢？</p>
-<p>​ 我们可以把学习过程看作一个在<strong>所有假设组成的空间</strong>中进行搜索的过程，搜索目标是找到与训练集<strong>"匹配(fit)"</strong>的假设，即能够将训练集中的瓜判断正确的假设.假设的表示一旦确定，假设空间及其规模大小就确定了.这里我们的假设空间由形如<strong>"(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>的可能取值所形成的假设组成.例如色泽有"青绿""乌黑""浅白"这三种可能取值；还需考虑到，也许色泽无论取什么值都合适，我们用通配符"*"来表示，例如**"好瓜$ <span class="math inline">\((色泽=\*)^(根蒂=蜷缩)^(敲声=浊响)&quot;**，即&quot;好瓜是根蒂蜷缩、敲声浊响的瓜，什么色泽都行&quot;.此外，还需要考虑极端情况，有可能&quot;好瓜&quot;这个概念根本不成立，世界上没有&quot;好瓜&quot;这种东西，我们用\)</span> $表示这个假设。这样，若"色泽""根蒂""敲声"分别有3、2、2种可能取值，则我们面临的假设空间规模大小为<span class="math inline">\(4 \times 3 \times 3+1=37\)</span>.下图直观地显示了这个西瓜空间假设问题。</p>
-<blockquote>
-<p>这里我们假定训练样本不含噪声，而且不考虑"非青绿"这样的<span class="math inline">\(\not\subset A\)</span>操作，由于训练集包含正例，因此$ $假设自然不出现。</p>
-</blockquote>
-<p><img data-src="image-20200806202019247.png" /></p>
-<p>​ 可以有许多策略对这个假设空间进行搜索，例如自顶向下、从一般到特殊，或是自底向上、从特殊到一般，搜索过程种可以不断删除与正例不一致的假设和(或)与反例一致的假设.最终将会获得<strong>与训练集一致(即对所有训练样本能够进行正确判断)</strong>的假设，这就是我们学习的结果。</p>
-<blockquote>
-<p>有很多可能的选择，如在路径上自顶向下与自底向上同时进行，在操作上只删除与正例不一致的假设等。</p>
-</blockquote>
-<p>​ 需注意的是，现实问题种我们常面临很大的假设空间，但学习过程是基于有限样本训练集进行的，因此，可能有多个假设与训练集一致，即存在一个<strong>与训练集一致的"假设集合"</strong>，我们称之为<strong>"版本空间"(version space).</strong>例如，在西瓜问题中，与表1.1训练集所对应的版本空间如图1.2所示.</p>
-<p><img data-src="image-20200806203152041.png"/></p>
 ]]></content>
       <tags>
         <tag>机器学习</tag>
