@@ -2,30 +2,28 @@
 <html lang="zh-CN">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.2.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
-  <meta name="google-site-verification" content="8asjqKj8nljgUycZFS4L-H9Ivw5U1DHaXAOrHxxnRUg">
 
 <link rel="stylesheet" href="/css/main.css">
 
 
 
-<link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/animate.min.css">
-  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
-  <script src="/js/pace.min.js"></script>
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
 
-<script class="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
-  </script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-  <meta name="description" content="写日志收集项目的时候遇到了一个关于reflect的问题，于是有了这一篇文章。 本文主要介绍go语言中reflect的基本用法，以及在使用反射特性时遇到的一些坑。 关键词：反射">
+    <meta name="description" content="写日志收集项目的时候遇到了一个关于reflect的问题，于是有了这一篇文章。 本文主要介绍go语言中reflect的基本用法，以及在使用反射特性时遇到的一些坑。 关键词：反射">
 <meta property="og:type" content="article">
 <meta property="og:title" content="go语言设计与实现之反射">
 <meta property="og:url" content="https://fly97.cn/p/Reflections-in-go-language-base/index.html">
@@ -48,59 +46,20 @@
 <link rel="canonical" href="https://fly97.cn/p/Reflections-in-go-language-base/">
 
 
-<script class="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>go语言设计与实现之反射 | 个人随想</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/Reflections-in-go-language-base/","path":"p/Reflections-in-go-language-base/","title":"go语言设计与实现之反射"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>go语言设计与实现之反射 | 个人随想</title>
   
 
 
 
 
 
-
   <noscript>
-  <style>
-  body { margin-top: 2rem; }
-
-  .use-motion .menu-item,
-  .use-motion .sidebar,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header {
-    visibility: visible;
-  }
-
-  .use-motion .header,
-  .use-motion .site-brand-container .toggle,
-  .use-motion .footer { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle,
-  .use-motion .custom-logo-image {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line {
-    transform: scaleX(1);
-  }
-
-  .search-pop-overlay, .sidebar-nav { display: none; }
-  .sidebar-panel { display: block; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
 <link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
@@ -111,7 +70,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
+    <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
         <span class="toggle-line"></span>
         <span class="toggle-line"></span>
@@ -122,7 +81,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">个人随想</h1>
+      <p class="site-title">个人随想</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
@@ -138,27 +97,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-sitemap">
-
-    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
-
-  </li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -169,8 +108,7 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
@@ -179,7 +117,7 @@
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
@@ -195,7 +133,7 @@
 </div>
         
   
-  <div class="toggle sidebar-toggle">
+  <div class="toggle sidebar-toggle" role="button">
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
@@ -213,35 +151,34 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BC%95%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">问题引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">反射是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reflect%E5%8C%85"><span class="nav-number">2.1.</span> <span class="nav-text">reflect包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.type"><span class="nav-number">2.1.1.</span> <span class="nav-text">reflect.Type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.value"><span class="nav-number">2.1.2.</span> <span class="nav-text">reflect.Value</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%A4%A7%E6%B3%95%E5%88%99"><span class="nav-number">2.2.</span> <span class="nav-text">三大法则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%B3%95%E5%88%99"><span class="nav-number">2.2.1.</span> <span class="nav-text">第一法则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%B3%95%E5%88%99"><span class="nav-number">2.2.2.</span> <span class="nav-text">第二法则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%B3%95%E5%88%99"><span class="nav-number">2.2.3.</span> <span class="nav-text">第三法则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC"><span class="nav-number">2.3.</span> <span class="nav-text">类型和值</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.typeof%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.1.</span> <span class="nav-text">reflect.TypeOf实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.valueof%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.2.</span> <span class="nav-text">reflect.ValueOf实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E8%B0%83%E7%94%A8"><span class="nav-number">2.3.3.</span> <span class="nav-text">编译调用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%8F%98%E9%87%8F"><span class="nav-number">2.4.</span> <span class="nav-text">更新变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.5.</span> <span class="nav-text">实现协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="nav-number">2.6.</span> <span class="nav-text">方法调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%A3%80%E6%9F%A5"><span class="nav-number">2.6.1.</span> <span class="nav-text">参数检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%8F%82%E6%95%B0"><span class="nav-number">2.6.2.</span> <span class="nav-text">准备参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">2.6.3.</span> <span class="nav-text">调用函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">2.6.4.</span> <span class="nav-text">处理返回值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%B8%A3%E8%B0%A2"><span class="nav-number">4.</span> <span class="nav-text">鸣谢</span></a></li></ol></div>
-      </section>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BC%95%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">问题引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">反射是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reflect%E5%8C%85"><span class="nav-number">2.1.</span> <span class="nav-text">reflect包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.type"><span class="nav-number">2.1.1.</span> <span class="nav-text">reflect.Type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.value"><span class="nav-number">2.1.2.</span> <span class="nav-text">reflect.Value</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%A4%A7%E6%B3%95%E5%88%99"><span class="nav-number">2.2.</span> <span class="nav-text">三大法则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%B3%95%E5%88%99"><span class="nav-number">2.2.1.</span> <span class="nav-text">第一法则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%B3%95%E5%88%99"><span class="nav-number">2.2.2.</span> <span class="nav-text">第二法则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%B3%95%E5%88%99"><span class="nav-number">2.2.3.</span> <span class="nav-text">第三法则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC"><span class="nav-number">2.3.</span> <span class="nav-text">类型和值</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.typeof%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.1.</span> <span class="nav-text">reflect.TypeOf实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reflect.valueof%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.2.</span> <span class="nav-text">reflect.ValueOf实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E8%B0%83%E7%94%A8"><span class="nav-number">2.3.3.</span> <span class="nav-text">编译调用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%8F%98%E9%87%8F"><span class="nav-number">2.4.</span> <span class="nav-text">更新变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.5.</span> <span class="nav-text">实现协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="nav-number">2.6.</span> <span class="nav-text">方法调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%A3%80%E6%9F%A5"><span class="nav-number">2.6.1.</span> <span class="nav-text">参数检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%8F%82%E6%95%B0"><span class="nav-number">2.6.2.</span> <span class="nav-text">准备参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">2.6.3.</span> <span class="nav-text">调用函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">2.6.4.</span> <span class="nav-text">处理返回值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%B8%A3%E8%B0%A2"><span class="nav-number">4.</span> <span class="nav-text">鸣谢</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">fly97</p>
   <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
 </div>
-<div class="site-state-wrap animated">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">153</span>
+        <a href="/archives/">
+          <span class="site-state-item-count">145</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">92</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">64</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
-  <div class="links-of-author animated">
+  <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
@@ -251,7 +188,7 @@
   </div>
 
 
-  <div class="links-of-blogroll animated">
+  <div class="links-of-blogroll site-overview-item animated">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
       Links
     </div>
@@ -265,7 +202,8 @@
     </ul>
   </div>
 
-      </section>
+        </div>
+      </div>
     </div>
   </aside>
   <div class="sidebar-dimmer"></div>
@@ -274,7 +212,7 @@
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
@@ -287,28 +225,32 @@
 
 
     <div class="main-inner post posts-expand">
-      
 
-      
 
-    
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/Reflections-in-go-language-base/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="fly97">
-      <meta itemprop="description" content="加油吧，为了你期待的生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
     </span>
 
-    
-    
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="go语言设计与实现之反射 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           go语言设计与实现之反射
@@ -338,7 +280,7 @@
         <p>写日志收集项目的时候遇到了一个关于<code>reflect</code>的问题，于是有了这一篇文章。</p>
 <p><strong>本文主要介绍go语言中reflect的基本用法，以及在使用反射特性时遇到的一些坑。</strong></p>
 <p><strong>关键词：反射</strong></p>
-<a id="more"></a>
+<span id="more"></span>
 <h2 id="问题引入">问题引入</h2>
 <p>使用<a target="_blank" rel="noopener" href="https://ini.unknwon.io/">go-ini</a>时遇到了一个问题：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cfg *conf.AppConf</span><br><span class="line">err := ini.MapTo(cfg, <span class="string">&quot;./conf/config.ini&quot;</span>)</span><br></pre></td></tr></table></figure>
@@ -368,10 +310,10 @@
 <p><img data-src="golang-reflection.png" /></p>
 <h4 id="reflect.type">reflect.Type</h4>
 <p>类型<code>reflect.Type</code>是反射包定义的一个<strong>接口</strong>，可以使用<code>reflect.TypeOf</code>函数获取任意变量的类型， <code>reflect.Type</code>接口中定义了一些有趣的方法：<code>MethodByName</code>可以获取当前类型对应方法的引用、<code>Implements</code>可以判断当前类型是否实现了某个接口：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Type <span class="keyword">interface</span> &#123;</span><br><span class="line">        Align() <span class="keyword">int</span></span><br><span class="line">        FieldAlign() <span class="keyword">int</span></span><br><span class="line">        Method(<span class="keyword">int</span>) Method</span><br><span class="line">        MethodByName(<span class="keyword">string</span>) (Method, <span class="keyword">bool</span>)</span><br><span class="line">        NumMethod() <span class="keyword">int</span></span><br><span class="line">        ...</span><br><span class="line">        Implements(u Type) <span class="keyword">bool</span></span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Type <span class="keyword">interface</span> &#123;</span><br><span class="line">        Align() <span class="type">int</span></span><br><span class="line">        FieldAlign() <span class="type">int</span></span><br><span class="line">        Method(<span class="type">int</span>) Method</span><br><span class="line">        MethodByName(<span class="type">string</span>) (Method, <span class="type">bool</span>)</span><br><span class="line">        NumMethod() <span class="type">int</span></span><br><span class="line">        ...</span><br><span class="line">        Implements(u Type) <span class="type">bool</span></span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="reflect.value">reflect.Value</h4>
 <p>反射包中<code>reflect.Value</code>的类型与<code>reflect.Type</code>不同，他被声明成了<strong>结构体</strong>。这个结构体没有对外暴露的字段，但是提供了获取或者写入数据的方法。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Value <span class="keyword">struct</span>&#123;</span><br><span class="line">    <span class="comment">// 包含过滤的或者未导出的字段</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span> <span class="title">Addr</span><span class="params">()</span> <span class="title">Value</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span> <span class="title">Bool</span><span class="params">()</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span> <span class="title">Bytes</span><span class="params">()</span> []<span class="title">byte</span></span></span><br><span class="line">... </span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Value <span class="keyword">struct</span>&#123;</span><br><span class="line">    <span class="comment">// 包含过滤的或者未导出的字段</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> Addr() Value</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> Bool() <span class="type">bool</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> Bytes() []<span class="type">byte</span></span><br><span class="line">... </span><br></pre></td></tr></table></figure>
 <p>反射包中所有方法都是围绕<code>reflect.Type</code>和<code>reflect.Value</code>两个类型设计的。</p>
 <p>通过<code>reflect.TypeOf</code>、<code>reflect.ValueOf</code>可以将一个普通变量转换成<code>reflect.Type</code>和<code>reflect.Value</code>，随后就可以使用反射包中的方法对他们进行复杂的操作。</p>
 <h3 id="三大法则">三大法则</h3>
@@ -388,7 +330,7 @@
 <p><img data-src="golang-interface-to-reflection.png" /></p>
 <p>通过以下例子介绍他们的作用，<code>reflect.TypeOf</code>获取了变量author的类型，<code>reflect.ValueOf</code>获取了变量的值draven。如果我们知道了一个变量的<strong>值和类型</strong>，那么就意味着我们知道了这个变量的<strong>全部信息</strong>。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    author := <span class="string">&quot;draven&quot;</span></span><br><span class="line">    fmt.Println(<span class="string">&quot;TypeOf author:&quot;</span>, reflect.TypeOf(author))</span><br><span class="line">    fmt.Println(<span class="string">&quot;ValueOf author:&quot;</span>, reflect.ValueOf(author))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run main.go</span><br><span class="line">TypeOf author: string</span><br><span class="line">ValueOf author: draven</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run main.go</span><br><span class="line">TypeOf author: string</span><br><span class="line">ValueOf author: draven</span><br></pre></td></tr></table></figure>
 <p>拿到变量的类型以后，可以通过Method方法获得类型实现的方法，通过Field获取类型包含的全部字段，对于不同的类型， 可以通过调用不同的方法来获取相关信息：</p>
 <ul>
 <li>结构体：获取字段的数量并通过下标和字段名获取字段名StructField；</li>
@@ -402,7 +344,7 @@
 <p>反射的第二法则是可以从反射对象获取<code>interface&#123;&#125;</code>变量，reflect中的<code>reflect.Value.Interface()</code>可以将反射对象还原成接口类型的变量：</p>
 <p><img data-src="golang-reflection-to-interface.png" /></p>
 <p>调用<code>reflect.Value.Interface</code>方法只能获得<code>interface&#123;&#125;</code>类型的变量，如果还想将其还原成最原始的状态还需要对其进行显式类型转换：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v := reflect.ValueOf(<span class="number">1</span>)</span><br><span class="line">v.Interface().(<span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v := reflect.ValueOf(<span class="number">1</span>)</span><br><span class="line">v.Interface().(<span class="type">int</span>)</span><br></pre></td></tr></table></figure>
 <p>从反射对象到接口值的过程是从接口值到反射对象的镜面过程，两个过程都需要经历两次转换：</p>
 <ul>
 <li>从接口值到反射对象：
@@ -439,13 +381,13 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> emptyInterface <span class="keyword">struct</span> &#123;</span><br><span class="line">	typ  *rtype</span><br><span class="line">	word unsafe.Pointer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="reflect.typeof实现">reflect.TypeOf实现</h4>
 <p>用于获取变量类型的<code>reflect.TypeOf</code>函数将传入的变量隐式转换成<code>reflect.emptyInterface</code>类型并<strong>返回</strong>其中存储的类型信息<code>reflect.rtype</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TypeOf</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">Type</span></span> &#123;</span><br><span class="line">    eface := *(*emptyInterface)(unsafe.Pointer(&amp;i))</span><br><span class="line">    <span class="keyword">return</span> toType(eface.typ)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">toType</span><span class="params">(t *rtype)</span> <span class="title">Type</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TypeOf</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span></span> Type &#123;</span><br><span class="line">    eface := *(*emptyInterface)(unsafe.Pointer(&amp;i))</span><br><span class="line">    <span class="keyword">return</span> toType(eface.typ)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">toType</span><span class="params">(t *rtype)</span></span> Type&#123;</span><br><span class="line">    <span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>reflect.rtype</code>是一个实现了<code>reflect.Type</code>接口的结构体，该结构体实现的<code>reflect.rtype.String</code>方法可以帮助我们获取当前类型的名称：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *rtype)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">    s := t.nameOff(t.str).name()</span><br><span class="line">    <span class="keyword">if</span> t.tflag&amp;tflagExtraStar != <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> s[<span class="number">1</span>:]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *rtype)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">    s := t.nameOff(t.str).name()</span><br><span class="line">    <span class="keyword">if</span> t.tflag&amp;tflagExtraStar != <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> s[<span class="number">1</span>:]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>reflect.TypeOf的实现原理并不复杂，它只是将一个<code>interface&#123;&#125;</code>变量转换成了内部的<code>reflect.emptyInterface</code> 表示，然后从中获取相应的类型信息。</p>
 <h4 id="reflect.valueof实现">reflect.ValueOf实现</h4>
 <p>用于接口值的<code>reflect.Value</code>的函数实现<code>reflect.ValuesOf</code>实现也非常简单，在该函数中先调用<code>reflect.escapes</code>保证当前值逃逸到堆上，然后通过<code>reflect.unpackEface</code>从接口中获取<code>reflect.Value</code>结构体：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ValueOf</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">Value</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> i == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Value&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    escapes(i)</span><br><span class="line">    <span class="keyword">return</span> unpackEface(is)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">unpackEface</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">Value</span></span> &#123;</span><br><span class="line">    e := *(emptyInterface)(unsafe.Pointer(&amp;i))</span><br><span class="line">    t := e.typ</span><br><span class="line">    <span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Value&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    f := flag(t.Kind())</span><br><span class="line">    <span class="keyword">if</span> ifaceIndir(t) &#123;</span><br><span class="line">        f |= flagIndir</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Value&#123;t, e.Word, f&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ValueOf</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span></span> Value &#123;</span><br><span class="line">    <span class="keyword">if</span> i == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Value&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    escapes(i)</span><br><span class="line">    <span class="keyword">return</span> unpackEface(is)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">unpackEface</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span></span> Value &#123;</span><br><span class="line">    e := *(emptyInterface)(unsafe.Pointer(&amp;i))</span><br><span class="line">    t := e.typ</span><br><span class="line">    <span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Value&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    f := flag(t.Kind())</span><br><span class="line">    <span class="keyword">if</span> ifaceIndir(t) &#123;</span><br><span class="line">        f |= flagIndir</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Value&#123;t, e.Word, f&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>reflect.unpackEface</code>会将传入的接口转换成<code>reflect.emptyInterface</code>，然后将具体类型和指针包装成<code>reflect.Value</code>结构体后返回。</p>
 <h4 id="编译调用">编译调用</h4>
 <p><code>reflect.TypeOf</code>和<code>reflect.ValueOf</code>的实现都很简单，我们已经分析了这两个函数的实现，现在需要了解编译器在调用函数之前做了哪些工作：</p>
@@ -459,9 +401,9 @@
 <li><strong>reflect.flag.mustBeAssignable</strong>：用于检查当前反射对象是否可以被设置</li>
 <li><strong>reflect.flag.mustBeExported</strong>：用于检查字段是否对外公开</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span> <span class="title">Set</span><span class="params">(x Value)</span></span> &#123;</span><br><span class="line">    v.mustBeAssignable()</span><br><span class="line">    v.mustBeExported()</span><br><span class="line">    <span class="keyword">var</span> target unsafe.Pointer</span><br><span class="line">    <span class="keyword">if</span> v.Kind() == Interface&#123;</span><br><span class="line">        target = v.ptr</span><br><span class="line">    &#125;</span><br><span class="line">    x = x.assignTo(<span class="string">&quot;reflect.Set&quot;</span>, v.typ, target)</span><br><span class="line">    typedmemmove(v.typ, v.ptr, x.ptr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> Set(x Value) &#123;</span><br><span class="line">    v.mustBeAssignable()</span><br><span class="line">    v.mustBeExported()</span><br><span class="line">    <span class="keyword">var</span> target unsafe.Pointer</span><br><span class="line">    <span class="keyword">if</span> v.Kind() == Interface&#123;</span><br><span class="line">        target = v.ptr</span><br><span class="line">    &#125;</span><br><span class="line">    x = x.assignTo(<span class="string">&quot;reflect.Set&quot;</span>, v.typ, target)</span><br><span class="line">    typedmemmove(v.typ, v.ptr, x.ptr)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>reflect.Value.Set</code>会调用<code>reflect.Value.assignTo</code>并返回一个新的反射对象，这个反射对象指针会直接覆盖原反射变量。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span> <span class="title">assignTo</span><span class="params">(context <span class="keyword">string</span>, dst *rtype, target unsafe.Pointer)</span> <span class="title">Value</span></span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">switch</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> directlyAssignable(dst, v.typ):</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> Value&#123;dst, v.ptr. f1&#125;</span><br><span class="line">    <span class="keyword">case</span> implements(dst, v.typ):</span><br><span class="line">        <span class="keyword">if</span> v.kind() == Interface &amp;&amp; v.IsNil() &#123;</span><br><span class="line">            <span class="keyword">return</span> Value&#123;dst, <span class="literal">nil</span>, flag(Interface)&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        x := valueInterface(v, <span class="literal">false</span>)</span><br><span class="line">        <span class="keyword">if</span> dst.NumMethod() == <span class="number">0</span> &#123;</span><br><span class="line">            *(*<span class="keyword">interface</span>&#123;&#125;)(target) = x</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            ifaceE2I(dst, x, target)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Value&#123;dst, target, flagIndir | flag(Interface)&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">panic</span>(context+ <span class="string">&quot;:value of type &quot;</span> + v.typ.String() + <span class="string">&quot; is not assignable to type &quot;</span>+ dst.String())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> assignTo(context <span class="type">string</span>, dst *rtype, target unsafe.Pointer) Value &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">switch</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> directlyAssignable(dst, v.typ):</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> Value&#123;dst, v.ptr. f1&#125;</span><br><span class="line">    <span class="keyword">case</span> implements(dst, v.typ):</span><br><span class="line">        <span class="keyword">if</span> v.kind() == Interface &amp;&amp; v.IsNil() &#123;</span><br><span class="line">            <span class="keyword">return</span> Value&#123;dst, <span class="literal">nil</span>, flag(Interface)&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        x := valueInterface(v, <span class="literal">false</span>)</span><br><span class="line">        <span class="keyword">if</span> dst.NumMethod() == <span class="number">0</span> &#123;</span><br><span class="line">            *(*<span class="keyword">interface</span>&#123;&#125;)(target) = x</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            ifaceE2I(dst, x, target)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Value&#123;dst, target, flagIndir | flag(Interface)&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">panic</span>(context+ <span class="string">&quot;:value of type &quot;</span> + v.typ.String() + <span class="string">&quot; is not assignable to type &quot;</span>+ dst.String())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>reflect.Value.assignTo</code> 会根据当前和被设置的反射对象类型创建一个新的<code>reflect.Value</code>结构体：</p>
 <ul>
 <li>如果反射对象的类型是可以被替换的，就会直接返回目标对象；</li>
@@ -473,23 +415,23 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reflect.TypeOf((*&lt;<span class="keyword">interface</span>&gt;)(<span class="literal">nil</span>)).Elem()</span><br></pre></td></tr></table></figure>
 <p>通过一个例子来介绍如何判断一个类型是否实现了某个接口。</p>
 <p>我们通过一个例子来介绍如何判断一个类型是否实现了某个接口。假设我们需要判断如下代码中的<code>CustomError</code>是否实现了Go语言标准库中的<code>error</code>接口：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CustomError <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*CustomError)</span> <span class="title">Error</span><span class="params">()</span> <span class="title">string</span></span> &#123; <span class="comment">// 实现了error接口</span></span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	typeOfError := reflect.TypeOf(((*error)(<span class="literal">nil</span>))).Elem() <span class="comment">// 把nil强制转换成error接口类型</span></span><br><span class="line">	customErrorPtr := reflect.TypeOf(&amp;CustomError&#123;&#125;)</span><br><span class="line">	customError := reflect.TypeOf(CustomError&#123;&#125;)</span><br><span class="line"></span><br><span class="line">	fmt.Println(customErrorPtr.Implements(typeOfError)) <span class="comment">// true</span></span><br><span class="line">	fmt.Println(customError.Implements(typeOfError))  <span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CustomError <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*CustomError)</span></span> Error() <span class="type">string</span> &#123; <span class="comment">// 实现了error接口</span></span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	typeOfError := reflect.TypeOf(((*<span class="type">error</span>)(<span class="literal">nil</span>))).Elem() <span class="comment">// 把nil强制转换成error接口类型</span></span><br><span class="line">	customErrorPtr := reflect.TypeOf(&amp;CustomError&#123;&#125;)</span><br><span class="line">	customError := reflect.TypeOf(CustomError&#123;&#125;)</span><br><span class="line"></span><br><span class="line">	fmt.Println(customErrorPtr.Implements(typeOfError)) <span class="comment">// true</span></span><br><span class="line">	fmt.Println(customError.Implements(typeOfError))  <span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上述代码的运行结果说明了：</p>
 <ul>
 <li><code>CustomError</code>类型<strong>没有实现</strong><code>error</code>接口；</li>
 <li><code>*CustomError</code>类型<strong>实现了</strong><code>error</code>接口；</li>
 </ul>
 <p>分析一下<code>reflect.rtype.Implements</code>方法的工作原理：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *rtype)</span> <span class="title">Implements</span><span class="params">(u Type)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> u == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">&quot;reflect: nil type passed to Type.Implements&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> u.Kind() != Interface &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">&quot;reflect: non-interface type passed to Type.Implements&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> implements(u.(*rtype), t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *rtype)</span></span> Implements(u Type) <span class="type">bool</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> u == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">&quot;reflect: nil type passed to Type.Implements&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> u.Kind() != Interface &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">&quot;reflect: non-interface type passed to Type.Implements&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> implements(u.(*rtype), t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>reflect.rtype.Implements</code>会检查传入的类型是不是接口，如果不是接口或者是空值就会直接<strong>panic</strong>。</p>
 <p>在参数没有问题的情况下，上述方法会调用私有函数<code>reflect.implements</code>判断类型之间<strong>是否有实现关系</strong>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">implements</span><span class="params">(T, V *rtype)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	t := (*interfaceType)(unsafe.Pointer(T))</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(t.methods) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">	v := V.uncommon()</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	vmethods := v.methods()</span><br><span class="line">	<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="keyword">int</span>(v.mcount); j++ &#123;</span><br><span class="line">		tm := &amp;t.methods[i]</span><br><span class="line">		tmName := t.nameOff(tm.name)</span><br><span class="line">		vm := vmethods[j]</span><br><span class="line">		vmName := V.nameOff(vm.name)</span><br><span class="line">		<span class="keyword">if</span> vmName.name() == tmName.name() &amp;&amp; V.typeOff(vm.mtyp) == t.typeOff(tm.typ) &#123;</span><br><span class="line">			<span class="keyword">if</span> i++; i &gt;= <span class="built_in">len</span>(t.methods) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">implements</span><span class="params">(T, V *rtype)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">	t := (*interfaceType)(unsafe.Pointer(T))</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(t.methods) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">	v := V.uncommon()</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	vmethods := v.methods()</span><br><span class="line">	<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="type">int</span>(v.mcount); j++ &#123;</span><br><span class="line">		tm := &amp;t.methods[i]</span><br><span class="line">		tmName := t.nameOff(tm.name)</span><br><span class="line">		vm := vmethods[j]</span><br><span class="line">		vmName := V.nameOff(vm.name)</span><br><span class="line">		<span class="keyword">if</span> vmName.name() == tmName.name() &amp;&amp; V.typeOff(vm.mtyp) == t.typeOff(tm.typ) &#123;</span><br><span class="line">			<span class="keyword">if</span> i++; i &gt;= <span class="built_in">len</span>(t.methods) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果接口中不包含任何方法，就意味着这是一个空的接口，任意类型都自动实现该接口，此时会直接返回<code>true</code>。</p>
 <p><img data-src="golang-type-implements-interface.png" /></p>
 <p>在其他情况下，由于方法都是按照<strong>字母序</strong>存储的，<code>reflect.implements</code>会维护两个用于遍历接口和类型方法的索引<code>i</code>和 <code>j</code>判断类型是否实现了接口，因为最多只会进行<code>n</code>次比较（类型的方法数量），所以整个过程的时间复杂度是O(n)。</p>
 <h3 id="方法调用">方法调用</h3>
 <p>作为一门静态语言，如果想要通过<code>reflect</code>包利用反射在运行期间执行方法不是一件容易的事情，下面的代码使用反射来执行<code>Add(0, 1)</code>函数：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Add</span><span class="params">(a, b <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;<span class="keyword">return</span> a + b&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    v := reflect.ValueOf(Add) <span class="comment">// 1. 获取函数反射对象</span></span><br><span class="line">    <span class="keyword">if</span> v.Kind() != reflect.Func &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    t := v.Type()</span><br><span class="line">    argv := <span class="built_in">make</span>([]reflect.Value, t.NumIn()) <span class="comment">// 2. 获取函数入参个数，并根据数目创建[]reflect.Value切片</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> argv &#123;</span><br><span class="line">        <span class="keyword">if</span> t.In(i).Kind() != reflect.Int &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        argv[i] = reflect.ValueOf(i) <span class="comment">// 3. 设置入参数组的各个参数</span></span><br><span class="line">    &#125;</span><br><span class="line">    result := v.Call(argv) <span class="comment">// 4. 调用方法并传入参数列表</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(result) != <span class="number">1</span> || result[<span class="number">0</span>].Kind() != reflect.Int&#123; <span class="comment">// 5.获取返回值数组，验证数组的长度以及类型；</span></span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(result[<span class="number">0</span>].Int())  <span class="comment">// 1 // 5. 打印返回值数组中的数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Add</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;<span class="keyword">return</span> a + b&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    v := reflect.ValueOf(Add) <span class="comment">// 1. 获取函数反射对象</span></span><br><span class="line">    <span class="keyword">if</span> v.Kind() != reflect.Func &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    t := v.Type()</span><br><span class="line">    argv := <span class="built_in">make</span>([]reflect.Value, t.NumIn()) <span class="comment">// 2. 获取函数入参个数，并根据数目创建[]reflect.Value切片</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> argv &#123;</span><br><span class="line">        <span class="keyword">if</span> t.In(i).Kind() != reflect.Int &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        argv[i] = reflect.ValueOf(i) <span class="comment">// 3. 设置入参数组的各个参数</span></span><br><span class="line">    &#125;</span><br><span class="line">    result := v.Call(argv) <span class="comment">// 4. 调用方法并传入参数列表</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(result) != <span class="number">1</span> || result[<span class="number">0</span>].Kind() != reflect.Int&#123; <span class="comment">// 5.获取返回值数组，验证数组的长度以及类型；</span></span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(result[<span class="number">0</span>].Int())  <span class="comment">// 1 // 5. 打印返回值数组中的数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可以概括为以下几个步骤：</p>
 <ol type="1">
 <li>通过调用<code>reflect.ValueOf</code>获取函数<code>Add</code>对应的反射对象；</li>
@@ -499,7 +441,7 @@
 <li>获取返回值数组、验证数组的长度以及类型并打印其中的数据；</li>
 </ol>
 <p>使用反射来调用方法非常复杂，原本只需要一行代码就能完成的工作，现在需要十几行代码才能完成，但这也是在静态语言中使用动态特性所需要付出的成本。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span> <span class="title">Call</span><span class="params">(in []Value)</span> []<span class="title">Value</span></span> &#123;</span><br><span class="line">    v.mustBe(Func)</span><br><span class="line">    v.mustBeExported()</span><br><span class="line">    <span class="keyword">return</span> v.call(<span class="string">&quot;Call&quot;</span>, in)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> Call(in []Value) []Value &#123;</span><br><span class="line">    v.mustBe(Func)</span><br><span class="line">    v.mustBeExported()</span><br><span class="line">    <span class="keyword">return</span> v.call(<span class="string">&quot;Call&quot;</span>, in)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>reflect.Value.Call是运行时调用方法的入口，它通过两个<strong>mustBe</strong>开头的方法确定了当前反射对象的类型是函数以及可见性，随后调用reflect.Value.call完成方法调用，这个私有方法的执行过程会分成以下的几个部分：</p>
 <ol type="1">
 <li>检查输入参数以及类型的合法性；</li>
@@ -510,11 +452,11 @@
 <p>下面将按照以上的顺序分析<code>reflect</code>进行函数调用的过程。</p>
 <h4 id="参数检查">参数检查</h4>
 <p>参数检查是通过反射调用方法的第一步，在参数检查期间会从反射对象取出当前的函数指针<code>unsafe.Pointer</code>，如果该函数指针是方法，那么会通过<code>reflect.methodReceiver</code>获取方法的接收者和函数指针。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span> <span class="title">call</span><span class="params">(op <span class="keyword">string</span>, in []Value)</span> []<span class="title">Value</span></span> &#123;</span><br><span class="line">	t := (*funcType)(unsafe.Pointer(v.typ)) <span class="comment">// 强制转换成函数指针</span></span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> v.flag&amp;flagMethod != <span class="number">0</span> &#123;  <span class="comment">// 如果该函数指针是方法</span></span><br><span class="line">		rcvr = v</span><br><span class="line">		rcvrtype, t, fn = methodReceiver(op, v, <span class="keyword">int</span>(v.flag)&gt;&gt;flagMethodShift) <span class="comment">// 获取方法指针的接收者和函数指针</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	n := t.NumIn()</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(in) &lt; n &#123; <span class="comment">// 检查入参个数是否匹配</span></span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;reflect: Call with too few input arguments&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(in) &gt; n &#123; <span class="comment">// 检查入参个数是否匹配</span></span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;reflect: Call with too many input arguments&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> xt, targ := in[i].Type(), t.In(i); !xt.AssignableTo(targ) &#123;  <span class="comment">// 检查函数入参类型是否和函数签名匹配</span></span><br><span class="line">			<span class="built_in">panic</span>(<span class="string">&quot;reflect: &quot;</span> + op + <span class="string">&quot; using &quot;</span> + xt.String() + <span class="string">&quot; as type &quot;</span> + targ.String())</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v Value)</span></span> call(op <span class="type">string</span>, in []Value) []Value &#123;</span><br><span class="line">	t := (*funcType)(unsafe.Pointer(v.typ)) <span class="comment">// 强制转换成函数指针</span></span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> v.flag&amp;flagMethod != <span class="number">0</span> &#123;  <span class="comment">// 如果该函数指针是方法</span></span><br><span class="line">		rcvr = v</span><br><span class="line">		rcvrtype, t, fn = methodReceiver(op, v, <span class="type">int</span>(v.flag)&gt;&gt;flagMethodShift) <span class="comment">// 获取方法指针的接收者和函数指针</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">	n := t.NumIn()</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(in) &lt; n &#123; <span class="comment">// 检查入参个数是否匹配</span></span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;reflect: Call with too few input arguments&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(in) &gt; n &#123; <span class="comment">// 检查入参个数是否匹配</span></span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;reflect: Call with too many input arguments&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> xt, targ := in[i].Type(), t.In(i); !xt.AssignableTo(targ) &#123;  <span class="comment">// 检查函数入参类型是否和函数签名匹配</span></span><br><span class="line">			<span class="built_in">panic</span>(<span class="string">&quot;reflect: &quot;</span> + op + <span class="string">&quot; using &quot;</span> + xt.String() + <span class="string">&quot; as type &quot;</span> + targ.String())</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上述方法会检查入参个数的个数以及参数的类型与签名中的类型是否可以匹配，任何参数的不匹配都导致整个程序的崩溃中止。</p>
 <h4 id="准备参数">准备参数</h4>
 <p>当我们已经对当前方法的参数完成验证后，就会进入函数调用的下一个阶段，为函数调用准备参数。<strong>Go语言的函数调用惯例是函数或者方法在调用时，所有的参数都会被以依次放到栈上。</strong></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">nout := t.NumOut()</span><br><span class="line">frametype, _, retOffset, _, framePool := funcLayout(t, rcvrtype) <span class="comment">// 计算当前函数需要的参数和返回值的栈布局，也就是每一个参数和返回值所占的空间大小</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> args unsafe.Pointer</span><br><span class="line"><span class="keyword">if</span> nout == <span class="number">0</span> &#123; <span class="comment">// 若当前函数有返回值</span></span><br><span class="line">	args = framePool.Get().(unsafe.Pointer) <span class="comment">// 那么就为当前函数的参数和返回值分配内存空间</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123; </span><br><span class="line">	args = unsafe_New(frametype)  <span class="comment">// 否则就全新开辟一块内存空间</span></span><br><span class="line">&#125;</span><br><span class="line">off := <span class="keyword">uintptr</span>(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">if</span> rcvrtype != <span class="literal">nil</span> &#123; <span class="comment">// 如果当前函数是方法</span></span><br><span class="line">	storeRcvr(rcvr, args) <span class="comment">// 将方法的接收者拷贝到内存中</span></span><br><span class="line">	off = ptrSize</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> i, v := <span class="keyword">range</span> in &#123; <span class="comment">// 将所有函数入参按照顺序依次拷贝到args内存中</span></span><br><span class="line">	targ := t.In(i).(*rtype)</span><br><span class="line">	a := <span class="keyword">uintptr</span>(targ.align)</span><br><span class="line">	off = (off + a - <span class="number">1</span>) &amp;^ (a - <span class="number">1</span>)</span><br><span class="line">	n := targ.size</span><br><span class="line">	...</span><br><span class="line">	addr := add(args, off, <span class="string">&quot;n &gt; 0&quot;</span>)</span><br><span class="line">	v = v.assignTo(<span class="string">&quot;reflect.Value.Call&quot;</span>, targ, addr)</span><br><span class="line">	*(*unsafe.Pointer)(addr) = v.ptr</span><br><span class="line">	off += n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">nout := t.NumOut()</span><br><span class="line">frametype, _, retOffset, _, framePool := funcLayout(t, rcvrtype) <span class="comment">// 计算当前函数需要的参数和返回值的栈布局，也就是每一个参数和返回值所占的空间大小</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> args unsafe.Pointer</span><br><span class="line"><span class="keyword">if</span> nout == <span class="number">0</span> &#123; <span class="comment">// 若当前函数有返回值</span></span><br><span class="line">	args = framePool.Get().(unsafe.Pointer) <span class="comment">// 那么就为当前函数的参数和返回值分配内存空间</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123; </span><br><span class="line">	args = unsafe_New(frametype)  <span class="comment">// 否则就全新开辟一块内存空间</span></span><br><span class="line">&#125;</span><br><span class="line">off := <span class="type">uintptr</span>(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">if</span> rcvrtype != <span class="literal">nil</span> &#123; <span class="comment">// 如果当前函数是方法</span></span><br><span class="line">	storeRcvr(rcvr, args) <span class="comment">// 将方法的接收者拷贝到内存中</span></span><br><span class="line">	off = ptrSize</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> i, v := <span class="keyword">range</span> in &#123; <span class="comment">// 将所有函数入参按照顺序依次拷贝到args内存中</span></span><br><span class="line">	targ := t.In(i).(*rtype)</span><br><span class="line">	a := <span class="type">uintptr</span>(targ.align)</span><br><span class="line">	off = (off + a - <span class="number">1</span>) &amp;^ (a - <span class="number">1</span>)</span><br><span class="line">	n := targ.size</span><br><span class="line">	...</span><br><span class="line">	addr := add(args, off, <span class="string">&quot;n &gt; 0&quot;</span>)</span><br><span class="line">	v = v.assignTo(<span class="string">&quot;reflect.Value.Call&quot;</span>, targ, addr)</span><br><span class="line">	*(*unsafe.Pointer)(addr) = v.ptr</span><br><span class="line">	off += n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ol type="1">
 <li><p>通过 <a target="_blank" rel="noopener" href="https://draveness.me/golang/tree/reflect.funcLayout"><code>reflect.funcLayout</code></a> 计算当前函数需要的参数和返回值的栈布局，也就是每一个参数和返回值所占的空间大小；</p></li>
 <li><p>如果当前函数有返回值，需要为当前函数的参数和返回值分配一片内存空间 <code>args</code>；</p></li>
@@ -530,7 +472,7 @@
 </ol>
 <h4 id="调用函数">调用函数</h4>
 <p>准备好调用函数需要的全部参数后，就会通过下面的代码执行函数指针了。函数入参是<strong>栈类型、函数指针、参数、和返回值的内存空间、栈的大小，以及返回值的偏移量：</strong></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">call(frametype, fn, args, <span class="keyword">uint32</span>(frametype.size), <span class="keyword">uint32</span>(retOffset))</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">call(frametype, fn, args, <span class="type">uint32</span>(frametype.size), <span class="type">uint32</span>(retOffset))</span><br></pre></td></tr></table></figure>
 <p>上述函数实际上并不存在，他会在编译期间链接到<code>reflect.reflectcall</code>这个用汇编语言实现的函数上。</p>
 <h4 id="处理返回值">处理返回值</h4>
 <p>当函数调用结束以后，就会开始处理函数的返回值：</p>
@@ -543,7 +485,7 @@
 <li>从函数对象中获取返回值的类型和内存大小，将<code>args</code>内存中的数据转换成<code>reflect.Value</code>类型并存储到切片中；</li>
 </ol></li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">var</span> ret []Value</span><br><span class="line">	<span class="keyword">if</span> nout == <span class="number">0</span> &#123; <span class="comment">//  如果函数没有返回值</span></span><br><span class="line">		typedmemclr(frametype, args)   <span class="comment">// 清空args释放空间</span></span><br><span class="line">		framePool.Put(args)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123; <span class="comment">// 如果函数有返回值</span></span><br><span class="line">		typedmemclrpartial(frametype, args, <span class="number">0</span>, retOffset) <span class="comment">// 将args中输入参数有关的内存空间清空</span></span><br><span class="line">		ret = <span class="built_in">make</span>([]Value, nout)   <span class="comment">// 新建一个切片来保存返回值数组</span></span><br><span class="line">		off = retOffset</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; nout; i++ &#123; </span><br><span class="line">			tv := t.Out(i)</span><br><span class="line">			a := <span class="keyword">uintptr</span>(tv.Align())</span><br><span class="line">			off = (off + a - <span class="number">1</span>) &amp;^ (a - <span class="number">1</span>)</span><br><span class="line">			<span class="keyword">if</span> tv.Size() != <span class="number">0</span> &#123;</span><br><span class="line">				fl := flagIndir | flag(tv.Kind())</span><br><span class="line">				ret[i] = Value&#123;tv.common(), add(args, off, <span class="string">&quot;tv.Size() != 0&quot;</span>), fl&#125; <span class="comment">// 从函数对象中获取返回值的类型和内存大小，将 args 内存中的数据转换成 reflect.Value 类型并存储到切片中</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				ret[i] = Zero(tv)</span><br><span class="line">			&#125;</span><br><span class="line">			off += tv.Size()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">var</span> ret []Value</span><br><span class="line">	<span class="keyword">if</span> nout == <span class="number">0</span> &#123; <span class="comment">//  如果函数没有返回值</span></span><br><span class="line">		typedmemclr(frametype, args)   <span class="comment">// 清空args释放空间</span></span><br><span class="line">		framePool.Put(args)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123; <span class="comment">// 如果函数有返回值</span></span><br><span class="line">		typedmemclrpartial(frametype, args, <span class="number">0</span>, retOffset) <span class="comment">// 将args中输入参数有关的内存空间清空</span></span><br><span class="line">		ret = <span class="built_in">make</span>([]Value, nout)   <span class="comment">// 新建一个切片来保存返回值数组</span></span><br><span class="line">		off = retOffset</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; nout; i++ &#123; </span><br><span class="line">			tv := t.Out(i)</span><br><span class="line">			a := <span class="type">uintptr</span>(tv.Align())</span><br><span class="line">			off = (off + a - <span class="number">1</span>) &amp;^ (a - <span class="number">1</span>)</span><br><span class="line">			<span class="keyword">if</span> tv.Size() != <span class="number">0</span> &#123;</span><br><span class="line">				fl := flagIndir | flag(tv.Kind())</span><br><span class="line">				ret[i] = Value&#123;tv.common(), add(args, off, <span class="string">&quot;tv.Size() != 0&quot;</span>), fl&#125; <span class="comment">// 从函数对象中获取返回值的类型和内存大小，将 args 内存中的数据转换成 reflect.Value 类型并存储到切片中</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				ret[i] = Zero(tv)</span><br><span class="line">			&#125;</span><br><span class="line">			off += tv.Size()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>由<code>reflect.Value</code>构成的ret数组会被返回到调用方，到此使用反射实现函数调用的过程就结束了，</p>
 <h2 id="小结">小结</h2>
 <p>Go 语言的 <a target="_blank" rel="noopener" href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 包为我们提供了多种能力，包括如何使用反射来动态修改变量、判断类型是否实现了某些接口以及动态调用方法等功能，通过分析反射包中方法的原理能帮助我们理解之前看起来比较怪异、令人困惑的现象。</p>
@@ -557,6 +499,23 @@
     
 
     <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/Reflections-in-go-language-base/" title="go语言设计与实现之反射">https://fly97.cn/p/Reflections-in-go-language-base/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
           <div class="post-tags">
               <a href="/tags/golang/" rel="tag"># golang</a>
           </div>
@@ -577,58 +536,24 @@
           </div>
     </footer>
   </article>
-  
-  
-  
+</div>
 
 
 
-      
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      const commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
 
-    </div>
+
+</div>
   </main>
 
   <footer class="footer">
     <div class="footer-inner">
-      
 
-      
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
   </div>
-<div>
-  <div style="vertical-align:middle; display:inline-block;">
-  Powered by
-  </div>
-  <div style="display: inline-block; vertical-align:middle;">
-    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
-      UPYUN</a>
-  </div>
-</div>
+
 <div class="copyright">
-  
-  &copy; 
+  &copy; 2020 – 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
@@ -640,62 +565,30 @@
   </footer>
 
   
-  <script src="/js/anime.min.js"></script>
-  <script src="/js/lozad.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-<script>
-document.querySelectorAll('.pdfobject-container').forEach(element => {
-  const url = element.dataset.target;
-  const pdfOpenParams = {
-    navpanes : 0,
-    toolbar  : 0,
-    statusbar: 0,
-    pagemode : 'thumbs',
-    view     : 'FitH'
-  };
-  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
-  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
-
-  if (NexT.utils.supportsPDFs()) {
-    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
-  } else {
-    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
-  }
-});
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-
-
-
-
   
 
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
-
-
-
-
-
-  
-
-  
-
-  
 
 </body>
 </html>

@@ -2,30 +2,28 @@
 <html lang="zh-CN">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.2.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
-  <meta name="google-site-verification" content="8asjqKj8nljgUycZFS4L-H9Ivw5U1DHaXAOrHxxnRUg">
 
 <link rel="stylesheet" href="/css/main.css">
 
 
 
-<link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/animate.min.css">
-  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
-  <script src="/js/pace.min.js"></script>
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
 
-<script class="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
-  </script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-  <meta name="description" content="本文主要介绍如何使用一个kubeadm创建一个K8s集群。 关键词：docker，k8s">
+    <meta name="description" content="本文主要介绍如何使用一个kubeadm创建一个K8s集群。 关键词：docker，k8s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群">
 <meta property="og:url" content="https://fly97.cn/p/create-a-k8s-cluster-with-kubeadm/index.html">
@@ -62,59 +60,20 @@
 <link rel="canonical" href="https://fly97.cn/p/create-a-k8s-cluster-with-kubeadm/">
 
 
-<script class="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群 | 个人随想</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/create-a-k8s-cluster-with-kubeadm/","path":"p/create-a-k8s-cluster-with-kubeadm/","title":"Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群 | 个人随想</title>
   
 
 
 
 
 
-
   <noscript>
-  <style>
-  body { margin-top: 2rem; }
-
-  .use-motion .menu-item,
-  .use-motion .sidebar,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header {
-    visibility: visible;
-  }
-
-  .use-motion .header,
-  .use-motion .site-brand-container .toggle,
-  .use-motion .footer { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle,
-  .use-motion .custom-logo-image {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line {
-    transform: scaleX(1);
-  }
-
-  .search-pop-overlay, .sidebar-nav { display: none; }
-  .sidebar-panel { display: block; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
 <link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
@@ -125,7 +84,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
+    <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
         <span class="toggle-line"></span>
         <span class="toggle-line"></span>
@@ -136,7 +95,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">个人随想</h1>
+      <p class="site-title">个人随想</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
@@ -152,27 +111,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-sitemap">
-
-    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
-
-  </li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -183,8 +122,7 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
@@ -193,7 +131,7 @@
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
@@ -209,7 +147,7 @@
 </div>
         
   
-  <div class="toggle sidebar-toggle">
+  <div class="toggle sidebar-toggle" role="button">
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
@@ -227,35 +165,34 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#xcall"><span class="nav-number">1.1.</span> <span class="nav-text">xcall</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xsync"><span class="nav-number">1.2.</span> <span class="nav-text">xsync</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%BB%E6%9C%BA%E5%85%AC%E9%92%A5%E7%A1%AE%E8%AE%A4"><span class="nav-number">1.3.</span> <span class="nav-text">设置主机公钥确认</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E4%B8%A4%E4%B8%AA%E8%84%9A%E6%9C%AC%E6%89%80%E5%9C%A8%E7%9A%84%E7%9B%AE%E5%BD%95%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">将两个脚本所在的目录添加到环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E8%84%9A%E6%9C%AC%E6%98%AF%E5%90%A6%E6%AD%A3%E5%B8%B8%E8%BF%90%E8%A1%8C"><span class="nav-number">1.5.</span> <span class="nav-text">检查脚本是否正常运行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85kubeadm"><span class="nav-number">2.</span> <span class="nav-text">安装kubeadm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%B9%8B%E5%89%8D"><span class="nav-number">2.1.</span> <span class="nav-text">开始之前</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A6%81%E7%94%A8%E4%BA%A4%E6%8D%A2%E5%88%86%E5%8C%BA"><span class="nav-number">2.1.1.</span> <span class="nav-text">禁用交换分区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A1%AE%E4%BF%9D%E6%AF%8F%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B8%8A-mac-%E5%9C%B0%E5%9D%80%E5%92%8C-product_uuid-%E7%9A%84%E5%94%AF%E4%B8%80%E6%80%A7"><span class="nav-number">2.1.2.</span> <span class="nav-text">确保每个节点上 MAC 地址和 product_uuid 的唯一性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%BD%91%E7%BB%9C%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">2.1.3.</span> <span class="nav-text">检查网络适配器</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%81%E8%AE%B8-iptables-%E6%A3%80%E6%9F%A5%E6%A1%A5%E6%8E%A5%E6%B5%81%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">允许 iptables 检查桥接流量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%89%80%E9%9C%80%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.3.</span> <span class="nav-text">检查所需端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">2.4.</span> <span class="nav-text">安装容器运行时</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">2.4.1.</span> <span class="nav-text">设置运行时</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEdocker-hub%E9%95%9C%E5%83%8F%E6%BA%90"><span class="nav-number">2.4.2.</span> <span class="nav-text">设置Docker Hub镜像源</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-systemd-cgroup-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.4.3.</span> <span class="nav-text">使用 systemd cgroup 驱动程序</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-kubeadmkubelet-%E5%92%8C-kubectl"><span class="nav-number">2.5.</span> <span class="nav-text">安装 kubeadm、kubelet 和 kubectl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-cgroup-%E9%A9%B1%E5%8A%A8"><span class="nav-number">2.6.</span> <span class="nav-text">配置容器运行时 cgroup 驱动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9"><span class="nav-number">3.</span> <span class="nav-text">启动控制节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">删除控制节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9%E5%90%AF%E5%8A%A8%E6%88%90%E5%8A%9F"><span class="nav-number">5.</span> <span class="nav-text">控制节点启动成功</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-pod-%E7%BD%91%E7%BB%9C%E9%99%84%E5%8A%A0%E7%BB%84%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">安装 Pod 网络附加组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEmaster%E4%B8%BA%E5%8F%AF%E8%B0%83%E5%BA%A6%E8%8A%82%E7%82%B9"><span class="nav-number">7.</span> <span class="nav-text">设置Master为可调度节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%B7%A5%E4%BD%9C%E8%8A%82%E7%82%B9"><span class="nav-number">8.</span> <span class="nav-text">启动工作节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%90%AF%E5%8A%A8%E6%88%90%E5%8A%9F"><span class="nav-number">9.</span> <span class="nav-text">集群启动成功</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kubernetes%E6%8E%92%E9%94%99"><span class="nav-number">10.</span> <span class="nav-text">Kubernetes排错</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#wait-control-plane-waiting-for-the-kubelet-to-boot-up-the-control-plane-as-static-pods-from-directory-etckubernetesmanifests.-this-can-take-up-to-4m0s"><span class="nav-number">10.1.</span> <span class="nav-text">[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory “&#x2F;etc&#x2F;kubernetes&#x2F;manifests”. This can take up to 4m0s</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">10.1.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E8%8A%82%E7%82%B9%E6%97%B6%E6%8F%90%E7%A4%BAgetting-status-of-runtime-rpc-error-code-unimplemented-desc-unknown-service-runtime.v1alpha2.runtimeservice"><span class="nav-number">10.2.</span> <span class="nav-text">加入节点时，提示&quot;getting status of runtime: rpc error: code &#x3D; Unimplemented desc &#x3D; unknown service runtime.v1alpha2.RuntimeService&quot;</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-1"><span class="nav-number">10.2.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">11.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </section>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#xcall"><span class="nav-number">1.1.</span> <span class="nav-text">xcall</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xsync"><span class="nav-number">1.2.</span> <span class="nav-text">xsync</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%BB%E6%9C%BA%E5%85%AC%E9%92%A5%E7%A1%AE%E8%AE%A4"><span class="nav-number">1.3.</span> <span class="nav-text">设置主机公钥确认</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E4%B8%A4%E4%B8%AA%E8%84%9A%E6%9C%AC%E6%89%80%E5%9C%A8%E7%9A%84%E7%9B%AE%E5%BD%95%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">将两个脚本所在的目录添加到环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E8%84%9A%E6%9C%AC%E6%98%AF%E5%90%A6%E6%AD%A3%E5%B8%B8%E8%BF%90%E8%A1%8C"><span class="nav-number">1.5.</span> <span class="nav-text">检查脚本是否正常运行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85kubeadm"><span class="nav-number">2.</span> <span class="nav-text">安装kubeadm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%B9%8B%E5%89%8D"><span class="nav-number">2.1.</span> <span class="nav-text">开始之前</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A6%81%E7%94%A8%E4%BA%A4%E6%8D%A2%E5%88%86%E5%8C%BA"><span class="nav-number">2.1.1.</span> <span class="nav-text">禁用交换分区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A1%AE%E4%BF%9D%E6%AF%8F%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B8%8A-mac-%E5%9C%B0%E5%9D%80%E5%92%8C-product_uuid-%E7%9A%84%E5%94%AF%E4%B8%80%E6%80%A7"><span class="nav-number">2.1.2.</span> <span class="nav-text">确保每个节点上 MAC 地址和 product_uuid 的唯一性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%BD%91%E7%BB%9C%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">2.1.3.</span> <span class="nav-text">检查网络适配器</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%81%E8%AE%B8-iptables-%E6%A3%80%E6%9F%A5%E6%A1%A5%E6%8E%A5%E6%B5%81%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">允许 iptables 检查桥接流量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%89%80%E9%9C%80%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.3.</span> <span class="nav-text">检查所需端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">2.4.</span> <span class="nav-text">安装容器运行时</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">2.4.1.</span> <span class="nav-text">设置运行时</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEdocker-hub%E9%95%9C%E5%83%8F%E6%BA%90"><span class="nav-number">2.4.2.</span> <span class="nav-text">设置Docker Hub镜像源</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-systemd-cgroup-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.4.3.</span> <span class="nav-text">使用 systemd cgroup 驱动程序</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-kubeadmkubelet-%E5%92%8C-kubectl"><span class="nav-number">2.5.</span> <span class="nav-text">安装 kubeadm、kubelet 和 kubectl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6-cgroup-%E9%A9%B1%E5%8A%A8"><span class="nav-number">2.6.</span> <span class="nav-text">配置容器运行时 cgroup 驱动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9"><span class="nav-number">3.</span> <span class="nav-text">启动控制节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">删除控制节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9%E5%90%AF%E5%8A%A8%E6%88%90%E5%8A%9F"><span class="nav-number">5.</span> <span class="nav-text">控制节点启动成功</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-pod-%E7%BD%91%E7%BB%9C%E9%99%84%E5%8A%A0%E7%BB%84%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">安装 Pod 网络附加组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEmaster%E4%B8%BA%E5%8F%AF%E8%B0%83%E5%BA%A6%E8%8A%82%E7%82%B9"><span class="nav-number">7.</span> <span class="nav-text">设置Master为可调度节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%B7%A5%E4%BD%9C%E8%8A%82%E7%82%B9"><span class="nav-number">8.</span> <span class="nav-text">启动工作节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%90%AF%E5%8A%A8%E6%88%90%E5%8A%9F"><span class="nav-number">9.</span> <span class="nav-text">集群启动成功</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kubernetes%E6%8E%92%E9%94%99"><span class="nav-number">10.</span> <span class="nav-text">Kubernetes排错</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#wait-control-plane-waiting-for-the-kubelet-to-boot-up-the-control-plane-as-static-pods-from-directory-etckubernetesmanifests.-this-can-take-up-to-4m0s"><span class="nav-number">10.1.</span> <span class="nav-text">[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory “&#x2F;etc&#x2F;kubernetes&#x2F;manifests”. This can take up to 4m0s</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">10.1.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E8%8A%82%E7%82%B9%E6%97%B6%E6%8F%90%E7%A4%BAgetting-status-of-runtime-rpc-error-code-unimplemented-desc-unknown-service-runtime.v1alpha2.runtimeservice"><span class="nav-number">10.2.</span> <span class="nav-text">加入节点时，提示&quot;getting status of runtime: rpc error: code &#x3D; Unimplemented desc &#x3D; unknown service runtime.v1alpha2.RuntimeService&quot;</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-1"><span class="nav-number">10.2.1.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">11.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">fly97</p>
   <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
 </div>
-<div class="site-state-wrap animated">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">153</span>
+        <a href="/archives/">
+          <span class="site-state-item-count">145</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">92</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">64</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
-  <div class="links-of-author animated">
+  <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
@@ -265,7 +202,7 @@
   </div>
 
 
-  <div class="links-of-blogroll animated">
+  <div class="links-of-blogroll site-overview-item animated">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
       Links
     </div>
@@ -279,7 +216,8 @@
     </ul>
   </div>
 
-      </section>
+        </div>
+      </div>
     </div>
   </aside>
   <div class="sidebar-dimmer"></div>
@@ -288,7 +226,7 @@
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
@@ -301,28 +239,32 @@
 
 
     <div class="main-inner post posts-expand">
-      
 
-      
 
-    
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/create-a-k8s-cluster-with-kubeadm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="fly97">
-      <meta itemprop="description" content="加油吧，为了你期待的生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
     </span>
 
-    
-    
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群
@@ -351,15 +293,15 @@
     <div class="post-body" itemprop="articleBody">
         <p>本文主要介绍如何使用一个kubeadm创建一个K8s集群。</p>
 <p>关键词：<strong>docker，k8s</strong></p>
-<a id="more"></a>
+<span id="more"></span>
 <h3 id="准备工作">准备工作</h3>
 <p>首先确保你至少有两台机器，这里准备了四台机器：一台master节点，三台node节点，主机名分别为node1、node2、node3。</p>
 <p>master节点配置了管理node集群的脚本，分别是批量执行命令的<strong>xcall</strong>脚本和批量拷贝文件的<strong>xsync</strong>脚本。</p>
 <p>安装xcall和xsync脚本的机器需要先配置<strong>免密码登录</strong>，并安装<strong>rsync服务</strong>。</p>
 <h4 id="xcall">xcall</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取控制台指令</span></span><br><span class="line"></span><br><span class="line">cmd=$*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断指令是否为空</span></span><br><span class="line"><span class="keyword">if</span> [ ! -n <span class="string">&quot;<span class="variable">$cmd</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;command can not be null !&quot;</span></span><br><span class="line">        <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前登录用户</span></span><br><span class="line">user=`whoami`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在从机执行指令,这里需要根据你具体的集群情况配置，host与具体主机名一致，同上</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> =============== <span class="variable">$host</span> ===============</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;--&gt; excute command \&quot;<span class="variable">$cmd</span>\&quot;&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="variable">$cmd</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;excute successfully !&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取控制台指令</span></span><br><span class="line"></span><br><span class="line">cmd=$*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断指令是否为空</span></span><br><span class="line"><span class="keyword">if</span> [ ! -n <span class="string">&quot;<span class="variable">$cmd</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;command can not be null !&quot;</span></span><br><span class="line">        <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前登录用户</span></span><br><span class="line">user=`<span class="built_in">whoami</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在从机执行指令,这里需要根据你具体的集群情况配置，host与具体主机名一致，同上</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> =============== <span class="variable">$host</span> ===============</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;--&gt; excute command \&quot;<span class="variable">$cmd</span>\&quot;&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="variable">$cmd</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;excute successfully !&quot;</span></span><br></pre></td></tr></table></figure>
 <h4 id="xsync">xsync</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取输出参数，如果没有参数则直接返回</span></span><br><span class="line">pcount=<span class="variable">$#</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$pcount</span> -eq 0 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;no parameter find !&quot;</span>;</span><br><span class="line">        <span class="built_in">exit</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取传输文件名</span></span><br><span class="line">p1=<span class="variable">$1</span></span><br><span class="line">filename=`basename <span class="variable">$p1</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;load file <span class="variable">$p1</span> success !&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取文件的绝对路径</span></span><br><span class="line">pdir=`<span class="built_in">cd</span> -P $(dirname <span class="variable">$p1</span>); <span class="built_in">pwd</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;file path is <span class="variable">$pdir</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前用户（如果想使用root用户权限拷贝文件，在命令后加入-root参数即可）</span></span><br><span class="line">user=<span class="variable">$2</span></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$user</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">&quot;-root&quot;</span>)</span><br><span class="line">        user=<span class="string">&quot;root&quot;</span>;;</span><br><span class="line"><span class="string">&quot;&quot;</span>)</span><br><span class="line">        user=`whoami`;;</span><br><span class="line">*)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;illegal parameter <span class="variable">$user</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$user</span></span><br><span class="line"><span class="comment"># 拷贝文件到从机(这里注意主机的host需要根据你的实际情况配置，要与你具体的主机名对应)</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;================<span class="variable">$host</span>=================&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="string">&quot;mkdir -p <span class="variable">$pdir</span>&quot;</span></span><br><span class="line">        rsync -av <span class="variable">$pdir</span>/<span class="variable">$filename</span> <span class="variable">$host</span>:<span class="variable">$pdir</span>/<span class="variable">$filename</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;complate !&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取输出参数，如果没有参数则直接返回</span></span><br><span class="line">pcount=<span class="variable">$#</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$pcount</span> -eq 0 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;no parameter find !&quot;</span>;</span><br><span class="line">        <span class="built_in">exit</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取传输文件名</span></span><br><span class="line">p1=<span class="variable">$1</span></span><br><span class="line">filename=`<span class="built_in">basename</span> <span class="variable">$p1</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;load file <span class="variable">$p1</span> success !&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取文件的绝对路径</span></span><br><span class="line">pdir=`<span class="built_in">cd</span> -P $(<span class="built_in">dirname</span> <span class="variable">$p1</span>); <span class="built_in">pwd</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;file path is <span class="variable">$pdir</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前用户（如果想使用root用户权限拷贝文件，在命令后加入-root参数即可）</span></span><br><span class="line">user=<span class="variable">$2</span></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$user</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">&quot;-root&quot;</span>)</span><br><span class="line">        user=<span class="string">&quot;root&quot;</span>;;</span><br><span class="line"><span class="string">&quot;&quot;</span>)</span><br><span class="line">        user=`<span class="built_in">whoami</span>`;;</span><br><span class="line">*)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;illegal parameter <span class="variable">$user</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$user</span></span><br><span class="line"><span class="comment"># 拷贝文件到从机(这里注意主机的host需要根据你的实际情况配置，要与你具体的主机名对应)</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;================<span class="variable">$host</span>=================&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="string">&quot;mkdir -p <span class="variable">$pdir</span>&quot;</span></span><br><span class="line">        rsync -av <span class="variable">$pdir</span>/<span class="variable">$filename</span> <span class="variable">$host</span>:<span class="variable">$pdir</span>/<span class="variable">$filename</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;complate !&quot;</span></span><br></pre></td></tr></table></figure>
 <h4 id="设置主机公钥确认">设置主机公钥确认</h4>
 <p>SSH 公钥检查是一个重要的安全机制，可以防范中间人劫持等黑客攻击。但是在特定情况下，严格的 SSH 公钥检查会破坏一些依赖 SSH 协议的自动化任务，就需要一种手段能够<strong>绕过 SSH 的公钥检查</strong>。</p>
 <p>编辑<code>/etc/ssh/ssh_config</code>文件，修改<code>StrictHostKeyChecking=no</code>.</p>
@@ -395,10 +337,10 @@
 <p>这里直接使用xcall脚本执行命令。</p>
 <p>一般来讲，硬件设备会拥有唯一的地址，但是有些虚拟机的地址可能会重复。 Kubernetes 使用这些值来唯一确定集群中的节点。 如果这些值在每个节点上不唯一，可能会导致<strong>安装失败</strong>。</p>
 <p>检查mac地址</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip <span class="built_in">link</span></span><br></pre></td></tr></table></figure></p>
 <p><img data-src="image-20220504140036574.png" /></p>
 <p>检查product_uuid</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cat /sys/class/dmi/id/product_uuid</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">cat</span> /sys/class/dmi/id/product_uuid</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220504140019711.png" /></p>
 <h5 id="检查网络适配器">检查网络适配器</h5>
 <p>如果<strong>有一个以上的网络适配器</strong>，同时K8s通过默认路由不可达，此时需要先添加默认IP路由规则。</p>
@@ -411,13 +353,13 @@
 <p>显式加载</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure>
 <p>为了让Linux开机时就加载，需要修改<code>sysctl</code> 配置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | sudo tee /etc/modules-load.d/k8s.conf</span><br><span class="line">br_netfilter</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF | sudo tee /etc/sysctl.d/k8s.conf</span><br><span class="line">net.bridge.bridge-nf-call-ip6tables = 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables = 1</span><br><span class="line">EOF</span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k8s.conf</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/k8s.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
 <h4 id="检查所需端口">检查所需端口</h4>
 <p>为了和K8s组件通信，需要检查特定端口</p>
 <p>具体请查看：https://kubernetes.io/zh/docs/reference/ports-and-protocols/</p>
 <h4 id="安装容器运行时">安装容器运行时</h4>
 <h5 id="设置运行时">设置运行时</h5>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | sudo tee /etc/modules-load.d/containerd.conf</span><br><span class="line">overlay</span><br><span class="line">br_netfilter</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">sudo modprobe overlay</span><br><span class="line">sudo modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置必需的 sysctl 参数，这些参数在重新启动后仍然存在。</span></span><br><span class="line">cat &lt;&lt;EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf</span><br><span class="line">net.bridge.bridge-nf-call-iptables  = 1</span><br><span class="line">net.ipv4.ip_forward                 = 1</span><br><span class="line">net.bridge.bridge-nf-call-ip6tables = 1</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数而无需重新启动</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/containerd.conf</span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo modprobe overlay</span><br><span class="line">sudo modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置必需的 sysctl 参数，这些参数在重新启动后仍然存在。</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数而无需重新启动</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
 <p>K8s支持以下运行时</p>
 <table>
 <thead>
@@ -449,7 +391,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install containerd.io</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>配置运行时</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/containerd</span><br><span class="line">containerd config default | sudo tee /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /etc/containerd</span><br><span class="line">containerd config default | sudo <span class="built_in">tee</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
 <p>重新启动 containerd</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220504143744362.png" /></p>
@@ -462,7 +404,7 @@
 <figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server</span> = <span class="string">&quot;https://docker.io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[host.&quot;http://f1361db2.m.daocloud.io&quot;]</span></span><br><span class="line">  <span class="attr">capabilities</span> = [<span class="string">&quot;pull&quot;</span>, <span class="string">&quot;resolve&quot;</span>]</span><br></pre></td></tr></table></figure>
 <h5 id="使用-systemd-cgroup-驱动程序">使用 <code>systemd</code> cgroup 驱动程序</h5>
 <p>结合 <code>runc</code> 使用 <code>systemd</code> cgroup 驱动，在 <code>/etc/containerd/config.toml</code> 中设置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc]</span><br><span class="line">  ...</span><br><span class="line">  [plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</span><br><span class="line">    SystemdCgroup &#x3D; true</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc]</span><br><span class="line">  ...</span><br><span class="line">  [plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</span><br><span class="line">    SystemdCgroup = true</span><br></pre></td></tr></table></figure>
 <p>如果您应用此更改，请确保再次重新启动 containerd：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
 <p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/#containerd">参考</a></p>
@@ -475,7 +417,7 @@
 <ol start="2" type="1">
 <li>安装仓库密钥，这里使用<strong>阿里云的源</strong></li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - </span><br><span class="line">cat &lt;&lt; EOF &gt;/etc/apt/sources.list.d/kubernetes.list</span><br><span class="line">deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - </span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt;/etc/apt/sources.list.d/kubernetes.list</span></span><br><span class="line"><span class="string">deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
 <ol start="3" type="1">
 <li>更新apt包索引，安装 kubelet、kubeadm 和 kubectl，并<strong>锁定其版本</strong>：</li>
 </ol>
@@ -490,7 +432,7 @@
 <p>启用控制平面前应先启动containerd服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> containerd --now</span><br></pre></td></tr></table></figure>
 <p>修改<code>containerd.sock</code>权限，不使用sudo也可以拉取镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chown -R wf09:wf09 /run/containerd/</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> -R wf09:wf09 /run/containerd/</span><br></pre></td></tr></table></figure>
 <p>运行master节点之前可以先拉取本地镜像</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm config images pull --config kubeadm-config.yaml</span><br></pre></td></tr></table></figure>
 <p>在master节点运行以下命令，同时传递上文中说到的kubeadm-config.yaml</p>
@@ -503,11 +445,11 @@
 <h3 id="控制节点启动成功">控制节点启动成功</h3>
 <p><img data-src="image-20220505101003030.png" /></p>
 <p>如果使用非root用户运行kubectl，需要运行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
 <p>如果使用root用户，则可以运行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> KUBECONFIG=/etc/kubernetes/admin.conf</span><br></pre></td></tr></table></figure>
 <p>还需要记录一下token，后面的节点<strong>加入集群</strong>需要这个</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">        --discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubeadm <span class="built_in">join</span> 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">        --discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
 <h3 id="安装-pod-网络附加组件">安装 Pod 网络附加组件</h3>
 <p>必须部署一个基于Pod网络插件的容器网络接口，以便的Pod可以相互通信</p>
 <p>安装之前需要先设置<strong>网络插件地址</strong>，在kubeadm-config.yaml添加以下配置</p>
@@ -525,7 +467,7 @@
 <h3 id="启动工作节点">启动工作节点</h3>
 <p>准备工作首先也需要完成<strong>安装kubeadm</strong>的步骤。</p>
 <p>剩下的步骤就比较简单了，找到上文中<strong>成功启动K8s控制节点</strong>中的token，在工作节点执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo kubeadm join 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo kubeadm <span class="built_in">join</span> 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220505133657174.png" /></p>
 <p>如果有类似的回显说明已经加入成功了。</p>
 <h3 id="集群启动成功">集群启动成功</h3>
@@ -537,7 +479,7 @@
 <p>出现频率较高的就是<strong>sandbox</strong>，应该和这个镜像有关</p>
 <p><img data-src="image-20220505094125196.png" /></p>
 <p>查看<code>containerd</code>默认配置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220505094253375.png" /></p>
 <p>发现默认配置是<code>k8s.gcr.io</code>域的镜像，国内拉取不到。</p>
 <p>上文中已经拉取了阿里云的镜像，执行以下命令可以查看镜像的拉取地址</p>
@@ -566,6 +508,23 @@
     
 
     <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/create-a-k8s-cluster-with-kubeadm/" title="Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群">https://fly97.cn/p/create-a-k8s-cluster-with-kubeadm/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
           <div class="post-tags">
               <a href="/tags/k8s/" rel="tag"># k8s</a>
           </div>
@@ -586,58 +545,24 @@
           </div>
     </footer>
   </article>
-  
-  
-  
+</div>
 
 
 
-      
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      const commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
 
-    </div>
+
+</div>
   </main>
 
   <footer class="footer">
     <div class="footer-inner">
-      
 
-      
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
   </div>
-<div>
-  <div style="vertical-align:middle; display:inline-block;">
-  Powered by
-  </div>
-  <div style="display: inline-block; vertical-align:middle;">
-    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
-      UPYUN</a>
-  </div>
-</div>
+
 <div class="copyright">
-  
-  &copy; 
+  &copy; 2020 – 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
@@ -649,62 +574,30 @@
   </footer>
 
   
-  <script src="/js/anime.min.js"></script>
-  <script src="/js/lozad.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-<script>
-document.querySelectorAll('.pdfobject-container').forEach(element => {
-  const url = element.dataset.target;
-  const pdfOpenParams = {
-    navpanes : 0,
-    toolbar  : 0,
-    statusbar: 0,
-    pagemode : 'thumbs',
-    view     : 'FitH'
-  };
-  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
-  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
-
-  if (NexT.utils.supportsPDFs()) {
-    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
-  } else {
-    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
-  }
-});
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-
-
-
-
   
 
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
-
-
-
-
-
-  
-
-  
-
-  
 
 </body>
 </html>

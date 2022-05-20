@@ -2,30 +2,28 @@
 <html lang="zh-CN">
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.2.0">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
-  <meta name="google-site-verification" content="8asjqKj8nljgUycZFS4L-H9Ivw5U1DHaXAOrHxxnRUg">
 
 <link rel="stylesheet" href="/css/main.css">
 
 
 
-<link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/animate.min.css">
-  <link rel="stylesheet" href="/css/pace-theme-minimal.css">
-  <script src="/js/pace.min.js"></script>
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
 
-<script class="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"fly97.cn","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
-  </script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-  <meta name="description" content="本文是CNCF × Alibaba 云原生技术公开课的第八章理解Kubernetes Services学习笔记。 关键词：k8s">
+    <meta name="description" content="本文是CNCF × Alibaba 云原生技术公开课的第八章理解Kubernetes Services学习笔记。 关键词：k8s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="理解Kubernetes Services">
 <meta property="og:url" content="https://fly97.cn/p/understanding-services-in-kubernetes/index.html">
@@ -55,59 +53,20 @@
 <link rel="canonical" href="https://fly97.cn/p/understanding-services-in-kubernetes/">
 
 
-<script class="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
 
-  <title>理解Kubernetes Services | 个人随想</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/understanding-services-in-kubernetes/","path":"p/understanding-services-in-kubernetes/","title":"理解Kubernetes Services"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>理解Kubernetes Services | 个人随想</title>
   
 
 
 
 
 
-
   <noscript>
-  <style>
-  body { margin-top: 2rem; }
-
-  .use-motion .menu-item,
-  .use-motion .sidebar,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header {
-    visibility: visible;
-  }
-
-  .use-motion .header,
-  .use-motion .site-brand-container .toggle,
-  .use-motion .footer { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle,
-  .use-motion .custom-logo-image {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line {
-    transform: scaleX(1);
-  }
-
-  .search-pop-overlay, .sidebar-nav { display: none; }
-  .sidebar-panel { display: block; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
 <link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
@@ -118,7 +77,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
+    <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
         <span class="toggle-line"></span>
         <span class="toggle-line"></span>
@@ -129,7 +88,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">个人随想</h1>
+      <p class="site-title">个人随想</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
@@ -145,27 +104,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-sitemap">
-
-    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
-
-  </li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -176,8 +115,7 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
+    <div class="popup search-popup"><div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
@@ -186,7 +124,7 @@
            placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
-  <span class="popup-btn-close">
+  <span class="popup-btn-close" role="button">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
@@ -202,7 +140,7 @@
 </div>
         
   
-  <div class="toggle sidebar-toggle">
+  <div class="toggle sidebar-toggle" role="button">
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
     <span class="toggle-line"></span>
@@ -220,35 +158,34 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E6%9D%A5%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">需求来源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要服务发现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#servicek8s%E4%B8%AD%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.</span> <span class="nav-text">Service：K8s中服务发现和负载均衡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E8%A7%A3%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">用例解读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#service%E8%AF%AD%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Service语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.</span> <span class="nav-text">创建和查看Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAservice"><span class="nav-number">2.2.1.</span> <span class="nav-text">创建Service</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.2.</span> <span class="nav-text">查看Service</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%86%85%E9%83%A8%E8%AE%BF%E9%97%AEservice"><span class="nav-number">2.3.</span> <span class="nav-text">集群内部访问Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#headless-service"><span class="nav-number">2.4.</span> <span class="nav-text">Headless Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%91%E9%9B%86%E7%BE%A4%E5%A4%96%E9%83%A8%E6%9A%B4%E9%9C%B2service"><span class="nav-number">2.5.</span> <span class="nav-text">向集群外部暴露Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#nodeport"><span class="nav-number">2.5.1.</span> <span class="nav-text">NodePort</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#loadbalancer"><span class="nav-number">2.5.2.</span> <span class="nav-text">LoadBalancer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#external-ip"><span class="nav-number">2.5.3.</span> <span class="nav-text">External IP</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9Fip%E5%92%8Cservice%E4%BB%A3%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">虚拟IP和Service代理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%BD%BF%E7%94%A8dns%E8%BD%AE%E8%AF%A2"><span class="nav-number">3.1.</span> <span class="nav-text">为什么不使用DNS轮询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#userspace%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">userspace代理模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">iptables代理模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipvs%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">IPVS代理模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.</span> <span class="nav-text">架构设计</span></a></li></ol></div>
-      </section>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E6%9D%A5%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">需求来源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要服务发现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#servicek8s%E4%B8%AD%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.</span> <span class="nav-text">Service：K8s中服务发现和负载均衡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E8%A7%A3%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">用例解读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#service%E8%AF%AD%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Service语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.</span> <span class="nav-text">创建和查看Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAservice"><span class="nav-number">2.2.1.</span> <span class="nav-text">创建Service</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bservice"><span class="nav-number">2.2.2.</span> <span class="nav-text">查看Service</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%86%85%E9%83%A8%E8%AE%BF%E9%97%AEservice"><span class="nav-number">2.3.</span> <span class="nav-text">集群内部访问Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#headless-service"><span class="nav-number">2.4.</span> <span class="nav-text">Headless Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%91%E9%9B%86%E7%BE%A4%E5%A4%96%E9%83%A8%E6%9A%B4%E9%9C%B2service"><span class="nav-number">2.5.</span> <span class="nav-text">向集群外部暴露Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#nodeport"><span class="nav-number">2.5.1.</span> <span class="nav-text">NodePort</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#loadbalancer"><span class="nav-number">2.5.2.</span> <span class="nav-text">LoadBalancer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#external-ip"><span class="nav-number">2.5.3.</span> <span class="nav-text">External IP</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9Fip%E5%92%8Cservice%E4%BB%A3%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">虚拟IP和Service代理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%BD%BF%E7%94%A8dns%E8%BD%AE%E8%AF%A2"><span class="nav-number">3.1.</span> <span class="nav-text">为什么不使用DNS轮询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#userspace%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">userspace代理模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">iptables代理模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipvs%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">IPVS代理模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.</span> <span class="nav-text">架构设计</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
   <p class="site-author-name" itemprop="name">fly97</p>
   <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
 </div>
-<div class="site-state-wrap animated">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">153</span>
+        <a href="/archives/">
+          <span class="site-state-item-count">145</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">92</span>
+          <a href="/tags/">
+        <span class="site-state-item-count">64</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
-  <div class="links-of-author animated">
+  <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
@@ -258,7 +195,7 @@
   </div>
 
 
-  <div class="links-of-blogroll animated">
+  <div class="links-of-blogroll site-overview-item animated">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
       Links
     </div>
@@ -272,7 +209,8 @@
     </ul>
   </div>
 
-      </section>
+        </div>
+      </div>
     </div>
   </aside>
   <div class="sidebar-dimmer"></div>
@@ -281,7 +219,7 @@
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
@@ -294,28 +232,32 @@
 
 
     <div class="main-inner post posts-expand">
-      
 
-      
 
-    
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/understanding-services-in-kubernetes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="fly97">
-      <meta itemprop="description" content="加油吧，为了你期待的生活">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
     </span>
 
-    
-    
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="理解Kubernetes Services | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           理解Kubernetes Services
@@ -344,7 +286,7 @@
     <div class="post-body" itemprop="articleBody">
         <p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第八章理解Kubernetes Services</strong>学习笔记。</p>
 <p>关键词：<strong>k8s</strong></p>
-<a id="more"></a>
+<span id="more"></span>
 <h3 id="需求来源">需求来源</h3>
 <h4 id="为什么需要服务发现">为什么需要服务发现</h4>
 <p>传统的应用部署实在特定的机器上面部署，此时知道怎么去调用别的机器的IP地址。但是在K8s集群中应该是通过Pod去部署，而Pod的生命周期过程中，比如创建或者销毁，此时<strong>IP地址都会发生变化</strong>，<strong>不能指定IP去访问指定的应用。</strong></p>
@@ -480,6 +422,23 @@
     
 
     <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/understanding-services-in-kubernetes/" title="理解Kubernetes Services">https://fly97.cn/p/understanding-services-in-kubernetes/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
           <div class="post-tags">
               <a href="/tags/k8s/" rel="tag"># k8s</a>
           </div>
@@ -488,70 +447,36 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/stack-and-ground/" rel="prev" title="大话数据结构（二） | 栈和队列">
-                  <i class="fa fa-chevron-left"></i> 大话数据结构（二） | 栈和队列
+                <a href="/p/stack-and-ground/" rel="prev" title="大话数据结构（二）| 栈和队列">
+                  <i class="fa fa-chevron-left"></i> 大话数据结构（二）| 栈和队列
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/how-to-use-nfs-in-k8s/" rel="next" title="Kubernetes集群实践（四）| 如何在集群中使用网络存储系统NFS">
-                  Kubernetes集群实践（四）| 如何在集群中使用网络存储系统NFS <i class="fa fa-chevron-right"></i>
+                <a href="/p/go-file/" rel="next" title="Go语言基础（一）| 文件操作">
+                  Go语言基础（一）| 文件操作 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
     </footer>
   </article>
-  
-  
-  
+</div>
 
 
 
-      
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      const commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
 
-    </div>
+
+</div>
   </main>
 
   <footer class="footer">
     <div class="footer-inner">
-      
 
-      
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
   </div>
-<div>
-  <div style="vertical-align:middle; display:inline-block;">
-  Powered by
-  </div>
-  <div style="display: inline-block; vertical-align:middle;">
-    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
-      UPYUN</a>
-  </div>
-</div>
+
 <div class="copyright">
-  
-  &copy; 
+  &copy; 2020 – 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
@@ -563,62 +488,30 @@
   </footer>
 
   
-  <script src="/js/anime.min.js"></script>
-  <script src="/js/lozad.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-<script>
-document.querySelectorAll('.pdfobject-container').forEach(element => {
-  const url = element.dataset.target;
-  const pdfOpenParams = {
-    navpanes : 0,
-    toolbar  : 0,
-    statusbar: 0,
-    pagemode : 'thumbs',
-    view     : 'FitH'
-  };
-  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
-  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
-
-  if (NexT.utils.supportsPDFs()) {
-    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
-  } else {
-    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
-  }
-});
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-
-
-
-
   
 
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
-
-
-
-
-
-  
-
-  
-
-  
 
 </body>
 </html>
