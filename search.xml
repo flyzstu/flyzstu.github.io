@@ -6863,7 +6863,7 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>Kubernetes集群实践（一）| 使用Kubeadm创建一个K8s集群</title>
+    <title>Kubernetes集群实践（一）使用Kubeadm创建一个K8s集群</title>
     <url>/p/create-a-k8s-cluster-with-kubeadm/</url>
     <content><![CDATA[<p>本文主要介绍如何使用一个kubeadm创建一个K8s集群。</p>
 <p>关键词：<strong>docker，k8s</strong></p>
@@ -6958,7 +6958,8 @@ y=x^2e^x
 </tbody>
 </table>
 <p>由于在<strong>1.24之后的版本不在支持Dockershim </strong>，因此不推荐使用Docker Engine作为K8s容器运行时，这里使用<strong>containerd</strong>。</p>
-<p>方法：</p>
+<p>方法1：使用docker-ce 镜像源</p>
+<p>后期还可以通过安装docker-cli实现docker的一系列操作，如<strong>打包镜像、使用docker-compose运行容器</strong>等。</p>
 <ul>
 <li><p>按照安装docker的方法，安装docker需要的apt源；</p></li>
 <li><p>执行以下命令</p>
@@ -6969,6 +6970,19 @@ y=x^2e^x
 <p>重新启动 containerd</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220504143744362.png" /></p>
+<p>方法2：直接使用<code>nerdctl</code>打包好的containerd运行时和一系列插件</p>
+<p>nerdctl是<code>containerd</code>项目下的和docker cli兼容的命令行。现在已经支持docker-cli的大部分功能。甚至可以直接将nerdctl设置为docker，这样就可以无缝使用docker和docker compose的命令啦。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">alias</span> docker=`sudo nerdctl`</span><br><span class="line"><span class="built_in">alias</span> docker-compose=`sudo nerdctl compose`</span><br></pre></td></tr></table></figure>
+<p>项目地址：<a href="https://github.com/containerd/nerdctl">https://github.com/containerd/nerdctl</a></p>
+<p>直接下载<strong>Full</strong>的版本</p>
+<p>下载完毕以后执行安装命令，以0.20.0版本为例</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo tar Cxzvvf /usr/local nerdctl-full-0.20.0-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
+<p>设置自动启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> buildkit.service --now</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> containerd.service --now</span><br><span class="line">sudo systemcle <span class="built_in">enable</span> stargz-snapshotter.service --now</span><br></pre></td></tr></table></figure>
+<h5 id="配置stargz-snapshotter">配置stargz-snapshotter</h5>
+<p><strong>Fast container image distribution plugin with lazy pulling</strong>，项目地址：<a href="https://github.com/containerd/stargz-snapshotter">https://github.com/containerd/stargz-snapshotter</a></p>
+<p>修改<code>/etc/containerd/config.toml</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">version = 2</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plug stargz snapshotter into containerd</span></span><br><span class="line"><span class="comment"># Containerd recognizes stargz snapshotter through specified socket address.</span></span><br><span class="line"><span class="comment"># The specified address below is the default which stargz snapshotter listen to.</span></span><br><span class="line">[proxy_plugins]</span><br><span class="line">  [proxy_plugins.stargz]</span><br><span class="line">    <span class="built_in">type</span> = <span class="string">&quot;snapshot&quot;</span></span><br><span class="line">    address = <span class="string">&quot;/run/containerd-stargz-grpc/containerd-stargz-grpc.sock&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use stargz snapshotter through CRI</span></span><br><span class="line">[plugins.<span class="string">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd]</span><br><span class="line">  snapshotter = <span class="string">&quot;stargz&quot;</span></span><br><span class="line">  disable_snapshot_annotations = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
 <h5 id="设置docker-hub镜像源">设置Docker Hub镜像源</h5>
 <p>默认containerd在Docker Hub拉取镜像，这样速度很慢</p>
 <p><img data-src="image-20220505115520415.png" /></p>
@@ -6981,7 +6995,11 @@ y=x^2e^x
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc]</span><br><span class="line">  ...</span><br><span class="line">  [plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</span><br><span class="line">    SystemdCgroup = true</span><br></pre></td></tr></table></figure>
 <p>如果您应用此更改，请确保再次重新启动 containerd：</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
-<p><a href="https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/#containerd">参考</a></p>
+<p>注意：此项更改并不能使用<code>crictl info</code> 、 <code>config dump</code>或<code>nerdctl info</code>查看，可以通过<code>systemctl status containerd</code>查看是否存在<code>/opt/dev/bin/containerd-shim-runc-v2</code>来判断是否生效。</p>
+<blockquote>
+<p>https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/#containerd</p>
+<p>https://github.com/containerd/containerd/issues/4900#issuecomment-756085464</p>
+</blockquote>
 <h4 id="安装-kubeadmkubelet-和-kubectl">安装 kubeadm、kubelet 和 kubectl</h4>
 <p>这里使用基于Debian的发行版</p>
 <ol type="1">
@@ -7072,7 +7090,10 @@ y=x^2e^x
 <p>在集群出现异常，需要重置集群的时候可能会出现此问题。如果是第一次安装则不会，因为此时是集群第一次安装cni网络组件，不会出现地址冲突的问题。</p>
 <h5 id="解决方案-2">解决方案</h5>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ifconfig cni0 down    </span><br><span class="line">ip <span class="built_in">link</span> delete cni0</span><br></pre></td></tr></table></figure>
-<h3 id="参考">参考</h3>
+<h4 id="fata0000-failed-to-create-shim-task-oci-runtime-create-failed-runc-create-failed-unable-to-start-container-process-error-during-container-init-error-running-hook-0-error-running-hook-exit-status-1-stdout-stderr-time2022-05-24t022902z-levelfatal-msgfailed-to-call-cni.setup-plugin-typebridge-failed-add-incompatible-cni-versions-config-is-1.0.0-plugin-supports-0.1.0-0.2.0-0.3.0-0.3.1-0.4.0">FATA[0000] failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error running hook #0: error running hook: exit status 1, stdout: , stderr: time="2022-05-24T02:29:02Z" level=fatal msg="failed to call cni.Setup: plugin type="bridge" failed (add): incompatible CNI versions; config is "1.0.0", plugin supports ["0.1.0" "0.2.0" "0.3.0" "0.3.1" "0.4.0"]"</h4>
+<p>未安装CNI组件导致容器运行失败</p>
+<h5 id="解决方案-3">解决方案</h5>
+<p>直接使用<code>nerdctl</code>打包好的containerd运行时和一系列插件即可，参考上文<strong>安装kubeadm——安装容器运行时——方法2</strong></p>
 <ul>
 <li><p>https://github.com/flannel-io/flannel</p></li>
 <li><p>https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</p></li>
@@ -7815,6 +7836,41 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<span id="more"></span>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣二叉树之二叉搜索树</title>
     <url>/p/binary-search-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -7931,41 +7987,6 @@ y=x^2e^x
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convertBST</span><span class="params">(root *TreeNode)</span></span> *TreeNode &#123;</span><br><span class="line">    <span class="keyword">if</span> root != <span class="literal">nil</span> &#123;</span><br><span class="line">        convertBST(root.Right)</span><br><span class="line">        sum += root.Val</span><br><span class="line">        root.Val = sum</span><br><span class="line">        convertBST(root.Left)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> root</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="拓展">拓展</h4>
 <p>递归函数是否需要返回值的问题？</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<span id="more"></span>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -8627,6 +8648,40 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>大话数据结构（二）| 栈和队列</title>
+    <url>/p/stack-and-ground/</url>
+    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
+<p><strong>关键词：数据结构</strong></p>
+<span id="more"></span>
+<h3 id="栈的定义">栈的定义</h3>
+<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
+<ul>
+<li>允许插入和删除的一端称为栈顶</li>
+<li>另一端被称为栈底</li>
+<li>不含任何元素的栈称为空栈</li>
+<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
+<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
+</ul>
+<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
+<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
+<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
+<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
+<ol type="1">
+<li>1、2、3进，3、2、1出。出栈次序为321。</li>
+<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
+<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
+<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
+<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
+</ol>
+<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
+<h3 id="抽象数据类型">抽象数据类型</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>数据结构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>基于Proxmox VE的KVM虚拟化实战</title>
     <url>/p/pve-pci-passthrough/</url>
     <content><![CDATA[<p>Proxmox VE是一个既可以运行虚拟机也可以运行容器的虚拟化平台。Proxmox VE基于Debian Linux 开发，而且完全开源。处于灵活性的考虑，Proxmox VE同时支持两种虚拟化技术：KVM虚拟机和LXC容器。以下操作基于KVM虚拟机。</p>
@@ -8820,41 +8875,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>大话数据结构（二）| 栈和队列</title>
-    <url>/p/stack-and-ground/</url>
-    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
-<p><strong>关键词：数据结构</strong></p>
-<span id="more"></span>
-<h3 id="栈的定义">栈的定义</h3>
-<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
-<ul>
-<li>允许插入和删除的一端称为栈顶</li>
-<li>另一端被称为栈底</li>
-<li>不含任何元素的栈称为空栈</li>
-<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
-<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
-</ul>
-<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
-<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
-<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
-<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
-<ol type="1">
-<li>1、2、3进，3、2、1出。出栈次序为321。</li>
-<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
-<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
-<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
-<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
-</ol>
-<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
-<h3 id="抽象数据类型">抽象数据类型</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>数据结构</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Kubernetes集群实践（四）| 如何在集群中使用网络存储系统NFS</title>
+    <title>Kubernetes集群实践（四）如何在集群中使用网络存储系统NFS</title>
     <url>/p/how-to-use-nfs-in-k8s/</url>
     <content><![CDATA[<p>由于需要在Pods中共享文件，直接挂载到宿主机肯定不行的。因此需要有一套网络存储系统。</p>
 <p>本文主要介绍如何在K8s中使用网络存储系统NFS。</p>
@@ -9019,7 +9040,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>Kubernetes集群实践（二）| 如何编写k8s资源清单yaml文件</title>
+    <title>Kubernetes集群实践（二）如何编写k8s资源清单yaml文件</title>
     <url>/p/how-to-write-k8s-resource-manifest-yaml/</url>
     <content><![CDATA[<p>本文主要介绍如何编写k8s资源清单yaml文件。</p>
 <p>在K8s集群上进行资源配置通常都是通过yaml文件进行的，因此如何快速编写yaml文件就变得十分重要。</p>
@@ -9098,7 +9119,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>Kubernetes集群实践（三）| 集群外如何访问K8s内的Service</title>
+    <title>Kubernetes集群实践（三）集群外如何访问K8s内的Service</title>
     <url>/p/service-access-application-cluster/</url>
     <content><![CDATA[<p>本文主要介绍<strong>集群外如何访问K8s内的Service</strong>。</p>
 <p>关键词：<strong>k8s</strong></p>
