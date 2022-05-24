@@ -2441,6 +2441,149 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>Python应用（七）｜数据处理Pandas</title>
+    <url>/p/Pandas-learning-notes-01/</url>
+    <content><![CDATA[<p>Pandas是什么？</p>
+<span id="more"></span>
+<p>Pandas是一个强大的分析结构化数据的工具集；它的使用基础是Numpy（提供高性能的矩阵运算）；用于数据挖掘和数据分析，同时也提供数据清洗功能。</p>
+<h3 id="安装pandas">安装Pandas</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pandas -i http://mirrors.aliyun.com/pypi/simple/</span><br></pre></td></tr></table></figure>
+<h3 id="pandas简介">Pandas简介</h3>
+<p>Pandas 适用于处理以下类型的数据：</p>
+<ul>
+<li>与 SQL 或 Excel 表类似的，含异构列的表格数据;</li>
+<li>有序和无序（非固定频率）的时间序列数据;</li>
+<li>带行列标签的矩阵数据，包括同构或异构型数据;</li>
+<li>任意其它形式的观测、统计数据集, 数据转入 Pandas 数据结构时不必事先标记。</li>
+</ul>
+<p>Pandas 的主要数据结构是 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series">Series</a>（一维数据）与 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a>（二维数据），这两种数据结构足以<strong>处理金融、统计、社会科学、工程</strong>等领域里的大多数典型用例。对于 R 用户，DataFrame 提供了比 R 语言 data.frame 更丰富的功能。Pandas 基于 <a href="https://www.numpy.org/">NumPy</a> 开发，可以与其它第三方科学计算支持库完美集成。</p>
+<p>Pandas 就像一把万能瑞士军刀，下面仅列出了它的部分优势 ：</p>
+<ul>
+<li>处理浮点与非浮点数据里的<strong>缺失数据</strong>，表示为 <code>NaN</code>；</li>
+<li>大小可变：<strong>插入或删除</strong> DataFrame 等多维对象的列；</li>
+<li>自动、显式<strong>数据对齐</strong>：显式地将对象与一组标签对齐，也可以忽略标签，在 Series、DataFrame 计算时自动与数据对齐；</li>
+<li>强大、灵活的<strong>分组</strong>（group by）功能：<strong>拆分-应用-组合</strong>数据集，聚合、转换数据；</li>
+<li>把 Python 和 NumPy 数据结构里不规则、不同索引的数据<strong>轻松</strong>地转换为 DataFrame 对象；</li>
+<li>基于智能标签，对大型数据集进行<strong>切片</strong>、<strong>花式索引</strong>、<strong>子集分解</strong>等操作；</li>
+<li>直观地<strong>合并（merge）</strong>、<strong>连接（join）</strong>数据集；</li>
+<li>灵活地<strong>重塑（reshape）</strong>、<strong>透视（pivot）</strong>数据集；</li>
+<li><strong>轴</strong>支持结构化标签：一个刻度支持多个标签；</li>
+<li>成熟的 IO 工具：读取<strong>文本文件</strong>（CSV 等支持分隔符的文件）、Excel 文件、数据库等来源的数据，利用超快的 <strong>HDF5</strong> 格式保存 / 加载数据；</li>
+<li><strong>时间序列</strong>：支持日期范围生成、频率转换、移动窗口统计、移动窗口线性回归、日期位移等时间序列功能。</li>
+</ul>
+<p>这些功能主要是为了解决其它编程语言、科研环境的痛点。处理数据一般分为几个阶段：<strong>数据整理与清洗、数据分析与建模、数据可视化与制表</strong>，Pandas 是处理数据的理想工具。</p>
+<p>其它说明：</p>
+<ul>
+<li>Pandas 速度<strong>很快</strong>。Pandas 的很多底层算法都用 <a href="https://cython.org/">Cython</a> 优化过。然而，为了保持通用性，必然要牺牲一些性能，如果专注某一功能，完全可以开发出比 Pandas 更快的专用工具。</li>
+<li>Pandas 是 <a href="https://www.statsmodels.org/stable/index.html">statsmodels</a> 的依赖项，因此，Pandas 也是 Python 中统计计算生态系统的重要组成部分。</li>
+<li>Pandas 已广泛应用于金融领域</li>
+</ul>
+<h3 id="pandas中的数据结构">Pandas中的数据结构</h3>
+<table>
+<thead>
+<tr class="header">
+<th>维数</th>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Series</td>
+<td>带标签的一维同构数组</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>DataFrame</td>
+<td>带标签的，大小可变的，二维异构表格</td>
+</tr>
+</tbody>
+</table>
+<h3 id="为什么有多个数据结构">为什么有多个数据结构？</h3>
+<p>Pandas 数据结构就像是低维数据的容器。比如，DataFrame 是 Series 的容器，Series 则是标量的容器。使用这种方式，可以在容器中以字典的形式插入或删除对象。</p>
+<p>此外，通用 API 函数的默认操作要顾及时间序列与截面数据集的方向。多维数组存储二维或三维数据时，编写函数要注意数据集的方向，这对用户来说是一种负担；如果不考虑 C 或 Fortran 中连续性对性能的影响，一般情况下，不同的轴在程序里其实没有什么区别。Pandas 里，轴的概念主要是为了给数据赋予更直观的语义，即用“更恰当”的方式表示数据集的方向。这样做可以让用户编写数据转换函数时，少费点脑子。</p>
+<p>处理 DataFrame 等表格数据时，<strong>index</strong>（行）或 <strong>columns</strong>（列）比 <strong>axis 0</strong> 和 <strong>axis 1</strong> 更直观。用这种方式迭代 DataFrame 的列，代码更易读易懂：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> df.columns:</span><br><span class="line">    series = df[col]</span><br><span class="line">    <span class="comment"># do something with series</span></span><br></pre></td></tr></table></figure>
+<h3 id="大小可变与数据复制"><a href="https://www.pypandas.cn/docs/getting_started/overview.html#大小可变与数据复制">大小可变与数据复制</a></h3>
+<p>Pandas 所有数据结构的值都是可变的，但数据结构的大小并非都是可变的，比如，Series 的长度不可改变，但 DataFrame 里就可以插入列。</p>
+<p>Pandas 里，绝大多数方法都不改变原始的输入数据，而是复制数据，生成新的对象。 一般来说，原始输入数据<strong>不变</strong>更稳妥。</p>
+<h3 id="十分钟入门pandas"><a href="https://www.pypandas.cn/docs/getting_started/10min.html#%E5%8D%81%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8-pandas">十分钟入门Pandas</a></h3>
+<p>导入：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
+<h4 id="生成对象">生成对象</h4>
+<p>使用值列表生成Series</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">3</span>]: s = pd.Series([<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, np.nan, <span class="number">6</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: s</span><br><span class="line">Out[<span class="number">4</span>]: </span><br><span class="line"><span class="number">0</span>    <span class="number">1.0</span></span><br><span class="line"><span class="number">1</span>    <span class="number">3.0</span></span><br><span class="line"><span class="number">2</span>    <span class="number">5.0</span></span><br><span class="line"><span class="number">3</span>    NaN</span><br><span class="line"><span class="number">4</span>    <span class="number">6.0</span></span><br><span class="line"><span class="number">5</span>    <span class="number">8.0</span></span><br><span class="line">dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用含日期时间索引与标签的Numpy数组生成DataFrame</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">5</span>]: dates = pd.date_range(<span class="string">&#x27;20130101&#x27;</span>, periods=<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: dates</span><br><span class="line">Out[<span class="number">6</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: df = pd.DataFrame(np.random.randn(<span class="number">6</span>, <span class="number">4</span>), index=dates, columns=<span class="built_in">list</span>(<span class="string">&#x27;ABCD&#x27;</span>))</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: df</span><br><span class="line">Out[<span class="number">8</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span> -<span class="number">1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p>用Series字典对象生成DataFrame</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">In [9]: df2 = pd.DataFrame(&#123;&#x27;A&#x27;: 1.,</span><br><span class="line">   ...:                     &#x27;B&#x27;: pd.Timestamp(&#x27;20130102&#x27;),</span><br><span class="line">   ...:                     &#x27;C&#x27;: pd.Series(1, index=list(range(4)), dtype=&#x27;float32&#x27;),</span><br><span class="line">   ...:                     &#x27;D&#x27;: np.array([3] * 4, dtype=&#x27;int32&#x27;),</span><br><span class="line">   ...:                     &#x27;E&#x27;: pd.Categorical([&quot;test&quot;, &quot;train&quot;, &quot;test&quot;, &quot;train&quot;]),</span><br><span class="line">   ...:                     &#x27;F&#x27;: &#x27;foo&#x27;&#125;)</span><br><span class="line">   ...: </span><br><span class="line"></span><br><span class="line">In [10]: df2</span><br><span class="line">Out[10]: </span><br><span class="line">     A          B    C  D      E    F</span><br><span class="line">0  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">1  1.0 2013-01-02  1.0  3  train  foo</span><br><span class="line">2  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">3  1.0 2013-01-02  1.0  3  train  foo</span><br></pre></td></tr></table></figure>
+<p>DataFrame的列有不同的数据类型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">11</span>]: df2.dtypes</span><br><span class="line">Out[<span class="number">11</span>]: </span><br><span class="line">A           float64</span><br><span class="line">B    datetime64[ns]</span><br><span class="line">C           float32</span><br><span class="line">D             int32</span><br><span class="line">E          category</span><br><span class="line">F            <span class="built_in">object</span></span><br><span class="line">dtype: <span class="built_in">object</span></span><br></pre></td></tr></table></figure>
+<p>IPython支持 tab 键自动补全列名与公共属性。下面是部分可自动补全的属性：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">12</span>]: df2.&lt;TAB&gt;  <span class="comment"># noqa: E225, E999</span></span><br><span class="line">df2.A                  df2.<span class="built_in">bool</span></span><br><span class="line">df2.<span class="built_in">abs</span>                df2.boxplot</span><br><span class="line">df2.add                df2.C</span><br><span class="line">df2.add_prefix         df2.clip</span><br><span class="line">df2.add_suffix         df2.clip_lower</span><br><span class="line">df2.align              df2.clip_upper</span><br><span class="line">df2.<span class="built_in">all</span>                df2.columns</span><br><span class="line">df2.<span class="built_in">any</span>                df2.combine</span><br><span class="line">df2.append             df2.combine_first</span><br><span class="line">df2.apply              df2.compound</span><br><span class="line">df2.applymap           df2.consolidate</span><br><span class="line">df2.D</span><br></pre></td></tr></table></figure>
+<p>列 A、B、C、D 和 E 都可以自动补全；为简洁起见，此处只显示了部分属性。</p>
+<h4 id="查看数据">查看数据</h4>
+<p>下列代码说明了如何查看DataFrame头部和尾部的数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">13</span>]: df.head()</span><br><span class="line">Out[<span class="number">13</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: df.tail(<span class="number">3</span>) <span class="comment">#后三行	</span></span><br><span class="line">Out[<span class="number">14</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span> -<span class="number">1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p>显示索引与列名：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">15</span>]: df.index</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: df.columns</span><br><span class="line">Out[<span class="number">16</span>]: Index([<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>], dtype=<span class="string">&#x27;object&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 输出底层数据的 NumPy 对象。注意，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 的列由多种数据类型组成时，该操作耗费系统资源较大，这也是 Pandas 和 NumPy 的本质区别：<strong>NumPy 数组只有一种数据类型，DataFrame 每列的数据类型各不相同</strong>。调用 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 时，Pandas 查找支持 DataFrame 里所有数据类型的 NumPy 数据类型。还有一种数据类型是 <code>object</code>，可以把 DataFrame 列里的值强制转换为 Python 对象。</p>
+<p>下面的 <code>df</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 里的值都是浮点数，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的操作会很快，而且不复制数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">17</span>]: df.to_numpy()</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">array([[ <span class="number">0.4691</span>, -<span class="number">0.2829</span>, -<span class="number">1.5091</span>, -<span class="number">1.1356</span>],</span><br><span class="line">       [ <span class="number">1.2121</span>, -<span class="number">0.1732</span>,  <span class="number">0.1192</span>, -<span class="number">1.0442</span>],</span><br><span class="line">       [-<span class="number">0.8618</span>, -<span class="number">2.1046</span>, -<span class="number">0.4949</span>,  <span class="number">1.0718</span>],</span><br><span class="line">       [ <span class="number">0.7216</span>, -<span class="number">0.7068</span>, -<span class="number">1.0396</span>,  <span class="number">0.2719</span>],</span><br><span class="line">       [-<span class="number">0.425</span> ,  <span class="number">0.567</span> ,  <span class="number">0.2762</span>, -<span class="number">1.0874</span>],</span><br><span class="line">       [-<span class="number">0.6737</span>,  <span class="number">0.1136</span>, -<span class="number">1.4784</span>,  <span class="number">0.525</span> ]])</span><br></pre></td></tr></table></figure>
+<p><code>df2</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 包含了多种类型，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 操作就会耗费较多资源。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">18</span>]: df2.to_numpy()</span><br><span class="line">Out[<span class="number">18</span>]: </span><br><span class="line">array([[<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>]], dtype=<span class="built_in">object</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提醒：<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的输出不包含行索引和列标签。</p>
+</blockquote>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.describe.html#pandas.DataFrame.describe">describe()</a> 可以快速查看数据的统计摘要：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">19</span>]: df.describe()</span><br><span class="line">Out[<span class="number">19</span>]: </span><br><span class="line">              A         B         C         D</span><br><span class="line">count  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span></span><br><span class="line">mean   <span class="number">0.073711</span> -<span class="number">0.431125</span> -<span class="number">0.687758</span> -<span class="number">0.233103</span></span><br><span class="line">std    <span class="number">0.843157</span>  <span class="number">0.922818</span>  <span class="number">0.779887</span>  <span class="number">0.973118</span></span><br><span class="line"><span class="built_in">min</span>   -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">25</span>%   -<span class="number">0.611510</span> -<span class="number">0.600794</span> -<span class="number">1.368714</span> -<span class="number">1.076610</span></span><br><span class="line"><span class="number">50</span>%    <span class="number">0.022070</span> -<span class="number">0.228039</span> -<span class="number">0.767252</span> -<span class="number">0.386188</span></span><br><span class="line"><span class="number">75</span>%    <span class="number">0.658444</span>  <span class="number">0.041933</span> -<span class="number">0.034326</span>  <span class="number">0.461706</span></span><br><span class="line"><span class="built_in">max</span>    <span class="number">1.212112</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
+<p>转置数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">20</span>]: df.T</span><br><span class="line">Out[<span class="number">20</span>]: </span><br><span class="line">   <span class="number">2013</span>-01-01  <span class="number">2013</span>-01-02  <span class="number">2013</span>-01-03  <span class="number">2013</span>-01-04  <span class="number">2013</span>-01-05  <span class="number">2013</span>-01-06</span><br><span class="line">A    <span class="number">0.469112</span>    <span class="number">1.212112</span>   -<span class="number">0.861849</span>    <span class="number">0.721555</span>   -<span class="number">0.424972</span>   -<span class="number">0.673690</span></span><br><span class="line">B   -<span class="number">0.282863</span>   -<span class="number">0.173215</span>   -<span class="number">2.104569</span>   -<span class="number">0.706771</span>    <span class="number">0.567020</span>    <span class="number">0.113648</span></span><br><span class="line">C   -<span class="number">1.509059</span>    <span class="number">0.119209</span>   -<span class="number">0.494929</span>   -<span class="number">1.039575</span>    <span class="number">0.276232</span>   -<span class="number">1.478427</span></span><br><span class="line">D   -<span class="number">1.135632</span>   -<span class="number">1.044236</span>    <span class="number">1.071804</span>    <span class="number">0.271860</span>   -<span class="number">1.087401</span>    <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
+<p><strong>按轴排序：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">21</span>]: df.sort_index(axis=<span class="number">1</span>, ascending=<span class="literal">False</span>)</span><br><span class="line">Out[<span class="number">21</span>]: </span><br><span class="line">                   D         C         B         A</span><br><span class="line"><span class="number">2013</span>-01-01 -<span class="number">1.135632</span> -<span class="number">1.509059</span> -<span class="number">0.282863</span>  <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span>-01-02 -<span class="number">1.044236</span>  <span class="number">0.119209</span> -<span class="number">0.173215</span>  <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span>-01-03  <span class="number">1.071804</span> -<span class="number">0.494929</span> -<span class="number">2.104569</span> -<span class="number">0.861849</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.271860</span> -<span class="number">1.039575</span> -<span class="number">0.706771</span>  <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">1.087401</span>  <span class="number">0.276232</span>  <span class="number">0.567020</span> -<span class="number">0.424972</span></span><br><span class="line"><span class="number">2013</span>-01-06  <span class="number">0.524988</span> -<span class="number">1.478427</span>  <span class="number">0.113648</span> -<span class="number">0.673690</span></span><br></pre></td></tr></table></figure>
+<p>按值排序：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">22</span>]: df.sort_values(by=<span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">Out[<span class="number">22</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span> -<span class="number">1.478427</span>  <span class="number">0.524988</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br></pre></td></tr></table></figure>
+<h4 id="选择">选择</h4>
+<p>获取数据</p>
+<p>选择单列，产生<code>Series</code>，与<code>df.A</code>等效：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">23</span>]: df[<span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">23</span>]: </span><br><span class="line"><span class="number">2013</span>-01-01    <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span>-01-02    <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span>-01-03   -<span class="number">0.861849</span></span><br><span class="line"><span class="number">2013</span>-01-04    <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span>-01-05   -<span class="number">0.424972</span></span><br><span class="line"><span class="number">2013</span>-01-06   -<span class="number">0.673690</span></span><br><span class="line">Freq: D, Name: A, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用[]切片行：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">24</span>]: df[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">24</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: df[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>]</span><br><span class="line">Out[<span class="number">25</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br></pre></td></tr></table></figure>
+<h4 id="按标签选择">按标签选择</h4>
+<p>用标签提取一行数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">26</span>]: df.loc[dates[<span class="number">0</span>]]</span><br><span class="line">Out[<span class="number">26</span>]: </span><br><span class="line">A    <span class="number">0.469112</span></span><br><span class="line">B   -<span class="number">0.282863</span></span><br><span class="line">C   -<span class="number">1.509059</span></span><br><span class="line">D   -<span class="number">1.135632</span></span><br><span class="line">Name: <span class="number">2013</span>-01-01 <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>用标签选择多列数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">27</span>]: df.loc[:, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">27</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span></span><br></pre></td></tr></table></figure>
+<p>用标签切片，包含行与列结束点：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">28</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">28</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span></span><br></pre></td></tr></table></figure>
+<p>返回对象降维：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">29</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">29</span>]: </span><br><span class="line">A    <span class="number">1.212112</span></span><br><span class="line">B   -<span class="number">0.173215</span></span><br><span class="line">Name: <span class="number">2013</span>-01-02 <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>提取标量：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">30</span>]: df.loc[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">30</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
+<p>快速访问标量，与上述方法等效。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">31</span>]: df.at[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">31</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
+<h4 id="按位置选择">按位置选择</h4>
+<p>选择第三行的数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">32</span>]: df.iloc[<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">32</span>]: </span><br><span class="line">A    <span class="number">0.721555</span></span><br><span class="line">B   -<span class="number">0.706771</span></span><br><span class="line">C   -<span class="number">1.039575</span></span><br><span class="line">D    <span class="number">0.271860</span></span><br><span class="line">Name: <span class="number">2013</span>-01-04 <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>类似于Numpy/Python，用整数切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">33</span>]: df.iloc[<span class="number">3</span>:<span class="number">5</span>, <span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">Out[<span class="number">33</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span></span><br></pre></td></tr></table></figure>
+<p>类似于Numpy/Python，用整数列表按位置切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">34</span>]: df.iloc[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>], [<span class="number">0</span>, <span class="number">2</span>]]</span><br><span class="line">Out[<span class="number">34</span>]: </span><br><span class="line">                   A         C</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">0.494929</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.276232</span></span><br></pre></td></tr></table></figure>
+<p>显式整行切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">35</span>]: df.iloc[<span class="number">1</span>:<span class="number">3</span>, :]</span><br><span class="line">Out[<span class="number">35</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
+<p>显式整列切片：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">36</span>]: df.iloc[:, <span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">36</span>]: </span><br><span class="line">                   B         C</span><br><span class="line"><span class="number">2013</span>-01-01 -<span class="number">0.282863</span> -<span class="number">1.509059</span></span><br><span class="line"><span class="number">2013</span>-01-02 -<span class="number">0.173215</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">2.104569</span> -<span class="number">0.494929</span></span><br><span class="line"><span class="number">2013</span>-01-04 -<span class="number">0.706771</span> -<span class="number">1.039575</span></span><br><span class="line"><span class="number">2013</span>-01-05  <span class="number">0.567020</span>  <span class="number">0.276232</span></span><br><span class="line"><span class="number">2013</span>-01-06  <span class="number">0.113648</span> -<span class="number">1.478427</span></span><br></pre></td></tr></table></figure>
+<p>显示提取值：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">37</span>]: df.iloc[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">37</span>]: -<span class="number">0.17321464905330858</span></span><br></pre></td></tr></table></figure>
+<p>快速访问标量，与上述方法等效：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">38</span>]: df.iat[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">38</span>]: -<span class="number">0.17321464905330858</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python应用（一）｜正则表达式</title>
     <url>/p/regular-expression-usage-in-python/</url>
     <content><![CDATA[<h4 id="正则表达式全集">正则表达式全集</h4>
@@ -3141,149 +3284,6 @@ y=x^2e^x
 <li id="fn3" role="doc-endnote"><p>E80-FFF<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python应用（七）｜数据处理Pandas</title>
-    <url>/p/Pandas-learning-notes-01/</url>
-    <content><![CDATA[<p>Pandas是什么？</p>
-<span id="more"></span>
-<p>Pandas是一个强大的分析结构化数据的工具集；它的使用基础是Numpy（提供高性能的矩阵运算）；用于数据挖掘和数据分析，同时也提供数据清洗功能。</p>
-<h3 id="安装pandas">安装Pandas</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install Pandas -i http://mirrors.aliyun.com/pypi/simple/</span><br></pre></td></tr></table></figure>
-<h3 id="pandas简介">Pandas简介</h3>
-<p>Pandas 适用于处理以下类型的数据：</p>
-<ul>
-<li>与 SQL 或 Excel 表类似的，含异构列的表格数据;</li>
-<li>有序和无序（非固定频率）的时间序列数据;</li>
-<li>带行列标签的矩阵数据，包括同构或异构型数据;</li>
-<li>任意其它形式的观测、统计数据集, 数据转入 Pandas 数据结构时不必事先标记。</li>
-</ul>
-<p>Pandas 的主要数据结构是 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series">Series</a>（一维数据）与 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a>（二维数据），这两种数据结构足以<strong>处理金融、统计、社会科学、工程</strong>等领域里的大多数典型用例。对于 R 用户，DataFrame 提供了比 R 语言 data.frame 更丰富的功能。Pandas 基于 <a href="https://www.numpy.org/">NumPy</a> 开发，可以与其它第三方科学计算支持库完美集成。</p>
-<p>Pandas 就像一把万能瑞士军刀，下面仅列出了它的部分优势 ：</p>
-<ul>
-<li>处理浮点与非浮点数据里的<strong>缺失数据</strong>，表示为 <code>NaN</code>；</li>
-<li>大小可变：<strong>插入或删除</strong> DataFrame 等多维对象的列；</li>
-<li>自动、显式<strong>数据对齐</strong>：显式地将对象与一组标签对齐，也可以忽略标签，在 Series、DataFrame 计算时自动与数据对齐；</li>
-<li>强大、灵活的<strong>分组</strong>（group by）功能：<strong>拆分-应用-组合</strong>数据集，聚合、转换数据；</li>
-<li>把 Python 和 NumPy 数据结构里不规则、不同索引的数据<strong>轻松</strong>地转换为 DataFrame 对象；</li>
-<li>基于智能标签，对大型数据集进行<strong>切片</strong>、<strong>花式索引</strong>、<strong>子集分解</strong>等操作；</li>
-<li>直观地<strong>合并（merge）</strong>、<strong>连接（join）</strong>数据集；</li>
-<li>灵活地<strong>重塑（reshape）</strong>、<strong>透视（pivot）</strong>数据集；</li>
-<li><strong>轴</strong>支持结构化标签：一个刻度支持多个标签；</li>
-<li>成熟的 IO 工具：读取<strong>文本文件</strong>（CSV 等支持分隔符的文件）、Excel 文件、数据库等来源的数据，利用超快的 <strong>HDF5</strong> 格式保存 / 加载数据；</li>
-<li><strong>时间序列</strong>：支持日期范围生成、频率转换、移动窗口统计、移动窗口线性回归、日期位移等时间序列功能。</li>
-</ul>
-<p>这些功能主要是为了解决其它编程语言、科研环境的痛点。处理数据一般分为几个阶段：<strong>数据整理与清洗、数据分析与建模、数据可视化与制表</strong>，Pandas 是处理数据的理想工具。</p>
-<p>其它说明：</p>
-<ul>
-<li>Pandas 速度<strong>很快</strong>。Pandas 的很多底层算法都用 <a href="https://cython.org/">Cython</a> 优化过。然而，为了保持通用性，必然要牺牲一些性能，如果专注某一功能，完全可以开发出比 Pandas 更快的专用工具。</li>
-<li>Pandas 是 <a href="https://www.statsmodels.org/stable/index.html">statsmodels</a> 的依赖项，因此，Pandas 也是 Python 中统计计算生态系统的重要组成部分。</li>
-<li>Pandas 已广泛应用于金融领域</li>
-</ul>
-<h3 id="pandas中的数据结构">Pandas中的数据结构</h3>
-<table>
-<thead>
-<tr class="header">
-<th>维数</th>
-<th>名称</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Series</td>
-<td>带标签的一维同构数组</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>DataFrame</td>
-<td>带标签的，大小可变的，二维异构表格</td>
-</tr>
-</tbody>
-</table>
-<h3 id="为什么有多个数据结构">为什么有多个数据结构？</h3>
-<p>Pandas 数据结构就像是低维数据的容器。比如，DataFrame 是 Series 的容器，Series 则是标量的容器。使用这种方式，可以在容器中以字典的形式插入或删除对象。</p>
-<p>此外，通用 API 函数的默认操作要顾及时间序列与截面数据集的方向。多维数组存储二维或三维数据时，编写函数要注意数据集的方向，这对用户来说是一种负担；如果不考虑 C 或 Fortran 中连续性对性能的影响，一般情况下，不同的轴在程序里其实没有什么区别。Pandas 里，轴的概念主要是为了给数据赋予更直观的语义，即用“更恰当”的方式表示数据集的方向。这样做可以让用户编写数据转换函数时，少费点脑子。</p>
-<p>处理 DataFrame 等表格数据时，<strong>index</strong>（行）或 <strong>columns</strong>（列）比 <strong>axis 0</strong> 和 <strong>axis 1</strong> 更直观。用这种方式迭代 DataFrame 的列，代码更易读易懂：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> df.columns:</span><br><span class="line">    series = df[col]</span><br><span class="line">    <span class="comment"># do something with series</span></span><br></pre></td></tr></table></figure>
-<h3 id="大小可变与数据复制"><a href="https://www.pypandas.cn/docs/getting_started/overview.html#大小可变与数据复制">大小可变与数据复制</a></h3>
-<p>Pandas 所有数据结构的值都是可变的，但数据结构的大小并非都是可变的，比如，Series 的长度不可改变，但 DataFrame 里就可以插入列。</p>
-<p>Pandas 里，绝大多数方法都不改变原始的输入数据，而是复制数据，生成新的对象。 一般来说，原始输入数据<strong>不变</strong>更稳妥。</p>
-<h3 id="十分钟入门pandas"><a href="https://www.pypandas.cn/docs/getting_started/10min.html#%E5%8D%81%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8-pandas">十分钟入门Pandas</a></h3>
-<p>导入：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
-<h4 id="生成对象">生成对象</h4>
-<p>使用值列表生成Series</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">3</span>]: s = pd.Series([<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, np.nan, <span class="number">6</span>, <span class="number">8</span>])</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: s</span><br><span class="line">Out[<span class="number">4</span>]: </span><br><span class="line"><span class="number">0</span>    <span class="number">1.0</span></span><br><span class="line"><span class="number">1</span>    <span class="number">3.0</span></span><br><span class="line"><span class="number">2</span>    <span class="number">5.0</span></span><br><span class="line"><span class="number">3</span>    NaN</span><br><span class="line"><span class="number">4</span>    <span class="number">6.0</span></span><br><span class="line"><span class="number">5</span>    <span class="number">8.0</span></span><br><span class="line">dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用含日期时间索引与标签的Numpy数组生成DataFrame</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">5</span>]: dates = pd.date_range(<span class="string">&#x27;20130101&#x27;</span>, periods=<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: dates</span><br><span class="line">Out[<span class="number">6</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: df = pd.DataFrame(np.random.randn(<span class="number">6</span>, <span class="number">4</span>), index=dates, columns=<span class="built_in">list</span>(<span class="string">&#x27;ABCD&#x27;</span>))</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: df</span><br><span class="line">Out[<span class="number">8</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span> -<span class="number">1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p>用Series字典对象生成DataFrame</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">In [9]: df2 = pd.DataFrame(&#123;&#x27;A&#x27;: 1.,</span><br><span class="line">   ...:                     &#x27;B&#x27;: pd.Timestamp(&#x27;20130102&#x27;),</span><br><span class="line">   ...:                     &#x27;C&#x27;: pd.Series(1, index=list(range(4)), dtype=&#x27;float32&#x27;),</span><br><span class="line">   ...:                     &#x27;D&#x27;: np.array([3] * 4, dtype=&#x27;int32&#x27;),</span><br><span class="line">   ...:                     &#x27;E&#x27;: pd.Categorical([&quot;test&quot;, &quot;train&quot;, &quot;test&quot;, &quot;train&quot;]),</span><br><span class="line">   ...:                     &#x27;F&#x27;: &#x27;foo&#x27;&#125;)</span><br><span class="line">   ...: </span><br><span class="line"></span><br><span class="line">In [10]: df2</span><br><span class="line">Out[10]: </span><br><span class="line">     A          B    C  D      E    F</span><br><span class="line">0  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">1  1.0 2013-01-02  1.0  3  train  foo</span><br><span class="line">2  1.0 2013-01-02  1.0  3   test  foo</span><br><span class="line">3  1.0 2013-01-02  1.0  3  train  foo</span><br></pre></td></tr></table></figure>
-<p>DataFrame的列有不同的数据类型</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">11</span>]: df2.dtypes</span><br><span class="line">Out[<span class="number">11</span>]: </span><br><span class="line">A           float64</span><br><span class="line">B    datetime64[ns]</span><br><span class="line">C           float32</span><br><span class="line">D             int32</span><br><span class="line">E          category</span><br><span class="line">F            <span class="built_in">object</span></span><br><span class="line">dtype: <span class="built_in">object</span></span><br></pre></td></tr></table></figure>
-<p>IPython支持 tab 键自动补全列名与公共属性。下面是部分可自动补全的属性：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">12</span>]: df2.&lt;TAB&gt;  <span class="comment"># noqa: E225, E999</span></span><br><span class="line">df2.A                  df2.<span class="built_in">bool</span></span><br><span class="line">df2.<span class="built_in">abs</span>                df2.boxplot</span><br><span class="line">df2.add                df2.C</span><br><span class="line">df2.add_prefix         df2.clip</span><br><span class="line">df2.add_suffix         df2.clip_lower</span><br><span class="line">df2.align              df2.clip_upper</span><br><span class="line">df2.<span class="built_in">all</span>                df2.columns</span><br><span class="line">df2.<span class="built_in">any</span>                df2.combine</span><br><span class="line">df2.append             df2.combine_first</span><br><span class="line">df2.apply              df2.compound</span><br><span class="line">df2.applymap           df2.consolidate</span><br><span class="line">df2.D</span><br></pre></td></tr></table></figure>
-<p>列 A、B、C、D 和 E 都可以自动补全；为简洁起见，此处只显示了部分属性。</p>
-<h4 id="查看数据">查看数据</h4>
-<p>下列代码说明了如何查看DataFrame头部和尾部的数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">13</span>]: df.head()</span><br><span class="line">Out[<span class="number">13</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: df.tail(<span class="number">3</span>) <span class="comment">#后三行	</span></span><br><span class="line">Out[<span class="number">14</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span> -<span class="number">1.478427</span>  <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p>显示索引与列名：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">15</span>]: df.index</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">DatetimeIndex([<span class="string">&#x27;2013-01-01&#x27;</span>, <span class="string">&#x27;2013-01-02&#x27;</span>, <span class="string">&#x27;2013-01-03&#x27;</span>, <span class="string">&#x27;2013-01-04&#x27;</span>,</span><br><span class="line">               <span class="string">&#x27;2013-01-05&#x27;</span>, <span class="string">&#x27;2013-01-06&#x27;</span>],</span><br><span class="line">              dtype=<span class="string">&#x27;datetime64[ns]&#x27;</span>, freq=<span class="string">&#x27;D&#x27;</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: df.columns</span><br><span class="line">Out[<span class="number">16</span>]: Index([<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>], dtype=<span class="string">&#x27;object&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 输出底层数据的 NumPy 对象。注意，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 的列由多种数据类型组成时，该操作耗费系统资源较大，这也是 Pandas 和 NumPy 的本质区别：<strong>NumPy 数组只有一种数据类型，DataFrame 每列的数据类型各不相同</strong>。调用 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 时，Pandas 查找支持 DataFrame 里所有数据类型的 NumPy 数据类型。还有一种数据类型是 <code>object</code>，可以把 DataFrame 列里的值强制转换为 Python 对象。</p>
-<p>下面的 <code>df</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 里的值都是浮点数，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的操作会很快，而且不复制数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">17</span>]: df.to_numpy()</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">array([[ <span class="number">0.4691</span>, -<span class="number">0.2829</span>, -<span class="number">1.5091</span>, -<span class="number">1.1356</span>],</span><br><span class="line">       [ <span class="number">1.2121</span>, -<span class="number">0.1732</span>,  <span class="number">0.1192</span>, -<span class="number">1.0442</span>],</span><br><span class="line">       [-<span class="number">0.8618</span>, -<span class="number">2.1046</span>, -<span class="number">0.4949</span>,  <span class="number">1.0718</span>],</span><br><span class="line">       [ <span class="number">0.7216</span>, -<span class="number">0.7068</span>, -<span class="number">1.0396</span>,  <span class="number">0.2719</span>],</span><br><span class="line">       [-<span class="number">0.425</span> ,  <span class="number">0.567</span> ,  <span class="number">0.2762</span>, -<span class="number">1.0874</span>],</span><br><span class="line">       [-<span class="number">0.6737</span>,  <span class="number">0.1136</span>, -<span class="number">1.4784</span>,  <span class="number">0.525</span> ]])</span><br></pre></td></tr></table></figure>
-<p><code>df2</code> 这个 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame">DataFrame</a> 包含了多种类型，<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 操作就会耗费较多资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">18</span>]: df2.to_numpy()</span><br><span class="line">Out[<span class="number">18</span>]: </span><br><span class="line">array([[<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>],</span><br><span class="line">       [<span class="number">1.0</span>, Timestamp(<span class="string">&#x27;2013-01-02 00:00:00&#x27;</span>), <span class="number">1.0</span>, <span class="number">3</span>, <span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;foo&#x27;</span>]], dtype=<span class="built_in">object</span>)</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>提醒：<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_numpy.html#pandas.DataFrame.to_numpy">DataFrame.to_numpy()</a> 的输出不包含行索引和列标签。</p>
-</blockquote>
-<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.describe.html#pandas.DataFrame.describe">describe()</a> 可以快速查看数据的统计摘要：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">19</span>]: df.describe()</span><br><span class="line">Out[<span class="number">19</span>]: </span><br><span class="line">              A         B         C         D</span><br><span class="line">count  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span>  <span class="number">6.000000</span></span><br><span class="line">mean   <span class="number">0.073711</span> -<span class="number">0.431125</span> -<span class="number">0.687758</span> -<span class="number">0.233103</span></span><br><span class="line">std    <span class="number">0.843157</span>  <span class="number">0.922818</span>  <span class="number">0.779887</span>  <span class="number">0.973118</span></span><br><span class="line"><span class="built_in">min</span>   -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">25</span>%   -<span class="number">0.611510</span> -<span class="number">0.600794</span> -<span class="number">1.368714</span> -<span class="number">1.076610</span></span><br><span class="line"><span class="number">50</span>%    <span class="number">0.022070</span> -<span class="number">0.228039</span> -<span class="number">0.767252</span> -<span class="number">0.386188</span></span><br><span class="line"><span class="number">75</span>%    <span class="number">0.658444</span>  <span class="number">0.041933</span> -<span class="number">0.034326</span>  <span class="number">0.461706</span></span><br><span class="line"><span class="built_in">max</span>    <span class="number">1.212112</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
-<p>转置数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">20</span>]: df.T</span><br><span class="line">Out[<span class="number">20</span>]: </span><br><span class="line">   <span class="number">2013</span>-01-01  <span class="number">2013</span>-01-02  <span class="number">2013</span>-01-03  <span class="number">2013</span>-01-04  <span class="number">2013</span>-01-05  <span class="number">2013</span>-01-06</span><br><span class="line">A    <span class="number">0.469112</span>    <span class="number">1.212112</span>   -<span class="number">0.861849</span>    <span class="number">0.721555</span>   -<span class="number">0.424972</span>   -<span class="number">0.673690</span></span><br><span class="line">B   -<span class="number">0.282863</span>   -<span class="number">0.173215</span>   -<span class="number">2.104569</span>   -<span class="number">0.706771</span>    <span class="number">0.567020</span>    <span class="number">0.113648</span></span><br><span class="line">C   -<span class="number">1.509059</span>    <span class="number">0.119209</span>   -<span class="number">0.494929</span>   -<span class="number">1.039575</span>    <span class="number">0.276232</span>   -<span class="number">1.478427</span></span><br><span class="line">D   -<span class="number">1.135632</span>   -<span class="number">1.044236</span>    <span class="number">1.071804</span>    <span class="number">0.271860</span>   -<span class="number">1.087401</span>    <span class="number">0.524988</span></span><br></pre></td></tr></table></figure>
-<p><strong>按轴排序：</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">21</span>]: df.sort_index(axis=<span class="number">1</span>, ascending=<span class="literal">False</span>)</span><br><span class="line">Out[<span class="number">21</span>]: </span><br><span class="line">                   D         C         B         A</span><br><span class="line"><span class="number">2013</span>-01-01 -<span class="number">1.135632</span> -<span class="number">1.509059</span> -<span class="number">0.282863</span>  <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span>-01-02 -<span class="number">1.044236</span>  <span class="number">0.119209</span> -<span class="number">0.173215</span>  <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span>-01-03  <span class="number">1.071804</span> -<span class="number">0.494929</span> -<span class="number">2.104569</span> -<span class="number">0.861849</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.271860</span> -<span class="number">1.039575</span> -<span class="number">0.706771</span>  <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">1.087401</span>  <span class="number">0.276232</span>  <span class="number">0.567020</span> -<span class="number">0.424972</span></span><br><span class="line"><span class="number">2013</span>-01-06  <span class="number">0.524988</span> -<span class="number">1.478427</span>  <span class="number">0.113648</span> -<span class="number">0.673690</span></span><br></pre></td></tr></table></figure>
-<p>按值排序：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">22</span>]: df.sort_values(by=<span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">Out[<span class="number">22</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span> -<span class="number">1.478427</span>  <span class="number">0.524988</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span>  <span class="number">0.276232</span> -<span class="number">1.087401</span></span><br></pre></td></tr></table></figure>
-<h4 id="选择">选择</h4>
-<p>获取数据</p>
-<p>选择单列，产生<code>Series</code>，与<code>df.A</code>等效：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">23</span>]: df[<span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">23</span>]: </span><br><span class="line"><span class="number">2013</span>-01-01    <span class="number">0.469112</span></span><br><span class="line"><span class="number">2013</span>-01-02    <span class="number">1.212112</span></span><br><span class="line"><span class="number">2013</span>-01-03   -<span class="number">0.861849</span></span><br><span class="line"><span class="number">2013</span>-01-04    <span class="number">0.721555</span></span><br><span class="line"><span class="number">2013</span>-01-05   -<span class="number">0.424972</span></span><br><span class="line"><span class="number">2013</span>-01-06   -<span class="number">0.673690</span></span><br><span class="line">Freq: D, Name: A, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用[]切片行：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">24</span>]: df[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">24</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span> -<span class="number">1.509059</span> -<span class="number">1.135632</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: df[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>]</span><br><span class="line">Out[<span class="number">25</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span> -<span class="number">1.039575</span>  <span class="number">0.271860</span></span><br></pre></td></tr></table></figure>
-<h4 id="按标签选择">按标签选择</h4>
-<p>用标签提取一行数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">26</span>]: df.loc[dates[<span class="number">0</span>]]</span><br><span class="line">Out[<span class="number">26</span>]: </span><br><span class="line">A    <span class="number">0.469112</span></span><br><span class="line">B   -<span class="number">0.282863</span></span><br><span class="line">C   -<span class="number">1.509059</span></span><br><span class="line">D   -<span class="number">1.135632</span></span><br><span class="line">Name: <span class="number">2013</span>-01-01 <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>用标签选择多列数据：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">27</span>]: df.loc[:, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">27</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span>-01-01  <span class="number">0.469112</span> -<span class="number">0.282863</span></span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span></span><br><span class="line"><span class="number">2013</span>-01-06 -<span class="number">0.673690</span>  <span class="number">0.113648</span></span><br></pre></td></tr></table></figure>
-<p>用标签切片，包含行与列结束点：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">28</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>:<span class="string">&#x27;20130104&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">28</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span></span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span></span><br></pre></td></tr></table></figure>
-<p>返回对象降维：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">29</span>]: df.loc[<span class="string">&#x27;20130102&#x27;</span>, [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>]]</span><br><span class="line">Out[<span class="number">29</span>]: </span><br><span class="line">A    <span class="number">1.212112</span></span><br><span class="line">B   -<span class="number">0.173215</span></span><br><span class="line">Name: <span class="number">2013</span>-01-02 <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>提取标量：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">30</span>]: df.loc[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">30</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
-<p>快速访问标量，与上述方法等效。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">31</span>]: df.at[dates[<span class="number">0</span>], <span class="string">&#x27;A&#x27;</span>]</span><br><span class="line">Out[<span class="number">31</span>]: <span class="number">0.46911229990718628</span></span><br></pre></td></tr></table></figure>
-<h4 id="按位置选择">按位置选择</h4>
-<p>选择第三行的数据</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">32</span>]: df.iloc[<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">32</span>]: </span><br><span class="line">A    <span class="number">0.721555</span></span><br><span class="line">B   -<span class="number">0.706771</span></span><br><span class="line">C   -<span class="number">1.039575</span></span><br><span class="line">D    <span class="number">0.271860</span></span><br><span class="line">Name: <span class="number">2013</span>-01-04 <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>, dtype: float64</span><br></pre></td></tr></table></figure>
-<p>类似于Numpy/Python，用整数切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">33</span>]: df.iloc[<span class="number">3</span>:<span class="number">5</span>, <span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">Out[<span class="number">33</span>]: </span><br><span class="line">                   A         B</span><br><span class="line"><span class="number">2013</span>-01-04  <span class="number">0.721555</span> -<span class="number">0.706771</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.567020</span></span><br></pre></td></tr></table></figure>
-<p>类似于Numpy/Python，用整数列表按位置切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">34</span>]: df.iloc[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>], [<span class="number">0</span>, <span class="number">2</span>]]</span><br><span class="line">Out[<span class="number">34</span>]: </span><br><span class="line">                   A         C</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">0.494929</span></span><br><span class="line"><span class="number">2013</span>-01-05 -<span class="number">0.424972</span>  <span class="number">0.276232</span></span><br></pre></td></tr></table></figure>
-<p>显式整行切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">35</span>]: df.iloc[<span class="number">1</span>:<span class="number">3</span>, :]</span><br><span class="line">Out[<span class="number">35</span>]: </span><br><span class="line">                   A         B         C         D</span><br><span class="line"><span class="number">2013</span>-01-02  <span class="number">1.212112</span> -<span class="number">0.173215</span>  <span class="number">0.119209</span> -<span class="number">1.044236</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">0.861849</span> -<span class="number">2.104569</span> -<span class="number">0.494929</span>  <span class="number">1.071804</span></span><br></pre></td></tr></table></figure>
-<p>显式整列切片：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">36</span>]: df.iloc[:, <span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line">Out[<span class="number">36</span>]: </span><br><span class="line">                   B         C</span><br><span class="line"><span class="number">2013</span>-01-01 -<span class="number">0.282863</span> -<span class="number">1.509059</span></span><br><span class="line"><span class="number">2013</span>-01-02 -<span class="number">0.173215</span>  <span class="number">0.119209</span></span><br><span class="line"><span class="number">2013</span>-01-03 -<span class="number">2.104569</span> -<span class="number">0.494929</span></span><br><span class="line"><span class="number">2013</span>-01-04 -<span class="number">0.706771</span> -<span class="number">1.039575</span></span><br><span class="line"><span class="number">2013</span>-01-05  <span class="number">0.567020</span>  <span class="number">0.276232</span></span><br><span class="line"><span class="number">2013</span>-01-06  <span class="number">0.113648</span> -<span class="number">1.478427</span></span><br></pre></td></tr></table></figure>
-<p>显示提取值：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">37</span>]: df.iloc[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">37</span>]: -<span class="number">0.17321464905330858</span></span><br></pre></td></tr></table></figure>
-<p>快速访问标量，与上述方法等效：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">In [<span class="number">38</span>]: df.iat[<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">Out[<span class="number">38</span>]: -<span class="number">0.17321464905330858</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>Python</tag>
@@ -4943,6 +4943,94 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>YAML简明教程</title>
+    <url>/p/yaml-concise-tutorial/</url>
+    <content><![CDATA[<p>本文主要介绍YAML 。</p>
+<p>YAML 是 "YAML Ain't a Markup Language"（YAML 不是一种标记语言）的递归缩写。在开发的这种语言时，YAML 的意思其实是："Yet Another Markup Language"（仍是一种标记语言）。</p>
+<p>YAML 的语法和其他高级语言类似，并且可以简单表达清单、散列表，标量等数据形态。它使用空白符号缩进和大量依赖外观的特色，特别适合用来表达或编辑数据结构、各种配置文件、倾印调试内容、文件大纲（例如：许多电子邮件标题格式和YAML非常接近）。</p>
+<p>YAML 的配置文件后缀为 <strong>yml</strong>或<strong>yaml</strong>。</p>
+<p>关键词：<strong>YAML</strong></p>
+<span id="more"></span>
+<h3 id="yaml文件格式">yaml文件格式</h3>
+<h4 id="基本语法">基本语法</h4>
+<ul>
+<li>大小写敏感</li>
+<li>使用缩进表示层级关系</li>
+<li>缩进<strong>不允许使用Tab，只允许空格</strong></li>
+<li>缩进的空格数不重要，只要相同层级的元素左对齐即可</li>
+<li><code>#</code>表示注释</li>
+<li><code>---</code>表示yaml格式文件的开始</li>
+</ul>
+<h4 id="数据类型">数据类型</h4>
+<p>YAML支持以下数据类型</p>
+<ul>
+<li>对象：键值对的几个，又称为映射（mapping）/ 哈希（hashes）/ 字典（dictionary）</li>
+<li>数组：一组按次序排列的值，又称为序列（sequence）/ 列表（list）</li>
+<li>标量（scalars）：单个的、不可再分的值</li>
+</ul>
+<h4 id="yaml对象">YAML对象</h4>
+<p>对象键值对使用冒号结构表示key-value，<strong>冒号后面要加一个空格。</strong></p>
+<p>也可以使用<code>key:&#123;key1: value, key2: value, ...&#125;</code></p>
+<p>也可以使用缩进表示层级关系：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">key:</span></span><br><span class="line">    <span class="attr">key1:</span> <span class="string">value</span></span><br><span class="line">    <span class="attr">key2:</span> <span class="string">value</span></span><br></pre></td></tr></table></figure>
+<p>对于较为复杂的对象格式，可以使用<strong>问号加一个空格表示一个复杂的key</strong>，配合<strong>一个冒号加一个空格表示一个value</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">?</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">complexkey1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">complexkey2</span></span><br><span class="line"><span class="string">:</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">complexvalue1</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">complexvalue2</span></span><br></pre></td></tr></table></figure>
+<p>即对象的属性是一个数组<code>[complexkey1,complexkey2]</code>，对应的值也是一个数组<code>[complexvalue1, complexvalue2]</code></p>
+<h4 id="yaml数组">YAML数组</h4>
+<p>以<code>-</code>开头的行表示构成一个数组</p>
+<p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="string">A</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">B</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">C</span></span><br></pre></td></tr></table></figure></p>
+<p>支持多维数组，可以使用<strong>行内表示</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">key:</span> [<span class="string">value1</span>, <span class="string">value2</span>, <span class="string">...</span>]</span><br></pre></td></tr></table></figure>
+<p>如果子成员是一个数组，则可以在下面缩进一个空格</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> </span><br><span class="line"> <span class="bullet">-</span> <span class="string">A</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">B</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">C</span></span><br></pre></td></tr></table></figure>
+<p>一个复杂的例子：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">companies:</span></span><br><span class="line">    <span class="bullet">-</span></span><br><span class="line">        <span class="attr">id:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">company1</span></span><br><span class="line">        <span class="attr">price:</span> <span class="string">200W</span></span><br><span class="line">    <span class="bullet">-</span></span><br><span class="line">        <span class="attr">id:</span> <span class="number">2</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">company2</span></span><br><span class="line">        <span class="attr">price:</span> <span class="string">500W</span></span><br></pre></td></tr></table></figure>
+<p>即<code>companies</code>属性是一个数组，每一个数组元素又是由<code>id/name/price</code>三个属性组成。</p>
+<p>数组也可以使用<strong>行内表示</strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">companies:</span> [&#123;<span class="attr">id:</span> <span class="number">1</span>,<span class="attr">name:</span> <span class="string">company1</span>,<span class="attr">price:</span> <span class="string">200W</span>&#125;,&#123;<span class="attr">id:</span> <span class="number">2</span>,<span class="attr">name:</span> <span class="string">company2</span>,<span class="attr">price:</span> <span class="string">500W</span>&#125;]</span><br></pre></td></tr></table></figure>
+<h4 id="复合结构">复合结构</h4>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">languages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ruby</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Perl</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Python</span> </span><br><span class="line"><span class="attr">websites:</span></span><br><span class="line">  <span class="attr">YAML:</span> <span class="string">yaml.org</span> </span><br><span class="line">  <span class="attr">Ruby:</span> <span class="string">ruby-lang.org</span> </span><br><span class="line">  <span class="attr">Python:</span> <span class="string">python.org</span> </span><br><span class="line">  <span class="attr">Perl:</span> <span class="string">use.perl.org</span></span><br></pre></td></tr></table></figure>
+<p>转换为json</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> </span><br><span class="line">  languages<span class="punctuation">:</span> <span class="punctuation">[</span> &#x27;Ruby&#x27;<span class="punctuation">,</span> &#x27;Perl&#x27;<span class="punctuation">,</span> &#x27;Python&#x27;<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  websites<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    YAML<span class="punctuation">:</span> &#x27;yaml.org&#x27;<span class="punctuation">,</span></span><br><span class="line">    Ruby<span class="punctuation">:</span> &#x27;ruby-lang.org&#x27;<span class="punctuation">,</span></span><br><span class="line">    Python<span class="punctuation">:</span> &#x27;python.org&#x27;<span class="punctuation">,</span></span><br><span class="line">    Perl<span class="punctuation">:</span> &#x27;use.perl.org&#x27; </span><br><span class="line">  <span class="punctuation">&#125;</span> </span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="标量">标量</h4>
+<p>标量是不可再分的值，包括</p>
+<ul>
+<li>字符串</li>
+<li>布尔值</li>
+<li>整数</li>
+<li>浮点数</li>
+<li>NULL</li>
+<li>时间</li>
+<li>日期</li>
+</ul>
+<p>通过一个例子来了解纯量的基本使用</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">boolean:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="literal">TRUE</span>  <span class="comment">#true,True都可以</span></span><br><span class="line">    <span class="bullet">-</span> <span class="literal">FALSE</span>  <span class="comment">#false，False都可以</span></span><br><span class="line"><span class="attr">float:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">3.14</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">6.8523015e+5</span>  <span class="comment">#可以使用科学计数法</span></span><br><span class="line"><span class="attr">int:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">123</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">0b1010_0111_0100_1010_1110</span>    <span class="comment">#二进制表示</span></span><br><span class="line"><span class="attr">null:</span></span><br><span class="line">    <span class="attr">nodeName:</span> <span class="string">&#x27;node&#x27;</span></span><br><span class="line">    <span class="attr">parent:</span> <span class="string">~</span>  <span class="comment">#使用~表示null</span></span><br><span class="line"><span class="attr">string:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">哈哈</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;Hello world&#x27;</span>  <span class="comment">#可以使用双引号或者单引号包裹特殊字符</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">newline</span></span><br><span class="line">      <span class="string">newline2</span>    <span class="comment">#字符串可以拆成多行，每一行会被转化成一个空格</span></span><br><span class="line"><span class="attr">date:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">2018-02-17</span>    <span class="comment">#日期必须使用ISO 8601格式，即yyyy-MM-dd</span></span><br><span class="line"><span class="attr">datetime:</span> </span><br><span class="line">    <span class="bullet">-</span>  <span class="number">2018-02-17T15:02:31+08:00</span>    <span class="comment">#时间使用ISO 8601格式，时间和日期之间使用T连接，最后使用+代表时区</span></span><br></pre></td></tr></table></figure>
+<h4 id="引用">引用</h4>
+<p><code>&amp;</code>锚点和<code>*</code>别名，可以用来引用</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">defaults:</span> <span class="meta">&amp;defaults</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br><span class="line"></span><br><span class="line"><span class="attr">development:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_development</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*defaults</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_test</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*defaults</span></span><br></pre></td></tr></table></figure>
+<p>相当于</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br><span class="line"></span><br><span class="line"><span class="attr">development:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_development</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_test</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br></pre></td></tr></table></figure>
+<p><code>&amp;</code>用来建立锚点，<code>&lt;&lt;</code>表示合并到当前数据，<code>*</code>用来引用锚点。</p>
+<blockquote>
+<p>此处的锚点有点类似于编程语言【指针】的含义。</p>
+</blockquote>
+<p>下面是另一个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">- &amp;showell Steve </span><br><span class="line">- Clark </span><br><span class="line">- Brian </span><br><span class="line">- Oren </span><br><span class="line">- *showell </span><br></pre></td></tr></table></figure>
+<p>转换为JavaScript代码如下</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">[ <span class="string">&#x27;Steve&#x27;</span>, <span class="string">&#x27;Clark&#x27;</span>, <span class="string">&#x27;Brian&#x27;</span>, <span class="string">&#x27;Oren&#x27;</span>, <span class="string">&#x27;Steve&#x27;</span> ]</span><br></pre></td></tr></table></figure>
+<h3 id="参考地址">参考地址</h3>
+<ul>
+<li>https://www.runoob.com/w3cnote/yaml-intro.html</li>
+<li>https://www.ruanyifeng.com/blog/2016/07/yaml.html</li>
+<li>https://www.jianshu.com/p/97222440cd08</li>
+<li>https://daihainidewo.github.io/blog/yaml%E6%95%99%E7%A8%8B/</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>yaml</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
     <url>/p/install-and-configure-coturn-in-debian/</url>
     <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
@@ -5070,94 +5158,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>YAML简明教程</title>
-    <url>/p/yaml-concise-tutorial/</url>
-    <content><![CDATA[<p>本文主要介绍YAML 。</p>
-<p>YAML 是 "YAML Ain't a Markup Language"（YAML 不是一种标记语言）的递归缩写。在开发的这种语言时，YAML 的意思其实是："Yet Another Markup Language"（仍是一种标记语言）。</p>
-<p>YAML 的语法和其他高级语言类似，并且可以简单表达清单、散列表，标量等数据形态。它使用空白符号缩进和大量依赖外观的特色，特别适合用来表达或编辑数据结构、各种配置文件、倾印调试内容、文件大纲（例如：许多电子邮件标题格式和YAML非常接近）。</p>
-<p>YAML 的配置文件后缀为 <strong>yml</strong>或<strong>yaml</strong>。</p>
-<p>关键词：<strong>YAML</strong></p>
-<span id="more"></span>
-<h3 id="yaml文件格式">yaml文件格式</h3>
-<h4 id="基本语法">基本语法</h4>
-<ul>
-<li>大小写敏感</li>
-<li>使用缩进表示层级关系</li>
-<li>缩进<strong>不允许使用Tab，只允许空格</strong></li>
-<li>缩进的空格数不重要，只要相同层级的元素左对齐即可</li>
-<li><code>#</code>表示注释</li>
-<li><code>---</code>表示yaml格式文件的开始</li>
-</ul>
-<h4 id="数据类型">数据类型</h4>
-<p>YAML支持以下数据类型</p>
-<ul>
-<li>对象：键值对的几个，又称为映射（mapping）/ 哈希（hashes）/ 字典（dictionary）</li>
-<li>数组：一组按次序排列的值，又称为序列（sequence）/ 列表（list）</li>
-<li>标量（scalars）：单个的、不可再分的值</li>
-</ul>
-<h4 id="yaml对象">YAML对象</h4>
-<p>对象键值对使用冒号结构表示key-value，<strong>冒号后面要加一个空格。</strong></p>
-<p>也可以使用<code>key:&#123;key1: value, key2: value, ...&#125;</code></p>
-<p>也可以使用缩进表示层级关系：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">key:</span></span><br><span class="line">    <span class="attr">key1:</span> <span class="string">value</span></span><br><span class="line">    <span class="attr">key2:</span> <span class="string">value</span></span><br></pre></td></tr></table></figure>
-<p>对于较为复杂的对象格式，可以使用<strong>问号加一个空格表示一个复杂的key</strong>，配合<strong>一个冒号加一个空格表示一个value</strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">?</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">complexkey1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">complexkey2</span></span><br><span class="line"><span class="string">:</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">complexvalue1</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">complexvalue2</span></span><br></pre></td></tr></table></figure>
-<p>即对象的属性是一个数组<code>[complexkey1,complexkey2]</code>，对应的值也是一个数组<code>[complexvalue1, complexvalue2]</code></p>
-<h4 id="yaml数组">YAML数组</h4>
-<p>以<code>-</code>开头的行表示构成一个数组</p>
-<p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="string">A</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">B</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">C</span></span><br></pre></td></tr></table></figure></p>
-<p>支持多维数组，可以使用<strong>行内表示</strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">key:</span> [<span class="string">value1</span>, <span class="string">value2</span>, <span class="string">...</span>]</span><br></pre></td></tr></table></figure>
-<p>如果子成员是一个数组，则可以在下面缩进一个空格</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> </span><br><span class="line"> <span class="bullet">-</span> <span class="string">A</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">B</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">C</span></span><br></pre></td></tr></table></figure>
-<p>一个复杂的例子：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">companies:</span></span><br><span class="line">    <span class="bullet">-</span></span><br><span class="line">        <span class="attr">id:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">company1</span></span><br><span class="line">        <span class="attr">price:</span> <span class="string">200W</span></span><br><span class="line">    <span class="bullet">-</span></span><br><span class="line">        <span class="attr">id:</span> <span class="number">2</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">company2</span></span><br><span class="line">        <span class="attr">price:</span> <span class="string">500W</span></span><br></pre></td></tr></table></figure>
-<p>即<code>companies</code>属性是一个数组，每一个数组元素又是由<code>id/name/price</code>三个属性组成。</p>
-<p>数组也可以使用<strong>行内表示</strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">companies:</span> [&#123;<span class="attr">id:</span> <span class="number">1</span>,<span class="attr">name:</span> <span class="string">company1</span>,<span class="attr">price:</span> <span class="string">200W</span>&#125;,&#123;<span class="attr">id:</span> <span class="number">2</span>,<span class="attr">name:</span> <span class="string">company2</span>,<span class="attr">price:</span> <span class="string">500W</span>&#125;]</span><br></pre></td></tr></table></figure>
-<h4 id="复合结构">复合结构</h4>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">languages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ruby</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Perl</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Python</span> </span><br><span class="line"><span class="attr">websites:</span></span><br><span class="line">  <span class="attr">YAML:</span> <span class="string">yaml.org</span> </span><br><span class="line">  <span class="attr">Ruby:</span> <span class="string">ruby-lang.org</span> </span><br><span class="line">  <span class="attr">Python:</span> <span class="string">python.org</span> </span><br><span class="line">  <span class="attr">Perl:</span> <span class="string">use.perl.org</span></span><br></pre></td></tr></table></figure>
-<p>转换为json</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span> </span><br><span class="line">  languages<span class="punctuation">:</span> <span class="punctuation">[</span> &#x27;Ruby&#x27;<span class="punctuation">,</span> &#x27;Perl&#x27;<span class="punctuation">,</span> &#x27;Python&#x27;<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  websites<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    YAML<span class="punctuation">:</span> &#x27;yaml.org&#x27;<span class="punctuation">,</span></span><br><span class="line">    Ruby<span class="punctuation">:</span> &#x27;ruby-lang.org&#x27;<span class="punctuation">,</span></span><br><span class="line">    Python<span class="punctuation">:</span> &#x27;python.org&#x27;<span class="punctuation">,</span></span><br><span class="line">    Perl<span class="punctuation">:</span> &#x27;use.perl.org&#x27; </span><br><span class="line">  <span class="punctuation">&#125;</span> </span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h4 id="标量">标量</h4>
-<p>标量是不可再分的值，包括</p>
-<ul>
-<li>字符串</li>
-<li>布尔值</li>
-<li>整数</li>
-<li>浮点数</li>
-<li>NULL</li>
-<li>时间</li>
-<li>日期</li>
-</ul>
-<p>通过一个例子来了解纯量的基本使用</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">boolean:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="literal">TRUE</span>  <span class="comment">#true,True都可以</span></span><br><span class="line">    <span class="bullet">-</span> <span class="literal">FALSE</span>  <span class="comment">#false，False都可以</span></span><br><span class="line"><span class="attr">float:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">3.14</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">6.8523015e+5</span>  <span class="comment">#可以使用科学计数法</span></span><br><span class="line"><span class="attr">int:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">123</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">0b1010_0111_0100_1010_1110</span>    <span class="comment">#二进制表示</span></span><br><span class="line"><span class="attr">null:</span></span><br><span class="line">    <span class="attr">nodeName:</span> <span class="string">&#x27;node&#x27;</span></span><br><span class="line">    <span class="attr">parent:</span> <span class="string">~</span>  <span class="comment">#使用~表示null</span></span><br><span class="line"><span class="attr">string:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">哈哈</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;Hello world&#x27;</span>  <span class="comment">#可以使用双引号或者单引号包裹特殊字符</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">newline</span></span><br><span class="line">      <span class="string">newline2</span>    <span class="comment">#字符串可以拆成多行，每一行会被转化成一个空格</span></span><br><span class="line"><span class="attr">date:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">2018-02-17</span>    <span class="comment">#日期必须使用ISO 8601格式，即yyyy-MM-dd</span></span><br><span class="line"><span class="attr">datetime:</span> </span><br><span class="line">    <span class="bullet">-</span>  <span class="number">2018-02-17T15:02:31+08:00</span>    <span class="comment">#时间使用ISO 8601格式，时间和日期之间使用T连接，最后使用+代表时区</span></span><br></pre></td></tr></table></figure>
-<h4 id="引用">引用</h4>
-<p><code>&amp;</code>锚点和<code>*</code>别名，可以用来引用</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">defaults:</span> <span class="meta">&amp;defaults</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br><span class="line"></span><br><span class="line"><span class="attr">development:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_development</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*defaults</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_test</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*defaults</span></span><br></pre></td></tr></table></figure>
-<p>相当于</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">defaults:</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br><span class="line"></span><br><span class="line"><span class="attr">development:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_development</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">database:</span> <span class="string">myapp_test</span></span><br><span class="line">  <span class="attr">adapter:</span>  <span class="string">postgres</span></span><br><span class="line">  <span class="attr">host:</span>     <span class="string">localhost</span></span><br></pre></td></tr></table></figure>
-<p><code>&amp;</code>用来建立锚点，<code>&lt;&lt;</code>表示合并到当前数据，<code>*</code>用来引用锚点。</p>
-<blockquote>
-<p>此处的锚点有点类似于编程语言【指针】的含义。</p>
-</blockquote>
-<p>下面是另一个例子：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">- &amp;showell Steve </span><br><span class="line">- Clark </span><br><span class="line">- Brian </span><br><span class="line">- Oren </span><br><span class="line">- *showell </span><br></pre></td></tr></table></figure>
-<p>转换为JavaScript代码如下</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">[ <span class="string">&#x27;Steve&#x27;</span>, <span class="string">&#x27;Clark&#x27;</span>, <span class="string">&#x27;Brian&#x27;</span>, <span class="string">&#x27;Oren&#x27;</span>, <span class="string">&#x27;Steve&#x27;</span> ]</span><br></pre></td></tr></table></figure>
-<h3 id="参考地址">参考地址</h3>
-<ul>
-<li>https://www.runoob.com/w3cnote/yaml-intro.html</li>
-<li>https://www.ruanyifeng.com/blog/2016/07/yaml.html</li>
-<li>https://www.jianshu.com/p/97222440cd08</li>
-<li>https://daihainidewo.github.io/blog/yaml%E6%95%99%E7%A8%8B/</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>yaml</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker in docker</title>
     <url>/p/docker-in-docker/</url>
     <content><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
@@ -5281,6 +5281,28 @@ y=x^2e^x
       <tags>
         <tag>golang</tag>
         <tag>socket</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Github Action定时重启IBM cloud foundry</title>
+    <url>/p/ibm-cloud-auto-restart/</url>
+    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
+<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
+<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
+<span id="more"></span>
+<h3 id="yml配置文件">yml配置文件</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用方法">使用方法</h3>
+<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
+<h4 id="设置环境变量">设置环境变量</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
+<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
+<h4 id="效果图">效果图</h4>
+<p><img data-src="image-20200827193322808.png" /></p>
+<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
+]]></content>
+      <tags>
+        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -5503,28 +5525,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用Github Action定时重启IBM cloud foundry</title>
-    <url>/p/ibm-cloud-auto-restart/</url>
-    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
-<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
-<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
-<span id="more"></span>
-<h3 id="yml配置文件">yml配置文件</h3>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用方法">使用方法</h3>
-<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
-<h4 id="设置环境变量">设置环境变量</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
-<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
-<h4 id="效果图">效果图</h4>
-<p><img data-src="image-20200827193322808.png" /></p>
-<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
-]]></content>
-      <tags>
-        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -6738,10 +6738,11 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</title>
-    <url>/p/use-wrap-unlock-ipv6/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>使用cloudflare wrap为只有ipv4地址的服务器解锁ipv6</p>
-<p><strong>关键词</strong>：cloudflare ，wrap</p>
+    <title>如何为ipv4-only的服务器添加ipv6地址</title>
+    <url>/p/use-warp-unlock-ipv6/</url>
+    <content><![CDATA[<p>本文主要介绍如何为ipv4-only的服务器添加ipv6地址。</p>
+<p>更新：由于大范围滥用，近期warp已经基本处于处于不可用状态。RIP.</p>
+<p><strong>关键词</strong>：cloudflare</p>
 <span id="more"></span>
 <h3 id="准备工作">准备工作</h3>
 <ul>
@@ -6837,7 +6838,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>cloudflare</tag>
-        <tag>wrap</tag>
       </tags>
   </entry>
   <entry>
@@ -6860,6 +6860,254 @@ y=x^2e^x
       <tags>
         <tag>github</tag>
         <tag>jsdelivrCDN</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Kubernetes集群实践（一）使用Kubeadm创建一个K8s集群</title>
+    <url>/p/create-a-k8s-cluster-with-kubeadm/</url>
+    <content><![CDATA[<p>本文主要介绍如何使用一个kubeadm创建一个K8s集群。</p>
+<p>关键词：<strong>docker，k8s</strong></p>
+<span id="more"></span>
+<h3 id="准备工作">准备工作</h3>
+<p>首先确保你至少有两台机器，这里准备了四台机器：一台master节点，三台node节点，主机名分别为node1、node2、node3。</p>
+<p>master节点配置了管理node集群的脚本，分别是批量执行命令的<strong>xcall</strong>脚本和批量拷贝文件的<strong>xsync</strong>脚本。</p>
+<p>安装xcall和xsync脚本的机器需要先配置<strong>免密码登录</strong>，并安装<strong>rsync服务</strong>。</p>
+<h4 id="xcall">xcall</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取控制台指令</span></span><br><span class="line"></span><br><span class="line">cmd=$*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断指令是否为空</span></span><br><span class="line"><span class="keyword">if</span> [ ! -n <span class="string">&quot;<span class="variable">$cmd</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;command can not be null !&quot;</span></span><br><span class="line">        <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前登录用户</span></span><br><span class="line">user=`<span class="built_in">whoami</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在从机执行指令,这里需要根据你具体的集群情况配置，host与具体主机名一致，同上</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> =============== <span class="variable">$host</span> ===============</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;--&gt; excute command \&quot;<span class="variable">$cmd</span>\&quot;&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="variable">$cmd</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;excute successfully !&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="xsync">xsync</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取输出参数，如果没有参数则直接返回</span></span><br><span class="line">pcount=<span class="variable">$#</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$pcount</span> -eq 0 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;no parameter find !&quot;</span>;</span><br><span class="line">        <span class="built_in">exit</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取传输文件名</span></span><br><span class="line">p1=<span class="variable">$1</span></span><br><span class="line">filename=`<span class="built_in">basename</span> <span class="variable">$p1</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;load file <span class="variable">$p1</span> success !&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取文件的绝对路径</span></span><br><span class="line">pdir=`<span class="built_in">cd</span> -P $(<span class="built_in">dirname</span> <span class="variable">$p1</span>); <span class="built_in">pwd</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;file path is <span class="variable">$pdir</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前用户（如果想使用root用户权限拷贝文件，在命令后加入-root参数即可）</span></span><br><span class="line">user=<span class="variable">$2</span></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$user</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">&quot;-root&quot;</span>)</span><br><span class="line">        user=<span class="string">&quot;root&quot;</span>;;</span><br><span class="line"><span class="string">&quot;&quot;</span>)</span><br><span class="line">        user=`<span class="built_in">whoami</span>`;;</span><br><span class="line">*)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;illegal parameter <span class="variable">$user</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$user</span></span><br><span class="line"><span class="comment"># 拷贝文件到从机(这里注意主机的host需要根据你的实际情况配置，要与你具体的主机名对应)</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;================<span class="variable">$host</span>=================&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="string">&quot;mkdir -p <span class="variable">$pdir</span>&quot;</span></span><br><span class="line">        rsync -av <span class="variable">$pdir</span>/<span class="variable">$filename</span> <span class="variable">$host</span>:<span class="variable">$pdir</span>/<span class="variable">$filename</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;complate !&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置主机公钥确认">设置主机公钥确认</h4>
+<p>SSH 公钥检查是一个重要的安全机制，可以防范中间人劫持等黑客攻击。但是在特定情况下，严格的 SSH 公钥检查会破坏一些依赖 SSH 协议的自动化任务，就需要一种手段能够<strong>绕过 SSH 的公钥检查</strong>。</p>
+<p>编辑<code>/etc/ssh/ssh_config</code>文件，修改<code>StrictHostKeyChecking=no</code>.</p>
+<ol type="1">
+<li><code>StrictHostKeyChecking=no</code> 最不安全的级别，当然也没有那么多烦人的提示了，相对安全的内网<strong>测试</strong>时建议使用。如果连接<strong>server</strong>的key在本地不存在，那么就自动添加到文件中（默认是known_hosts），并且给出一个警告。</li>
+<li><code>StrictHostKeyChecking=ask</code> 默认的级别，就是出现刚才的提示了。如果连接和key不匹配，给出提示，并拒绝登录。</li>
+<li><code>StrictHostKeyChecking=yes</code> 最安全的级别，如果连接与key不匹配，就拒绝连接，不会提示详细信息。</li>
+</ol>
+<h4 id="将两个脚本所在的目录添加到环境变量">将两个脚本所在的目录添加到环境变量</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export PATH=<span class="variable">$PATH</span>:~/.bin&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="检查脚本是否正常运行">检查脚本是否正常运行</h4>
+<p><img data-src="image-20220504134400786.png" /></p>
+<h3 id="安装kubeadm">安装kubeadm</h3>
+<h4 id="开始之前">开始之前</h4>
+<p>你需要准备：</p>
+<ul>
+<li>一台兼容的 Linux 主机。Kubernetes 项目为基于 Debian 和 Red Hat 的 Linux 发行版以及一些不提供包管理器的发行版提供通用的指令</li>
+<li>每台机器 2 GB 或更多的 RAM （如果少于这个数字将会影响你应用的运行内存)</li>
+<li>2 CPU 核或更多</li>
+<li>集群中的所有机器的网络彼此均能相互连接(公网和内网都可以)</li>
+<li>节点之中不可以有重复的主机名、MAC 地址或 product_uuid。请参见<a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#verify-mac-address">这里</a>了解更多详细信息。</li>
+<li>开启机器上的某些端口。请参见<a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#check-required-ports">这里</a> 了解更多详细信息。</li>
+<li><strong>禁用交换分区</strong>。为了保证 kubelet 正常工作，你 <strong>必须</strong> 禁用交换分区。</li>
+</ul>
+<h5 id="禁用交换分区">禁用交换分区</h5>
+<p>临时关闭</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">swapoff -a</span><br></pre></td></tr></table></figure>
+<p>永久关闭</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure>
+<p>注释掉最后一行的swap</p>
+<p><img data-src="image-20220504135341965.png" /></p>
+<h5 id="确保每个节点上-mac-地址和-product_uuid-的唯一性">确保每个节点上 MAC 地址和 product_uuid 的唯一性</h5>
+<p>这里直接使用xcall脚本执行命令。</p>
+<p>一般来讲，硬件设备会拥有唯一的地址，但是有些虚拟机的地址可能会重复。 Kubernetes 使用这些值来唯一确定集群中的节点。 如果这些值在每个节点上不唯一，可能会导致<strong>安装失败</strong>。</p>
+<p>检查mac地址</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ip <span class="built_in">link</span></span><br></pre></td></tr></table></figure></p>
+<p><img data-src="image-20220504140036574.png" /></p>
+<p>检查product_uuid</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">cat</span> /sys/class/dmi/id/product_uuid</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220504140019711.png" /></p>
+<h5 id="检查网络适配器">检查网络适配器</h5>
+<p>如果<strong>有一个以上的网络适配器</strong>，同时K8s通过默认路由不可达，此时需要先添加默认IP路由规则。</p>
+<p>这里使用的是同一局域网的虚拟机，默认符合规则。</p>
+<h4 id="允许-iptables-检查桥接流量">允许 iptables 检查桥接流量</h4>
+<p>检查<code>br_netfilter</code>模块是否被加载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsmod | grep br_netfilter</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220504140607226.png" /></p>
+<p>这里没有加载，需要设置加载</p>
+<p>显式加载</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure>
+<p>为了让Linux开机时就加载，需要修改<code>sysctl</code> 配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k8s.conf</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/k8s.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
+<h4 id="检查所需端口">检查所需端口</h4>
+<p>为了和K8s组件通信，需要检查特定端口</p>
+<p>具体请查看：https://kubernetes.io/zh/docs/reference/ports-and-protocols/</p>
+<h4 id="安装容器运行时">安装容器运行时</h4>
+<h5 id="设置运行时">设置运行时</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/containerd.conf</span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo modprobe overlay</span><br><span class="line">sudo modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置必需的 sysctl 参数，这些参数在重新启动后仍然存在。</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数而无需重新启动</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
+<p>K8s支持以下运行时</p>
+<table>
+<thead>
+<tr class="header">
+<th>运行时</th>
+<th>域套接字</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Docker Engine</td>
+<td><code>/var/run/dockershim.sock</code></td>
+</tr>
+<tr class="even">
+<td>containerd</td>
+<td><code>/run/containerd/containerd.sock</code></td>
+</tr>
+<tr class="odd">
+<td>CRI-O</td>
+<td><code>/var/run/crio/crio.sock</code></td>
+</tr>
+</tbody>
+</table>
+<p>由于在<strong>1.24之后的版本不在支持Dockershim </strong>，因此不推荐使用Docker Engine作为K8s容器运行时，这里使用<strong>containerd</strong>。</p>
+<p>方法1：使用docker-ce 镜像源</p>
+<p>后期还可以通过安装docker-cli实现docker的一系列操作，如<strong>打包镜像、使用docker-compose运行容器</strong>等。</p>
+<ul>
+<li><p>按照安装docker的方法，安装docker需要的apt源；</p></li>
+<li><p>执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install containerd.io</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>配置运行时</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /etc/containerd</span><br><span class="line">containerd config default | sudo <span class="built_in">tee</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<p>重新启动 containerd</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220504143744362.png" /></p>
+<p>方法2：直接使用<code>nerdctl</code>打包好的containerd运行时和一系列插件</p>
+<p>nerdctl是<code>containerd</code>项目下的和docker cli兼容的命令行。现在已经支持docker-cli的大部分功能。甚至可以直接将nerdctl设置为docker，这样就可以无缝使用docker和docker compose的命令啦。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">alias</span> docker=`sudo nerdctl`</span><br><span class="line"><span class="built_in">alias</span> docker-compose=`sudo nerdctl compose`</span><br></pre></td></tr></table></figure>
+<p>项目地址：<a href="https://github.com/containerd/nerdctl">https://github.com/containerd/nerdctl</a></p>
+<p>直接下载<strong>Full</strong>的版本</p>
+<p>下载完毕以后执行安装命令，以0.20.0版本为例</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo tar Cxzvvf /usr/local nerdctl-full-0.20.0-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
+<p>设置自动启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> buildkit.service --now</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> containerd.service --now</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> stargz-snapshotter.service --now</span><br></pre></td></tr></table></figure>
+<h5 id="配置stargz-snapshotter">配置stargz-snapshotter</h5>
+<p><strong>Fast container image distribution plugin with lazy pulling</strong>，项目地址：<a href="https://github.com/containerd/stargz-snapshotter">https://github.com/containerd/stargz-snapshotter</a></p>
+<p>修改<code>/etc/containerd/config.toml</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">version = 2</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plug stargz snapshotter into containerd</span></span><br><span class="line"><span class="comment"># Containerd recognizes stargz snapshotter through specified socket address.</span></span><br><span class="line"><span class="comment"># The specified address below is the default which stargz snapshotter listen to.</span></span><br><span class="line">[proxy_plugins]</span><br><span class="line">  [proxy_plugins.stargz]</span><br><span class="line">    <span class="built_in">type</span> = <span class="string">&quot;snapshot&quot;</span></span><br><span class="line">    address = <span class="string">&quot;/run/containerd-stargz-grpc/containerd-stargz-grpc.sock&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use stargz snapshotter through CRI</span></span><br><span class="line">[plugins.<span class="string">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd]</span><br><span class="line">  snapshotter = <span class="string">&quot;stargz&quot;</span></span><br><span class="line">  disable_snapshot_annotations = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<h5 id="设置docker-hub镜像源">设置Docker Hub镜像源</h5>
+<p>默认containerd在Docker Hub拉取镜像，这样速度很慢</p>
+<p><img data-src="image-20220505115520415.png" /></p>
+<p>在<code>/etc/containerd</code>创建mirrors.d文件夹</p>
+<p><img data-src="image-20220505115710174.png" /></p>
+<p>编辑hosts.toml，这里使用daocloud的源</p>
+<figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server</span> = <span class="string">&quot;https://docker.io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[host.&quot;http://f1361db2.m.daocloud.io&quot;]</span></span><br><span class="line">  <span class="attr">capabilities</span> = [<span class="string">&quot;pull&quot;</span>, <span class="string">&quot;resolve&quot;</span>]</span><br></pre></td></tr></table></figure>
+<h5 id="使用-systemd-cgroup-驱动程序">使用 <code>systemd</code> cgroup 驱动程序</h5>
+<p>结合 <code>runc</code> 使用 <code>systemd</code> cgroup 驱动，在 <code>/etc/containerd/config.toml</code> 中设置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc]</span><br><span class="line">  ...</span><br><span class="line">  [plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</span><br><span class="line">    SystemdCgroup = true</span><br></pre></td></tr></table></figure>
+<p>如果您应用此更改，请确保再次重新启动 containerd：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
+<p>注意：此项更改并不能使用<code>crictl info</code> 、 <code>config dump</code>或<code>nerdctl info</code>查看，可以通过<code>systemctl status containerd</code>查看是否存在<code>/opt/dev/bin/containerd-shim-runc-v2</code>来判断是否生效。</p>
+<blockquote>
+<p>https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/#containerd</p>
+<p>https://github.com/containerd/containerd/issues/4900#issuecomment-756085464</p>
+</blockquote>
+<h4 id="安装-kubeadmkubelet-和-kubectl">安装 kubeadm、kubelet 和 kubectl</h4>
+<p>这里使用基于Debian的发行版</p>
+<ol type="1">
+<li>更新 <code>apt</code>包索引并安装使用 Kubernetes <code>apt</code> 仓库所需要的包</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y apt-transport-https ca-certificates curl</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>安装仓库密钥，这里使用<strong>阿里云的源</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - </span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt;/etc/apt/sources.list.d/kubernetes.list</span></span><br><span class="line"><span class="string">deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>官方源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - </span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt;/etc/apt/sources.list.d/kubernetes.list</span></span><br><span class="line"><span class="string">deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>更新apt包索引，安装 kubelet、kubeadm 和 kubectl，并<strong>锁定其版本</strong>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y kubelet kubeadm kubectl</span><br><span class="line">sudo apt-mark hold kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
+<p>kubelet 现在每隔几秒就会重启，因为它陷入了一个等待 kubeadm 指令的死循环。</p>
+<p><img data-src="image-20220504145739260.png" /></p>
+<h4 id="配置容器运行时-cgroup-驱动">配置容器运行时 cgroup 驱动</h4>
+<p>由于 kubeadm 把 kubelet 视为一个系统服务来管理，所以对基于 kubeadm 的安装， <strong>推荐使用 <code>systemd</code> 驱动</strong>，不推荐 <code>cgroupfs</code> 驱动。</p>
+<p>一个示例：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubeadm-config.yaml</span></span><br><span class="line">kind: ClusterConfiguration</span><br><span class="line">apiVersion: kubeadm.k8s.io/v1beta3</span><br><span class="line">kubernetesVersion: v1.23.6</span><br><span class="line">imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers</span><br><span class="line">networking:</span><br><span class="line">  podSubnet: <span class="string">&quot;10.244.0.0/16&quot;</span> <span class="comment"># --pod-network-cidr # 网络插件地址</span></span><br><span class="line">---</span><br><span class="line">kind: KubeletConfiguration</span><br><span class="line">apiVersion: kubelet.config.k8s.io/v1beta1</span><br><span class="line">cgroupDriver: systemd</span><br></pre></td></tr></table></figure>
+<h3 id="启动控制节点">启动控制节点</h3>
+<p>启用控制平面前应先启动containerd服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> containerd --now</span><br></pre></td></tr></table></figure>
+<p>修改<code>containerd.sock</code>权限，不使用sudo也可以拉取镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> -R wf09:wf09 /run/containerd/</span><br></pre></td></tr></table></figure>
+<p>运行master节点之前可以先拉取本地镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm config images pull --config kubeadm-config.yaml</span><br></pre></td></tr></table></figure>
+<p>在master节点运行以下命令，同时传递上文中说到的kubeadm-config.yaml</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm init --config kubeadm-config.yaml</span><br></pre></td></tr></table></figure>
+<p>可以使用以下命令重新打印token和加入命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm token create --print-join-command</span><br></pre></td></tr></table></figure>
+<h3 id="删除控制节点">删除控制节点</h3>
+<p>如果在启动后控制平面以后出现错误，必须先<strong>删除控制平面</strong></p>
+<p>更详细的可以参考<a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#tear-down">卸载集群</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo kubeadm reset</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220505095239821.png" /></p>
+<h3 id="控制节点启动成功">控制节点启动成功</h3>
+<p><img data-src="image-20220505101003030.png" /></p>
+<p>如果使用非root用户运行kubectl，需要运行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+<p>如果使用root用户，则可以运行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> KUBECONFIG=/etc/kubernetes/admin.conf</span><br></pre></td></tr></table></figure>
+<p>还需要记录一下token，后面的节点<strong>加入集群</strong>需要这个</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm <span class="built_in">join</span> 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">        --discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
+<h3 id="安装-pod-网络附加组件">安装 Pod 网络附加组件</h3>
+<p>必须部署一个基于Pod网络插件的容器网络接口，以便的Pod可以相互通信</p>
+<p>安装之前需要先设置<strong>网络插件地址</strong>，在kubeadm-config.yaml添加以下配置</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">podSubnet:</span> <span class="string">&quot;10.244.0.0/16&quot;</span> <span class="comment"># --pod-network-cidr # 网络插件地址</span></span><br></pre></td></tr></table></figure>
+<p>这里使用<strong>flannel</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220505112506790.png" /></p>
+<p>检查节点状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220505112608594.png" /></p>
+<p>当STATUS状态为Ready时说明集群已经启动成功了。</p>
+<h3 id="设置master为可调度节点">设置Master为可调度节点</h3>
+<p>默认情况下，<code>Master</code> 不参与 <code>Pod</code> 调度，也就是说不会在 <code>Master</code> 节点上部署其他非系统 <code>Pod</code>。可以使用以下命令调整这个策略</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 允许 Master 部署 Pod</span></span><br><span class="line">kubectl taint nodes master node-role.kubernetes.io/master- --overwrite</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 Master 部署 Pod</span></span><br><span class="line">kubectl taint nodes master node-role.kubernetes.io/master=:NoSchedule --overwrite</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其中 localhost.master 是操作的节点名称</span></span><br></pre></td></tr></table></figure>
+<h3 id="启动工作节点">启动工作节点</h3>
+<p>准备工作首先也需要完成<strong>安装kubeadm</strong>的步骤。</p>
+<p>剩下的步骤就比较简单了，找到上文中<strong>成功启动K8s控制节点</strong>中的token，在工作节点执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo kubeadm <span class="built_in">join</span> 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220505133657174.png" /></p>
+<p>如果有类似的回显说明已经加入成功了。</p>
+<h3 id="集群启动成功">集群启动成功</h3>
+<p><img data-src="image-20220505141228217.png" /></p>
+<h3 id="kubernetes排错">Kubernetes排错</h3>
+<h4 id="wait-control-plane-waiting-for-the-kubelet-to-boot-up-the-control-plane-as-static-pods-from-directory-etckubernetesmanifests.-this-can-take-up-to-4m0s">[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory “/etc/kubernetes/manifests”. This can take up to 4m0s</h4>
+<p>查看kubelet日志</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">journalctl -xeu kubelet</span><br></pre></td></tr></table></figure>
+<p>出现频率较高的就是<strong>sandbox</strong>，应该和这个镜像有关</p>
+<p><img data-src="image-20220505094125196.png" /></p>
+<p>查看<code>containerd</code>默认配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220505094253375.png" /></p>
+<p>发现默认配置是<code>k8s.gcr.io</code>域的镜像，国内拉取不到。</p>
+<p>上文中已经拉取了阿里云的镜像，执行以下命令可以查看镜像的拉取地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crictl images</span><br></pre></td></tr></table></figure>
+<p>如果报错应该是权限问题，<strong>即<code>containerd</code> 的创建的unix socket文件权限是root</strong>，可以试试加上<code>sudo</code></p>
+<p><img data-src="image-20220505094820005.png" /></p>
+<h5 id="解决方案">解决方案</h5>
+<p>将<code>k8s.gcr.io/pause</code>镜像更改为本地拉取的阿里云镜像即可。</p>
+<h4 id="加入节点时提示getting-status-of-runtime-rpc-error-code-unimplemented-desc-unknown-service-runtime.v1alpha2.runtimeservice">加入节点时，提示"getting status of runtime: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"</h4>
+<h5 id="解决方案-1">解决方案</h5>
+<p>检查<code>/etc/containerd/config.toml</code>文件，将SystemdCgroup设置为true</p>
+<p><img data-src="image-20220505140624811.png" /></p>
+<p>重启containerd服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
+<h4 id="failed-to-set-bridge-addr-cni0-already-has-an-ip-address-different-from-10.244.1.124">failed to set bridge addr: "cni0" already has an IP address different from 10.244.1.1/24</h4>
+<p>在集群出现异常，需要重置集群的时候可能会出现此问题。如果是第一次安装则不会，因为此时是集群第一次安装cni网络组件，不会出现地址冲突的问题。</p>
+<h5 id="解决方案-2">解决方案</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ifconfig cni0 down    </span><br><span class="line">ip <span class="built_in">link</span> delete cni0</span><br></pre></td></tr></table></figure>
+<h4 id="fata0000-failed-to-create-shim-task-oci-runtime-create-failed-runc-create-failed-unable-to-start-container-process-error-during-container-init-error-running-hook-0-error-running-hook-exit-status-1-stdout-stderr-time2022-05-24t022902z-levelfatal-msgfailed-to-call-cni.setup-plugin-typebridge-failed-add-incompatible-cni-versions-config-is-1.0.0-plugin-supports-0.1.0-0.2.0-0.3.0-0.3.1-0.4.0">FATA[0000] failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error running hook #0: error running hook: exit status 1, stdout: , stderr: time="2022-05-24T02:29:02Z" level=fatal msg="failed to call cni.Setup: plugin type="bridge" failed (add): incompatible CNI versions; config is "1.0.0", plugin supports ["0.1.0" "0.2.0" "0.3.0" "0.3.1" "0.4.0"]"</h4>
+<p>未安装CNI组件导致容器运行失败</p>
+<h5 id="解决方案-3">解决方案</h5>
+<p>直接使用<code>nerdctl</code>打包好的containerd运行时和一系列插件即可，参考上文<strong>安装kubeadm——安装容器运行时——方法2</strong></p>
+<h4 id="may-24-061748-aws-jp-4g-kubelet184529-e0524-061748.193006-184529-kubelet.go2419-error-getting-node-errnode-aws-jp-4g-not-found">May 24 06:17:48 aws-jp-4G kubelet[184529]: E0524 06:17:48.193006 184529 kubelet.go:2419] "Error getting node" err="node "aws-jp-4g" not found"</h4>
+<p>解决方案：删除kubelet、kubeadm、kubectl重新安装即可。</p>
+<ul>
+<li><p>https://github.com/flannel-io/flannel</p></li>
+<li><p>https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</p></li>
+<li><p>https://github.com/containerd/containerd/blob/main/docs/cri/registry.md</p></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -7053,248 +7301,6 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Kubernetes集群实践（一）使用Kubeadm创建一个K8s集群</title>
-    <url>/p/create-a-k8s-cluster-with-kubeadm/</url>
-    <content><![CDATA[<p>本文主要介绍如何使用一个kubeadm创建一个K8s集群。</p>
-<p>关键词：<strong>docker，k8s</strong></p>
-<span id="more"></span>
-<h3 id="准备工作">准备工作</h3>
-<p>首先确保你至少有两台机器，这里准备了四台机器：一台master节点，三台node节点，主机名分别为node1、node2、node3。</p>
-<p>master节点配置了管理node集群的脚本，分别是批量执行命令的<strong>xcall</strong>脚本和批量拷贝文件的<strong>xsync</strong>脚本。</p>
-<p>安装xcall和xsync脚本的机器需要先配置<strong>免密码登录</strong>，并安装<strong>rsync服务</strong>。</p>
-<h4 id="xcall">xcall</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取控制台指令</span></span><br><span class="line"></span><br><span class="line">cmd=$*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断指令是否为空</span></span><br><span class="line"><span class="keyword">if</span> [ ! -n <span class="string">&quot;<span class="variable">$cmd</span>&quot;</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;command can not be null !&quot;</span></span><br><span class="line">        <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前登录用户</span></span><br><span class="line">user=`<span class="built_in">whoami</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在从机执行指令,这里需要根据你具体的集群情况配置，host与具体主机名一致，同上</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> =============== <span class="variable">$host</span> ===============</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;--&gt; excute command \&quot;<span class="variable">$cmd</span>\&quot;&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="variable">$cmd</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;excute successfully !&quot;</span></span><br></pre></td></tr></table></figure>
-<h4 id="xsync">xsync</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取输出参数，如果没有参数则直接返回</span></span><br><span class="line">pcount=<span class="variable">$#</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$pcount</span> -eq 0 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;no parameter find !&quot;</span>;</span><br><span class="line">        <span class="built_in">exit</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取传输文件名</span></span><br><span class="line">p1=<span class="variable">$1</span></span><br><span class="line">filename=`<span class="built_in">basename</span> <span class="variable">$p1</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;load file <span class="variable">$p1</span> success !&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取文件的绝对路径</span></span><br><span class="line">pdir=`<span class="built_in">cd</span> -P $(<span class="built_in">dirname</span> <span class="variable">$p1</span>); <span class="built_in">pwd</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;file path is <span class="variable">$pdir</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前用户（如果想使用root用户权限拷贝文件，在命令后加入-root参数即可）</span></span><br><span class="line">user=<span class="variable">$2</span></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$user</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">&quot;-root&quot;</span>)</span><br><span class="line">        user=<span class="string">&quot;root&quot;</span>;;</span><br><span class="line"><span class="string">&quot;&quot;</span>)</span><br><span class="line">        user=`<span class="built_in">whoami</span>`;;</span><br><span class="line">*)</span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;illegal parameter <span class="variable">$user</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$user</span></span><br><span class="line"><span class="comment"># 拷贝文件到从机(这里注意主机的host需要根据你的实际情况配置，要与你具体的主机名对应)</span></span><br><span class="line"><span class="keyword">for</span> host <span class="keyword">in</span> node1 node2 node3</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;================<span class="variable">$host</span>=================&quot;</span></span><br><span class="line">        ssh <span class="variable">$host</span> <span class="string">&quot;mkdir -p <span class="variable">$pdir</span>&quot;</span></span><br><span class="line">        rsync -av <span class="variable">$pdir</span>/<span class="variable">$filename</span> <span class="variable">$host</span>:<span class="variable">$pdir</span>/<span class="variable">$filename</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;complate !&quot;</span></span><br></pre></td></tr></table></figure>
-<h4 id="设置主机公钥确认">设置主机公钥确认</h4>
-<p>SSH 公钥检查是一个重要的安全机制，可以防范中间人劫持等黑客攻击。但是在特定情况下，严格的 SSH 公钥检查会破坏一些依赖 SSH 协议的自动化任务，就需要一种手段能够<strong>绕过 SSH 的公钥检查</strong>。</p>
-<p>编辑<code>/etc/ssh/ssh_config</code>文件，修改<code>StrictHostKeyChecking=no</code>.</p>
-<ol type="1">
-<li><code>StrictHostKeyChecking=no</code> 最不安全的级别，当然也没有那么多烦人的提示了，相对安全的内网<strong>测试</strong>时建议使用。如果连接<strong>server</strong>的key在本地不存在，那么就自动添加到文件中（默认是known_hosts），并且给出一个警告。</li>
-<li><code>StrictHostKeyChecking=ask</code> 默认的级别，就是出现刚才的提示了。如果连接和key不匹配，给出提示，并拒绝登录。</li>
-<li><code>StrictHostKeyChecking=yes</code> 最安全的级别，如果连接与key不匹配，就拒绝连接，不会提示详细信息。</li>
-</ol>
-<h4 id="将两个脚本所在的目录添加到环境变量">将两个脚本所在的目录添加到环境变量</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export PATH=<span class="variable">$PATH</span>:~/.bin&quot;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="检查脚本是否正常运行">检查脚本是否正常运行</h4>
-<p><img data-src="image-20220504134400786.png" /></p>
-<h3 id="安装kubeadm">安装kubeadm</h3>
-<h4 id="开始之前">开始之前</h4>
-<p>你需要准备：</p>
-<ul>
-<li>一台兼容的 Linux 主机。Kubernetes 项目为基于 Debian 和 Red Hat 的 Linux 发行版以及一些不提供包管理器的发行版提供通用的指令</li>
-<li>每台机器 2 GB 或更多的 RAM （如果少于这个数字将会影响你应用的运行内存)</li>
-<li>2 CPU 核或更多</li>
-<li>集群中的所有机器的网络彼此均能相互连接(公网和内网都可以)</li>
-<li>节点之中不可以有重复的主机名、MAC 地址或 product_uuid。请参见<a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#verify-mac-address">这里</a>了解更多详细信息。</li>
-<li>开启机器上的某些端口。请参见<a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#check-required-ports">这里</a> 了解更多详细信息。</li>
-<li><strong>禁用交换分区</strong>。为了保证 kubelet 正常工作，你 <strong>必须</strong> 禁用交换分区。</li>
-</ul>
-<h5 id="禁用交换分区">禁用交换分区</h5>
-<p>临时关闭</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">swapoff -a</span><br></pre></td></tr></table></figure>
-<p>永久关闭</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure>
-<p>注释掉最后一行的swap</p>
-<p><img data-src="image-20220504135341965.png" /></p>
-<h5 id="确保每个节点上-mac-地址和-product_uuid-的唯一性">确保每个节点上 MAC 地址和 product_uuid 的唯一性</h5>
-<p>这里直接使用xcall脚本执行命令。</p>
-<p>一般来讲，硬件设备会拥有唯一的地址，但是有些虚拟机的地址可能会重复。 Kubernetes 使用这些值来唯一确定集群中的节点。 如果这些值在每个节点上不唯一，可能会导致<strong>安装失败</strong>。</p>
-<p>检查mac地址</p>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ip <span class="built_in">link</span></span><br></pre></td></tr></table></figure></p>
-<p><img data-src="image-20220504140036574.png" /></p>
-<p>检查product_uuid</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">cat</span> /sys/class/dmi/id/product_uuid</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220504140019711.png" /></p>
-<h5 id="检查网络适配器">检查网络适配器</h5>
-<p>如果<strong>有一个以上的网络适配器</strong>，同时K8s通过默认路由不可达，此时需要先添加默认IP路由规则。</p>
-<p>这里使用的是同一局域网的虚拟机，默认符合规则。</p>
-<h4 id="允许-iptables-检查桥接流量">允许 iptables 检查桥接流量</h4>
-<p>检查<code>br_netfilter</code>模块是否被加载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsmod | grep br_netfilter</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220504140607226.png" /></p>
-<p>这里没有加载，需要设置加载</p>
-<p>显式加载</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure>
-<p>为了让Linux开机时就加载，需要修改<code>sysctl</code> 配置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k8s.conf</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/k8s.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
-<h4 id="检查所需端口">检查所需端口</h4>
-<p>为了和K8s组件通信，需要检查特定端口</p>
-<p>具体请查看：https://kubernetes.io/zh/docs/reference/ports-and-protocols/</p>
-<h4 id="安装容器运行时">安装容器运行时</h4>
-<h5 id="设置运行时">设置运行时</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/containerd.conf</span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo modprobe overlay</span><br><span class="line">sudo modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置必需的 sysctl 参数，这些参数在重新启动后仍然存在。</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数而无需重新启动</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
-<p>K8s支持以下运行时</p>
-<table>
-<thead>
-<tr class="header">
-<th>运行时</th>
-<th>域套接字</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Docker Engine</td>
-<td><code>/var/run/dockershim.sock</code></td>
-</tr>
-<tr class="even">
-<td>containerd</td>
-<td><code>/run/containerd/containerd.sock</code></td>
-</tr>
-<tr class="odd">
-<td>CRI-O</td>
-<td><code>/var/run/crio/crio.sock</code></td>
-</tr>
-</tbody>
-</table>
-<p>由于在<strong>1.24之后的版本不在支持Dockershim </strong>，因此不推荐使用Docker Engine作为K8s容器运行时，这里使用<strong>containerd</strong>。</p>
-<p>方法1：使用docker-ce 镜像源</p>
-<p>后期还可以通过安装docker-cli实现docker的一系列操作，如<strong>打包镜像、使用docker-compose运行容器</strong>等。</p>
-<ul>
-<li><p>按照安装docker的方法，安装docker需要的apt源；</p></li>
-<li><p>执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install containerd.io</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>配置运行时</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /etc/containerd</span><br><span class="line">containerd config default | sudo <span class="built_in">tee</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
-<p>重新启动 containerd</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220504143744362.png" /></p>
-<p>方法2：直接使用<code>nerdctl</code>打包好的containerd运行时和一系列插件</p>
-<p>nerdctl是<code>containerd</code>项目下的和docker cli兼容的命令行。现在已经支持docker-cli的大部分功能。甚至可以直接将nerdctl设置为docker，这样就可以无缝使用docker和docker compose的命令啦。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">alias</span> docker=`sudo nerdctl`</span><br><span class="line"><span class="built_in">alias</span> docker-compose=`sudo nerdctl compose`</span><br></pre></td></tr></table></figure>
-<p>项目地址：<a href="https://github.com/containerd/nerdctl">https://github.com/containerd/nerdctl</a></p>
-<p>直接下载<strong>Full</strong>的版本</p>
-<p>下载完毕以后执行安装命令，以0.20.0版本为例</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo tar Cxzvvf /usr/local nerdctl-full-0.20.0-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
-<p>设置自动启动</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> buildkit.service --now</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> containerd.service --now</span><br><span class="line">sudo systemcle <span class="built_in">enable</span> stargz-snapshotter.service --now</span><br></pre></td></tr></table></figure>
-<h5 id="配置stargz-snapshotter">配置stargz-snapshotter</h5>
-<p><strong>Fast container image distribution plugin with lazy pulling</strong>，项目地址：<a href="https://github.com/containerd/stargz-snapshotter">https://github.com/containerd/stargz-snapshotter</a></p>
-<p>修改<code>/etc/containerd/config.toml</code>文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">version = 2</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plug stargz snapshotter into containerd</span></span><br><span class="line"><span class="comment"># Containerd recognizes stargz snapshotter through specified socket address.</span></span><br><span class="line"><span class="comment"># The specified address below is the default which stargz snapshotter listen to.</span></span><br><span class="line">[proxy_plugins]</span><br><span class="line">  [proxy_plugins.stargz]</span><br><span class="line">    <span class="built_in">type</span> = <span class="string">&quot;snapshot&quot;</span></span><br><span class="line">    address = <span class="string">&quot;/run/containerd-stargz-grpc/containerd-stargz-grpc.sock&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Use stargz snapshotter through CRI</span></span><br><span class="line">[plugins.<span class="string">&quot;io.containerd.grpc.v1.cri&quot;</span>.containerd]</span><br><span class="line">  snapshotter = <span class="string">&quot;stargz&quot;</span></span><br><span class="line">  disable_snapshot_annotations = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h5 id="设置docker-hub镜像源">设置Docker Hub镜像源</h5>
-<p>默认containerd在Docker Hub拉取镜像，这样速度很慢</p>
-<p><img data-src="image-20220505115520415.png" /></p>
-<p>在<code>/etc/containerd</code>创建mirrors.d文件夹</p>
-<p><img data-src="image-20220505115710174.png" /></p>
-<p>编辑hosts.toml，这里使用daocloud的源</p>
-<figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server</span> = <span class="string">&quot;https://docker.io&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[host.&quot;http://f1361db2.m.daocloud.io&quot;]</span></span><br><span class="line">  <span class="attr">capabilities</span> = [<span class="string">&quot;pull&quot;</span>, <span class="string">&quot;resolve&quot;</span>]</span><br></pre></td></tr></table></figure>
-<h5 id="使用-systemd-cgroup-驱动程序">使用 <code>systemd</code> cgroup 驱动程序</h5>
-<p>结合 <code>runc</code> 使用 <code>systemd</code> cgroup 驱动，在 <code>/etc/containerd/config.toml</code> 中设置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc]</span><br><span class="line">  ...</span><br><span class="line">  [plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</span><br><span class="line">    SystemdCgroup = true</span><br></pre></td></tr></table></figure>
-<p>如果您应用此更改，请确保再次重新启动 containerd：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
-<p>注意：此项更改并不能使用<code>crictl info</code> 、 <code>config dump</code>或<code>nerdctl info</code>查看，可以通过<code>systemctl status containerd</code>查看是否存在<code>/opt/dev/bin/containerd-shim-runc-v2</code>来判断是否生效。</p>
-<blockquote>
-<p>https://kubernetes.io/zh/docs/setup/production-environment/container-runtimes/#containerd</p>
-<p>https://github.com/containerd/containerd/issues/4900#issuecomment-756085464</p>
-</blockquote>
-<h4 id="安装-kubeadmkubelet-和-kubectl">安装 kubeadm、kubelet 和 kubectl</h4>
-<p>这里使用基于Debian的发行版</p>
-<ol type="1">
-<li>更新 <code>apt</code>包索引并安装使用 Kubernetes <code>apt</code> 仓库所需要的包</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y apt-transport-https ca-certificates curl</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>安装仓库密钥，这里使用<strong>阿里云的源</strong></li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - </span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt;/etc/apt/sources.list.d/kubernetes.list</span></span><br><span class="line"><span class="string">deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-<ol start="3" type="1">
-<li>更新apt包索引，安装 kubelet、kubeadm 和 kubectl，并<strong>锁定其版本</strong>：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y kubelet kubeadm kubectl</span><br><span class="line">sudo apt-mark hold kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
-<p>kubelet 现在每隔几秒就会重启，因为它陷入了一个等待 kubeadm 指令的死循环。</p>
-<p><img data-src="image-20220504145739260.png" /></p>
-<h4 id="配置容器运行时-cgroup-驱动">配置容器运行时 cgroup 驱动</h4>
-<p>由于 kubeadm 把 kubelet 视为一个系统服务来管理，所以对基于 kubeadm 的安装， <strong>推荐使用 <code>systemd</code> 驱动</strong>，不推荐 <code>cgroupfs</code> 驱动。</p>
-<p>一个示例：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kubeadm-config.yaml</span></span><br><span class="line">kind: ClusterConfiguration</span><br><span class="line">apiVersion: kubeadm.k8s.io/v1beta3</span><br><span class="line">kubernetesVersion: v1.23.6</span><br><span class="line">imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers</span><br><span class="line">networking:</span><br><span class="line">  podSubnet: <span class="string">&quot;10.244.0.0/16&quot;</span> <span class="comment"># --pod-network-cidr # 网络插件地址</span></span><br><span class="line">---</span><br><span class="line">kind: KubeletConfiguration</span><br><span class="line">apiVersion: kubelet.config.k8s.io/v1beta1</span><br><span class="line">cgroupDriver: systemd</span><br></pre></td></tr></table></figure>
-<h3 id="启动控制节点">启动控制节点</h3>
-<p>启用控制平面前应先启动containerd服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> containerd --now</span><br></pre></td></tr></table></figure>
-<p>修改<code>containerd.sock</code>权限，不使用sudo也可以拉取镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> -R wf09:wf09 /run/containerd/</span><br></pre></td></tr></table></figure>
-<p>运行master节点之前可以先拉取本地镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm config images pull --config kubeadm-config.yaml</span><br></pre></td></tr></table></figure>
-<p>在master节点运行以下命令，同时传递上文中说到的kubeadm-config.yaml</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm init --config kubeadm-config.yaml</span><br></pre></td></tr></table></figure>
-<h3 id="删除控制节点">删除控制节点</h3>
-<p>如果在启动后控制平面以后出现错误，必须先<strong>删除控制平面</strong></p>
-<p>更详细的可以参考<a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#tear-down">卸载集群</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo kubeadm reset</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220505095239821.png" /></p>
-<h3 id="控制节点启动成功">控制节点启动成功</h3>
-<p><img data-src="image-20220505101003030.png" /></p>
-<p>如果使用非root用户运行kubectl，需要运行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
-<p>如果使用root用户，则可以运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> KUBECONFIG=/etc/kubernetes/admin.conf</span><br></pre></td></tr></table></figure>
-<p>还需要记录一下token，后面的节点<strong>加入集群</strong>需要这个</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm <span class="built_in">join</span> 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">        --discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
-<h3 id="安装-pod-网络附加组件">安装 Pod 网络附加组件</h3>
-<p>必须部署一个基于Pod网络插件的容器网络接口，以便的Pod可以相互通信</p>
-<p>安装之前需要先设置<strong>网络插件地址</strong>，在kubeadm-config.yaml添加以下配置</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">podSubnet:</span> <span class="string">&quot;10.244.0.0/16&quot;</span> <span class="comment"># --pod-network-cidr # 网络插件地址</span></span><br></pre></td></tr></table></figure>
-<p>这里使用<strong>flannel</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220505112506790.png" /></p>
-<p>检查节点状态</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220505112608594.png" /></p>
-<p>当STATUS状态为Ready时说明集群已经启动成功了。</p>
-<h3 id="设置master为可调度节点">设置Master为可调度节点</h3>
-<p>默认情况下，<code>Master</code> 不参与 <code>Pod</code> 调度，也就是说不会在 <code>Master</code> 节点上部署其他非系统 <code>Pod</code>。可以使用以下命令调整这个策略</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 允许 Master 部署 Pod</span></span><br><span class="line">kubectl taint nodes master node-role.kubernetes.io/master- --overwrite</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 Master 部署 Pod</span></span><br><span class="line">kubectl taint nodes master node-role.kubernetes.io/master=:NoSchedule --overwrite</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其中 localhost.master 是操作的节点名称</span></span><br></pre></td></tr></table></figure>
-<h3 id="启动工作节点">启动工作节点</h3>
-<p>准备工作首先也需要完成<strong>安装kubeadm</strong>的步骤。</p>
-<p>剩下的步骤就比较简单了，找到上文中<strong>成功启动K8s控制节点</strong>中的token，在工作节点执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo kubeadm <span class="built_in">join</span> 192.168.15.201:6443 --token 57hnhv.sy8wb7c1gsrzbotp \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:15cb23455b3cb846261b535dcbbf73ea36e3f089cf4b8b36623bf36b461b522d</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220505133657174.png" /></p>
-<p>如果有类似的回显说明已经加入成功了。</p>
-<h3 id="集群启动成功">集群启动成功</h3>
-<p><img data-src="image-20220505141228217.png" /></p>
-<h3 id="kubernetes排错">Kubernetes排错</h3>
-<h4 id="wait-control-plane-waiting-for-the-kubelet-to-boot-up-the-control-plane-as-static-pods-from-directory-etckubernetesmanifests.-this-can-take-up-to-4m0s">[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory “/etc/kubernetes/manifests”. This can take up to 4m0s</h4>
-<p>查看kubelet日志</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">journalctl -xeu kubelet</span><br></pre></td></tr></table></figure>
-<p>出现频率较高的就是<strong>sandbox</strong>，应该和这个镜像有关</p>
-<p><img data-src="image-20220505094125196.png" /></p>
-<p>查看<code>containerd</code>默认配置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/containerd/config.toml</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220505094253375.png" /></p>
-<p>发现默认配置是<code>k8s.gcr.io</code>域的镜像，国内拉取不到。</p>
-<p>上文中已经拉取了阿里云的镜像，执行以下命令可以查看镜像的拉取地址</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crictl images</span><br></pre></td></tr></table></figure>
-<p>如果报错应该是权限问题，<strong>即<code>containerd</code> 的创建的unix socket文件权限是root</strong>，可以试试加上<code>sudo</code></p>
-<p><img data-src="image-20220505094820005.png" /></p>
-<h5 id="解决方案">解决方案</h5>
-<p>将<code>k8s.gcr.io/pause</code>镜像更改为本地拉取的阿里云镜像即可。</p>
-<h4 id="加入节点时提示getting-status-of-runtime-rpc-error-code-unimplemented-desc-unknown-service-runtime.v1alpha2.runtimeservice">加入节点时，提示"getting status of runtime: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"</h4>
-<h5 id="解决方案-1">解决方案</h5>
-<p>检查<code>/etc/containerd/config.toml</code>文件，将SystemdCgroup设置为true</p>
-<p><img data-src="image-20220505140624811.png" /></p>
-<p>重启containerd服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart containerd</span><br></pre></td></tr></table></figure>
-<h4 id="failed-to-set-bridge-addr-cni0-already-has-an-ip-address-different-from-10.244.1.124">failed to set bridge addr: "cni0" already has an IP address different from 10.244.1.1/24</h4>
-<p>在集群出现异常，需要重置集群的时候可能会出现此问题。如果是第一次安装则不会，因为此时是集群第一次安装cni网络组件，不会出现地址冲突的问题。</p>
-<h5 id="解决方案-2">解决方案</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ifconfig cni0 down    </span><br><span class="line">ip <span class="built_in">link</span> delete cni0</span><br></pre></td></tr></table></figure>
-<h4 id="fata0000-failed-to-create-shim-task-oci-runtime-create-failed-runc-create-failed-unable-to-start-container-process-error-during-container-init-error-running-hook-0-error-running-hook-exit-status-1-stdout-stderr-time2022-05-24t022902z-levelfatal-msgfailed-to-call-cni.setup-plugin-typebridge-failed-add-incompatible-cni-versions-config-is-1.0.0-plugin-supports-0.1.0-0.2.0-0.3.0-0.3.1-0.4.0">FATA[0000] failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error running hook #0: error running hook: exit status 1, stdout: , stderr: time="2022-05-24T02:29:02Z" level=fatal msg="failed to call cni.Setup: plugin type="bridge" failed (add): incompatible CNI versions; config is "1.0.0", plugin supports ["0.1.0" "0.2.0" "0.3.0" "0.3.1" "0.4.0"]"</h4>
-<p>未安装CNI组件导致容器运行失败</p>
-<h5 id="解决方案-3">解决方案</h5>
-<p>直接使用<code>nerdctl</code>打包好的containerd运行时和一系列插件即可，参考上文<strong>安装kubeadm——安装容器运行时——方法2</strong></p>
-<ul>
-<li><p>https://github.com/flannel-io/flannel</p></li>
-<li><p>https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</p></li>
-<li><p>https://github.com/containerd/containerd/blob/main/docs/cri/registry.md</p></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
