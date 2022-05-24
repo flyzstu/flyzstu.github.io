@@ -30,15 +30,15 @@
 <meta property="og:site_name" content="个人随想">
 <meta property="og:description" content="本文主要介绍安装和配置Jenkins。 关键词：jenkins">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/安装配置Jenkins/image-20220509131641758.png">
-<meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/安装配置Jenkins/image-20220509131731389.png">
-<meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/安装配置Jenkins/image-20220509135702702.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/image-20220509131641758.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/image-20220509131731389.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/image-20220509135702702.png">
 <meta property="article:published_time" content="2022-05-08T09:26:00.000Z">
 <meta property="article:modified_time" content="2022-05-08T09:26:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="jenkins">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fly97.cn/p/install-and-config-jenkins/安装配置Jenkins/image-20220509131641758.png">
+<meta name="twitter:image" content="https://fly97.cn/p/install-and-config-jenkins/image-20220509131641758.png">
 
 
 <link rel="canonical" href="https://fly97.cn/p/install-and-config-jenkins/">
@@ -165,13 +165,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">145</span>
+          <span class="site-state-item-count">147</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-count">65</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -304,12 +304,10 @@
 <p>使用systemd，配置文件地址在</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/lib/systemd/system/jenkins.service</span><br></pre></td></tr></table></figure>
 <h4 id="修改监听端口">修改监听端口</h4>
-<p><img data-src="安装配置Jenkins/image-20220509131641758.png" /></p>
+<p><img data-src="image-20220509131641758.png" /></p>
 <h4 id="启用反向代理">启用反向代理</h4>
 <p>这里使用前缀<code>/jenkins</code>进行反向代理</p>
-<figure>
-<img data-src="安装配置Jenkins/image-20220509131731389.png" alt="image-20220509131731389" /><figcaption aria-hidden="true">image-20220509131731389</figcaption>
-</figure>
+<p><img data-src="image-20220509131731389.png" /></p>
 <h5 id="反向代理设置">反向代理设置</h5>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="section">upstream</span> jenkins&#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>;                   <span class="comment"># 后端jenkins地址</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">443</span>    ssl;</span><br><span class="line">    <span class="attribute">server_name</span>  jenkins.local;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">access_log</span>  /var/log/nginx/jenkins.access.log  main;</span><br><span class="line">    <span class="attribute">ssl_session_cache</span> shared:SSL:<span class="number">10m</span>;</span><br><span class="line">    <span class="attribute">ssl_certificate</span>     /usr/local/ssl/jenkins.crt;  <span class="comment"># pem文件的路径</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span>  /usr/local/ssl/jenkins.key; <span class="comment"># key文件的路径</span></span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /usr/local/ssl/ca.crt;</span><br><span class="line">    <span class="comment">#ssl_reject_handshake on;</span></span><br><span class="line">    <span class="comment"># ssl验证相关配置</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span>  <span class="number">10m</span>;    <span class="comment">#缓存有效期</span></span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;    <span class="comment">#加密算法</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>;    <span class="comment">#安全链接可选的加密协议</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;   <span class="comment">#使用服务器端的首选算法</span></span><br><span class="line">    <span class="attribute">ssl_stapling</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_stapling_verify</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://jenkins;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h4 id="修改插件地址">修改插件地址</h4>
@@ -317,7 +315,7 @@
 <p>https://www.jenkins-zh.cn/tutorial/management/plugin/update-center/</p>
 </blockquote>
 <p>修改地址，<strong>Dashboard&gt;&gt;&gt;插件管理&gt;&gt;&gt;Plugin Manager&gt;&gt;&gt;高级</strong></p>
-<p><img data-src="安装配置Jenkins/image-20220509135702702.png" /></p>
+<p><img data-src="image-20220509135702702.png" /></p>
 <h4 id="添加ssh密钥">添加SSH密钥</h4>
 
     </div>
