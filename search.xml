@@ -188,6 +188,18 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang时间处理</title>
+    <url>/p/time-processing-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
+<span id="more"></span>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git常见操作</title>
     <url>/p/Git-common-operations/</url>
     <content><![CDATA[<p>本文主要介绍 Git常见操作。</p>
@@ -449,18 +461,6 @@
 ]]></content>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang时间处理</title>
-    <url>/p/time-processing-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
-<span id="more"></span>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -1931,413 +1931,6 @@
 ]]></content>
       <tags>
         <tag>Mac</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（一）｜安装Anaconda3</title>
-    <url>/p/Chapter-01-of-how-to-install-anaconda/</url>
-    <content><![CDATA[<p>Python是一种面向对象的解释型计算机程序设计语言，其使用，具有跨平台的特点，可以在Linux、macOS以及Windows系统中搭建环境并使用，其编写的代码在不同平台上运行时，几乎不需要做较大的改动，使用者无不受益于它的便捷性。</p>
-<p>此外，Python的强大之处在于它的应用领域范围之广，遍及人工智能、科学计算、Web开发、系统运维、大数据及云计算、金融、游戏开发等。实现其强大功能的前提，就是Python具有数量庞大且功能相对完善的标准库和第三方库。通过对库的引用，能够实现对不同领域业务的开发。然而，正是由于库的数量庞大，对于管理这些库以及对库作及时的维护成为既重要但复杂度又高的事情。</p>
-<p><strong>Anaconda（<a href="https://link.zhihu.com/?target=https%3A//www.anaconda.com/download/%23macos">官方网站</a>）就是可以便捷获取包且对包能够进行管理，同时对环境可以统一管理的发行版本。Anaconda包含了conda、Python在内的超过180个科学包及其依赖项。</strong></p>
-<span id="more"></span>
-<h3 id="下载anadoda3安装包">下载Anadoda3安装包</h3>
-<ul>
-<li><p>可以选择清华镜像源</p>
-<p>https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/</p>
-<p><img data-src="image-20191228165427982.png" /></p></li>
-</ul>
-<p>注意时间，选择最近的即可</p>
-<p><img data-src="image-20201015093722350.png" /></p>
-<ul>
-<li><p><del>官网下载(网速特别慢)</del></p>
-<p>https://repo.anaconda.com/archive/</p>
-<p><img data-src="image-20201015094427422.png" /></p></li>
-</ul>
-<p>等待下载完成（以下以2019.10的版本为例）。</p>
-<h3 id="双击安装">双击安装</h3>
-<p><em>注意：安装时可以选择将Anaconda注册为默认的Python环境</em></p>
-<p>​ <img data-src="image-20191228170508433.png" style="zoom:67%;" /></p>
-<p><strong>注意：官方不推荐第一个选项。勾选第二个选项即可。</strong></p>
-<p>等待安装完成。</p>
-<p><img data-src="image-20191228170821162.png" /></p>
-<h3 id="验证安装完成">验证安装完成</h3>
-<p>点击开始 -&gt; Anaconda3</p>
-<p><img data-src="image-20200723190040460.png" /></p>
-<p>找到<strong>Anaconda Prompt (Anaconda3)</strong></p>
-<p><img data-src="image-20200723190154019.png" /></p>
-<p>点击并输入Python，敲回车以后出现以下提示说明安装完成。</p>
-<p><img data-src="image-20200723190228823.png" /></p>
-<h3 id="程序编写">程序编写</h3>
-<p>点击<strong>开始 -&gt; Anaconda3 -&gt; Spyder</strong></p>
-<p><img data-src="image-20200723191007101.png" /></p>
-<p>也可以点击<strong>开始 -&gt; Anaconda3 -&gt; Jupyter Notebook (Anaconda3)</strong></p>
-<p>等待片刻后会自动打开浏览器</p>
-<p><img data-src="image-20200723191158884.png" /></p>
-<p>输入代码以后，按住<strong>shift+回车</strong>，即可运行代码。</p>
-<p><img data-src="image-20200723191351960.png" /></p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（七）｜如何导入图片</title>
-    <url>/p/How-to-process-images-in-Pytorch/</url>
-    <content><![CDATA[<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。</p>
-<span id="more"></span>
-<h3 id="数据处理">数据处理</h3>
-<h4 id="数据加载">数据加载</h4>
-<p>在Pytorch中，数据加载可以通过自定义的数据集对象来实现。数据集对象被抽象为Dataset类，实现自定义的数据集需要继承Dataset，并实现两个Python魔法方法。</p>
-<ul>
-<li><code>__getitem__():返回一条数据或一个样本。obj[index]等价于obj.getitem__(index).</code></li>
-<li><code>__len__():返回样本的数量.len(obj)等价于obj.__len__().</code></li>
-</ul>
-<p>这里我们以某学校结课项目为例，谈谈在PyTorch中处理图像的操作。</p>
-<p><img data-src="202011081130.png" style="zoom:50%;" /></p>
-<p>第一步，首先要考虑的操作是将"绝缘子"文件夹下面的文件全部load到内存中，说干就干。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Data</span>(data.Dataset):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, root</span>):</span><br><span class="line">        imgs = os.listdir(root)</span><br><span class="line">        <span class="comment"># 所有图片的绝对路径</span></span><br><span class="line">        <span class="comment"># 这里不实际加载图片, 只是指定路径</span></span><br><span class="line">        <span class="comment"># 当调用__getitem__才会真正读图片</span></span><br><span class="line">        self.imgs = [os.path.join(root, img) <span class="keyword">for</span> img <span class="keyword">in</span> imgs]</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        img_path = self.imgs[index]</span><br><span class="line">        label = <span class="string">&#x27;jueyuanzi&#x27;</span>               				<span class="comment">#这里的标签是随便指定的</span></span><br><span class="line">        pli_img = Image.<span class="built_in">open</span>(img_path)</span><br><span class="line">        array = np.asarray(pli_img)</span><br><span class="line">        data = torch.from_numpy(array)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> data, label</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.imgs)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dataset  = Data(<span class="string">&#x27;..\\绝缘子&#x27;</span>)</span><br><span class="line">img, label = dataset[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img, label <span class="keyword">in</span> dataset:</span><br><span class="line">    <span class="built_in">print</span>(img.size(), img.<span class="built_in">float</span>().mean(), label)</span><br></pre></td></tr></table></figure>
-<p>实验结果：</p>
-<p><img data-src="image-20201108113830607.png" /></p>
-<p>通过上面的代码，我们学习了如何自定义自己的数据集，并可以依次获取。但是这里的数据不适合实际使用，其具有以下问题：</p>
-<ol type="1">
-<li>返回的数据形状会因为样本的形状而变化，这里由于图片的大小是一致的，因此无需处理。<strong>但是如果每张图片的大小不一</strong>，返回的数据大小就会不一致，这对于需要取batch训练的神经网络来说非常不友好。</li>
-<li>返回的样本数值较大，未归一化至<strong>[-1, 1]</strong>.</li>
-</ol>
-<p>针对上述问题，PyTorch提供了torchvision。它是一个视觉工具包，提供了很多视觉图像处理的工具，其中<code>tranforms</code>模块提供了对PIL Image和Tensor对象的常用操作。</p>
-<p>对PIL Image 的常见操作如下：</p>
-<ul>
-<li>Resize：调整图片尺寸。</li>
-<li>CenterCrop、RandCrop、RandomSizedCrop：裁剪图片。</li>
-<li>Pad：填充。</li>
-<li>ToTensor：将PIL Image对象转成Tensor，会自动将[0, 255]归一化至[0, 1]。</li>
-</ul>
-<p>对Tensor 的常见操作如下：</p>
-<ul>
-<li>Normalize：标准化，及减去均值，除以标准差。</li>
-<li>ToPILImage：将Tensor转为PIL Image对象。</li>
-</ul>
-<p>如果对这些图片进行操作，可以通过Compose将这些操作拼接起来。请注意：这些操作帝国一后是以对象的形式存在，真正使用时需调用它的__call__方法，类似于nn.Module。具体实现请下面的代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Created on Sun Nov  8 10:05:04 2020</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">@author: wf09</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> utils</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms <span class="keyword">as</span> T</span><br><span class="line"></span><br><span class="line">transform = T.Compose([</span><br><span class="line">        T.Resize([<span class="number">375</span>, <span class="number">500</span>]),   <span class="comment">#缩放图片</span></span><br><span class="line">        T.CenterCrop([<span class="number">375</span>, <span class="number">500</span>]), <span class="comment">#从图片中间切出这个大小的图片</span></span><br><span class="line">        T.ToTensor(),             <span class="comment">#将图片转换到Tensor, 归一化[0, 1]</span></span><br><span class="line">        T.Normalize(mean=[<span class="number">.5</span>, <span class="number">.5</span>, <span class="number">.5</span>], std =[<span class="number">.5</span>, <span class="number">.5</span>, <span class="number">.5</span>])  <span class="comment">#标准化到[-1, 1]</span></span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Data</span>(data.Dataset):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, root, transforms=<span class="literal">None</span></span>):</span><br><span class="line">        imgs = os.listdir(root)</span><br><span class="line">        <span class="comment"># 所有图片的绝对路径</span></span><br><span class="line">        <span class="comment"># 这里不实际加载图片, 只是指定路径</span></span><br><span class="line">        <span class="comment"># 当调用__getitem__才会真正读图片</span></span><br><span class="line">        self.imgs = [os.path.join(root, img) <span class="keyword">for</span> img <span class="keyword">in</span> imgs]</span><br><span class="line">        self.transforms = transforms</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        img_path = self.imgs[index]</span><br><span class="line">        label = <span class="string">&#x27;jueyuanzi&#x27;</span></span><br><span class="line"><span class="comment">#        pli_img = Image.open(img_path)</span></span><br><span class="line"><span class="comment">#        array = np.asarray(pli_img)</span></span><br><span class="line"><span class="comment">#        data = torch.from_numpy(array)</span></span><br><span class="line">        data = Image.<span class="built_in">open</span>(img_path)</span><br><span class="line">        <span class="keyword">if</span> self.transforms:</span><br><span class="line">            data = self.transforms(data)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> data, label</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.imgs)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">dataset  = Data(<span class="string">&#x27;..\\不同形态绝缘子&#x27;</span>, transform)</span><br><span class="line">img, label = dataset[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> img, label <span class="keyword">in</span> dataset:</span><br><span class="line">    <span class="built_in">print</span>(img.size(), img.<span class="built_in">float</span>().mean(), label)</span><br><span class="line">    utils</span><br><span class="line">    </span><br><span class="line">        </span><br><span class="line"> </span><br></pre></td></tr></table></figure>
-<h3 id="未完待续">未完待续</h3>
-<ul class="task-list">
-<li><input type="checkbox" disabled="" />
-如何将操作后的图片保存下来？</li>
-<li><input type="checkbox" disabled="" />
-什么是Python中的魔法方法？</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（三）｜安装PyTorch-GPU</title>
-    <url>/p/Use-pip-to-install-the-GPU-version-of-PyTorch-offline/</url>
-    <content><![CDATA[<p>废话不多说，上教程。</p>
-<span id="more"></span>
-<h4 id="查看linux预装的python3版本">查看Linux预装的Python3版本</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@wf09:~<span class="comment"># python3 -V</span></span><br><span class="line">Python 3.6.9</span><br></pre></td></tr></table></figure>
-<h4 id="下载对应的pytorch版本">下载对应的Pytorch版本</h4>
-<p>https://download.pytorch.org/whl/torch_stable.html</p>
-<p>Python版本是3.6.9，下载的版本是<code>cpu/torch-1.4.0%2Bcpu-cp36-cp36m-linux_x86_64.whl</code></p>
-<h4 id="安装pip3">安装pip3</h4>
-<h5 id="linux">Linux</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install python3-pip</span><br></pre></td></tr></table></figure>
-<p><strong>tips：</strong>由于apt源自带的pip版本过低，可以执行如下命令升级pip。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<p>升级完pip以后，pip就相当于pip3了。</p>
-<h5 id="win">Win</h5>
-<p>安装完Python后默认安装pip，执行命令升级pip即可</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3 -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
-<h4 id="离线安装pytorch">离线安装Pytorch</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install --no-index --find-links=torch-1.4.0+cpu-cp36-cp36m-linux_x86_64.whl torch</span><br></pre></td></tr></table></figure>
-<h4 id="windows10卸载pytorch-cpu版本并安装gpu版本">windows10卸载Pytorch-cpu版本并安装GPU版本</h4>
-<h5 id="卸载cpu版">卸载cpu版</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip uninstall torch   		<span class="comment">#卸载torch</span></span><br><span class="line">pip uninstall torchvison    <span class="comment">#卸载torchvison</span></span><br></pre></td></tr></table></figure>
-<h5 id="安装cuda">安装CUDA</h5>
-<p>https://developer.nvidia.com/cuda-toolkit-archive</p>
-<p>笔者使用的<code>Win10</code>，附上离线安装版链接：</p>
-<p><del>http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_441.22_win10.exe</del></p>
-<h6 id="tips最新版本的cuda10.2现在还无法被pytorch支持安装10.1版本的即可">Tips：最新版本的CUDA(10.2)现在还无法被Pytorch支持，安装10.1版本的即可。</h6>
-<p>http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_426.00_win10.exe</p>
-<p>下载完毕，双击打开即可。</p>
-<p>点击OK选择下一步。</p>
-<p>等待进度条达到100%，会自动打开安装程序。</p>
-<p>选择自定义，然后全部选中，期间会升级本机的<strong>显卡驱动</strong>。</p>
-<h6 id="tips升级显卡驱动是很重要的一步不升级到最新版本无法正确安装cuda"><strong>Tips：</strong>升级显卡驱动是很重要的一步，不升级到最新版本无法正确安装<strong>CUDA</strong></h6>
-<p>等待安装完毕。</p>
-<h5 id="安装cudnn">安装cuDNN</h5>
-<p><strong>相比标准的cuda，它在一些常用的神经网络操作上进行了性能的优化，比如卷积，pooling，归一化，以及激活层等等。</strong></p>
-<p>下载过程中需要注册 <strong>NVIDIA account</strong>。</p>
-<p>下载完毕后执行解压：会生成<code>cuda/include、cuda/lib、cuda/bin</code>三个目录；</p>
-<p>然后分别将<code>cuda/include、cuda/lib、cuda/bin</code>三个目录中的内容拷贝到<code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1</code>对应的<code>include、lib、bin</code>目录下即可。</p>
-<h5 id="安装pytorch-gpu版本">安装Pytorch-GPU版本</h5>
-<p>下载Pytorch-CUDA版本的whl文件，用于离线安装。</p>
-<p>https://download.pytorch.org/whl/torch_stable.html</p>
-<p>其中，<strong>cu101</strong>代表CUDA版本是10.1，<strong>cp37</strong>代表CPython version 3.7（指的是C语言实现的Python，就是原汁原味的Python。除了CPython以外，还有用Java实现的Jython，用.NET实现的IronPython，使Python方便地和Java程序、.NET程序集成。另外还有一些实验性的Python解释器比如PyPy），<strong>win</strong>代表Windows操作系统，<strong>amd64</strong>代表64位CPU平台。</p>
-<p>使用<strong>管理员权限</strong>打开<code>Anaconda Prompt (Anaconda3)</code>cmd窗口，输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install 下载路径\torch-1.4.0-cp37-cp37m-win_amd64.whl</span><br></pre></td></tr></table></figure>
-<p>等待安装完毕。</p>
-<p>使用相同的操作安装 <code>torchvision</code>，其中包含流行的数据集。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install 下载路径\torchvision-0.5.0-cp37-cp37m-win_amd64.whl</span><br></pre></td></tr></table></figure>
-<p>至此<strong>Pytoch-GPU</strong>版已经全部安装完毕。</p>
-<h5 id="测试是否安装成功">测试是否安装成功</h5>
-<p>打开cmd窗口，输入<strong>python</strong>进入<strong>python环境</strong>。依次输入：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">torch.cuda.is_available()</span><br><span class="line"><span class="comment"># True</span></span><br></pre></td></tr></table></figure>
-<p>输出为<strong>True</strong>，安装完毕。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（二）｜Anaconda3安装Pytorch</title>
-    <url>/p/Install-Pytorch-using-Anaconda3/</url>
-    <content><![CDATA[<p>话不多说，先上教程。</p>
-<span id="more"></span>
-<h4 id="下载anadoda3安装包">1.下载Anadoda3安装包</h4>
-<ul>
-<li><p>可以选择清华镜像源</p>
-<p>https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-2019.10-Windows-x86_64.exe</p></li>
-</ul>
-<p><img data-src="image-20191228165427982-16370643305702.png" /></p>
-<ul>
-<li><p>有条件的可以选择官网下载</p>
-<p>https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe</p>
-<p><img data-src="image-20191228170139071.png" /></p></li>
-</ul>
-<h4 id="双击安装">2.双击安装</h4>
-<p><em>注意：安装时可以选择将Anaconda注册为默认的Python环境</em></p>
-<p>​ <img data-src="image-20191228170508433.png" style="zoom:67%;" /></p>
-<p>然后一路next就可以了</p>
-<p>安装完成！</p>
-<p><img data-src="image-20191228170821162.png" /></p>
-<p>接下来到了很重要的环节————</p>
-<h4 id="创建conda虚拟环境">3.创建conda虚拟环境</h4>
-<p>为什么要创建虚拟环境呢？</p>
-<p>Anaconda主要是对python中的各个包进行管理与部署，从而方便用户的使用体验。</p>
-<p>在从github上面下载别人的代码之后，不同的代码往往需要特定的运行环境。比如说有些代码需要在python3.6的环境下运行，有些代码需要在python2.7的环境下运行。</p>
-<p>这个时候，就需要conda出马了</p>
-<h5 id="选择anaconda-prompt-anaconda3以管理员身份运行">选择Anaconda Prompt (Anaconda3)以管理员身份运行</h5>
-<p><img data-src="image-20191228171544280.png" /></p>
-<h5 id="输入命令">输入命令：</h5>
-<p><code>conda create -n environment_name python=3 numpy  pytorch torchvision cpuonly -c pytorch</code></p>
-<p>注意：以上命令是安装CPU版本的Pytorch</p>
-<h5 id="如需安装gpu版本的pytorch可以去官网查看对应命令">如需安装GPU版本的Pytorch可以去官网查看对应命令</h5>
-<p>https://pytorch.org/get-started/locally/</p>
-<p><img data-src="image-20191228172220826.png" /></p>
-<h5 id="然后一路敲y直到安装完成">然后一路敲y直到安装完成</h5>
-<p><img data-src="image-20191228172356834.png" /></p>
-<p>接下来需要切换到刚刚创建好的虚拟环境</p>
-<h5 id="输入命令-1">输入命令：</h5>
-<p><code>conda activate pytorch</code></p>
-<p><img data-src="image-20191228172503786.png" /></p>
-<h5 id="安装-librosa-音频处理库">安装 librosa 音频处理库</h5>
-<p><code>conda install -c conda-forge librosa</code></p>
-<h4 id="最后一步安装spyder-ide">4.最后一步：安装Spyder IDE</h4>
-<h5 id="输入命令-2">输入命令：</h5>
-<p><code>conda install spyder</code></p>
-<h5 id="没有问题的话输入命令">没有问题的话输入命令：</h5>
-<p><code>spyder</code></p>
-<p>会自动打开spyder4窗口</p>
-<h5 id="如果出现">如果出现</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(pytorch) C:\Windows\system32&gt;spyder</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;, line 204, in &lt;module&gt;</span><br><span class="line">    from PySide import __version__ as PYSIDE_VERSION  # analysis:ignore</span><br><span class="line">ModuleNotFoundError: No module named &#x27;PySide&#x27;</span><br><span class="line"></span><br><span class="line">During handling of the above exception, another exception occurred:</span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;C:\ProgramData\Anaconda3\envs\pytorch\Scripts\spyder-script.py&quot;, line 10, in &lt;module&gt;</span><br><span class="line">    sys.exit(main())</span><br><span class="line">  File &quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\start.py&quot;, line 201, in main</span><br><span class="line">    from spyder.app import mainwindow</span><br><span class="line">  File &quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\app\mainwindow.py&quot;, line 52, in &lt;module&gt;</span><br><span class="line">    requirements.check_qt()</span><br><span class="line">  File &quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\spyder\requirements.py&quot;, line 41, in check_qt</span><br><span class="line">    import qtpy</span><br><span class="line">  File &quot;C:\ProgramData\Anaconda3\envs\pytorch\lib\site-packages\qtpy\__init__.py&quot;, line 210, in &lt;module&gt;</span><br><span class="line">    raise PythonQtError(&#x27;No Qt bindings could be found&#x27;)</span><br><span class="line">qtpy.PythonQtError: No Qt bindings could be found</span><br></pre></td></tr></table></figure>
-<p>说明没有安装 pyqt</p>
-<p>输入命令</p>
-<p><code>conda install pyqt</code></p>
-<p>即可</p>
-<h5 id="至此pytorch安装完成你又可以愉快的机器学习了">至此，pytorch安装完成，你又可以愉快的机器学习了</h5>
-<p>安装完成后，你会发现开始栏多了一个Spyder，从此，可以直接从这里打开你刚刚创建的虚拟环境对应的Spyder~</p>
-<p><img data-src="image-20191228174316358.png" /></p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（四）｜torch.Tensor和torch.tensor的区别</title>
-    <url>/p/the-difference-between-torch-Tensor-and-torch-tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>不说废话，直接上教程。</p>
-<span id="more"></span>
-<h4 id="torch.tensor和torch.tensor有什么区别">torch.Tensor和torch.tensor有什么区别？</h4>
-<h6 id="介绍">介绍</h6>
-<p>​ 在PyTorch 中，torch.Tensor是主要的tensor类，所有的tensor都是torch.Tensor的实例。torch.Tensor是torch.FloatTensor的别名。 而torch.tensor是一个函数，返回的是一个tensor，在PyTorch官方文档中，描述如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.tensor(data, dtype=<span class="literal">None</span>, device=<span class="literal">None</span>, requires_grad=<span class="literal">False</span>) → Tensor</span><br><span class="line">Constructs a tensor <span class="keyword">with</span> data.</span><br></pre></td></tr></table></figure>
-<h6 id="区别1">区别1</h6>
-<p><code>torch.Tensor(data)</code>是将输入的data转化<code>torch.FloatTensor</code></p>
-<p><code>torch.tensor(data)</code>(当你未指定<code>dype</code>的类型时)是将data转化为<code>torch.FloatTensor、torch.LongTensor、torch.DoubleTensor</code>等类型，转化类型依据于<code>data</code>的类型或者<code>dtype</code>的值</p>
-<h5 id="区别2">区别2</h5>
-<p>使用如下语句：<code>tensor_without_data = torch.Tensor()</code>可以创建一个空的<code>FloatTensor</code>，而当你使用<code>tensor_without_data = torch.tensor()</code>时候则会报错：</p>
-<hr />
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">TypeError Traceback (most recent call last)</span><br><span class="line">&lt;ipython-<span class="built_in">input</span>-<span class="number">12</span>-ebc3ceaa76d2&gt; <span class="keyword">in</span> &lt;module&gt;()</span><br><span class="line">----&gt; <span class="number">1</span> torch.tensor()</span><br><span class="line"></span><br><span class="line">TypeError: tensor() missing <span class="number">1</span> required positional arguments: <span class="string">&quot;data&quot;</span></span><br></pre></td></tr></table></figure>
-<p>当你想要创建一个空的<code>tensor</code>时候，可以使用如下的方法：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tensor_without_data = torch.Tensor() <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.tensor(()) <span class="comment"># tensor([])</span></span><br><span class="line">tensor_without_data = torch.empty([]) <span class="comment"># tensor(0.)</span></span><br></pre></td></tr></table></figure>
-<p>所以<code>torch.Tensor</code>应该说是同时具有<code>torch.tensor</code>和<code>torch.empty</code>的功能，但是使用<code>torch.Tensor</code>可能会使你的代码出错，所以最好还是使用<code>torch.tensor</code>和<code>torch.empty</code>，而不是<code>torch.Tensor</code>。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（五）｜自动求导机制和计算图</title>
-    <url>/p/automatic-derivation-mechanism-and-calculation-graph-in-PyTorch/</url>
-    <content><![CDATA[<p>本文介绍了 PyTorch 的自动求导机制和计算图。</p>
-<p><strong>摘要</strong>：深度学习的算法本质是通过反向传播求导数，PyTorch 的 <code>Autograd</code>模块实现了此功能。在 Tensor 上的所有操作，<code>Autograd</code>都能为他们自动提供微分，避免手动求导的复杂过程。</p>
-<p><strong>关键字</strong>：PyTorch，自动求导，计算图</p>
-<span id="more"></span>
-<p>PyTorch会根据计算过程来自动生成动态图，然后根据动态图的创建过程进行反向传播，计算得到每个节点的梯度值。为了能够记录张量的梯度，首先需要在创建张量的时候设置一个参数<code>requires_grad=True</code>，意味着这个张量将会加入到计算图中，作为计算图的叶子节点参与计算通过一系列的计算最后输出结果张量，也就是根节点。几乎所有的张量创建方式都可以指定这个参数，一旦指定了这个参数，在后续的计算中得到的中间结果的张量都会被设置成<code>requires_grad=True</code>。对于PyTorch 来说，每一个张量都有一个<code>grad_fn</code>方法，这个方法包含创建该张量的运算的导数信息。在反向传播过程中，通过传入后一层的神经网络的梯度，该函数会计算出参与运算的所有张量的梯度，<code>grad_fn</code>本身也携带着计算图的信息，该方法本身有一个<code>next_functions</code>属性，包含连接该张量的其他张量的<code>grad_fn</code>。通过不断反向传播回溯中间张量的计算节点，可以得到所有张量的梯度。一个张量的梯度张量的信息保存在该张量的grad属性中。</p>
-<p>除 PyTorch 张量本身外，PyTorch提供了一个专门用来自动求导的包，即<code>torch.autograd</code>.它包含了两个重要的函数，即<code>torch.autograd.backward</code>函数和<code>torch.autograd.grad</code>函数。</p>
-<p><code>torch.autograd.backward</code>函数通过传入根节点张量，以及起始梯度张量(形状和当前张量的相同)，可以计算产生该根节点所有对应的叶子节点的梯度。当张量为标量张量(即只有一个元素的张量)时，可以不传入起始梯度张量，默认会设置初始梯度张量为1。当计算梯度张量时，原来建立起来的计算图会自动被释放，如果需要再次做自动求导，因为计算图会被自动释放，如果需要再次做自动求导，因为计算图已经不存在，就会报错。如果要在反向传播的时候保留计算图，可以设置<code>retain_graph=True</code>。另外，在自动求导的时候默认不会建立反向传播的计算图(反向传播也是一个计算过程，可以动态创建计算图)，如果需要在反向传播计算的同时建立和梯度张量有关的计算图(在某些情况下，如需要计算高阶导数的情况下，不过这种情况比较少)，可以设置<code>creat_graph=True</code>。对于一个可求导的张量，也可以直接调用该张量内部的<code>backward</code>方法来进行自动求导。</p>
-<h2 id="自动求导机制实例">自动求导机制实例</h2>
-<p>下面举一个简单的例子来说明自动求导是如何使用的。根据高等数学的知识可知，若定义一个函数<span class="math inline">\(f(x)=x^2\)</span>，则它的导数<span class="math inline">\(f(x)=2x\)</span>。于是可以创建一个可求导的张量来测试具体的导数。具体如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch <span class="keyword">as</span> t</span><br><span class="line"></span><br><span class="line">t1 = t.randn(<span class="number">3</span>, <span class="number">3</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">t1</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[-0.6704,  1.1710,  0.7608],</span></span><br><span class="line"><span class="string">        [ 1.2378, -0.5393, -0.9865],</span></span><br><span class="line"><span class="string">        [ 0.2863,  0.5295, -0.4555]], requires_grad=True)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">t2 = t1.<span class="built_in">pow</span>(<span class="number">2</span>).<span class="built_in">sum</span>() </span><br><span class="line">t2.backward(retain_graph=<span class="literal">True</span>) <span class="comment">#梯度反向传播</span></span><br><span class="line">t1.grad <span class="comment">#梯度是张量原始分量的2倍</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;tensor([[-1.3407,  2.3419,  1.5216],</span></span><br><span class="line"><span class="string">        [ 2.4756, -1.0786, -1.9729],</span></span><br><span class="line"><span class="string">        [ 0.5725,  1.0589, -0.9110]]</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">t2 = t1.<span class="built_in">pow</span>(<span class="number">2</span>).<span class="built_in">sum</span>()  <span class="comment">#再次计算张量的所有分量平方和</span></span><br><span class="line">t2.backward() <span class="comment"># 梯度再次反向传播</span></span><br><span class="line">t1.grad <span class="comment">#梯度累积</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[-2.1156, -1.1415,  7.4562],</span></span><br><span class="line"><span class="string">        [ 0.0900, -4.8776, -0.5413],</span></span><br><span class="line"><span class="string">        [-8.0727, -0.1184, -6.8779]])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">t1.grad.zero_() <span class="comment">#梯度清零</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>需要注意的一点是，张量绑定的梯度张量在不清空的情况下会逐渐累积。这种特性在某些情况下是有用的，比如，需要一次性求很多迷你批次的累计梯度，但在一般情况下，不需要用到这个特性，所以要注意将张量的梯度清零。</p>
-<h2 id="梯度函数的使用">梯度函数的使用</h2>
-<p>在某些情况下，不需要求出当前张量对所有产生该张量的叶子节点的梯度，此时可以用<code>torch.autograd.grad</code>函数，这个函数的参数是两个张量，第一个张量是计算图的数据结果张量(或是张量列表)，第二个张量是需要对计算图求导的张量(或张量列表)。最后输出的结果是第一个张量对第二个张量求导的结果(注意梯度会累积，和前面介绍的<code>torch.autograd.backward</code>函数的行为一样)。<strong>需要注意的是</strong>，这个函数不会改变叶子节点的grad属性。而函数<code>torch.autograd.backward</code>会设置叶子节点的grad属性为最后求出梯度张量。<code>torch.autograd.grad</code>会在反向传播求导时释放计算图，如果需要保留计算图，同样可以设置<code>retain_graph=True</code>.如果需要反向传播的计算图，可以设置<code>create_graph=True</code>.</p>
-<p>另外，有时候会碰到一种情况是求导的两个张量之间在计算图上没有关联，在这种情况下函数会报错，如果不需要函数的报错行为，可以设置allow_unused=True这个参数，结果会返回分量全为0的梯度张量(因为两个张量没有关联，所以求导的梯度为0).</p>
-<p>具体的使用方法可以参考以下代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t1 = t.randn(<span class="number">3</span>, <span class="number">3</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#初始化t1张量</span></span><br><span class="line">t1</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[-0.1082, -1.0099, -0.4560],</span></span><br><span class="line"><span class="string">        [-0.3910, -0.9767,  0.6419],</span></span><br><span class="line"><span class="string">        [ 1.1544,  0.3572, -1.3304]], requires_grad=True)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">t2 = t1.<span class="built_in">pow</span>(<span class="number">2</span>).<span class="built_in">sum</span>() <span class="comment">#根据t1张量求t2张量</span></span><br><span class="line">t.autograd.grad(t2, t1) <span class="comment"># t2张量对t1张量求导</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">(tensor([[-0.2165, -2.0197, -0.9120],</span></span><br><span class="line"><span class="string">         [-0.7820, -1.9535,  1.2837],</span></span><br><span class="line"><span class="string">         [ 2.3088,  0.7145, -2.6608]]),)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<h2 id="计算图的构建的启用和禁用">计算图的构建的启用和禁用</h2>
-<p>由于计算图的构建需要消耗内存和计算资源，在一些情况下，计算图并不是必要的，比如<strong>神经网络的推导</strong>。在这种情况下，可以使用<code>torch.no_grad</code>上下文管理器，在这个上下文管理器的作用域内进行的神经网络计算不会构建任何计算图。</p>
-<p>另外，还有一种情况是对于一个张量，我们在反向传播的时候可能不需要让梯度通过这个张量的节点，也就是新建的计算图要和原来的计算图分离。在这种情况下，可以使用张量的<code>detach</code>方法，通过调用这个方法，可以返回一个新的张量，该张量会成为一个新的计算图的叶子节点，新的计算图和老的计算图互相分离，互不影响。具体代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">t1 = t.randn(<span class="number">3</span>, <span class="number">3</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line">t2 = t1.<span class="built_in">sum</span>()</span><br><span class="line"></span><br><span class="line">t2   <span class="comment">#t2的计算构建了计算图，输出结果带有grad_fn</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string"> tensor(2.2761, grad_fn=&lt;SumBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> t.no_grad():</span><br><span class="line">    t3 = t1.<span class="built_in">sum</span>()</span><br><span class="line">    </span><br><span class="line">t3  <span class="comment">#t3的计算没有构建计算图，输出结果没有grad_fn</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.2761)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">t1.<span class="built_in">sum</span>()   <span class="comment">#保持原来的计算图</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.2761, grad_fn=&lt;SumBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">t1.<span class="built_in">sum</span>().detach()</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string"> tensor(2.2761)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<h2 id="后记">后记</h2>
-<h3 id="tensor">Tensor</h3>
-<p>如果我们需要计算某个Tensor的导数，那么我们需要设置其<code>requires_grad=True</code>.</p>
-<p>Tensor包含以下属性：</p>
-<ul>
-<li><code>grad</code>：保存tensor的梯度，形状与Tensor一致。每次在计算backward时都需要将前一时刻的梯度归零，否则梯度值会一直累加。</li>
-<li><code>grad_fn</code>：指向一个Function，记录Tensor的操作历史，即它是什么操作的输出，用来构建计算图。如果某一个变量是由用户创建的，则他为<strong>叶子节点</strong>，对应的<code>grad_fn</code>等于<code>None</code>。只有<strong>根节点</strong>的<code>grad_fn</code>才有效，用于指示梯度函数是哪种类型。</li>
-<li><code>is_leaf</code>: 用来指示该Tensor是否是叶子节点。</li>
-<li><code>requires_grad</code>: 设置为<code>True</code>则表示该Tensor需要求导</li>
-</ul>
-<p>通过几个例子来了解一下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch <span class="keyword">as</span> t</span><br><span class="line"></span><br><span class="line">a = t.ones(<span class="number">3</span>, <span class="number">4</span>, requires_grad = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">a</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.]], requires_grad=True)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">b = t.zeros(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">b</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[0., 0., 0., 0.],</span></span><br><span class="line"><span class="string">        [0., 0., 0., 0.],</span></span><br><span class="line"><span class="string">        [0., 0., 0., 0.]])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="comment"># 张量加法</span></span><br><span class="line"></span><br><span class="line">c = a + b</span><br><span class="line">c</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.]], grad_fn=&lt;AddBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">c = a.add(b)</span><br><span class="line">c</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.]], grad_fn=&lt;AddBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">d = c.<span class="built_in">sum</span>()</span><br><span class="line">d.backward() <span class="comment"># 反向传播</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意两者的区别</span></span><br><span class="line">c.data.<span class="built_in">sum</span>(), c.<span class="built_in">sum</span>()</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">(tensor(12.), tensor(12., grad_fn=&lt;SumBackward0&gt;))</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">a.grad</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.],</span></span><br><span class="line"><span class="string">        [1., 1., 1., 1.]])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="comment"># 此处虽然没有指定c需要求导，但c依赖于a，a需要求导</span></span><br><span class="line"><span class="comment"># 因此c的requires_grad属性会自动设为True</span></span><br><span class="line">a.requires_grad, b.requires_grad, c.requires_grad</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;(True, False, True)&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 由用户创建的 tensor 属于叶子节点，对应的grad_fn是None</span></span><br><span class="line">a.is_leaf, b.is_leaf, c.is_leaf</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;(True, True, False)&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># c.grad是None, c不是叶子节点, 他的梯度是用来计算a的梯度</span></span><br><span class="line"><span class="comment"># 虽然c.requires_grad = True, 但其梯度计算完了即被释放</span></span><br><span class="line"></span><br><span class="line">c.grad <span class="keyword">is</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;True&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="torch.autograd.backward">torch.autograd.backward</h3>
-<p>先看一下backward的接口是如何定义的：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">torch.autograd.backward(</span><br><span class="line">		tensors, </span><br><span class="line">		grad_tensors=None, </span><br><span class="line">		retain_graph=None, </span><br><span class="line">		create_graph=False, </span><br><span class="line">		grad_variables=None)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>tensor</code>: 用于计算梯度的tensor。也就是说这两种方式是等价的：<code>torch.autograd.backward(z) == z.backward()</code></li>
-<li><code>grad_tensors</code>: 在计算矩阵的梯度时会用到。他其实也是一个tensor，shape一般需要和前面的<code>tensor</code>保持一致。</li>
-<li><code>retain_graph</code>: 通常在调用一次backward后，PyTorch会自动把计算图销毁，所以要想对某个变量重复调用backward，则需要将该参数设置为<code>True</code></li>
-<li><code>create_graph</code>: 当设置为<code>True</code>的时候可以用来计算更高阶的梯度</li>
-<li><code>grad_variables</code>: 这个官方说法是grad_variables' is deprecated. Use 'grad_tensors' instead.也就是说这个参数后面版本中应该会丢弃，直接使用<code>grad_tensors</code>.</li>
-</ul>
-<p>使用以下代码尝试解释<code>grad_tensors</code>的作用。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">x = torch.ones(<span class="number">2</span>,requires_grad=<span class="literal">True</span>)</span><br><span class="line">z = x + <span class="number">2</span></span><br><span class="line">z.backward()</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">RuntimeError: grad can be implicitly created only for scalar outputs</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>当代码被运行，会有一个上述的<code>RuntimeError</code>被抛出。上面的报错信息意思是<strong>只有对标量输出它才会计算梯度</strong>，而求一个矩阵对令一个矩阵的导数束手无策。 <span class="math display">\[
-X=[x_0\quad x_1]\quad  Z=X+2=[x_0+2\quad x_1+2]\Rightarrow \frac{\partial Z}{\partial X}=?
-\]</span> 那么我们只要相办法把矩阵转变成一个标量不就好了？比如我们可以对<code>Z</code>求和，然后用求和得到的标量在对x求导，这样不会对结果有影响。即： <span class="math display">\[
-Z_{sum}=\sum{z_i}=x_0+x_1+8\quad then \quad\frac{\partial Z_{sum}}{\partial X_0}=\frac{\partial Z_{sum}}{\partial X_1}=1
-\]</span> 我们可以看到对z求和以后再计算梯度没有报错，结果也和预期一样：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch <span class="keyword">as</span> t</span><br><span class="line"></span><br><span class="line">x = t.ones(<span class="number">2</span>,requires_grad=<span class="literal">True</span>)</span><br><span class="line">z = x + <span class="number">2</span></span><br><span class="line"></span><br><span class="line">z.<span class="built_in">sum</span>().backward()</span><br><span class="line">x.grad</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([1., 1.])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>我们再仔细想想，对z求和不就是等价于z<strong>点乘一个一样维度的全为1的矩阵</strong>吗？即<span class="math inline">\(sum(Z)=dot(Z,I)\)</span>,而这个I也就是我们需要传入的<code>grad_tensor</code>参数。点乘只是对一维向量而言的，对于矩阵或更高维的张量，可以看作是<strong>对每一个维度做点乘</strong>。</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch <span class="keyword">as</span> t</span><br><span class="line">x = t.ones(<span class="number">2</span>,requires_grad=<span class="literal">True</span>)</span><br><span class="line">z = x + <span class="number">2</span></span><br><span class="line"></span><br><span class="line">z.backward(t.ones_like(z))</span><br><span class="line">x.grad</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([1., 1.])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>弄个再复杂一点的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">x = t.tensor([[<span class="number">2.</span>, <span class="number">1.</span>]], requires_grad=<span class="literal">True</span>)</span><br><span class="line">y = t.tensor([[<span class="number">1.</span>, <span class="number">2.</span>], [<span class="number">3.</span>, <span class="number">4.</span>]], requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">z = t.mm(x, y)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;z:<span class="subst">&#123;z&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">z.backward(t.tensor([[<span class="number">1.</span>, <span class="number">0</span>]]), retain_graph=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;x.grad:<span class="subst">&#123;x.grad&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;y.grad:<span class="subst">&#123;y.grad&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">z:tensor([[5., 8.]], grad_fn=&lt;MmBackward&gt;)</span></span><br><span class="line"><span class="string">x.grad:tensor([[1., 3.]])</span></span><br><span class="line"><span class="string">y.grad:tensor([[2., 0.],</span></span><br><span class="line"><span class="string">        [1., 0.]])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>总结：说了这么多，grad_tensors的作用其实可以简单地理解成在求梯度时候地权重，因为可能梯度对影响结果程度不同。</p>
-<p><strong>知乎高赞评论：</strong>假设是在z点backward，输入<code>grad_tensors</code>应该是目标函数(scalar)f对z的梯度，那么 <span class="math display">\[
-\frac{\partial f}{\partial X}=\frac{\partial f}{\partial z} \times \frac{\partial z}{\partial x}
-\]</span> 其中，传入的第一项就是传入<code>grad_tensors</code></p>
-<h3 id="导数运算">导数运算</h3>
-<p>接着我们来看看autograd计算的导数和我们手动推导的导数的区别。</p>
-<p>给出下列函数表达式： <span class="math display">\[
-y=x^2e^x
-\]</span> 他的导函数是： <span class="math display">\[
-\frac{\partial y}{\partial x}=2xe^x+x^2e^x
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch <span class="keyword">as</span> t</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;计算y&quot;&quot;&quot;</span></span><br><span class="line">    y = x**<span class="number">2</span> * t.exp(x)</span><br><span class="line">    <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gradf</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;手动求导函数&quot;&quot;&quot;</span></span><br><span class="line">    dx = <span class="number">2</span>*x*t.exp(x) + x**<span class="number">2</span>*t.exp(x)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> dx</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置随机数种子, 使结果可以复现</span></span><br><span class="line">t.manual_seed(<span class="number">0</span>)</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line">x = t.randn(<span class="number">3</span>, <span class="number">4</span>, requires_grad = <span class="literal">True</span>)</span><br><span class="line">y = f(x)</span><br><span class="line">y</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[11.0879,  0.0642,  0.5373,  0.5705],</span></span><br><span class="line"><span class="string">        [ 0.3976,  0.4830,  0.2435,  1.6235],</span></span><br><span class="line"><span class="string">        [ 0.2520,  0.1087,  0.1960,  0.0398]], grad_fn=&lt;MulBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">y.backward(t.ones(y.size())) <span class="comment"># 和grad_tensor形状一致</span></span><br><span class="line">x.grad</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[25.4785, -0.3734,  0.0441,  2.5776],</span></span><br><span class="line"><span class="string">        [-0.3356, -0.2077,  1.4510,  5.4982],</span></span><br><span class="line"><span class="string">        [-0.4487, -0.4302, -0.4611,  0.4765]])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">y.<span class="built_in">sum</span>().backward()</span><br><span class="line">x.grad</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[25.4785, -0.3734,  0.0441,  2.5776],</span></span><br><span class="line"><span class="string">        [-0.3356, -0.2077,  1.4510,  5.4982],</span></span><br><span class="line"><span class="string">        [-0.4487, -0.4302, -0.4611,  0.4765]])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="comment"># autograd的计算结果与利用公式手动计算的结果一致</span></span><br><span class="line">gradf(x)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[25.4785, -0.3734,  0.0441,  2.5776],</span></span><br><span class="line"><span class="string">        [-0.3356, -0.2077,  1.4510,  5.4982],</span></span><br><span class="line"><span class="string">        [-0.4487, -0.4302, -0.4611,  0.4765]], grad_fn=&lt;AddBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="计算图">计算图</h3>
-<p>PyTorch 中的 autograd 的底层采用了计算图，计算图是一种<strong>特殊的有向无环图(DAG)</strong>.用于记录算子和变量之间的关系。一般用矩形表示算子，椭圆形表示变量。如表达式<span class="math inline">\(z=wx+b\)</span>可以分解为<span class="math inline">\(y=wx\)</span>和<span class="math inline">\(z=y+b\)</span>，其计算图如下图所示，图中的<code>MUL</code>和<code>ADD</code>都是算子，<span class="math inline">\(w、x、b\)</span>为变量。</p>
-<p><img data-src="image-20200820171041627.png" style="zoom:50%;" /></p>
-<p>如上有向无环图中，<span class="math inline">\(X\)</span>和<span class="math inline">\(b\)</span>是叶子节点(leaf node)，这些节点通常由用户自己创建，不依赖其他变量。<span class="math inline">\(z\)</span>称为根节点，是计算图的最终目标。利用链式法则很容易求得各个叶子节点的梯度。 <span class="math display">\[
-\frac{\partial z}{\partial b}=1\quad\frac{\partial z}{\partial y}=1
-\]</span></p>
-<p><span class="math display">\[
-\frac{\partial y}{\partial w}=x\quad\frac{\partial y}{\partial x}=w
-\]</span></p>
-<p><span class="math display">\[
-\frac{\partial z}{\partial x}=\frac{\partial z}{\partial y} \times\frac{\partial y}{\partial x}=1\times w
-\]</span></p>
-<p><span class="math display">\[
-\frac{\partial z}{\partial w}=\frac{\partial z}{\partial y} \times\frac{\partial y}{\partial w}=1\times x
-\]</span></p>
-<p>而有了计算图，上述链式求导即可利用计算图的反向传播自动完成，其传播过程如下图所示。</p>
-<p><img data-src="image-20200820172727826.png" style="zoom:50%;" /></p>
-<p>在 PyTorch 实现中，<code>autograd</code>会随着用户的操作，记录生成当前 <strong>Tensor</strong> 的所有操作，并由此建立一个有向无环图。用户没进行一个操作，相应的计算图就会发生改变。更底层的实现中，图中记录了操作<code>Function</code>，每个变量在图中的位置可通过其<code>grad_fn</code>属性在图中的位置可以推测得到。在反向传播过程中，<code>autograd</code>沿着这个图从当前变量(根节点<span class="math inline">\(z\)</span>)溯源，可以利用链式求导法则计算所有叶子节点的梯度。每一个前向传播操作的函数都有与之对应的反向传播函数用来计算输入的各个Tensor的梯度，这些函数的函数名通常以<code>Backward</code>结尾。</p>
-<p>部分转载自：https://zhuanlan.zhihu.com/p/83172023</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（八）｜MNIST识别</title>
-    <url>/p/Use-PyTorch-for-MNIST-recognition/</url>
-    <content><![CDATA[<p>本文主要介绍如何使用PyTorch进行MNIST识别。</p>
-<span id="more"></span>
-<h5 id="数据集部分">数据集部分</h5>
-<p>下载地址：http://yann.lecun.com/exdb/mnist/</p>
-<p>如果使用<code>torchvision</code>下载速度较慢可以参考：https://blog.csdn.net/york1996/article/details/81780065</p>
-<h5 id="网络定义部分">网络定义部分</h5>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Net</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">32</span>, <span class="number">3</span>, <span class="number">1</span>)         <span class="comment">#输入通道数为1, 输出通道数为32, 卷积核大小为3*3, 步长为1</span></span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">3</span>, <span class="number">1</span>)        </span><br><span class="line">        self.dropout1 = nn.Dropout2d(<span class="number">0.25</span>)          <span class="comment">#随机将输入张量中整个通道设置为0</span></span><br><span class="line">        self.dropout2 = nn.Dropout2d(<span class="number">0.5</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">9216</span>, <span class="number">256</span>)             <span class="comment">#全连接层</span></span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.conv2(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = F.max_pool2d(x, <span class="number">2</span>)                      <span class="comment">#使用2*2的窗口进行最大值池化</span></span><br><span class="line">        x = self.dropout1(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)                     <span class="comment">#展平一个连续范围的维度</span></span><br><span class="line">        x = self.fc1(x)</span><br><span class="line">        x = F.relu(x)</span><br><span class="line">        x = self.dropout2(x)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        output = F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>卷积层第一层： <code>nn.Conv2d(1, 32, 3, 1)</code></p>
-<p>输入通道数为1，输出通道数为32，使用大小为3*3的卷积核，步长为1。</p>
-<p>卷积层第二层：<code>nn.Conv2d(32, 64, 3, 1)</code></p>
-<p>输入通道数为32，输出通道数为64，使用大小为3*3的卷积核，步长为1。</p>
-<p>前向传播中使用池化层：<code>F.max_pool2d(x, 2)</code></p>
-<p>最后展平一个连续的维度：<code>torch.flatten(x, 1)</code></p>
-<p><strong>详细描述</strong></p>
-<p>大小为<strong>1X28X28</strong>的图片，经过第一层卷积层，维度变为<strong>32X26X26</strong>，在经过第二层卷积层，维度变为<strong>64X24X24</strong>，在经过一层最大值池化层处理以后，维度变为<strong>64X12X12</strong>，全部展开以后维度变为<strong>1X9216</strong>。</p>
-<h5 id="卷积计算公式">卷积计算公式</h5>
-<p><code>卷积后输出图像宽/高=(图像宽/高 - 卷积核宽/高 + 用零填充的个数) / 步长</code></p>
-<h5 id="池化计算公式">池化计算公式</h5>
-<p><code>池化后图像宽/高=池化前图像宽/高 / 池化窗口宽度</code></p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（六）｜损失函数和优化器</title>
-    <url>/p/loss-function-and-optimizer-in-PyTorch/</url>
-    <content><![CDATA[<p>本文介绍了 PyTorch 的损失函数和优化器。</p>
-<p><strong>关键字</strong>：PyTorch，损失函数，优化器</p>
-<span id="more"></span>
-<h2 id="损失函数">损失函数</h2>
-<p>一般来说，PyTorch的损失函数有两种形式：函数形式和模块形式。前者调用的是torch.nn.funtional库中的函数，通过传入神经网络预测值和目标值来计算损失函数，后者是torch.nn库里的模块，通过新建一个模块的实例，然后通过调用模块的方法来计算最终的损失函数。</p>
-<p>由于训练数据一般以<strong>迷你批次</strong>的形式输入神经网络，最后预测的只也是以迷你批次的形式输出的，而损失函数最后的输出结果应该是一个标量张量，因此，对于迷你批次的化简一般有两种方法，一般是对迷你批次的损失函数求和，第二种是对迷你批次的损失函数u求平均。一般来说，也是默认和最常见的情形，最后输出的损失函数是迷你批次损失函数的平均。</p>
-<p>神经网络处理的预测问题主要分为<strong>回归问题和分类问题</strong>。对于回归问题，一般情况下使用的是<code>torch.nn.MSELoss</code>模块，即平方损失函数。通过创建这个模块的实例（一般使用默认参数，即在类的构造函数中不传入任何参数，这样会输出迷你批次的平均；如果要输出迷你批次的每个损失函数，可以指定参数<code>reduction='none'</code>；如果要输出迷你批次的损失函数，可以指定参数<code>reduction='sum'</code>.在实例中传入神经网络预测的值和目标值，能够计算得到最终的损失函数。具体的代码可以参考：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mse = t.nn.MSELoss()  <span class="comment">#初始化平方损失模块</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t1</span></span><br><span class="line">t2 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment"># 随机生成张量t2</span></span><br><span class="line">mse(t1, t2) <span class="comment"># 计算张量t1和t2之间的平方损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.9193, grad_fn=&lt;MeanBackward0&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">bse = t.nn.BCELoss() <span class="comment"># 初始化二分类交叉损失函数</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, requires_grad=<span class="literal">True</span>) <span class="comment">#随机生成张量t1</span></span><br><span class="line">t1s = t.sigmoid(t1) <span class="comment"># 对张量求sigmoid函数, 转换为(0, 1)之间的概率</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">5</span>,)).<span class="built_in">float</span>() <span class="comment">#随机生成0, 1整数序列, 并转换为浮点数</span></span><br><span class="line">bse(t1s, t2) <span class="comment">#计算二分类的交叉熵</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">bce_logits = t.nn.BCEWithLogitsLoss() <span class="comment">#初始化交叉熵对数损失函数</span></span><br><span class="line">bce_logits(t1, t2) <span class="comment">#计算二分类的交叉熵 (和前面结果一样)</span></span><br><span class="line"><span class="comment"># 这是因为, BCEWithLogitsLoss会先让输入经过sigmoid函数, 变成概率分布的形式, 再计算二分类交叉熵.</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(0.8674, grad_fn=&lt;BinaryCrossEntropyWithLogitsBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">N = <span class="number">10</span> <span class="comment"># 定义分类数目</span></span><br><span class="line">t1 = t.randn(<span class="number">5</span>, N, requires_grad=<span class="literal">True</span>) <span class="comment">#随机产生预测张量</span></span><br><span class="line">t2 = t.randint(<span class="number">0</span>, N, (<span class="number">5</span>, ))            <span class="comment">#随机产生目标张量</span></span><br><span class="line">t1s = t.nn.functional.log_softmax(t1, -<span class="number">1</span>) <span class="comment"># 计算预测张量的LogSoftmax</span></span><br><span class="line">nll = t.nn.NLLLoss() <span class="comment">#定义NLL损失函数</span></span><br><span class="line">nll(t1s, t2) <span class="comment">#计算损失函数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">ce = t.nn.CrossEntropyLoss() <span class="comment">#定义交叉熵损失函数</span></span><br><span class="line">ce(t1, t2) <span class="comment"># 和前面计算结果相同</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor(2.3238, grad_fn=&lt;NllLossBackward&gt;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyTorch实战（四）｜认识Tensor</title>
-    <url>/p/Tensor-in-PyTorch/</url>
-    <content><![CDATA[<p>通过以下几个例子来了解一下PyTorch中的Tensor。</p>
-<span id="more"></span>
-<p>Tensor 是 PyTorch 中重要的数据结构，可认为是一个高维数组。它可以是一个数字（标量）、一维数组（向量）、二维数组（矩阵）或更高维的数组。Tensor 和 numpy 的中的 ndrrays 类似，但是 Tensor 可以使用GPU加速。Tensor 的使用和 numpy 以及MATLAB的接口十分类似。下面通过几个实例来了解一下Tensor的基本使用方法。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensor <span class="keyword">as</span> t</span><br><span class="line"><span class="comment"># 构建 5*3 矩阵，只是分配了空间，未初始化</span></span><br><span class="line">x = t.Tensor(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用[0, 1]均匀分布随机初始化二维数组</span></span><br><span class="line">x = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(x.size()) <span class="comment">#查看形状</span></span><br><span class="line">x.size()[<span class="number">0</span>], x.size(<span class="number">1</span>) <span class="comment">#查看列的个数，两种写法等价</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(t.Size([<span class="number">5</span>, <span class="number">3</span>]))</span><br><span class="line"><span class="comment"># (5L, 3)</span></span><br></pre></td></tr></table></figure>
-<p>touch.Size 是tuple对象的子类，因此它支持 tuple 的所有操作，如 x.size()[0]。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">y = t.rand(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="comment"># 加法</span></span><br><span class="line"><span class="built_in">print</span>(x + y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法2</span></span><br><span class="line">t.add(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加法3</span></span><br><span class="line">result  = t.Tensor(<span class="number">5</span>, <span class="number">3</span>) <span class="comment"># 预先分配空间 </span></span><br><span class="line">t.add(x, y, out=result)  <span class="comment"># 输入到result</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;最初y&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(y)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;第一种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add(x) <span class="comment"># 普通加法, 不改变y的内容</span></span><br><span class="line"><span class="built_in">print</span>(y)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;第二种加法, y的结果&#x27;</span>)</span><br><span class="line">y.add_(x) <span class="comment"># inplace加法, 执行完后y的值被更新</span></span><br></pre></td></tr></table></figure>
-<p><strong>注意：</strong>函数名后面带下划线的函数会修改 Tensor 本身。例如，<code>x.add(y)</code> 和 <code>x.t_()</code>会返回一个新的 Tensor，而<code>x</code>不变。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Tensor的选取操作与numpy类似</span></span><br><span class="line">x[:, <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
-<p>Tensor 还支持很多操作，包括<strong>数学运算、线性代数、选择、切片</strong>等，其接口涉及与 numpy 极为相似。</p>
-<p>Tensor 和 numpy 的数组间的互操作非常容易且快速。Tensor不支持的操作，可以先转为 numpy 数组处理，之后再转回 Tensor .</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = t.ones(<span class="number">5</span>) <span class="comment"># 新建一个全是1的Tensor</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b = a.numpy() <span class="comment"># Tensor -&gt; Numpy</span></span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = np.ones(<span class="number">5</span>)</span><br><span class="line">b = t.from_numpy(a) <span class="comment"># Numpy -&gt; Tensor</span></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="built_in">print</span>(b)</span><br></pre></td></tr></table></figure>
-<p>Tensor 和 Numpy 对象<strong>共享内存</strong>，所以他们之间的转换会很快，而且几乎不会消耗资源。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">b.add_(<span class="number">1</span>) <span class="comment"># 以_结尾的函数会修改自身</span></span><br><span class="line"><span class="built_in">print</span>(a) </span><br><span class="line"><span class="built_in">print</span>(b) <span class="comment"># Tensor和Numpy共享内存</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>Tensor可通过<code>.cuda</code>方法转换为GPU的Tensor，从而享受GPU带来的加速运算.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在不支持CUDA的机器下，下一步不会运行</span></span><br><span class="line"><span class="keyword">if</span> t.cuda.is_available():</span><br><span class="line">	x = x.cuda()</span><br><span class="line">	y = y.cuda()</span><br><span class="line">	x + y</span><br></pre></td></tr></table></figure>
-<p>此处可能会发现GPU的运算速度并未提升太多，这是因为 x 和y 太小且运算也比较简单，而且将数据从内存种转移到显存上还需要花费额外的开销。GPU的优势需要在大规模数据和复杂运算上才能体现出来。</p>
-]]></content>
-      <tags>
-        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -5121,88 +4714,6 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
-    <title>使用acme.sh快速申请ssl证书</title>
-    <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
-    <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
-<p><strong>转载自：<a href="https://github.com/acmesh-official/acme.sh/wiki/说明">https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E</a></strong></p>
-<span id="more"></span>
-<p>主要步骤:</p>
-<ol type="1">
-<li>安装 <strong>acme.sh</strong></li>
-<li>生成证书</li>
-<li>copy 证书到 nginx/apache 或者其他服务</li>
-<li>更新证书</li>
-<li>更新 <strong>acme.sh</strong></li>
-<li>出错怎么办, 如何调试</li>
-</ol>
-<p>下面详细介绍.</p>
-<h4 id="安装-acme.sh">安装 <strong>acme.sh</strong></h4>
-<p>安装很简单, 一个命令： <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl  https://get.acme.sh | sh</span><br></pre></td></tr></table></figure></p>
-<p>普通用户和 root 用户都可以安装使用. 安装过程进行了以下几步:</p>
-<ol type="1">
-<li>把 acme.sh 安装到你的 <strong>home</strong> 目录下:</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">~/.acme.sh/</span><br></pre></td></tr></table></figure>
-<p>并创建 一个 bash 的 alias, 方便你的使用: <code>alias acme.sh=~/.acme.sh/acme.sh</code></p>
-<p>2). 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.</p>
-<p>更高级的安装选项请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-install</p>
-<p><strong>安装过程不会污染已有的系统任何功能和文件</strong>, 所有的修改都限制在安装目录中: <code>~/.acme.sh/</code></p>
-<h4 id="生成证书">生成证书</h4>
-<p><strong>acme.sh</strong> 实现了 <strong>acme</strong> 协议支持的所有验证协议. 一般有两种方式验证: http 和 dns 验证.</p>
-<h5 id="http-方式需要在你的网站根目录下放置一个文件-来验证你的域名所有权完成验证.-然后就可以生成证书了.">http 方式需要在你的网站根目录下放置一个文件, 来验证你的域名所有权,完成验证. 然后就可以生成证书了.</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  -d mydomain.com -d www.mydomain.com  --webroot  /home/wwwroot/mydomain.com/</span><br></pre></td></tr></table></figure>
-<p>只需要指定域名, 并指定域名所在的网站根目录. <strong>acme.sh</strong> 会全自动的生成验证文件, 并放到网站的根目录, 然后自动完成验证. 最后会聪明的删除验证文件. 整个过程没有任何副作用.</p>
-<p>如果你用的 <strong>apache</strong>服务器, <strong>acme.sh</strong> 还可以智能的从 <strong>apache</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --apache</span><br></pre></td></tr></table></figure></p>
-<p>如果你用的 <strong>nginx</strong>服务器, 或者反代, <strong>acme.sh</strong> 还可以智能的从 <strong>nginx</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --nginx</span><br></pre></td></tr></table></figure></p>
-<p><strong>注意, 无论是 apache 还是 nginx 模式, acme.sh在完成验证之后, 会恢复到之前的状态, 都不会私自更改你本身的配置. 好处是你不用担心配置被搞坏, 也有一个缺点, 你需要自己配置 ssl 的配置, 否则只能成功生成证书, 你的网站还是无法访问https. 但是为了安全, 你还是自己手动改配置吧.</strong></p>
-<p>如果你还没有运行任何 web 服务, <strong>80</strong> 端口是空闲的, 那么 <strong>acme.sh</strong> 还能假装自己是一个webserver, 临时听在<strong>80</strong> 端口, 完成验证:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue -d mydomain.com   --standalone</span><br></pre></td></tr></table></figure>
-<p>更高级的用法请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-issue-a-cert</p>
-<h5 id="手动-dns-方式-手动在域名上添加一条-txt-解析记录-验证域名所有权.">手动 dns 方式, 手动在域名上添加一条 txt 解析记录, 验证域名所有权.</h5>
-<p>这种方式的好处是, 你不需要任何服务器, 不需要任何公网 ip, 只需要 dns 的解析记录即可完成验证. 坏处是，如果不同时配置 Automatic DNS API，使用这种方式 acme.sh 将无法自动更新证书，每次都需要手动再次重新解析验证域名所有权。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  --dns   -d mydomain.com</span><br></pre></td></tr></table></figure>
-<p>然后, <strong>acme.sh</strong> 会生成相应的解析记录显示出来, 你只需要在你的域名管理面板中添加这条 txt 记录即可.</p>
-<p>等待解析完成之后, 重新生成证书: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --renew   -d mydomain.com</span><br></pre></td></tr></table></figure> 注意第二次这里用的是 <code>--renew</code></p>
-<p>dns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.</p>
-<p><strong>acme.sh</strong> 目前支持 cloudflare, dnspod, cloudxns, godaddy 以及 ovh 等数十种解析商的自动集成.</p>
-<p>以 dnspod 为例, 你需要先登录到 dnspod 账号, 生成你的 api id 和 api key, 都是免费的. 然后: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export DP_Id=&quot;1234&quot;</span><br><span class="line"></span><br><span class="line">export DP_Key=&quot;sADDsdasdgdsf&quot;</span><br><span class="line"></span><br><span class="line">acme.sh   --issue   --dns dns_dp   -d aa.com  -d www.aa.com</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
-<p>证书就会自动生成了. 这里给出的 api id 和 api key 会被自动记录下来, 将来你在使用 dnspod api 的时候, 就不需要再次指定了. 直接生成就好了:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue   -d  mydomain2.com   --dns  dns_dp</span><br></pre></td></tr></table></figure>
-<p>更详细的 api 用法: https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md</p>
-<h4 id="copy安装-证书">copy/安装 证书</h4>
-<p>前面证书生成以后, 接下来需要把证书 copy 到真正需要用它的地方.</p>
-<p>注意, 默认生成的证书都放在安装目录下: <code>~/.acme.sh/</code>, 请不要直接使用此目录下的文件, 例如: 不要直接让 nginx/apache 的配置文件使用这下面的文件. 这里面的文件都是内部使用, 而且目录结构可能会变化.</p>
-<p>正确的使用方法是使用 <code>--installcert</code> 命令,并指定目标位置, 然后证书文件会被copy到相应的位置, 例如: ##### Apache example: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--cert-file      /path/to/certfile/in/apache/cert.pem  \</span><br><span class="line">--key-file       /path/to/keyfile/in/apache/key.pem  \</span><br><span class="line">--fullchain-file /path/to/fullchain/certfile/apache/fullchain.pem \</span><br><span class="line">--reloadcmd     &quot;service apache2 force-reload&quot;</span><br></pre></td></tr></table></figure></p>
-<h5 id="nginx-example">Nginx example:</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--key-file       /path/to/keyfile/in/nginx/key.pem  \</span><br><span class="line">--fullchain-file /path/to/fullchain/nginx/cert.pem \</span><br><span class="line">--reloadcmd     &quot;service nginx force-reload&quot;</span><br></pre></td></tr></table></figure>
-<p>(一个小提醒, 这里用的是 <code>service nginx force-reload</code>, 不是 <code>service nginx reload</code>, 据测试, <code>reload</code> 并不会重新加载证书, 所以用的 <code>force-reload</code>)</p>
-<p>Nginx 的配置 <code>ssl_certificate</code> 使用 <code>/etc/nginx/ssl/fullchain.cer</code> ，而非 <code>/etc/nginx/ssl/&lt;domain&gt;.cer</code> ，否则 <a href="https://www.ssllabs.com/ssltest/">SSL Labs</a> 的测试会报 <code>Chain issues Incomplete</code> 错误。</p>
-<p><code>--installcert</code>命令可以携带很多参数, 来指定目标文件. 并且可以指定 reloadcmd, 当证书更新以后, reloadcmd会被自动调用,让服务器生效.</p>
-<p>详细参数请参考: https://github.com/Neilpang/acme.sh#3-install-the-issued-cert-to-apachenginx-etc</p>
-<p>值得注意的是, 这里指定的所有参数都会被自动记录下来, 并在将来证书自动更新以后, 被再次自动调用.</p>
-<h4 id="更新证书">更新证书</h4>
-<p>目前证书在 60 天以后会自动更新, 你无需任何操作. 今后有可能会缩短这个时间, 不过都是自动的, 你不用关心.</p>
-<h4 id="更新-acme.sh">更新 acme.sh</h4>
-<p>目前由于 acme 协议和 letsencrypt CA 都在频繁的更新, 因此 acme.sh 也经常更新以保持同步.</p>
-<p>升级 acme.sh 到最新版 : <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade</span><br></pre></td></tr></table></figure></p>
-<p>如果你不想手动升级, 可以开启自动升级:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --upgrade  --auto-upgrade</span><br></pre></td></tr></table></figure>
-<p>之后, acme.sh 就会自动保持更新了.</p>
-<p>你也可以随时关闭自动更新:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade  --auto-upgrade  0</span><br></pre></td></tr></table></figure>
-<h4 id="调试">调试</h4>
-<p>如果出错, 请添加 debug log：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug </span><br></pre></td></tr></table></figure>
-<p>或者： <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug  2</span><br></pre></td></tr></table></figure></p>
-<p>请参考： https://github.com/Neilpang/acme.sh/wiki/How-to-debug-acme.sh</p>
-<p>最后, 本文并非完全的使用说明, 还有很多高级的功能, 更高级的用法请参看其他 wiki 页面.</p>
-<p>https://github.com/Neilpang/acme.sh/wiki</p>
-]]></content>
-      <tags>
-        <tag>证书</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>如何为ipv4-only的服务器添加ipv6地址</title>
     <url>/p/use-warp-unlock-ipv6/</url>
     <content><![CDATA[<p>本文主要介绍如何为ipv4-only的服务器添加ipv6地址。</p>
@@ -5575,6 +5086,88 @@ y=x^2e^x
 ]]></content>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用acme.sh快速申请ssl证书</title>
+    <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
+    <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
+<p><strong>转载自：<a href="https://github.com/acmesh-official/acme.sh/wiki/说明">https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E</a></strong></p>
+<span id="more"></span>
+<p>主要步骤:</p>
+<ol type="1">
+<li>安装 <strong>acme.sh</strong></li>
+<li>生成证书</li>
+<li>copy 证书到 nginx/apache 或者其他服务</li>
+<li>更新证书</li>
+<li>更新 <strong>acme.sh</strong></li>
+<li>出错怎么办, 如何调试</li>
+</ol>
+<p>下面详细介绍.</p>
+<h4 id="安装-acme.sh">安装 <strong>acme.sh</strong></h4>
+<p>安装很简单, 一个命令： <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl  https://get.acme.sh | sh</span><br></pre></td></tr></table></figure></p>
+<p>普通用户和 root 用户都可以安装使用. 安装过程进行了以下几步:</p>
+<ol type="1">
+<li>把 acme.sh 安装到你的 <strong>home</strong> 目录下:</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">~/.acme.sh/</span><br></pre></td></tr></table></figure>
+<p>并创建 一个 bash 的 alias, 方便你的使用: <code>alias acme.sh=~/.acme.sh/acme.sh</code></p>
+<p>2). 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.</p>
+<p>更高级的安装选项请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-install</p>
+<p><strong>安装过程不会污染已有的系统任何功能和文件</strong>, 所有的修改都限制在安装目录中: <code>~/.acme.sh/</code></p>
+<h4 id="生成证书">生成证书</h4>
+<p><strong>acme.sh</strong> 实现了 <strong>acme</strong> 协议支持的所有验证协议. 一般有两种方式验证: http 和 dns 验证.</p>
+<h5 id="http-方式需要在你的网站根目录下放置一个文件-来验证你的域名所有权完成验证.-然后就可以生成证书了.">http 方式需要在你的网站根目录下放置一个文件, 来验证你的域名所有权,完成验证. 然后就可以生成证书了.</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  -d mydomain.com -d www.mydomain.com  --webroot  /home/wwwroot/mydomain.com/</span><br></pre></td></tr></table></figure>
+<p>只需要指定域名, 并指定域名所在的网站根目录. <strong>acme.sh</strong> 会全自动的生成验证文件, 并放到网站的根目录, 然后自动完成验证. 最后会聪明的删除验证文件. 整个过程没有任何副作用.</p>
+<p>如果你用的 <strong>apache</strong>服务器, <strong>acme.sh</strong> 还可以智能的从 <strong>apache</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --apache</span><br></pre></td></tr></table></figure></p>
+<p>如果你用的 <strong>nginx</strong>服务器, 或者反代, <strong>acme.sh</strong> 还可以智能的从 <strong>nginx</strong>的配置中自动完成验证, 你不需要指定网站根目录: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --issue  -d mydomain.com   --nginx</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意, 无论是 apache 还是 nginx 模式, acme.sh在完成验证之后, 会恢复到之前的状态, 都不会私自更改你本身的配置. 好处是你不用担心配置被搞坏, 也有一个缺点, 你需要自己配置 ssl 的配置, 否则只能成功生成证书, 你的网站还是无法访问https. 但是为了安全, 你还是自己手动改配置吧.</strong></p>
+<p>如果你还没有运行任何 web 服务, <strong>80</strong> 端口是空闲的, 那么 <strong>acme.sh</strong> 还能假装自己是一个webserver, 临时听在<strong>80</strong> 端口, 完成验证:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue -d mydomain.com   --standalone</span><br></pre></td></tr></table></figure>
+<p>更高级的用法请参考: https://github.com/Neilpang/acme.sh/wiki/How-to-issue-a-cert</p>
+<h5 id="手动-dns-方式-手动在域名上添加一条-txt-解析记录-验证域名所有权.">手动 dns 方式, 手动在域名上添加一条 txt 解析记录, 验证域名所有权.</h5>
+<p>这种方式的好处是, 你不需要任何服务器, 不需要任何公网 ip, 只需要 dns 的解析记录即可完成验证. 坏处是，如果不同时配置 Automatic DNS API，使用这种方式 acme.sh 将无法自动更新证书，每次都需要手动再次重新解析验证域名所有权。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  --dns   -d mydomain.com</span><br></pre></td></tr></table></figure>
+<p>然后, <strong>acme.sh</strong> 会生成相应的解析记录显示出来, 你只需要在你的域名管理面板中添加这条 txt 记录即可.</p>
+<p>等待解析完成之后, 重新生成证书: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --renew   -d mydomain.com</span><br></pre></td></tr></table></figure> 注意第二次这里用的是 <code>--renew</code></p>
+<p>dns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.</p>
+<p><strong>acme.sh</strong> 目前支持 cloudflare, dnspod, cloudxns, godaddy 以及 ovh 等数十种解析商的自动集成.</p>
+<p>以 dnspod 为例, 你需要先登录到 dnspod 账号, 生成你的 api id 和 api key, 都是免费的. 然后: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export DP_Id=&quot;1234&quot;</span><br><span class="line"></span><br><span class="line">export DP_Key=&quot;sADDsdasdgdsf&quot;</span><br><span class="line"></span><br><span class="line">acme.sh   --issue   --dns dns_dp   -d aa.com  -d www.aa.com</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>证书就会自动生成了. 这里给出的 api id 和 api key 会被自动记录下来, 将来你在使用 dnspod api 的时候, 就不需要再次指定了. 直接生成就好了:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue   -d  mydomain2.com   --dns  dns_dp</span><br></pre></td></tr></table></figure>
+<p>更详细的 api 用法: https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md</p>
+<h4 id="copy安装-证书">copy/安装 证书</h4>
+<p>前面证书生成以后, 接下来需要把证书 copy 到真正需要用它的地方.</p>
+<p>注意, 默认生成的证书都放在安装目录下: <code>~/.acme.sh/</code>, 请不要直接使用此目录下的文件, 例如: 不要直接让 nginx/apache 的配置文件使用这下面的文件. 这里面的文件都是内部使用, 而且目录结构可能会变化.</p>
+<p>正确的使用方法是使用 <code>--installcert</code> 命令,并指定目标位置, 然后证书文件会被copy到相应的位置, 例如: ##### Apache example: <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--cert-file      /path/to/certfile/in/apache/cert.pem  \</span><br><span class="line">--key-file       /path/to/keyfile/in/apache/key.pem  \</span><br><span class="line">--fullchain-file /path/to/fullchain/certfile/apache/fullchain.pem \</span><br><span class="line">--reloadcmd     &quot;service apache2 force-reload&quot;</span><br></pre></td></tr></table></figure></p>
+<h5 id="nginx-example">Nginx example:</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --installcert -d example.com \</span><br><span class="line">--key-file       /path/to/keyfile/in/nginx/key.pem  \</span><br><span class="line">--fullchain-file /path/to/fullchain/nginx/cert.pem \</span><br><span class="line">--reloadcmd     &quot;service nginx force-reload&quot;</span><br></pre></td></tr></table></figure>
+<p>(一个小提醒, 这里用的是 <code>service nginx force-reload</code>, 不是 <code>service nginx reload</code>, 据测试, <code>reload</code> 并不会重新加载证书, 所以用的 <code>force-reload</code>)</p>
+<p>Nginx 的配置 <code>ssl_certificate</code> 使用 <code>/etc/nginx/ssl/fullchain.cer</code> ，而非 <code>/etc/nginx/ssl/&lt;domain&gt;.cer</code> ，否则 <a href="https://www.ssllabs.com/ssltest/">SSL Labs</a> 的测试会报 <code>Chain issues Incomplete</code> 错误。</p>
+<p><code>--installcert</code>命令可以携带很多参数, 来指定目标文件. 并且可以指定 reloadcmd, 当证书更新以后, reloadcmd会被自动调用,让服务器生效.</p>
+<p>详细参数请参考: https://github.com/Neilpang/acme.sh#3-install-the-issued-cert-to-apachenginx-etc</p>
+<p>值得注意的是, 这里指定的所有参数都会被自动记录下来, 并在将来证书自动更新以后, 被再次自动调用.</p>
+<h4 id="更新证书">更新证书</h4>
+<p>目前证书在 60 天以后会自动更新, 你无需任何操作. 今后有可能会缩短这个时间, 不过都是自动的, 你不用关心.</p>
+<h4 id="更新-acme.sh">更新 acme.sh</h4>
+<p>目前由于 acme 协议和 letsencrypt CA 都在频繁的更新, 因此 acme.sh 也经常更新以保持同步.</p>
+<p>升级 acme.sh 到最新版 : <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade</span><br></pre></td></tr></table></figure></p>
+<p>如果你不想手动升级, 可以开启自动升级:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --upgrade  --auto-upgrade</span><br></pre></td></tr></table></figure>
+<p>之后, acme.sh 就会自动保持更新了.</p>
+<p>你也可以随时关闭自动更新:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh --upgrade  --auto-upgrade  0</span><br></pre></td></tr></table></figure>
+<h4 id="调试">调试</h4>
+<p>如果出错, 请添加 debug log：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug </span><br></pre></td></tr></table></figure>
+<p>或者： <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">acme.sh  --issue  .....  --debug  2</span><br></pre></td></tr></table></figure></p>
+<p>请参考： https://github.com/Neilpang/acme.sh/wiki/How-to-debug-acme.sh</p>
+<p>最后, 本文并非完全的使用说明, 还有很多高级的功能, 更高级的用法请参看其他 wiki 页面.</p>
+<p>https://github.com/Neilpang/acme.sh/wiki</p>
+]]></content>
+      <tags>
+        <tag>证书</tag>
       </tags>
   </entry>
   <entry>
@@ -6109,10 +5702,13 @@ y=x^2e^x
 <p>服务定义包含应用为该服务启动的每个容器的配置，就像命令行参数传递给<code>docker run</code>。同样，网络和卷的定义分别类似于<code>docker network create</code>和<code>docker volume create</code>.</p>
 <p>与<code>docker run</code>Dockerfile指定的选项：<code>CMD</code>一样，默认情况下会读取<code>EXPOSE</code> 、<code>VOLUME</code>、<code>ENV</code>等，无需在<code>docker-compose.yml</code>中定义。</p>
 <p>可以使用类似Bash的<code>$&#123;VARIABLE&#125;</code>语法在配置值中使用环境变量：参考<a href="https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution">变量替换</a></p>
-<p>本节包含<code>version: "3"</code>中服务定义支持的所有配置选项的列表。</p>
-<h4 id="build-1">build</h4>
-<p>在容器build时使用以下配置。</p>
-<p>未完待续。。。</p>
+<h4 id="在docker-compose中使用gpu">在Docker Compose中使用GPU</h4>
+<h5 id="旧版docker-compose">旧版docker compose</h5>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">test:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nvidia/cuda:10.2-base</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">nvidia-smi</span></span><br><span class="line">    <span class="attr">runtime:</span> <span class="string">nvidia</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="新版本">新版本</h5>
+<p>使用指定数目的GPU</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">test:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nvidia/cuda:10.2-base</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">nvidia-smi</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">reservations:</span></span><br><span class="line">          <span class="attr">devices:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">driver:</span> <span class="string">nvidia</span></span><br><span class="line">              <span class="attr">count:</span> <span class="number">1</span></span><br><span class="line">              <span class="attr">capabilities:</span> [<span class="string">gpu</span>]</span><br></pre></td></tr></table></figure>
+<p>使用全部的GPU <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">test:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">tensorflow/tensorflow:latest-gpu</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">python</span> <span class="string">-c</span> <span class="string">&quot;import tensorflow as tf;tf.test.gpu_device_name()&quot;</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">reservations:</span></span><br><span class="line">          <span class="attr">devices:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">capabilities:</span> [<span class="string">gpu</span>]</span><br></pre></td></tr></table></figure></p>
 ]]></content>
       <tags>
         <tag>docker</tag>
@@ -6528,6 +6124,24 @@ y=x^2e^x
       </tags>
   </entry>
   <entry>
+    <title>力扣数组基础之双指针长度最小的子数组</title>
+    <url>/p/minimum-size-subarray-sum/</url>
+    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：target = 7, nums = [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p><img data-src="双指针02.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="type">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣数组基础之模拟螺旋矩阵Ⅱ</title>
     <url>/p/spiral-matrix-ii/</url>
     <content><![CDATA[<p>题目：给你一个正整数 <code>n</code> ，生成一个包含 <code>1</code> 到 <code>n2</code> 所有元素，且元素按顺时针顺序螺旋排列的 <code>n x n</code> 正方形矩阵 <code>matrix</code> 。</p>
@@ -6551,24 +6165,6 @@ y=x^2e^x
 </ul>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 螺旋矩阵 II</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generateMatrix</span><span class="params">(n <span class="type">int</span>)</span></span> [][]<span class="type">int</span> &#123;</span><br><span class="line">	<span class="comment">// 新建矩阵</span></span><br><span class="line">	<span class="keyword">var</span> ret = <span class="built_in">make</span>([][]<span class="type">int</span>, n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ret); i++ &#123;</span><br><span class="line">		ret[i] = <span class="built_in">make</span>([]<span class="type">int</span>, n)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 定义左右上下边界</span></span><br><span class="line">	<span class="keyword">var</span> left, right, top, bottom <span class="type">int</span> = <span class="number">0</span>, n - <span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span></span><br><span class="line">	<span class="keyword">var</span> begin <span class="type">int</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> begin &lt; n*n &#123;</span><br><span class="line">		<span class="comment">// 从左到右</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; right; i++ &#123;</span><br><span class="line">			ret[top][i] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		top++</span><br><span class="line">		<span class="comment">// 从上到下</span></span><br><span class="line">		<span class="keyword">for</span> i := top; i &lt; bottom; i++ &#123;</span><br><span class="line">			ret[i][right] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 从右到左</span></span><br><span class="line">		right--</span><br><span class="line">		<span class="keyword">for</span> i := right; i &gt;= <span class="number">1</span>; i-- &#123;</span><br><span class="line">			ret[bottom][i] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 从下到上</span></span><br><span class="line">		bottom--</span><br><span class="line">		<span class="keyword">for</span> i := bottom; i &gt;= <span class="number">1</span>; i-- &#123;</span><br><span class="line">			ret[i][left] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		left++</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之双指针长度最小的子数组</title>
-    <url>/p/minimum-size-subarray-sum/</url>
-    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：target = 7, nums = [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p><img data-src="双指针02.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="type">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
