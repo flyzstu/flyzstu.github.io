@@ -3342,6 +3342,28 @@
       </tags>
   </entry>
   <entry>
+    <title>使用Github Action定时重启IBM cloud foundry</title>
+    <url>/p/ibm-cloud-auto-restart/</url>
+    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
+<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
+<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
+<span id="more"></span>
+<h3 id="yml配置文件">yml配置文件</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用方法">使用方法</h3>
+<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
+<h4 id="设置环境变量">设置环境变量</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
+<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
+<h4 id="效果图">效果图</h4>
+<p><img data-src="image-20200827193322808.png" /></p>
+<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
+]]></content>
+      <tags>
+        <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>go语言设计与实现之反射</title>
     <url>/p/Reflections-in-go-language-base/</url>
     <content><![CDATA[<p>写日志收集项目的时候遇到了一个关于<code>reflect</code>的问题，于是有了这一篇文章。</p>
@@ -3564,28 +3586,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用Github Action定时重启IBM cloud foundry</title>
-    <url>/p/ibm-cloud-auto-restart/</url>
-    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
-<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
-<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
-<span id="more"></span>
-<h3 id="yml配置文件">yml配置文件</h3>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用方法">使用方法</h3>
-<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
-<h4 id="设置环境变量">设置环境变量</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
-<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
-<h4 id="效果图">效果图</h4>
-<p><img data-src="image-20200827193322808.png" /></p>
-<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
-]]></content>
-      <tags>
-        <tag>github</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>K8s核心概念</title>
     <url>/p/core-concept-about-k8s/</url>
     <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第三章Kubernetes 核心概念</strong>学习笔记。</p>
@@ -3680,6 +3680,64 @@
 ]]></content>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>kafaka学习笔记之绪论</title>
+    <url>/p/introduction-to-kafaka-study-notes/</url>
+    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
+<p>关键词：<strong>kafaka</strong></p>
+<span id="more"></span>
+<h2 id="定义">定义</h2>
+<h3 id="传统定义">传统定义</h3>
+<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
+<h4 id="发布订阅">发布/订阅</h4>
+<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
+<h3 id="kafka最新定义">kafka最新定义</h3>
+<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
+<h2 id="应用场景">应用场景</h2>
+<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
+<ul>
+<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
+</ul>
+<p><img data-src="image-20220419165347641.png" /></p>
+<h3 id="解耦">解耦</h3>
+<ul>
+<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
+</ul>
+<p><img data-src="image-20220419165511301.png" /></p>
+<h3 id="异步通信">异步通信</h3>
+<ul>
+<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
+</ul>
+<p><img data-src="image-20220419165706773.png" /></p>
+<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
+<h3 id="点对点方式">点对点方式</h3>
+<ul>
+<li>消费者主动拉取数据，消息收到后清除消息</li>
+</ul>
+<p><img data-src="image-20220419165858779.png" /></p>
+<h3 id="发布订阅方式">发布订阅方式</h3>
+<ul>
+<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
+<li>消费者消费以后不删除数据</li>
+<li>每个消费者相互独立，都可以消费到数据</li>
+</ul>
+<p><img data-src="image-20220419170024390.png" /></p>
+<h2 id="基础架构">基础架构</h2>
+<p><img data-src="image-20220419170301160.png" /></p>
+<ol type="1">
+<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
+<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
+<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
+<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
+<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
+<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
+<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>kafaka</tag>
       </tags>
   </entry>
   <entry>
@@ -3855,64 +3913,6 @@
       </tags>
   </entry>
   <entry>
-    <title>kafaka学习笔记之绪论</title>
-    <url>/p/introduction-to-kafaka-study-notes/</url>
-    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
-<p>关键词：<strong>kafaka</strong></p>
-<span id="more"></span>
-<h2 id="定义">定义</h2>
-<h3 id="传统定义">传统定义</h3>
-<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
-<h4 id="发布订阅">发布/订阅</h4>
-<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
-<h3 id="kafka最新定义">kafka最新定义</h3>
-<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
-<h2 id="应用场景">应用场景</h2>
-<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
-<ul>
-<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
-</ul>
-<p><img data-src="image-20220419165347641.png" /></p>
-<h3 id="解耦">解耦</h3>
-<ul>
-<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
-</ul>
-<p><img data-src="image-20220419165511301.png" /></p>
-<h3 id="异步通信">异步通信</h3>
-<ul>
-<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
-</ul>
-<p><img data-src="image-20220419165706773.png" /></p>
-<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
-<h3 id="点对点方式">点对点方式</h3>
-<ul>
-<li>消费者主动拉取数据，消息收到后清除消息</li>
-</ul>
-<p><img data-src="image-20220419165858779.png" /></p>
-<h3 id="发布订阅方式">发布订阅方式</h3>
-<ul>
-<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
-<li>消费者消费以后不删除数据</li>
-<li>每个消费者相互独立，都可以消费到数据</li>
-</ul>
-<p><img data-src="image-20220419170024390.png" /></p>
-<h2 id="基础架构">基础架构</h2>
-<p><img data-src="image-20220419170301160.png" /></p>
-<ol type="1">
-<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
-<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
-<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
-<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
-<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
-<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
-<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>kafaka</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>nginx.conf配置文件详解</title>
     <url>/p/How-to-configure-nginx-conf/</url>
     <content><![CDATA[<p>本文主要介绍了nginx的配置文件。</p>
@@ -3952,6 +3952,27 @@
 ]]></content>
       <tags>
         <tag>office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ssh-genkey参数</title>
+    <url>/p/ssh-genkey/</url>
+    <content><![CDATA[<p>什么是ssh-genkey？</p>
+<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
+<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
+<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
+<span id="more"></span>
+<h2 id="常用命令">常用命令</h2>
+<h3 id="生成密钥对">生成密钥对</h3>
+<p>默认生成 2048 位 RSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<p>生成 4096 位 RSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
+<p>生成 521 位 ECDSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ssh-genkey</tag>
       </tags>
   </entry>
   <entry>
@@ -4319,27 +4340,6 @@
       </tags>
   </entry>
   <entry>
-    <title>ssh-genkey参数</title>
-    <url>/p/ssh-genkey/</url>
-    <content><![CDATA[<p>什么是ssh-genkey？</p>
-<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
-<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
-<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
-<span id="more"></span>
-<h2 id="常用命令">常用命令</h2>
-<h3 id="生成密钥对">生成密钥对</h3>
-<p>默认生成 2048 位 RSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
-<p>生成 4096 位 RSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
-<p>生成 521 位 ECDSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ssh-genkey</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu安装kafka和zookeeper并设置开机自动启动</title>
     <url>/p/install-kafka-on-ubuntu2004/</url>
     <content><![CDATA[<p>kafka是一个分布式消息队列。具有高性能、持久化、多副本备份、横向扩展能力。生产者往队列里写消息，消费者从队列里取消息进行业务逻辑。一般在架构设计中起到解耦、削峰、异步处理的作用。kafka对外使用topic的概念，生产者往topic里写消息，消费者从读消息。为了做到水平扩展，一个topic实际是由多个partition组成的，遇到瓶颈时，可以通过增加partition的数量来进行横向扩容。单个parition内是保证消息有序。每新写一条消息，kafka就是在对应的文件append写，所以性能非常高。</p>
@@ -4669,6 +4669,61 @@
       </tags>
   </entry>
   <entry>
+    <title>使用WireGuard组建虚拟局域网</title>
+    <url>/p/create-a-virtual-local-area-network-with-wireguard/</url>
+    <content><![CDATA[<p>什么是wireguard？</p>
+<p>以下引用自 <a href="https://www.wireguard.com/">WireGuard</a> 项目主页:</p>
+<p>WireGuard 是一种极其简单但快速且现代的 VPN，它利用了最先进的加密技术。它的目标是比 IPsec 更快、更简单、更精简和更有用，同时避免令人头疼的问题。旨在提供比 OpenVPN 更高的性能。WireGuard 被设计为在嵌入式接口和超级计算机等上运行的通用 VPN，适用于许多不同的环境。最初仅支持 Linux 平台，现在可以进行跨平台（Windows、macOS、BSD、iOS、Android）的广泛部署。目前仍然在大力开发中，但已经被认为是业内最安全、最容易使用和最简单的 VPN 解决方案。</p>
+<p>本文主要介绍如何使用WireGuard组建虚拟局域网，并结合自己的实践经验，给出笔者在使用wireguard中遇到的问题。</p>
+<p>关键词：<strong>WireGuard</strong></p>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>有人可能会问，为什么不使用Frp或其他端口映射工具？需求之一是希望七层应用（包括DNS）都不需要特别的设置：而端口映射在应用层，每当有一个新的应用都要重新配置一遍。VPN虚拟出来的网络处于网络层，路由规则一次性配好后，就不需要再为了新的七层应用再配置一遍。</p>
+<p>部署前提：需要一台可以<strong>被公网访问</strong>的电脑，不管是通过DMZ，还是一对一NAT的方式，或者是其他方式。</p>
+<h2 id="基础设置">基础设置</h2>
+<h3 id="server端">Server端</h3>
+<p>为了方便，这里使用docker。</p>
+<p>注：安装docker环境不在本文的讨论范围内。</p>
+<p>安装Wireguard内核</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install wireguard-dkms -y</span><br></pre></td></tr></table></figure>
+<p>Docker开启IP地址转发</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/containerd.conf</span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo modprobe overlay</span><br><span class="line">sudo modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置必需的 sysctl 参数，这些参数在重新启动后仍然存在。</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数而无需重新启动</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
+<p>拉取Wireguard镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull lscr.io/linuxserver/wireguard:latest</span><br></pre></td></tr></table></figure>
+<p>设置Server端环境变量</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># env</span></span><br><span class="line">SERVERURL=1.2.3.4							 <span class="comment"># 任意client都可以直接访问的公网IP</span></span><br><span class="line">SERVERPORT=51820            	 <span class="comment"># Server向外暴露的端口</span></span><br><span class="line">PEERS=5                     	 <span class="comment"># Peer 数目</span></span><br><span class="line">PEERDNS=119.29.29.29        	 <span class="comment"># Peer DNS</span></span><br><span class="line">INTERNAL_SUBNET=192.168.7.0/24 <span class="comment"># 虚拟局域网IP</span></span><br><span class="line">ALLOWEDIPS=192.168.7.0/24      <span class="comment"># 允许被访问的IP</span></span><br></pre></td></tr></table></figure>
+<p>设置docker-compose.yml</p>
+<p>主要是server端容器配置</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3.3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">wireguard:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">lscr.io/linuxserver/wireguard:latest</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">env_file:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./env</span>                    <span class="comment"># 将上文的环境变量存为env</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">    	<span class="attr">TZ:</span> <span class="string">&quot;Asia/Shanghai&quot;</span></span><br><span class="line">      <span class="attr">PUID:</span> <span class="string">&quot;1000&quot;</span>               <span class="comment"># 配置文件映射到宿主机的UID</span></span><br><span class="line">      <span class="attr">PGID:</span> <span class="string">&quot;1000&quot;</span>               <span class="comment"># 配置文件映射到宿主机的PID</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/config</span>         <span class="comment"># 配置文件路径</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/lib/modules:/lib/modules</span></span><br><span class="line">    <span class="attr">cap_add:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">NET_ADMIN</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYS_MODULE</span></span><br><span class="line">    <span class="attr">sysctls:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">net.ipv4.conf.all.src_valid_mark=1</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">net.ipv4.ip_forward=1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">51820</span><span class="string">:51820/udp</span>         <span class="comment"># 向外映射的端口，需要开启UDP支持</span></span><br></pre></td></tr></table></figure>
+<p>启动Server端</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220610155805291.png" /></p>
+<h3 id="client端">Client端</h3>
+<p>从config目录下选择一个peerX，文件夹内的peerX.conf就是客户端的配置文件。</p>
+<p>客户端使用wg命令行的方式进行安装。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install wireguard-dkms -y  <span class="comment"># 如果当前内核版本大于5.6则不用安装</span></span><br><span class="line">sudo apt-get install wireguard-tools -y       </span><br></pre></td></tr></table></figure>
+<p>将配置文件复制到/etc/wireguard文件夹，执行以下命令启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wg-quick up peerX                      <span class="comment"># peerX要和配置文件名的basename一致</span></span><br></pre></td></tr></table></figure>
+<p>如果在启动过程发现了如下问题：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/bin/wg-quick: line 32: resolvconf: <span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
+<p>执行以下命令修复</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">ln</span> -s /usr/bin/resolvectl /usr/local/bin/resolvconf</span><br></pre></td></tr></table></figure>
+<p>启动完毕以后检查执行情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wg </span><br></pre></td></tr></table></figure>
+<p><img data-src="使用WireGuard组建虚拟局域网/image-20220610164755938.png" /></p>
+<h3 id="附加设置">附加设置</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PersistentKeepalive = 1</span><br></pre></td></tr></table></figure>
+<p>上面的设置是每隔1秒发送一个数据包，保持数据连接</p>
+<h2 id="进阶设置">进阶设置</h2>
+<h3 id="wireguard全互联架构">Wireguard全互联架构</h3>
+<h3 id="基于wireguard协议的vpn工具">基于WireGuard协议的VPN工具</h3>
+<p>未完待续...</p>
+]]></content>
+      <tags>
+        <tag>wireguard</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用Zerotier搭建内网穿透服务</title>
     <url>/p/how-to-use-Zerotier/</url>
     <content><![CDATA[<p>什么是Zerotier？</p>
@@ -4918,6 +4973,113 @@
       <tags>
         <tag>github</tag>
         <tag>jsdelivrCDN</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Kubernetes集群实践（六）使用k3s创建一个轻量级k8s集群</title>
+    <url>/p/create-a-lightweight-k8s-cluster-with-k3s/</url>
+    <content><![CDATA[<p>什么是K3s？</p>
+<p>K3s 是一个轻量级的 Kubernetes 发行版，它针对边缘计算、物联网等场景进行了高度优化。为了最大化的利用设备，于是我选择了k3s作为在嵌入式设备上使用的kubernetes集群。</p>
+<p>本文主要介绍如何使用k3s创建一个轻量级的k8s集群。</p>
+<p>关键词：<strong>k3s</strong></p>
+<span id="more"></span>
+<h2 id="准备工作">准备工作</h2>
+<ul>
+<li>Ubuntu 20.04 LTS amd64，32GB，作为Master节点</li>
+<li>Ubuntu 18.04 LTS arm64，8GB，作为Worker节点</li>
+</ul>
+<h3 id="使用wireguard创建虚拟局域网">使用Wireguard创建虚拟局域网</h3>
+<p>使用wireguard 创建无感知的虚拟局域网，降低跨网段组网的难度。</p>
+<p>具体请参考我的另外一篇文章<a href="https://fly97.cn/p/create-a-virtual-local-area-network-with-wireguard">使用WireGuard组建虚拟局域网</a>.</p>
+<h3 id="安装ipvs所需要的模块">安装IPVS所需要的模块</h3>
+<p>ipvs网络模式比iptables具有更优秀的性能</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k3s.conf</span></span><br><span class="line"><span class="string">ip_vs</span></span><br><span class="line"><span class="string">ip_vs_rr</span></span><br><span class="line"><span class="string">ip_vs_wrr</span></span><br><span class="line"><span class="string">ip_vs_sh</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>安装查看ipvs表软件包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ipvsadm -y</span><br></pre></td></tr></table></figure>
+<p>服务器起来以后，可以执行以下命令查看ipvs规则</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ipvsadm -<span class="built_in">ln</span></span><br></pre></td></tr></table></figure>
+<h2 id="安装master节点">安装master节点</h2>
+<p>国内用户可以使用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -</span><br></pre></td></tr></table></figure>
+<p>国际用户使用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sfL https://get.k3s.io | sh -	</span><br></pre></td></tr></table></figure>
+<p>可以指定环境变量，在管道之后传递：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest sh -</span><br></pre></td></tr></table></figure>
+<p>其中环境变量INSTALL_K3S_EXEC可以按照下面设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INSTALL_K3S_EXEC=<span class="string">&quot;server --node-ip 192.168.7.2 --node-external-ip 192.168.7.2 --flannel-iface wg0 --no-deploy servicelb --write-kubeconfig-mode 644 --kube-proxy-arg &#x27;proxy-mode=ipvs masquerade-all=true metrics-bind-address=0.0.0.0:10249&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>下面是flag的含义</p>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>FLAG</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>--node-ip value, -i</code> value</td>
+<td>为节点发布的 IP 地址</td>
+</tr>
+<tr class="even">
+<td><code>--node-external-ip</code> value</td>
+<td>对外发布节点的 IP 地址</td>
+</tr>
+<tr class="odd">
+<td><code>--flannel-iface</code> value</td>
+<td>覆盖默认的 flannel 接口</td>
+</tr>
+<tr class="even">
+<td><code>--no-deploy</code> value</td>
+<td>不需要部署的组件 (有效选项: coredns, servicelb, traefik, local-storage, metrics-server)</td>
+</tr>
+<tr class="odd">
+<td><code>--kube-proxy-arg</code> value</td>
+<td>自定义 kube-proxy 进程的参数</td>
+</tr>
+<tr class="even">
+<td><code>--write-kubeconfig-mode</code></td>
+<td>更改kubeconfig的权限</td>
+</tr>
+<tr class="odd">
+<td><code>--flannel-backend</code> value</td>
+<td>更改flannel后端模式</td>
+</tr>
+</tbody>
+</table>
+<h2 id="安装worker节点">安装worker节点</h2>
+<p>查看master节点的凭据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/lib/rancher/k3s/server/node-token</span><br></pre></td></tr></table></figure>
+<p>国内环境执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn K3S_TOKEN=<span class="string">&quot;xxx&quot;</span> K3S_URL=https://192.168.7.2:6443 sh -</span><br></pre></td></tr></table></figure>
+<p>其中环境变量INSTALL_K3S_EXEC可以按照下面设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INSTALL_K3S_EXEC=<span class="string">&quot;agent --node-ip 192.168.7.3 --node-external-ip 192.168.7.3 --flannel-iface wg0 --kube-proxy-arg &#x27;proxy-mode=ipvs masquerade-all=true metrics-bind-address=0.0.0.0:10249&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>也可以编辑下面的service单元文件</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/etc/systemd/system/k3s-agent.service</span><br></pre></td></tr></table></figure></p>
+<h2 id="检查集群是否安装成功">检查集群是否安装成功</h2>
+<h3 id="检查k3s是否安装成功">检查k3s是否安装成功</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl status k3s</span><br></pre></td></tr></table></figure>
+<h3 id="检查node状态">检查node状态</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo kubectl get node -A</span><br></pre></td></tr></table></figure>
+<h2 id="k3s排错">k3s排错</h2>
+<h3 id="k3s-flannel-failed-delete-failed-to-parse-netconf-unexpected-end-of-json-input">k3s flannel failed (delete): failed to parse netconf: unexpected end of JSON input</h3>
+<p>貌似是cri网络插件的问题，但是没有找到出现问题的原因。</p>
+<h4 id="解决方法">解决方法</h4>
+<p>删除k3s配置，重新启动即可。</p>
+<p>删除ipvsadm规则</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ipvsadm -C</span><br></pre></td></tr></table></figure>
+<p>删除iptables规则</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -F <span class="comment"># flush 清除所有的已定规则</span></span><br><span class="line">iptables -X <span class="comment"># delete 删除所有用户自定义的链</span></span><br><span class="line">iptables -Z <span class="comment"># zero 将所有的chain的计数与流量统计都归零</span></span><br></pre></td></tr></table></figure>
+<p>删除网卡信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ip <span class="built_in">link</span> delete kube-ipvs0 </span><br></pre></td></tr></table></figure>
+<p>重新启动集群</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl start k3s</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -6027,29 +6189,6 @@
       </tags>
   </entry>
   <entry>
-    <title>力扣数组基础之二分法</title>
-    <url>/p/binary-search/</url>
-    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
-<p>定义target在左闭右闭区间[left, right]内：</p>
-<ul>
-<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
-<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
-</ul>
-<p><strong>示意图</strong></p>
-<p><img data-src="新建位图图像.bmp" /></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣二叉树基础之深度优先遍历</title>
     <url>/p/DFS-in-binary-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -6082,6 +6221,29 @@
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img data-src="新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -6717,6 +6879,24 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>Jenkins实战（三）安装npm并设置自动构建Hexo博客.md</title>
+    <url>/p/install-npm-and-set-auto-build-blog-with-jenkins/</url>
+    <content><![CDATA[<p>本文主要介绍如何使用jenkins设置自动构建博客。</p>
+<p>关键词：<strong>Jenkins</strong></p>
+<span id="more"></span>
+<h2 id="使用npm镜像作为构建工具">使用npm镜像作为构建工具</h2>
+<p>为了方便构建，这里先打好了镜像，分别先后执行即可</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -i -v=`<span class="built_in">pwd</span>`:/blog fly97/build-blog npm install hexo</span><br><span class="line">docker run --<span class="built_in">rm</span> -i -v=`<span class="built_in">pwd</span>`:/blog fly97/build-blog npm install </span><br><span class="line">docker run --<span class="built_in">rm</span> -i -v=`<span class="built_in">pwd</span>`:/blog fly97/build-blog hexo g</span><br></pre></td></tr></table></figure>
+<h2 id="jenkins设置">Jenkins设置</h2>
+<p>这里主要是设置执行的shell脚本，我这里添加了同步到又拍云CDN的操作，根据自己的需要可以酌情删减</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">docker=<span class="string">&#x27;sudo nerdctl&#x27;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;准备生成静态文件&#x27;</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$WORKSPACE</span></span><br><span class="line"><span class="variable">$docker</span> run --<span class="built_in">rm</span> -i -v=`<span class="built_in">pwd</span>`:/blog fly97/build-blog npm install hexo</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;安装依赖hexo-cli失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$docker</span> run --<span class="built_in">rm</span> -i -v=`<span class="built_in">pwd</span>`:/blog fly97/build-blog npm install </span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;安装install依赖失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$docker</span> run --<span class="built_in">rm</span> -i -v=`<span class="built_in">pwd</span>`:/blog fly97/build-blog hexo g</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;生成静态文件失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;准备传输静态文件&#x27;</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/flyzstu/flyzstu.github.io.git</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;下载静态文件失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">sudo <span class="built_in">chown</span> -R jenkins:jenkins public</span><br><span class="line"><span class="built_in">cp</span> -r flyzstu.github.io/.git public</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;复制文件失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> public</span><br><span class="line">git config user.name flyzstu --global</span><br><span class="line">git config user.email flyzstu@gmail.com --global</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Jenkins Service Auto Builder at `date &quot;</span>+%Y-%m-%d %H:%k:%M<span class="string">&quot;`&quot;</span></span><br><span class="line">git push</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;推送失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;博客更新成功&#x27;</span></span><br><span class="line">upx login &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">xxx</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;登陆upx失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;登陆upx成功&#x27;</span></span><br><span class="line">sudo <span class="built_in">rm</span> -rf .git</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;删除.git失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;删除.git成功&#x27;</span></span><br><span class="line">upx <span class="built_in">sync</span> --strong</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;upx同步失败&#x27;</span></span><br><span class="line">    <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;同步成功&#x27;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Jenkins</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>基于Proxmox VE的KVM虚拟化实战</title>
     <url>/p/pve-pci-passthrough/</url>
     <content><![CDATA[<p>Proxmox VE是一个既可以运行虚拟机也可以运行容器的虚拟化平台。Proxmox VE基于Debian Linux 开发，而且完全开源。处于灵活性的考虑，Proxmox VE同时支持两种虚拟化技术：KVM虚拟机和LXC容器。以下操作基于KVM虚拟机。</p>
@@ -6860,6 +7040,9 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
 <p>有下图所示回显说明安装成功：</p>
 <p><img data-src="image-20210112155315385.png" /></p>
+<h5 id="安装qemu-guest-agent">安装qemu-guest-agent</h5>
+<p>客户机安装<code>qemu-guest-agent</code>，可以在宿主机直接关闭客户机而不需要客户机确认</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qemu-guest-agent -y</span><br></pre></td></tr></table></figure>
 <h4 id="pve配置wifi">PVE配置WiFi</h4>
 <p>如果你的pve宿主机有无线网卡，可以按照如下步骤配置无线连接。</p>
 <h5 id="安装必要的软件">安装必要的软件</h5>
@@ -7483,6 +7666,57 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络介绍</title>
+    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
+    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
+<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
+<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
+<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
+<p><img data-src="20150829181722_450.png" /></p>
+<blockquote>
+<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
+</blockquote>
+<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
+<p><img data-src="20150829181722_631.png" /></p>
+<blockquote>
+<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
+</blockquote>
+<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
+<p><img data-src="20150829181722_777.png" /></p>
+<blockquote>
+<p>LSTM中的图标</p>
+</blockquote>
+<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
+<h4 id="lstm核心内容">2.LSTM核心内容</h4>
+<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
+<p><img data-src="20150829181723_640.png" /></p>
+<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
+<p><img data-src="20150829181723_567.png" /></p>
+<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
+<p>LSTM有三个门，来保护和控制细胞状态。</p>
+<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
+<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
+<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_259.png" /></p>
+<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
+<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
+<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_897.png" /></p>
+<h5 id="确定更新的信息">3.2确定更新的信息</h5>
+<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
+<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
+<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
+<p><img data-src="20150829181723_883.png" /></p>
+<h5 id="更新细胞状态">3.3更新细胞状态</h5>
+<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
+<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
+<p><img data-src="20150829181723_463.png" /></p>
+]]></content>
+      <tags>
+        <tag>LSTM</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>应用编排与管理：Deployment</title>
     <url>/p/core-concept-about-resource-orchestration-and-management/</url>
     <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第七章应用编排与管理：Deployment</strong>学习笔记。</p>
@@ -7607,57 +7841,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>k8s</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>循环神经网络介绍</title>
-    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
-    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
-<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
-<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
-<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
-<p><img data-src="20150829181722_450.png" /></p>
-<blockquote>
-<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
-</blockquote>
-<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
-<p><img data-src="20150829181722_631.png" /></p>
-<blockquote>
-<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
-</blockquote>
-<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
-<p><img data-src="20150829181722_777.png" /></p>
-<blockquote>
-<p>LSTM中的图标</p>
-</blockquote>
-<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
-<h4 id="lstm核心内容">2.LSTM核心内容</h4>
-<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
-<p><img data-src="20150829181723_640.png" /></p>
-<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
-<p><img data-src="20150829181723_567.png" /></p>
-<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
-<p>LSTM有三个门，来保护和控制细胞状态。</p>
-<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
-<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
-<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_259.png" /></p>
-<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
-<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
-<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_897.png" /></p>
-<h5 id="确定更新的信息">3.2确定更新的信息</h5>
-<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
-<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
-<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
-<p><img data-src="20150829181723_883.png" /></p>
-<h5 id="更新细胞状态">3.3更新细胞状态</h5>
-<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
-<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
-<p><img data-src="20150829181723_463.png" /></p>
-]]></content>
-      <tags>
-        <tag>LSTM</tag>
       </tags>
   </entry>
   <entry>
@@ -7814,297 +7997,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       <tags>
         <tag>研一</tag>
         <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念（一）｜基本术语</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-01/</url>
-    <content><![CDATA[<p>为了理解深度学习，先了解一下机器学习的基本术语。</p>
-<span id="more"></span>
-<h4 id="引言">引言</h4>
-<p>机器学习的经典定义：<strong>利用经验改善系统自身的性能。</strong></p>
-<p>机器学习所研究的主要内容，是关于在计算机上从数据中产生的模型的算法，即学习算法。有了学习算法，我们把经验数据提供给它，它就能基于这些数据产生模型。在面对新的情况时，模型会给我们相应的判断。</p>
-<blockquote>
-<p>【Mitchell,1997】给出了一个更形式化的定义：假设用<em>P</em>来评估计算机程序在某任务类<em>T</em>上的性能，若一个程序通过利用经验<em>E</em>在<em>T</em>中任务上获得了性能改善，则我们就说关于<em>T</em>和<em>P</em>，该程序对<em>E</em>进行了学习。</p>
-</blockquote>
-<p>模型：泛指从数据中学到的结果。有文献用"模型"指全局性结果(例如一颗决策树)，而用"模式"指局部性结果(例如一条规则).</p>
-<h4 id="基本术语">基本术语</h4>
-<p>要进行机器学习，首先要有数据。假定收集了一批关于西瓜的数据，例如（色泽=青绿；根蒂=蜷缩；敲声=浊响），（色泽=乌黑；根蒂=稍蜷；敲声=沉闷），（色泽=浅白；根蒂=硬挺；敲声=清脆），······，每对括号内是一条记录，"="的意思是"取值为".</p>
-<p>记录数据的集合称为一个<strong>"数据集"(data set)</strong>，其中每条记录是关于一个事件和对象的叙述，称为一个<strong>"示例"（instance)或"样本"（sample）</strong>。</p>
-<p>反应事件或对象在某方面的表现或者性质的事项，例如"色泽"，"根蒂"，"敲声"，称为<strong>"属性"（attribute)或"特征"（feature）</strong>。</p>
-<p>属性上的取值，例如"青绿"，"乌黑"，称为<strong>"属性值"（attribute value）</strong>。属性张成的空间称为<strong>"属性空间"（attribute space）、"样本空间"（sample space）或"输入空间"</strong>。</p>
-<p>例如，我们把"色泽"、"根蒂"和"敲声"作为三个坐标轴，则他们张成的一个用于描述西瓜的三维空间，每个西瓜都可在这个空间找到他们自己的坐标位置。由于空间中的每个点对应一个坐标向量，因此也把一个示例称为一个<strong>"特征向量"（feature vector）</strong>。</p>
-<p>​ 一般地，令$ D=\{x_1,x_2,...,x_m\} <span class="math inline">\(表示包含\)</span>m<span class="math inline">\(个实例的数据集，每个实例由\)</span>d<span class="math inline">\(个属性描述(例如上面的西瓜数据使用了3个属性)，则每个实例\)</span>x_i=\{x_{i1},x_{i2},...,x_{id}\}<span class="math inline">\(是\)</span>d$维样本空间 <span class="math inline">\(\chi\)</span> 中一个向量，<span class="math inline">\(x_i \in \chi\)</span>，其中<span class="math inline">\(x\_{ij}\)</span>是第<span class="math inline">\(j\)</span>个属性上的取值(例如上述第3个西瓜在第二个属性上的属性是"硬挺")，<span class="math inline">\(d\)</span>称为样本<span class="math inline">\(x_i\)</span>的<strong>"维数"(dimensionality)</strong>.</p>
-<p>​ 从数据中学得模型的过程称为<strong>"学习"（learning）</strong>或者<strong>"训练"（training）</strong>，这个过程通过执行某个学习算法来完成。训练过程使用的数据称为<strong>"训练数据"（training data）</strong>，其中每个样本称为一个<strong>"训练样本"（training sample)</strong>，训练样本组成的集合称为<strong>"训练集"（training set）</strong>。学得模型对应了关于数据的某种潜在的规律，因此亦称<strong>"假设"（hypothesis）</strong>；这种潜在规律本身，则称为<strong>"真相"或"真实"(ground-truth)</strong>，学习过程就是为了找出或逼近真相。</p>
-<blockquote>
-<p>训练样本亦称为"训练示例"（training instance）或者"训练例"。</p>
-<p>学习算法通常由参数需要设置，使用不同的参数值和(或)训练数据，将产生不同的结果。</p>
-<p>有时将模型称为"学习器"（learner)，可看作学习算法在给定数据和参数空间上的实例化。</p>
-</blockquote>
-<p>​ 如果希望学得一个能够判断没剖开的是不是"好瓜"的模型，仅有前面的示例数据显然是不够的，要建立这样的关于<strong>"预测"（prediction）</strong>的模型，需要获得训练样本的"结果"信息，例如"((色泽=青绿；根蒂=蜷缩；敲声=浊响)，好瓜)"。这里关于实例结果的信息，例如"好瓜"，称为<strong>"标记"（label）</strong>；拥有了标记信息的示例，则成为<strong>"样例"（example)</strong>。一般地，用<span class="math inline">\((x_i,y_i)\)</span>表示第<span class="math inline">\(i\)</span>个样例，其中<span class="math inline">\(y_i \in Y\)</span>是示例<span class="math inline">\(x_i\)</span>的标记，<span class="math inline">\(Y\)</span> 是所有标记的集合，亦称为<strong>"标记空间"(label space)或"输出空间"</strong>。</p>
-<p>​ 若我们欲预测的是离散值，例如"好瓜"、"坏瓜"，此类任务被称为<strong>"分类"(classification)</strong>；若欲预测的是连续值，例如西瓜成熟度0.95，0.37，此类学习任务称为<strong>"回归"(regression)</strong>。对涉及两个类别的<strong>"二分类"(binary classification)</strong>任务，通常称其中一个类为<strong>"正类"(positive class)</strong>，另一个类称为<strong>"反类"(negative class)</strong>;涉及多个类别时，则成为<strong>"多分类"(multi-class classification)</strong>任务。一般地，预测任务是希望通过对训练集<span class="math inline">\(\{(x_1,y_1),(x_2,y_2),...,(x_m,y_m)\}\)</span>进行学习，建立一个从输入空间<span class="math inline">\(X\)</span>到输出空间<span class="math inline">\(Y\)</span>的映射<span class="math inline">\(f : X \to Y\)</span>。对于二分类任务，通常令<span class="math inline">\(Y=\\{-1,+1\\}\)</span>或<span class="math inline">\(\\{0,1\\}\)</span>；对多分类任务，<span class="math inline">\(|Y|&gt;2\)</span>；对于回归任务，<span class="math inline">\(Y=R\)</span>，<span class="math inline">\(R\)</span>为实数集。</p>
-<p>​ 学得模型后，使用其进行预测的过程称为<strong>"测试"(testing)</strong>，被预测的样本称为<strong>"测试样本"(testing sample)</strong>。例如在学得<span class="math inline">\(f\)</span>后，对测试例<span class="math inline">\(x\)</span>可得到其预测标记<span class="math inline">\(y=f(x)\)</span>。</p>
-<p>​ 还可以对西瓜做<strong>"聚类"(clustering)</strong>，即将训练集中的西瓜分成若干组，每组称为一个<strong>"簇"（cluster）</strong>；这些自动形成得簇可能对应一些潜在得概念划分，例如"浅色瓜"、"深色瓜"，甚至"本地瓜"、"外地瓜"。这样的学习过程有助于哦我们了解数据内在得规律，能为更深入地分析数据建立基础。需说明的是，在聚类分析中，"浅色瓜，本地瓜"这样得概念我们实现是不知道的，而且学习过程中使用的训练样本通常不拥有标记信息。</p>
-<p>​ 根据训练数据是否拥有标记信息，学习任务可大致分为两大类：<strong>"监督学习"(supervised learning)</strong>和<strong>"无监督学习"(unsupervised learning)</strong>。分类和回归是监督学习的代表，而聚类是无监督学习的代表。</p>
-<p>​ 需要注意的是，机器学习的目标是使学得的模型能很好地适用于"新样本"，而不是仅仅在训练样本上工作得很好；即便对聚类这样得无监督学习任务，我们也希望学得簇划分能适用于没在训练集中出现的样本。学得模型适用于新样本的能力，称为<strong>"泛化"(generalization)能力</strong>。具有强泛化能力的模型能够很好的适用于整个样本空间。尽管训练集通常只是样本空间的一个很小的采样，我们仍希望它能很好的反映出样本空间的特性，否则就很难再期望在训练集上学得的模型能在整个样本空间上都工作得很好。</p>
-<blockquote>
-<p>通常假设样本空间中全体样本服从一个未知<strong>"分布"(distribution)</strong><span class="math inline">\(\small D\)</span>，我们获得的每个样本都是<strong>"独立同分布"(independent and identically distributed，简称<span class="math inline">\(i.i.d\)</span>)</strong>。一般而言，训练样本越多，我们得到得关于<span class="math inline">\(D\)</span>的信息越多，这样就越有可能通过学习获得具有强泛化能力的模型。</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念03</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-03/</url>
-    <content><![CDATA[<p>机器学习中的归纳偏好。</p>
-<span id="more"></span>
-<h4 id="归纳偏好">归纳偏好</h4>
-<p>通过学习得到的模型对应了假设空间的一个假设，于是，上文中的西瓜版本空间给我们带来了一个麻烦：现在有三个与训练集一致的假设，但与他们对应的模型在面临新样本的时候，却会产生不同的输出。例如，对色泽=青绿；根蒂=蜷缩；敲声=沉闷这个新收来的瓜，如果我们采用的是“好瓜《=》（色泽=*）^（敲声=*)”。那么会把新瓜判断为好瓜，而如果采用了另外两个假设，则判断的结果将不是好瓜，那么，应该采用哪一个模型（或假设）呢？</p>
-<p>若仅有上表中训练样本，则无法断定上述三个假设哪一个“更好”。然而，对于一个具体的学习算法而言，他必须要产生一个模型。这时，学习算法本身的“偏好”就会起到关键的作用。例如，若我们的算法喜欢尽可能特殊的模型，则他会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=浊响)”；但若我们的算法喜欢“尽可能一般”的模型，并且由于某种原因它更相信“根蒂”，则它会选择“好瓜《=》（色泽=*）<sup>（根蒂=蜷缩）</sup>(敲声=*)”，机器学习算法在学习过程中对某种类型假设的偏好，称为“归纳偏好”(inductive bias)，或称为“偏好”。</p>
-<blockquote>
-<p>尽可能特殊即“适用情况尽可能少”；尽可能一般即“使用情况尽可能多”。</p>
-<p>对“根蒂”还是对“敲声”更重视，看起来和属性选择，亦称为“特征选择”(feature selection)有关，但需注意的是，机器学习中的特征选择仍是基于对训练样本的模型的分析进行的，而在此处我们并非基于特征选择做出对根蒂的重视；这里对“根蒂”的信赖可视为基于某种领域的知识而产生的归纳偏好关于特征选择方面的内容可以参加后续的更新。</p>
-</blockquote>
-<p>任何一个有效的机器学习算法未必有其归纳偏好，否则它将被假设空间中看似在训练集上“等效”的假设所迷惑，而无法产生确定的学习结果。可以想象，如果没有偏好，我们的西瓜学习算法产生的模型每次在进行预测时随机抽选训练集上的等效假设，那么对这个新瓜--------------学得模型时而告诉我们他是好的，时而告诉我们他是不好的，这样的学习结果显然没有意义。</p>
-<p>归纳偏好的作用在图1.3这个回归学习图示中可能更直观，这里的每个训练样本是图中的一个点(x,y)，要学得一个与训练集一致的模型，相当于找到一条穿过所有训练样本点的曲线。显然，对有限个样本点组成的训练集，存在着很多条曲线与其一致，我们的学习算法必须有某种偏好，才能产出它认为"正确"的模型。例如，若认为相似的样本应有相似的输出(例如，在各种属性上都很像的西瓜，成熟程度应该比较接近)，则对应的学习算法可能偏好图1.3中比较“平滑”的曲线<span class="math inline">\(A\)</span>而不是比较“崎岖”的曲线<span class="math inline">\(B\)</span>.</p>
-<p>归纳偏好可看作学习算法自身在一个可能很庞大的假设空间中对假设进行选择的启发式或"价值观".那么，有没有一般性的原则来引导算法确立“正确的”偏好呢？<strong>“奥卡姆剃刀”（Occam's razor)</strong>是一种常用的、自然科学研究中最基本的原则，即<strong>“若有若干个假设与观察一致，则选最简单的那个”</strong>.如果采用这个原则，并且假设我们认为“更平滑”意味着“更简单”(例如曲线A更容易描述，其方程式是<span class="math inline">\(y = -x_2+6x+1\)</span>，而曲线<span class="math inline">\(B\)</span>则要复杂得多)，则在图1.3中我们会自然地偏好“平滑”的曲线<span class="math inline">\(A\)</span>.</p>
-<p>然而，奥卡姆剃刀并非唯一可行的原则，退一步说，即便假定我们是奥卡姆剃刀的铁杆拥簇，也需注意到，奥卡姆剃刀本身存在不同的诠释，使用奥卡姆剃刀原则并不平凡。例如对我们已经很熟悉的西瓜问题来说，“假设1：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)”和“假设2：好瓜&lt;-&gt;(色泽=*)<sup>(根蒂=蜷缩)</sup>(敲声=*)”这两个假设，哪一个更“简单”呢？这个问题并不简单，需要借助其他机制才能解决.</p>
-<p>事实上，归纳偏好对应了学习算法本身所作出的关于"什么样的模型更好"的假设.在具体的实现问题中，这个假设是否成立，即算法的归纳偏好是否与问题匹配，大多数时候直接决定了算法能否取得好的性能.</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念（二）｜假设空间</title>
-    <url>/p/Basic-Concepts-of-Machine-Learning-02/</url>
-    <content><![CDATA[<p>机器学习中的假设空间。</p>
-<span id="more"></span>
-<h4 id="假设空间">假设空间</h4>
-<p>​ <strong>归纳(induction)和演绎(deduction)</strong>是科学推理的两大基本手段。归纳是从特殊到一般的"泛化"(generalization)过程。即从具体的事实归结出一般性规律；演绎则是从一般到特殊的"特化"(specialization)过程，即从基础原理推演出具体状况。例如，在数学公理系统中，基于一组公理和推理规则推导出与之相恰的定理，这是演绎；而"从样例中学习"显然是一个归纳的过程，因此亦称为<strong>"归纳学习"(inductive learning)</strong></p>
-<p>​ 归纳学习有狭义和广义之分，广义的归纳学习大体相当于从样例中学习，而狭义的归纳学习则要求从训练数据中学得概念(concept),因此亦称为<strong>"概念学习"或"概念形成"</strong>.概念学习技术目前应用、研究都比较少，因为要学得泛化性能好而且语义明确的概念实在是太难了，现实常用的技术大多数产生"黑箱"模型.然而，对概念学习有所理解，有助于理解机器学习的一些基础思想。</p>
-<p>​ 概念学习中最基本的是<strong>布尔概念学习</strong>，即对"是""不是"这样的可表示为0/1布尔值的目标概念的学习.举一个简单的例子，假定我们获得了这样的一个训练数据集：</p>
-<p><img data-src="image-20200806202414852.png" style="zoom:50%;" /></p>
-<p>​ 这里要学习的目标是"好瓜"，暂且假设"好瓜"可由"色泽""根蒂""敲声”这三个因素完全确定，换言之，只要某个瓜的三个属性取值明确了，我们就能判断出它是不是好瓜，于是，我们学到的将是"好瓜是某种色泽、某种根蒂、某种敲声的瓜"这样的概念，用布尔表达式写出来则是<strong>"好瓜$ $(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>，这里"?"表示尚未确定的取值，而我们的任务就是通过对上表的训练集进行学习，把"?"确定下来.</p>
-<p>​ 读者可能马上发现，上表第一行：<strong>"(色泽=青绿)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>不就是好瓜吗？是的，但这是一个已见过的瓜，不要忘记学习的目的是<strong>"泛化"</strong>，即通过对训练集中的瓜的学习以获得对没见过瓜进行判断的能力.如果仅仅把训练集中的瓜"记住"，今后再见到一模一样的瓜当然可以判断，但是，对没见过的瓜，例如<strong>"(色泽=浅白)<sup>(根蒂=蜷缩)</sup>(敲声=浊响)"</strong>怎么办呢？</p>
-<p>​ 我们可以把学习过程看作一个在<strong>所有假设组成的空间</strong>中进行搜索的过程，搜索目标是找到与训练集<strong>"匹配(fit)"</strong>的假设，即能够将训练集中的瓜判断正确的假设.假设的表示一旦确定，假设空间及其规模大小就确定了.这里我们的假设空间由形如<strong>"(色泽=?)<sup>(根蒂=?)</sup>(敲声=?)"</strong>的可能取值所形成的假设组成.例如色泽有"青绿""乌黑""浅白"这三种可能取值；还需考虑到，也许色泽无论取什么值都合适，我们用通配符"*"来表示，例如**"好瓜$ <span class="math inline">\((色泽=\*)^(根蒂=蜷缩)^(敲声=浊响)&quot;**，即&quot;好瓜是根蒂蜷缩、敲声浊响的瓜，什么色泽都行&quot;.此外，还需要考虑极端情况，有可能&quot;好瓜&quot;这个概念根本不成立，世界上没有&quot;好瓜&quot;这种东西，我们用\)</span> $表示这个假设。这样，若"色泽""根蒂""敲声"分别有3、2、2种可能取值，则我们面临的假设空间规模大小为<span class="math inline">\(4 \times 3 \times 3+1=37\)</span>.下图直观地显示了这个西瓜空间假设问题。</p>
-<blockquote>
-<p>这里我们假定训练样本不含噪声，而且不考虑"非青绿"这样的<span class="math inline">\(\not\subset A\)</span>操作，由于训练集包含正例，因此$ $假设自然不出现。</p>
-</blockquote>
-<p><img data-src="image-20200806202019247.png" /></p>
-<p>​ 可以有许多策略对这个假设空间进行搜索，例如自顶向下、从一般到特殊，或是自底向上、从特殊到一般，搜索过程种可以不断删除与正例不一致的假设和(或)与反例一致的假设.最终将会获得<strong>与训练集一致(即对所有训练样本能够进行正确判断)</strong>的假设，这就是我们学习的结果。</p>
-<blockquote>
-<p>有很多可能的选择，如在路径上自顶向下与自底向上同时进行，在操作上只删除与正例不一致的假设等。</p>
-</blockquote>
-<p>​ 需注意的是，现实问题种我们常面临很大的假设空间，但学习过程是基于有限样本训练集进行的，因此，可能有多个假设与训练集一致，即存在一个<strong>与训练集一致的"假设集合"</strong>，我们称之为<strong>"版本空间"(version space).</strong>例如，在西瓜问题中，与表1.1训练集所对应的版本空间如图1.2所示.</p>
-<p><img data-src="image-20200806203152041.png"/></p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念（五）｜深度学习常见损失函数.md</title>
-    <url>/p/common-loss-functions-for-deep-learning/</url>
-    <content><![CDATA[<p>我们所说的优化，即优化网络权值使得损失函数值变小。但是，损失函数值变小是否能代表模型的分类/回归精度变高呢？那么多种损失函数，应该如何选择呢？</p>
-<span id="more"></span>
-<h4 id="l1范数损失-l1loss">L1范数损失 L1Loss</h4>
-<p>功能： 计算 output 和 target 之差的绝对值，可选返回同维度的tensor或者是一个标量。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.L1Loss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<h4 id="均方损失误差-mesloss">均方损失误差 MESLoss</h4>
-<p>功能： 计算 output 和 target 之差的平方，可选返回同维度的tensor或者是一个标量。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.MSELoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<h4 id="交叉熵损失-crossentropyloss">交叉熵损失 CrossEntropyLoss</h4>
-<p>功能： 将输入经过 softmax 激活函数之后，再计算其与 target 的交叉熵损失。即该方法将 nn.LogSoftmax() 和 nn.NLLLoss() 进行了结合。严格意义上的交叉熵损失函数应该是 nn.NLLLoss()。</p>
-<p>当训练有 C 个类别的分类问题时很有效，可选参数<code>weight</code>必须是一个1维<code>Tensor</code>，权重将被分配给各个类别。对于不平衡的训练集非常有效。</p>
-<p>在多分类任务中，经常采用 softmax 激活函数+交叉熵损失函数。因为交叉熵描述了两个<strong>概率分布</strong>的差异，然而神经网络输出的是向量，并不是概率分布的形式。所以需要 softmax 激活函数将一个向量进行“归一化”成概率分布的形式，再采用交叉熵损失函数计算 loss. <span class="math display">\[
-loss(x,class)=weight[class]\left(-x[class]+log \left(\sum_{j}^{}exp(x[  j])\right)\right)
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.CrossEntropyLoss(weight=<span class="literal">None</span>,ignore_index=-<span class="number">100</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>weight (Tensor, optional) – 自定义的每个类别的权重. 必须是一个长度为 C 的 Tensor</p>
-<p>ignore_index (int, optional) – 设置一个目标值, 该目标值会被忽略, 从而不会影响到 输入的梯度。</p>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<h4 id="kl散度损失-kldivloss">KL散度损失 KLDivLoss</h4>
-<p>功能：计算 input 和 target 之间的 KL 散度。KL散度可用于衡量不同的连续分布之间的距离，在连续的输出分布的空间上(离散采样)上进行直接回归时<strong>很有效</strong>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.KLDivLoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>reduction-三个值，none: 不使用约简；mean:返回loss和的平均值；sum:返回loss的和。默认：mean。</p>
-</blockquote>
-<blockquote>
-<p>补充：KL散度 KL散度( Kullback–Leibler divergence) 又称为相对熵(Relative Entropy)，用于描述两个概率分布之间的差异。计算公式(离散时)：</p>
-<p>其中p表示真实分布，q表示p的拟合分布， D(P||Q)表示当用概率分布q来拟合真实分布p时，产生的信息损耗。这里的信息损耗，可以理解为损失，损失越低，拟合分布q越接近真实分布p。同时也可以从另外一个角度上观察这个公式，即计算的是 p 与 q 之间的对数差在 p 上的期望值。 特别注意，D(p||q) ≠ D(q||p)， 其不具有对称性，因此不能称为K-L距离。</p>
-<p><strong>信息熵 = 交叉熵 - 相对熵</strong> 从信息论角度观察三者，其关系为信息熵 = 交叉熵 - 相对熵。在机器学习中，当训练数据固定，最小化相对熵 D(p||q) 等价于最小化交叉熵 H(p,q) 。</p>
-</blockquote>
-<p>使用注意事项： 要想获得真正的KL散度，需要如下操作：</p>
-<ol type="1">
-<li><p>reduce = True ；size_average=False</p></li>
-<li><p>计算得到的 loss 要对 batch 进行求平均</p></li>
-</ol>
-<h4 id="二进制交叉熵损失-bceloss">二进制交叉熵损失 BCELoss</h4>
-<p>功能： 二分类任务时的交叉熵计算函数。此函数可以认为是nn.CrossEntropyLoss函数的特例。其分类限定为二分类，y必须是{0,1}。还需要注意的是，input应该为概率分布的形式，这样才符合交叉熵的应用。所以在BCELoss之前，input一般为sigmoid激活层的输出。该损失函数在自编码器中常用。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.BCELoss(weight=<span class="literal">None</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>weight (Tensor, optional) – 自定义的每个 batch 元素的 loss 的权重. 必须是一个长度为 “nbatch” 的 的 Tensor</p>
-</blockquote>
-<h4 id="bcewithlogitsloss">BCEWithLogitsLoss</h4>
-<p>功能： 将Sigmoid与BCELoss结合，类似于CrossEntropyLoss(将nn.LogSoftmax()和 nn.NLLLoss()进行结合）。即input会经过Sigmoid激活函数，将input变成概率分布的形式。 计算公式：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.BCEWithLogitsLoss(weight=<span class="literal">None</span>, reduction=<span class="string">&#x27;mean&#x27;</span>, pos_weight=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
-<p>参数：</p>
-<blockquote>
-<p>weight (Tensor, optional) – 自定义的每个 batch 元素的 loss 的权重. 必须是一个长度 为 “nbatch” 的 Tensor</p>
-</blockquote>
-<h4 id="marginrankingloss">MarginRankingLoss</h4>
-<p>功能： 计算两个向量之间的相似度，当两个向量之间的距离大于margin，则loss为正，小于margin，loss为0。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.MarginRankingLoss(margin=<span class="number">0.0</span>, reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>对于 mini-batch (小批量) 中每个实例的损失函数如下： <span class="math display">\[
-loss(x,y)=max(0,-y*(x1-x2)+margin)
-\]</span> 参数：</p>
-<blockquote>
-<p>margin：默认值是0</p>
-</blockquote>
-<h4 id="hingeembeddingloss">HingeEmbeddingLoss</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.nn.HingeEmbeddingLoss(margin=<span class="number">1.0</span>,  reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>功能： 未知。主要用于衡量两个输入是否相似。 used for learning nonlinear embeddings or semi-supervised 。</p>
-<p>转载自：https://zhuanlan.zhihu.com/p/61379965</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>梯度下降法</title>
-    <url>/p/What&#39;s-the-Gradient-descent/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>梯度下降法，是当今最流行的最优化（optimization）算法，亦是至今最常用的最优化神经网络的方法。与此同时，最新的深度学习程序库都包含了各种优化梯度下降的算法（可以参见如 Pytorch 程序库的说明文档）。但他们的算法则不被公开，都作为黑箱优化器被使用，这也就是为什么它们的优势和劣势往往难以被实际地解释。</p>
-<p><strong>关键词：</strong>Deep Learning</p>
-<span id="more"></span>
-<h3 id="核心">核心</h3>
-<p>梯度下降法的核心，是最小化目标函数。方法是在每一次迭代中，对每个变量，按照目标函数在该变量梯度的相反方向，更新对应的参数值，其中，学习率决定了函数到达局部最小值的迭代次数。<strong>我们在目标函数的超平面上，沿着斜率下降的方向前进，直到我们遇到了超平面构成的"谷底"。</strong></p>
-<h3 id="梯度下降法的变体">梯度下降法的变体</h3>
-<p>梯度下降法有三种变体，它们的区别在于用多少数据来计算目标函数的梯度。根据数据量的不同，我们需要权衡参数更新的准确性和执行一次所需要的时间。</p>
-<h4 id="batch-gradient-descent-批量梯度下降">Batch gradient descent 批量梯度下降</h4>
-<p>批量梯度下降又称<strong>Vanilla梯度下降法</strong>，也就是所谓的批量梯度下降法，在整个数据集上对每个参数求目标函数的偏导数。 <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta)
-\]</span> 翻译成白话文就是：用整个训练集计算目标函数的梯度参数。</p>
-<p>由于我们需要计算整个数据集的梯度来执行一次更新，因此批量梯度下降可能非常缓慢。而且需要把数据集放入内存。批量梯度下降也不允许我们在线更新我们的的模型。</p>
-<p>代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n_epochs):</span><br><span class="line">    params_grad = evaluate_gradient(loss_function, data, params)</span><br><span class="line">    params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<p>对于预先定义的多个epoch，我们首先计算关于整个数据集的损失函数的梯度向量<code>param_grad</code>.当前的一些深度学习库提供了自动求导的函数，可以有效的计算一些参数梯度。</p>
-<p>按照梯度的反方向更新参数，学习速率决定我们执行的更新的大小。保证了批梯度下降收敛于凸误差曲面的全局最小值和非凸曲面的全局最小值。</p>
-<h4 id="stochastic-gradient-descent-随机梯度下降">Stochastic gradient descent 随机梯度下降</h4>
-<p>相比之下，随机梯度下降(SGD)对每个训练示例和标号进行参数更新： <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i)};y^{(i)})
-\]</span> 批量梯度下降对大数据集会有一些冗余计算，因此它在每次参数更新前重新计算类似的梯度。</p>
-<p><strong>随机梯度下降</strong>会以一个较大的方差执行频繁的更新，导致目标函数剧烈波动，如下图所示。</p>
-<p><img data-src="sgd_fluctuation.png" /></p>
-<p>当批量梯度下降法收敛到参数的盆地时，SGD的波动一方面会使其跳跃到新的、可能的更好的局部极小值。另一方面，这最终会使让收敛到特定最小值的过程复杂化，因为该方法可能持续的波动而不停止。但是，当我们慢慢降低学习率时，SGD表现出了与批量梯度下降法相似的收敛过程，也就是说，对非凸函数和凸函数，必然会分别收敛到他们的极小值和最小值。</p>
-<p>相比批量梯度下降法的代码，在如下的代码中，我们仅仅加入了一个循环，用以遍历所以的训练样本并求出相应的梯度值。值得注意的是，我们在每个阶段都要重新打乱训练数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> example <span class="keyword">in</span> data:</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, example, params)</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<h4 id="mini-batch-gradient-descent-小批量梯度下降">Mini-batch gradient descent 小批量梯度下降</h4>
-<p>小批量梯度下降具有以上两者的优点。在每次更新中，对<code>n</code>个样本构成的一批数据，计算损失函数，并对相应的参数求导： <span class="math display">\[
-\theta=\theta-\eta{\nabla_\theta}J(\theta;x^{(i:i+n)};y^{(i:i+n)})
-\]</span> 这种方法，1. 降低了参数更新的方差，使得收敛过程更加稳定；</p>
-<p>​ 2. 能够利用最新的深度学习程序库中高度优化的矩阵运算器，能够高效的求出每小批数据的梯度。通常一小批数据含有的样本数量在50至256之间，但对于不同的用途也会有所变化。例如，当你的显存不够时，就把<code>batch_size</code>调小。</p>
-<p>小批量梯度下降法，通常是我们训练神经网络的首选算法。同时，有时候我们也会使用<strong>随机梯度下降法</strong>，来称呼<strong>小批量梯度下降法</strong>。</p>
-<p>在代码中，不再迭代每个示例，而是迭代大小为50的小批量样本。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n_epochs):</span><br><span class="line">    np.random.shuffle(data)</span><br><span class="line">    <span class="keyword">for</span> batch <span class="keyword">in</span> get_batches(data, batch_size=<span class="number">50</span>):</span><br><span class="line">        params_grad = evaluate_gradient(loss_function, batch, params) / batch_size</span><br><span class="line">        params = params - lr * params_grad</span><br></pre></td></tr></table></figure>
-<h3 id="sgd的缺点">SGD的缺点</h3>
-<p>然而，小批量梯度下降法并不能保证良好地收敛，仍然存在一些问题。</p>
-<p>1.选择一个适当的学习率是一个难题太小的学习率会导致较慢的收敛速度，而太大的学习率则会阻碍收敛，并会引起损失函数在最小值处波动，甚至发散。 2. 学习率计划表(learning_rate_schedule)试图在训练过程中调整学习率，例如退火，即很具预先定义的计划表减少学习率，或当各时期之间的目标变换低于阈值时。但是，这些调度和阈值必须提前定义，因此无法适应数据集的特征。 3. 此外，我们对所有的参数都采用了相同的学习率。但如果我们的数据是稀疏的，同时特征有着不同的出现频率，那么我们不希望以相同的学习率来更新这些变量，我们希望对较少出现的特征有更大的学习率。 4. 会无数次的陷入最小值或<strong>鞍点</strong>。鞍点是在一个方向上斜率是正的、在一个方向上斜率是负的点。鞍点周围各个方向的梯度值都为0，所以<strong>SGD</strong>很难从这些鞍点中脱开。</p>
-]]></content>
-      <tags>
-        <tag>Deep Learning</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>线性回归中的基函数</title>
-    <url>/p/a-basis-function-in-linear-regression/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>最近再看<a href="https://www.zhihu.com/people/xpqiu">邱锡鹏</a>老师的《神经网络与深度学习》，学习过程中难免遇到问题。谨以此文作为记录，希望自己能坚持下去吧。</p>
-<p><strong>关键词：</strong>线性回归，基函数</p>
-<span id="more"></span>
-<h4 id="线性基函数模型">线性基函数模型</h4>
-<p>最简单的回归线性模型是输入变量的线性组合： <span class="math display">\[
-y(x,w) = w_0 + w_1x_1+ ... + w_Dx_D \tag{3.1}
-\]</span> 其中 <span class="math display">\[
-x = (x_1,...,x_D)^T
-\]</span> 这通常被叫做简单的线性回归。这个模型的关键属性是它是一个参数<span class="math inline">\(w_0,...,w_D\)</span>的一个线性函数，同时，它也是输入变量<span class="math inline">\(x_i\)</span>的一个线性函数，这给模型带来了<strong>极大的局限性</strong>。因此，我们将输入变量确定了的非线性函数进行线性组合来拓模型的类别： <span class="math display">\[
-y(x,w) = w_0 + \sum\limits_{j=1}^{M-1}w_j\phi_j(x) \tag{3.2}
-\]</span> 其中<span class="math inline">\(\phi_j(x)\)</span>被称为基函数。通过把下标<span class="math inline">\(j\)</span>的最大值记作<span class="math inline">\(M-1\)</span>，使得这个模型的参数总数为<span class="math inline">\(M\)</span>.</p>
-<p>参数<span class="math inline">\(w_0\)</span>使得数据中可以存在任意的固定偏移，通常被称为偏置参数。这里请不要和统计观念下的偏置搞混淆。通常，定义一个额外的占位基函数是很方便的，以便把函数简化为： <span class="math display">\[
-y(x,w) = \sum\limits_{j=0}^{M-1}w_j\phi_j(x) = w^T\phi(x) \tag{3.3}
-\]</span> 其中<span class="math inline">\(w = (w_0,...,w_{M-1})^T , \phi = (\phi_0,...,\phi_{M-1})^T\)</span>。在很多模型识别的应用中，会在原始数据上应用固定形式的预处理或特征抽取。如果原始变量组成向量<span class="math inline">\(x\)</span>，那么特征可以表示为基函数<span class="math inline">\(\{\phi_j(x)\}\)</span>的项。</p>
-<p>通过使用非线性的基函数，我们允许函数<span class="math inline">\(y(x,w)\)</span>是关于输入向量<span class="math inline">\(x\)</span>的非线性函数。由于式(3.2)是关于<span class="math inline">\(w\)</span>的线性函数，所以他被称为<font size="3" color="red">线性模型。</font>这种参数的线性性质极大地简化了这类模型的分析。不过，这也造成了一定的局限性。</p>
-<p><font size="3" color="red">多项式拟合</font>也被称作多项式基函数是这类模型的一个特例，他有单个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂函数的形式，即<span class="math inline">\(\phi_j(x) = x^j\)</span>。多项式基函数的局限性是他们是输入变量的<strong>全局函数</strong>，所以一个区间内改变会影响所有区域。解决的办法是把输入空间切分成若干个区域，然后对于每个区域用不同的多项式函数拟合，这样的函数被称为<strong>样条函数</strong>。还有很多其他基函数的选择，如： <span class="math display">\[
-\phi_j(x) = exp\left\{-\frac{(x-\mu_j)^2}{2s^2}\right\} \tag{3.4}
-\]</span> 其中，<span class="math inline">\(\mu_j\)</span>控制着基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制着基函数的空间大小。这些通常被称为<font size="3" color="red">高斯基函数</font>。由于这些基函数会有一个调节参数<span class="math inline">\(w_j\)</span>相乘，所以标准化系数是不重要的。</p>
-<h4 id="代码部分">代码部分</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">multinomial_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;多项式基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    x = np.expand_dims(x, axis=<span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    feat = [x]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>, feature_num+<span class="number">1</span>):</span><br><span class="line">        feat.append(x**i)</span><br><span class="line">    ret = np.concatenate(feat, axis = <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>输入<span class="math inline">\(x\)</span>是<code>numpy</code>的一维数组，使用 <code>np.expand_dims()</code> 函数将其扩展成大小为<code>(N，1)</code>向量。随后将矩阵包装到一个<code>list</code>里。然后将<span class="math inline">\(X^i\)</span>加入到<code>list</code>最后，循环10次，最后的得到的矩阵<strong>ret</strong>如下： <span class="math display">\[
-\begin{pmatrix} x^1 &amp; x^2 &amp; x^3 &amp; ... &amp;x^{10}  \\ \end{pmatrix}
-\]</span></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_basis</span>(<span class="params">x, feature_num=<span class="number">10</span></span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;高斯基函数&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    centers = np.linspace(<span class="number">0</span>, <span class="number">25</span>, feature_num)</span><br><span class="line">    width = <span class="number">1.0</span> * (centers[<span class="number">1</span>] - centers[<span class="number">0</span>])</span><br><span class="line">    x = np.expand_dims(x, axis = <span class="number">1</span>) <span class="comment"># shape(N, 1)</span></span><br><span class="line">    x = np.concatenate([x]*feature_num, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    out = (x-centers)/width</span><br><span class="line">    ret = np.exp(-<span class="number">0.5</span> * out ** <span class="number">2</span>)</span><br><span class="line">    <span class="comment">#==========</span></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
-<p>首先确定高斯基函数的中心：在粗略估计了数据集的范围之后，在该范围内等分出若干点，点的数量由<code>feature_num</code>确定。等分的宽度记作<code>width</code>，然后将输入扩展成<code>(N，1)</code>向量，<code>[x]*feature_num</code>将扩展后的<code>(N，1)</code>向量先包装到一个<code>list</code>里，随后复制<code>feature_num</code>次。<code>np.concatenate()</code>将复制的若干个<code>list</code>按列堆叠起来，得到的<span class="math inline">\(x\)</span>的矩阵如下： <span class="math display">\[
-\begin{pmatrix} x &amp; x &amp; x &amp; ... &amp;x  \\ \end{pmatrix}
-\]</span> <code>centers</code>是一维数组，<code>x</code>是二维的矩阵。两个维度不同的numpy对象在做加减运算时，自动执行<font size="3" color="red">广播规则</font>。</p>
-<h5 id="python中的广播规则">python中的广播规则</h5>
-<p>举个例子：</p>
-<p>假设<code>x</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">array([[0, 0, 0, 0, 0],</span><br><span class="line">        [1, 1, 1, 1, 1],</span><br><span class="line">        [2, 2, 2, 2, 2],</span><br><span class="line">        [3, 3, 3, 3, 3],</span><br><span class="line">        [4, 4, 4, 4, 4]]</span><br></pre></td></tr></table></figure>
-<p><code>centers</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">array([ 0.  ,  6.25, 12.5 , 18.75, 25.  ])</span><br></pre></td></tr></table></figure>
-<p>在做<code>x-centers</code>运算时，首先要将<code>centers</code><strong>按行拓展</strong>到和<code>x</code>一样的维度，拓展后的<code>centers</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">array([[ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ],</span><br><span class="line">       [ 0.  ,  6.25, 12.5 , 18.75, 25.  ]]))</span><br></pre></td></tr></table></figure>
-<p>扩展后的两个矩阵大小相等，这样就可以做加减法了。</p>
-<p>最后，<code>out</code>等于<code>(x-centers)/width</code>，最后带入公式<span class="math inline">\((3.4)\)</span>，求得高斯基函数的输出。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>机器学习基本概念（四）｜奥卡姆剃刀和没有免费的午餐定理</title>
-    <url>/p/Occam&#39;s-razor-and-no-free-lunch-theorem/</url>
-    <content><![CDATA[<p><strong>摘要</strong>：“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理。由于名字有点怪，所以初学者可能在理解上陷入误区。本文试图用简洁易懂的方式解释这两个原则和定理，并告诉大家它们的名字是怎么来的。</p>
-<p><strong>关键字</strong>：机器学习, 奥卡姆剃刀, 没有免费的午餐</p>
-<span id="more"></span>
-<p>“奥卡姆剃刀”和“没有免费的午餐”是机器学习中两个很基本的原则和定理，很多书都会提到它们来提升逼格。不过，烦就烦在它们的名字取的有些不好理解，初学者望文生义就容易错误理解。其实，了解了它们名字的由来，这两个原则和定理是很容易想明白的，也不用去纠结如何证明它们，因为它们更接近哲学思想，而不是你会在实际项目中用到的公式。</p>
-<h4 id="奥卡姆剃刀occams-razor">奥卡姆剃刀（Occam’s razor）</h4>
-<p>“奥卡姆剃刀”其实并不是机器学习领域产生的定理，事实上，它是哲学领域的一个思想。这个思想说起来也很简单，7个字，<code>“简单的是最好的”</code>。</p>
-<p>相信大家不难理解这个哲学思想，比如在数学领域，大多数数学家认为“好的公式应当是简洁明了的”，就是“奥卡姆剃刀”的体现。</p>
-<p>这个思想我能理解，但为什么叫这么奇怪的名字？容易想到，“奥卡姆”是提出这个思想的人的名字；至于为什么叫“剃刀”是因为这个思想的提出，对封建旧思想来说是把锋利的剃刀，狠狠地剃除教会的旧思想。（具体是如何剃除旧思想的就不展开了）</p>
-<p>那这个思想是怎么应用在机器学习领域的呢？用下图就可以概括：</p>
-<p><img data-src="overfit.png" style="zoom:80%;" align="center"/></p>
-<p>了解机器学习的同学不难看出，上图表示的是过拟合问题，不了解的同学也不必担心，可以把上图想象成用曲线拟合几个点。</p>
-<p>那么问题来了，上图中，哪种拟合方式是比较好的呢？相信大多数人都会选择左小图的拟合方式。机器学习领域也通常认为左小图是比较好的，原因就是“奥卡姆剃刀”的思想，“简单的是最好的”。</p>
-<p>有些敢于挑战权威的同学可能会反驳，“怎么证明图1左小图是更简单的呢？我可以认为右小图更简单”。是的，这个问题周志华的西瓜书中也有提到，其实是没有办法说明哪种更简单。这也是哲学问题的通病，难以联系到实际中，往往会有多种解读。</p>
-<p>不过我们不用去纠结怎样才算“简单”，只要明白这个词是什么意思就可以了。</p>
-<p>可能还会有同学反驳，“我同意左小图是简单的，但万一实际情况中右小图才是更符合结果的拟合方式呢？”。这个想法也是对的，我们无法证明实际情况一定是左小图的拟合方式最好。这也就是下面“没有免费的午餐”定理要说明的。</p>
-<h4 id="没有免费的午餐定理no-free-lunch-nfl">“没有免费的午餐”定理（no free lunch, NFL）</h4>
-<p>这个定理的名字乍一看很唬人，也有很多初学者因为这个名字陷入了误区。我们可以先把名字放在一边，先看定理的内容。</p>
-<p>这个定理证明起来很复杂，一长串的数学公式，但说明白其实只要一句话，<code>“没有一种机器学习算法是适用于所有情况的”</code>。</p>
-<p>这也符合我们的直觉。举个例子吧，比如上图，假设上图的左小图是机器算法A给出的拟合曲线，上图的右小图是机器算法B给出的拟合曲线。我们就一定能说机器算法A比机器算法B更好吗？或者说左小图的拟合曲线一定比右小图更符合实际情况吗？都不能。“没有免费的午餐”定理证明了对于所有机器学习问题，机器算法A更好与机器算法B更好的概率是一样的。<code>更一般地说，对于所有机器学习问题，任何一种算法（包括瞎猜）的期望效果都是一样的</code>。</p>
-<p>那我们还学个啥？既然任何算法的期望效果和瞎猜一样，我们为什么还要学？</p>
-<p>注意，这个定理有个前提：“对于所有机器学习问题，且所有问题同等重要”。而我们实际情况不是这样，我们在实际中往往更关心的是一个特定的机器学习问题，对于特定的问题，特定的机器学习算法效果自然比瞎猜更好。还是上图的例子，虽然“没有免费的午餐”定理告诉我们：我们不能预计到底是左小图拟合更好还是右小图拟合更好，但聪明的你一定能想到：是好是坏，代入到具体问题中检验一下不就知道了。</p>
-<p>这个定理本质上就是告诉我们不要奢望能找到一种算法对所有问题都适用。这么说来，这个定理其实有点废话，因为我们面对的总是一个特定的问题，而不是所有问题。</p>
-<p>但是这个定理其实揭示了一个哲学思想，“有得必有失”，某一个机器学习算法在某个领域好用，在另外一个领域就有可能不好用，瞎猜在一些情况下不好用，但在某个特定的问题上会很好用。就像能量守恒定理，这里的能量增加，另外一边的能量就会减少。天上掉馅饼被你捡到了，这个时刻你很幸运，但是之后你就会倒霉。</p>
-<p>理解了上面一段话，也就明白了这个定理为什么取这么奇怪的名字。</p>
-]]></content>
-      <tags>
-        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
