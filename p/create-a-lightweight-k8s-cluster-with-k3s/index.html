@@ -161,13 +161,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -299,7 +299,7 @@
 <p>可以指定环境变量，在管道之后传递：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest sh -</span><br></pre></td></tr></table></figure>
 <p>其中环境变量INSTALL_K3S_EXEC可以按照下面设置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSTALL_K3S_EXEC=<span class="string">&quot;server --node-ip 192.168.7.2 --node-external-ip 192.168.7.2 --flannel-iface wg0 --no-deploy servicelb --write-kubeconfig-mode 644 --kube-proxy-arg &#x27;proxy-mode=ipvs masquerade-all=true metrics-bind-address=0.0.0.0:10249&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSTALL_K3S_EXEC=<span class="string">&quot;server --node-ip 192.168.7.2 --node-external-ip 192.168.7.2 --flannel-iface wg0 --no-deploy servicelb --write-kubeconfig-mode 644 --kube-proxy-arg &#x27;proxy-mode=ipvs&#x27; --kube-proxy-arg &#x27;masquerade-all=true&#x27; --kube-proxy-arg &#x27;metrics-bind-address=0.0.0.0:10249&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
 <p>下面是flag的含义</p>
 <table>
 <colgroup>
@@ -344,12 +344,12 @@
 </tbody>
 </table>
 <h2 id="安装worker节点">安装worker节点</h2>
-<p>查看master节点的凭据</p>
+<p>在master节点上运行以下命令，获取加入集群的token</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/lib/rancher/k3s/server/node-token</span><br></pre></td></tr></table></figure>
 <p>国内环境执行以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn K3S_TOKEN=<span class="string">&quot;xxx&quot;</span> K3S_URL=https://192.168.7.2:6443 sh -</span><br></pre></td></tr></table></figure>
 <p>其中环境变量INSTALL_K3S_EXEC可以按照下面设置</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSTALL_K3S_EXEC=<span class="string">&quot;agent --node-ip 192.168.7.3 --node-external-ip 192.168.7.3 --flannel-iface wg0 --kube-proxy-arg &#x27;proxy-mode=ipvs masquerade-all=true metrics-bind-address=0.0.0.0:10249&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSTALL_K3S_EXEC=<span class="string">&quot;agent --node-ip 192.168.7.3 --node-external-ip 192.168.7.3 --flannel-iface wg0 --kube-proxy-arg &#x27;proxy-mode=ipvs&#x27; --kube-proxy-arg  &#x27;masquerade-all=true&#x27; --kube-proxy-arg &#x27;metrics-bind-address=0.0.0.0:10249&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
 <p>也可以编辑下面的service单元文件</p>
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/systemd/system/k3s-agent.service</span><br></pre></td></tr></table></figure></p>
 <h2 id="检查集群是否安装成功">检查集群是否安装成功</h2>
