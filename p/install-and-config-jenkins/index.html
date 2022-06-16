@@ -23,18 +23,16 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="本文主要介绍安装和配置Jenkins。 关键词：jenkins">
+    <meta name="description" content="本文主要介绍安装和配置Jenkins。 关键词：Jenkins">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Jenkins实战（二）安装配置Jenkins">
 <meta property="og:url" content="https://fly97.cn/p/install-and-config-jenkins/index.html">
 <meta property="og:site_name" content="个人随想">
-<meta property="og:description" content="本文主要介绍安装和配置Jenkins。 关键词：jenkins">
+<meta property="og:description" content="本文主要介绍安装和配置Jenkins。 关键词：Jenkins">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/image-20220509131641758.png">
 <meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/image-20220509131731389.png">
 <meta property="og:image" content="https://fly97.cn/p/install-and-config-jenkins/image-20220509135702702.png">
-<meta property="og:image" content="c:/Users/wf09/AppData/Roaming/Typora/typora-user-images/image-20220526173808481.png">
-<meta property="og:image" content="c:/Users/wf09/AppData/Roaming/Typora/typora-user-images/image-20220526173957500.png">
 <meta property="article:published_time" content="2022-05-08T09:26:00.000Z">
 <meta property="article:modified_time" content="2022-05-08T09:26:00.000Z">
 <meta property="article:author" content="fly97">
@@ -167,13 +165,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">122</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-count">64</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -278,7 +276,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>本文主要介绍安装和配置Jenkins。</p>
-<p>关键词：<strong>jenkins</strong></p>
+<p>关键词：<strong>Jenkins</strong></p>
 <span id="more"></span>
 <h3 id="准备工作">准备工作</h3>
 <ul>
@@ -311,20 +309,14 @@
 <p>这里使用前缀<code>/jenkins</code>进行反向代理</p>
 <p><img data-src="image-20220509131731389.png" /></p>
 <h5 id="反向代理设置">反向代理设置</h5>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="section">upstream</span> jenkins&#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>;                   <span class="comment"># 后端jenkins地址</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">443</span>    ssl;</span><br><span class="line">    <span class="attribute">server_name</span>  jenkins.local;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">access_log</span>  /var/log/nginx/jenkins.access.log  main;</span><br><span class="line">    <span class="attribute">ssl_session_cache</span> shared:SSL:<span class="number">10m</span>;</span><br><span class="line">    <span class="attribute">ssl_certificate</span>     /usr/local/ssl/jenkins.crt;  <span class="comment"># pem文件的路径</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span>  /usr/local/ssl/jenkins.key; <span class="comment"># key文件的路径</span></span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /usr/local/ssl/ca.crt;</span><br><span class="line">    <span class="comment">#ssl_reject_handshake on;</span></span><br><span class="line">    <span class="comment"># ssl验证相关配置</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span>  <span class="number">10m</span>;    			<span class="comment">#缓存有效期</span></span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;    <span class="comment">#加密算法</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>;    <span class="comment">#安全链接可选的加密协议</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;   		<span class="comment">#使用服务器端的首选算法</span></span><br><span class="line">    <span class="attribute">ssl_stapling</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_stapling_verify</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://jenkins;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="section">upstream</span> jenkins&#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>;                   <span class="comment"># 后端jenkins地址</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">443</span>    ssl;</span><br><span class="line">    <span class="attribute">server_name</span>  jenkins.local;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">access_log</span>  /var/log/nginx/jenkins.access.log  main;</span><br><span class="line">    <span class="attribute">ssl_session_cache</span> shared:SSL:<span class="number">10m</span>;</span><br><span class="line">    <span class="attribute">ssl_certificate</span>     /usr/local/ssl/jenkins.crt;  <span class="comment"># pem文件的路径</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span>  /usr/local/ssl/jenkins.key; <span class="comment"># key文件的路径</span></span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /usr/local/ssl/ca.crt;</span><br><span class="line">    <span class="comment">#ssl_reject_handshake on;</span></span><br><span class="line">    <span class="comment"># ssl验证相关配置</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span>  <span class="number">10m</span>;    <span class="comment">#缓存有效期</span></span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;    <span class="comment">#加密算法</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>;    <span class="comment">#安全链接可选的加密协议</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;   <span class="comment">#使用服务器端的首选算法</span></span><br><span class="line">    <span class="attribute">ssl_stapling</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_stapling_verify</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://jenkins;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h4 id="修改插件地址">修改插件地址</h4>
 <blockquote>
 <p>https://www.jenkins-zh.cn/tutorial/management/plugin/update-center/</p>
 </blockquote>
-<p>修改地址，<strong>Dashboard——插件管理——Plugin Manager——高级</strong></p>
+<p>修改地址，<strong>Dashboard&gt;&gt;&gt;插件管理&gt;&gt;&gt;Plugin Manager&gt;&gt;&gt;高级</strong></p>
 <p><img data-src="image-20220509135702702.png" /></p>
 <h4 id="添加ssh密钥">添加SSH密钥</h4>
-<p>选择<strong>Dashboard——Manage Credentials——Plugin Manager</strong>，选择并点击存储栏的Jenkins</p>
-<figure>
-<img data-src="C:\Users\wf09\AppData\Roaming\Typora\typora-user-images\image-20220526173808481.png" alt="" /><figcaption>image-20220526173808481</figcaption>
-</figure>
-<p>点击全局凭据，选择添加凭据，类型选择<strong>SSH Username with private key</strong></p>
-<p><img data-src="C:\Users\wf09\AppData\Roaming\Typora\typora-user-images\image-20220526173957500.png" /></p>
 
     </div>
 
@@ -358,13 +350,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/create-a-self-signed-certificate-with-openSSL/" rel="prev" title="使用OpenSSL创建自签名ecc证书">
-                  <i class="fa fa-chevron-left"></i> 使用OpenSSL创建自签名ecc证书
+                <a href="/p/build-harbor-mirror-warehouse-with-docker-compose/" rel="prev" title="使用Docker Compose搭建Harbor镜像仓库">
+                  <i class="fa fa-chevron-left"></i> 使用Docker Compose搭建Harbor镜像仓库
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/build-harbor-mirror-warehouse-with-docker-compose/" rel="next" title="使用Docker Compose搭建Harbor镜像仓库">
-                  使用Docker Compose搭建Harbor镜像仓库 <i class="fa fa-chevron-right"></i>
+                <a href="/p/service-access-application-cluster/" rel="next" title="Kubernetes集群实践（三）集群外如何访问K8s内的Service">
+                  Kubernetes集群实践（三）集群外如何访问K8s内的Service <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
