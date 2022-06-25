@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Dedian 10 使用qbittorrent-nox web</title>
+    <url>/p/qbittorrent-nox-on-debian/</url>
+    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
+<span id="more"></span>
+<h3 id="下载安装包">下载安装包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p>
+<h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=qBittorrent Command Line Client</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=qbittorrent-nox</span><br><span class="line">Group=qbittorrent-nox</span><br><span class="line">UMask=007</span><br><span class="line">ExecStart=/usr/bin/qbittorrent-nox -d --webui-port=8090</span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
+<p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p>
+<p>在tools-options-Web UI中找到Authentication，修改username及password。</p>
+]]></content>
+      <tags>
+        <tag>Debian</tag>
+        <tag>qbittorrent-nox</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Dedian10使用Rclone同步ondrive</title>
     <url>/p/rclone-on-debian/</url>
     <content><![CDATA[<p>Dedian10 使用Rclone同步onedrive</p>
@@ -24,30 +48,6 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 本地到网盘</span></span><br><span class="line">rclone [功能选项] &lt;本地路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到本地</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;本地路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到网盘</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">常用功能选项</span><br><span class="line">rclone copy - 复制</span><br><span class="line">rclone move - 移动，如果要在移动后删除空源目录，请加上 --delete-empty-src-dirs 参数</span><br><span class="line">rclone <span class="built_in">sync</span> - 同步：将源目录同步到目标目录，只更改目标目录。</span><br><span class="line">rclone size - 查看网盘文件占用大小。</span><br><span class="line">rclone delete - 删除路径下的文件内容。</span><br><span class="line">rclone purge - 删除路径及其所有文件内容。</span><br><span class="line">rclone <span class="built_in">mkdir</span> - 创建目录。</span><br><span class="line">rclone <span class="built_in">rmdir</span> - 删除目录。</span><br><span class="line">rclone rmdirs - 删除指定灵境下的空目录。如果加上 --leave-root 参数，则不会删除根目录。</span><br><span class="line">rclone check - 检查源和目的地址数据是否匹配。</span><br><span class="line">rclone <span class="built_in">ls</span> - 列出指定路径下的所有的文件以及文件大小和路径。</span><br><span class="line">rclone lsl - 比上面多一个显示上传时间。</span><br><span class="line">rclone lsd 列出指定路径下的目录</span><br><span class="line">rclone lsf - 列出指定路径下的目录和文件</span><br><span class="line">常用参数</span><br><span class="line">-n = --dry-run - 测试运行，用来查看 rclone 在实际运行中会进行哪些操作。</span><br><span class="line">-P = --progress - 显示实时传输进度，500mS 刷新一次，否则默认 1 分钟刷新一次。</span><br><span class="line">--cache-chunk-size SizeSuffi - 块的大小，默认5M，理论上是越大上传速度越快，同时占用内存也越多。如果设置得太大，可能会导致进程中断。</span><br><span class="line">--cache-chunk-total-size SizeSuffix - 块可以在本地磁盘上占用的总大小，默认10G。</span><br><span class="line">--transfers=N - 并行文件数，默认为4。在比较小的内存的VPS上建议调小这个参数，比如128M的小鸡上使用建议设置为1。</span><br><span class="line">--config string - 指定配置文件路径，string为配置文件路径。</span><br><span class="line">--ignore-errors - 跳过错误。比如 OneDrive 在传了某些特殊文件后会提示Failed to copy: failed to open <span class="built_in">source</span> object: malwareDetected: Malware detected，这会导致后续的传输任务被终止掉，此时就可以加上这个参数跳过错误。但需要注意 RCLONE 的退出状态码不会为0。</span><br></pre></td></tr></table></figure>
 <p>参考：https://p3terx.com/archives/rclone-advanced-user-manual-common-command-parameters.html</p>
-]]></content>
-      <tags>
-        <tag>Debian</tag>
-        <tag>qbittorrent-nox</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Dedian 10 使用qbittorrent-nox web</title>
-    <url>/p/qbittorrent-nox-on-debian/</url>
-    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
-<span id="more"></span>
-<h3 id="下载安装包">下载安装包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p>
-<h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=qBittorrent Command Line Client</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=qbittorrent-nox</span><br><span class="line">Group=qbittorrent-nox</span><br><span class="line">UMask=007</span><br><span class="line">ExecStart=/usr/bin/qbittorrent-nox -d --webui-port=8090</span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
-<p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p>
-<p>在tools-options-Web UI中找到Authentication，修改username及password。</p>
 ]]></content>
       <tags>
         <tag>Debian</tag>
@@ -1526,30 +1526,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux之crontab定时任务</title>
-    <url>/p/how-to-use-crontab/</url>
-    <content><![CDATA[<p>Linux中的crontab - - - -一个自定义定时器</p>
-<span id="more"></span>
-<h5 id="crontab命令">1.crontab命令</h5>
-<p>重新指定crobtab定时任务文件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab $filepath</span><br></pre></td></tr></table></figure>
-<p>查看crontab定时任务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
-<p>编辑、安装定时任务</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p><strong>2.crontab时间举例</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早上6点</span> </span><br><span class="line">0 6 * * * echo &quot;Good morning.&quot; &gt;&gt; /tmp/test.txt //注意单纯echo，从屏幕上看不到任何输出，因为cron把任何输出都email到root的信箱了。</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每两个小时</span> </span><br><span class="line">0 */2 * * * echo &quot;Have a break now.&quot; &gt;&gt; /tmp/test.txt  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">晚上11点到早上8点之间每两个小时和早上八点</span> </span><br><span class="line">0 23-7/2，8 * * * echo &quot;Have a good dream&quot; &gt;&gt; /tmp/test.txt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点</span> </span><br><span class="line">0 11 4 * 1-3 command line</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1月1日早上4点</span> </span><br><span class="line">0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/ </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时（第一分钟）执行/etc/cron.hourly内的脚本</span></span><br><span class="line">01 * * * * root run-parts /etc/cron.hourly</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天（凌晨4：02）执行/etc/cron.daily内的脚本</span></span><br><span class="line">02 4 * * * root run-parts /etc/cron.daily </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每星期（周日凌晨4：22）执行/etc/cron.weekly内的脚本</span></span><br><span class="line">22 4 * * 0 root run-parts /etc/cron.weekly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每月（1号凌晨4：42）去执行/etc/cron.monthly内的脚本</span> </span><br><span class="line">42 4 1 * * root run-parts /etc/cron.monthly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">注意:  <span class="string">&quot;run-parts&quot;</span>这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名。</span> 　 </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。</span> </span><br><span class="line">5，15，25，35，45，55 16，17，18 * * * command</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每周一，三，五的下午3：00系统进入维护状态，重新启动系统。</span></span><br><span class="line">00 15 * *1，3，5 shutdown -r +5</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的10分，40分执行用户目录下的innd/bbslin这个指令：</span> </span><br><span class="line">10，40 * * * * innd/bbslink </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的1分执行用户目录下的bin/account这个指令：</span> </span><br><span class="line">1 * * * * bin/account</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每1分钟执行以下命令</span></span><br><span class="line">*/1 * * * * bin/python</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早晨三点二十分执行用户目录下如下所示的两个指令（每个指令以;分隔）：</span> </span><br><span class="line">203 * * * （/bin/rm -f expire.ls logins.bad;bin/expire$#@62;expire.1st）　</span><br></pre></td></tr></table></figure>
-<h5 id="crontab任务举例">3.crontab任务举例</h5>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">*/5 * * * * /bin/bash /root/kaoyan/tiaoji.sh</span><br></pre></td></tr></table></figure>
-<p>sh写法举例</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin</span><br><span class="line">export PATH</span><br><span class="line"></span><br><span class="line">cd /root/kaoyan</span><br><span class="line">/root/***/python3 *.py &gt;&gt; /root/****/*.log 2&gt;&amp;1</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">将所有输出写入日志文件</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>golang LogAgent 项目实战（一）</title>
     <url>/p/LogAgent-project-action-in-golang-1/</url>
     <content><![CDATA[<p>本文主要记录了学习golang时做的一个项目：日志收集项目。</p>
@@ -1599,6 +1575,30 @@
 ]]></content>
       <tags>
         <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux之crontab定时任务</title>
+    <url>/p/how-to-use-crontab/</url>
+    <content><![CDATA[<p>Linux中的crontab - - - -一个自定义定时器</p>
+<span id="more"></span>
+<h5 id="crontab命令">1.crontab命令</h5>
+<p>重新指定crobtab定时任务文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab $filepath</span><br></pre></td></tr></table></figure>
+<p>查看crontab定时任务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
+<p>编辑、安装定时任务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p><strong>2.crontab时间举例</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早上6点</span> </span><br><span class="line">0 6 * * * echo &quot;Good morning.&quot; &gt;&gt; /tmp/test.txt //注意单纯echo，从屏幕上看不到任何输出，因为cron把任何输出都email到root的信箱了。</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每两个小时</span> </span><br><span class="line">0 */2 * * * echo &quot;Have a break now.&quot; &gt;&gt; /tmp/test.txt  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">晚上11点到早上8点之间每两个小时和早上八点</span> </span><br><span class="line">0 23-7/2，8 * * * echo &quot;Have a good dream&quot; &gt;&gt; /tmp/test.txt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点</span> </span><br><span class="line">0 11 4 * 1-3 command line</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1月1日早上4点</span> </span><br><span class="line">0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/ </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时（第一分钟）执行/etc/cron.hourly内的脚本</span></span><br><span class="line">01 * * * * root run-parts /etc/cron.hourly</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天（凌晨4：02）执行/etc/cron.daily内的脚本</span></span><br><span class="line">02 4 * * * root run-parts /etc/cron.daily </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每星期（周日凌晨4：22）执行/etc/cron.weekly内的脚本</span></span><br><span class="line">22 4 * * 0 root run-parts /etc/cron.weekly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每月（1号凌晨4：42）去执行/etc/cron.monthly内的脚本</span> </span><br><span class="line">42 4 1 * * root run-parts /etc/cron.monthly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">注意:  <span class="string">&quot;run-parts&quot;</span>这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名。</span> 　 </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。</span> </span><br><span class="line">5，15，25，35，45，55 16，17，18 * * * command</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每周一，三，五的下午3：00系统进入维护状态，重新启动系统。</span></span><br><span class="line">00 15 * *1，3，5 shutdown -r +5</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的10分，40分执行用户目录下的innd/bbslin这个指令：</span> </span><br><span class="line">10，40 * * * * innd/bbslink </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的1分执行用户目录下的bin/account这个指令：</span> </span><br><span class="line">1 * * * * bin/account</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每1分钟执行以下命令</span></span><br><span class="line">*/1 * * * * bin/python</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早晨三点二十分执行用户目录下如下所示的两个指令（每个指令以;分隔）：</span> </span><br><span class="line">203 * * * （/bin/rm -f expire.ls logins.bad;bin/expire$#@62;expire.1st）　</span><br></pre></td></tr></table></figure>
+<h5 id="crontab任务举例">3.crontab任务举例</h5>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">*/5 * * * * /bin/bash /root/kaoyan/tiaoji.sh</span><br></pre></td></tr></table></figure>
+<p>sh写法举例</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin</span><br><span class="line">export PATH</span><br><span class="line"></span><br><span class="line">cd /root/kaoyan</span><br><span class="line">/root/***/python3 *.py &gt;&gt; /root/****/*.log 2&gt;&amp;1</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">将所有输出写入日志文件</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
@@ -2931,6 +2931,109 @@
       </tags>
   </entry>
   <entry>
+    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
+    <url>/p/install-and-configure-coturn-in-debian/</url>
+    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
+<p><strong>关键词</strong>：coturn，stun，turn</p>
+<span id="more"></span>
+<p>安装Coturn一般分为两步。</p>
+<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
+<p>第二步是安装Coturn。</p>
+<h2 id="安装libevent">安装libevent</h2>
+<p>相关地址：</p>
+<ul>
+<li>https://github.com/libevent/libevent</li>
+<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
+</ul>
+<p><strong>注意</strong></p>
+<p>libevent与openssl的版本对应关系如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>libevent</th>
+<th>openssl</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2.1.x</td>
+<td>1.1</td>
+</tr>
+<tr class="even">
+<td>2.0.x</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
+<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
+<h3 id="查看openssl版本">查看openssl版本</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
+<p>这里使用2.1.12的版本进行安装。</p>
+<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="安装openssl依赖">安装openssl依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
+<h3 id="编译">编译</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h3 id="打包">打包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20211212133649851.png" /></p>
+<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
+<p><img data-src="image-20211212133609907.png" /></p>
+<h3 id="安装成功">安装成功</h3>
+<p><img data-src="image-20211212133729426.png" /></p>
+<h2 id="安装coturn">安装Coturn</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
+<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
+<h3 id="turn数据库配置">TURN数据库配置</h3>
+<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
+<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
+<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
+</ul>
+<p><strong>安装sqlite</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
+<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
+<p>需要安装libmysqlclient-dev：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
+<p><strong>查看当前的普通用户</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
+<p><strong>删除普通用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
+<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
+<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mv</span> /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
+<p>一些常用的配置：</p>
+<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip=172.17.62.224</span><br><span class="line">listening-device=eth0</span><br><span class="line"># TURN服务器UDP/TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port=3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port=5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device=eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port=49152</span><br><span class="line">max-port=65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm=deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#x27;静态&#x27; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert=/root/ssl/cert.pem </span><br><span class="line">pkey=/root/ssl/certs/key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
+<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
+<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
+<h3 id="重启服务">重启服务</h3>
+<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
+<h2 id="配置docker">配置docker</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
+<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
+<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
+<p><img data-src="image-20211127213711931.png" style="zoom:33%;" /></p>
+<p><img data-src="image-20211127213631207.png" /></p>
+<p><img data-src="image-20211127214043008.png" /></p>
+]]></content>
+      <tags>
+        <tag>coturn</tag>
+        <tag>STUN</tag>
+        <tag>TURN</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能</title>
     <url>/p/WebRTC-study-notes-01/</url>
     <content><![CDATA[<p>实习公司一直开展的项目突然停滞了，因为一个老板的需求我们一直无法满足：</p>
@@ -3150,109 +3253,6 @@
       </tags>
   </entry>
   <entry>
-    <title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</title>
-    <url>/p/install-and-configure-coturn-in-debian/</url>
-    <content><![CDATA[<p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
-<p><strong>关键词</strong>：coturn，stun，turn</p>
-<span id="more"></span>
-<p>安装Coturn一般分为两步。</p>
-<p>第一步要查看安装的openssl版本，然后安装<a href="https://github.com/libevent/libevent">libevent</a>。</p>
-<p>第二步是安装Coturn。</p>
-<h2 id="安装libevent">安装libevent</h2>
-<p>相关地址：</p>
-<ul>
-<li>https://github.com/libevent/libevent</li>
-<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
-</ul>
-<p><strong>注意</strong></p>
-<p>libevent与openssl的版本对应关系如下：</p>
-<table>
-<thead>
-<tr class="header">
-<th>libevent</th>
-<th>openssl</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2.1.x</td>
-<td>1.1</td>
-</tr>
-<tr class="even">
-<td>2.0.x</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
-<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
-<h3 id="查看openssl版本">查看openssl版本</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
-<p>这里使用2.1.12的版本进行安装。</p>
-<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="安装openssl依赖">安装openssl依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
-<h3 id="编译">编译</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
-<h3 id="打包">打包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20211212133649851.png" /></p>
-<p>这里需要把3 - Version: [ stable ] 修改成版本号，否则后面安装不成功。</p>
-<p><img data-src="image-20211212133609907.png" /></p>
-<h3 id="安装成功">安装成功</h3>
-<p><img data-src="image-20211212133729426.png" /></p>
-<h2 id="安装coturn">安装Coturn</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
-<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
-<h3 id="turn数据库配置">TURN数据库配置</h3>
-<p><strong>增加用户：</strong>增加普通long-term TURN用户，用于WebRTC的登陆。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
-<p>注意：</p>
-<ul>
-<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
-<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
-<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
-</ul>
-<p><strong>安装sqlite</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
-<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
-<p>需要安装libmysqlclient-dev：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
-<p><strong>查看当前的普通用户</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
-<p><strong>删除普通用户</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
-<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
-<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mv</span> /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
-<p>一些常用的配置：</p>
-<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip=172.17.62.224</span><br><span class="line">listening-device=eth0</span><br><span class="line"># TURN服务器UDP/TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port=3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port=5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device=eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port=49152</span><br><span class="line">max-port=65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm=deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#x27;静态&#x27; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert=/root/ssl/cert.pem </span><br><span class="line">pkey=/root/ssl/certs/key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
-<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
-<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
-<h3 id="重启服务">重启服务</h3>
-<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
-<h2 id="配置docker">配置docker</h2>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --user $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
-<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
-<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
-<p><img data-src="image-20211127213711931.png" style="zoom:33%;" /></p>
-<p><img data-src="image-20211127213631207.png" /></p>
-<p><img data-src="image-20211127214043008.png" /></p>
-]]></content>
-      <tags>
-        <tag>coturn</tag>
-        <tag>STUN</tag>
-        <tag>TURN</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>crontab定时任务不执行</title>
     <url>/p/crontab-does-not-work/</url>
     <content><![CDATA[<p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
@@ -3380,6 +3380,28 @@
       <tags>
         <tag>golang</tag>
         <tag>socket</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Github Action定时重启IBM cloud foundry</title>
+    <url>/p/ibm-cloud-auto-restart/</url>
+    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
+<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
+<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
+<span id="more"></span>
+<h3 id="yml配置文件">yml配置文件</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用方法">使用方法</h3>
+<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
+<h4 id="设置环境变量">设置环境变量</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
+<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
+<h4 id="效果图">效果图</h4>
+<p><img data-src="image-20200827193322808.png" /></p>
+<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
+]]></content>
+      <tags>
+        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -3602,28 +3624,6 @@
 ]]></content>
       <tags>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用Github Action定时重启IBM cloud foundry</title>
-    <url>/p/ibm-cloud-auto-restart/</url>
-    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
-<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
-<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
-<span id="more"></span>
-<h3 id="yml配置文件">yml配置文件</h3>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用方法">使用方法</h3>
-<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
-<h4 id="设置环境变量">设置环境变量</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
-<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
-<h4 id="效果图">效果图</h4>
-<p><img data-src="image-20200827193322808.png" /></p>
-<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
-]]></content>
-      <tags>
-        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -4794,51 +4794,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用Zerotier搭建内网穿透服务</title>
-    <url>/p/how-to-use-Zerotier/</url>
-    <content><![CDATA[<p>什么是Zerotier？</p>
-<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
-<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
-<span id="more"></span>
-<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
-<h4 id="创建账号">创建账号</h4>
-<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
-<p><img data-src="image-20210128181221059.png" /></p>
-<p>根据自己需要，选择注册方式。</p>
-<p><img data-src="image-20210128181326421.png" /></p>
-<h4 id="创建网络">创建网络</h4>
-<p><img data-src="image-20210128181610919.png" /></p>
-<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
-<p><img data-src="image-20210128181706204.png" /></p>
-<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
-<p><img data-src="image-20210128181808319.png" /></p>
-<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
-<h4 id="加入网络">加入网络</h4>
-<p><img data-src="image-20210128181920181.png" /></p>
-<p>点击<code>Download</code>，进入下载页面。</p>
-<p><img data-src="image-20210128181957790.png" style="zoom:67%;" /></p>
-<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
-<p><img data-src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
-<p>等待下载完成，然后安装。</p>
-<p><img data-src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
-<p>打开以后会默认在任务栏运行。</p>
-<figure>
-<img data-src="image-20210128182448852.png" alt="" /><figcaption>image-20210128182448852</figcaption>
-</figure>
-<p>右键选择<code>Join a network</code>。</p>
-<p><img data-src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
-<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
-<p><img data-src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
-<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
-<p><img data-src="image-20210128182844550.png" /></p>
-<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
-<p><img data-src="image-20210128183032664.png" /></p>
-]]></content>
-      <tags>
-        <tag>Zerotier</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用acme.sh快速申请ssl证书</title>
     <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
     <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
@@ -5021,6 +4976,51 @@
 ]]></content>
       <tags>
         <tag>cloudflare</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Zerotier搭建内网穿透服务</title>
+    <url>/p/how-to-use-Zerotier/</url>
+    <content><![CDATA[<p>什么是Zerotier？</p>
+<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
+<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
+<span id="more"></span>
+<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
+<h4 id="创建账号">创建账号</h4>
+<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
+<p><img data-src="image-20210128181221059.png" /></p>
+<p>根据自己需要，选择注册方式。</p>
+<p><img data-src="image-20210128181326421.png" /></p>
+<h4 id="创建网络">创建网络</h4>
+<p><img data-src="image-20210128181610919.png" /></p>
+<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
+<p><img data-src="image-20210128181706204.png" /></p>
+<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
+<p><img data-src="image-20210128181808319.png" /></p>
+<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
+<h4 id="加入网络">加入网络</h4>
+<p><img data-src="image-20210128181920181.png" /></p>
+<p>点击<code>Download</code>，进入下载页面。</p>
+<p><img data-src="image-20210128181957790.png" style="zoom:67%;" /></p>
+<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
+<p><img data-src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
+<p>等待下载完成，然后安装。</p>
+<p><img data-src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
+<p>打开以后会默认在任务栏运行。</p>
+<figure>
+<img data-src="image-20210128182448852.png" alt="" /><figcaption>image-20210128182448852</figcaption>
+</figure>
+<p>右键选择<code>Join a network</code>。</p>
+<p><img data-src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
+<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
+<p><img data-src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
+<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
+<p><img data-src="image-20210128182844550.png" /></p>
+<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
+<p><img data-src="image-20210128183032664.png" /></p>
+]]></content>
+      <tags>
+        <tag>Zerotier</tag>
       </tags>
   </entry>
   <entry>
@@ -6137,6 +6137,64 @@
       </tags>
   </entry>
   <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<span id="more"></span>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img data-src="新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣二叉树之二叉搜索树</title>
     <url>/p/binary-search-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -6256,64 +6314,6 @@
 ]]></content>
       <tags>
         <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<span id="more"></span>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之二分法</title>
-    <url>/p/binary-search/</url>
-    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
-<p>定义target在左闭右闭区间[left, right]内：</p>
-<ul>
-<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
-<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
-</ul>
-<p><strong>示意图</strong></p>
-<p><img data-src="新建位图图像.bmp" /></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -6815,29 +6815,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之链表相交</title>
-    <url>/p/intersection-of-two-linked-lists-lcci/</url>
-    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
-<ul>
-<li>a + c + b = b + c + a</li>
-<li>若无交集，则a + b = b + a</li>
-</ul>
-<p><img data-src="image-20220216162953801.png" /></p>
-<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣题目类型之回溯法（一）</title>
     <url>/p/back-tracking-one/</url>
     <content><![CDATA[<p>回溯法也可以叫做回溯搜索法，它是一种搜索的方式。</p>
@@ -6873,6 +6850,29 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之链表相交</title>
+    <url>/p/intersection-of-two-linked-lists-lcci/</url>
+    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
+<ul>
+<li>a + c + b = b + c + a</li>
+<li>若无交集，则a + b = b + a</li>
+</ul>
+<p><img data-src="image-20220216162953801.png" /></p>
+<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -6946,6 +6946,40 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大话数据结构（二）| 栈和队列</title>
+    <url>/p/stack-and-ground/</url>
+    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
+<p><strong>关键词：数据结构</strong></p>
+<span id="more"></span>
+<h3 id="栈的定义">栈的定义</h3>
+<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
+<ul>
+<li>允许插入和删除的一端称为栈顶</li>
+<li>另一端被称为栈底</li>
+<li>不含任何元素的栈称为空栈</li>
+<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
+<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
+</ul>
+<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
+<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
+<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
+<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
+<ol type="1">
+<li>1、2、3进，3、2、1出。出栈次序为321。</li>
+<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
+<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
+<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
+<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
+</ol>
+<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
+<h3 id="抽象数据类型">抽象数据类型</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -7164,40 +7198,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>大话数据结构（二）| 栈和队列</title>
-    <url>/p/stack-and-ground/</url>
-    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
-<p><strong>关键词：数据结构</strong></p>
-<span id="more"></span>
-<h3 id="栈的定义">栈的定义</h3>
-<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
-<ul>
-<li>允许插入和删除的一端称为栈顶</li>
-<li>另一端被称为栈底</li>
-<li>不含任何元素的栈称为空栈</li>
-<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
-<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
-</ul>
-<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
-<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
-<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
-<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
-<ol type="1">
-<li>1、2、3进，3、2、1出。出栈次序为321。</li>
-<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
-<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
-<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
-<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
-</ol>
-<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
-<h3 id="抽象数据类型">抽象数据类型</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -7837,57 +7837,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>循环神经网络介绍</title>
-    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
-    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
-<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
-<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
-<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
-<p><img data-src="20150829181722_450.png" /></p>
-<blockquote>
-<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
-</blockquote>
-<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
-<p><img data-src="20150829181722_631.png" /></p>
-<blockquote>
-<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
-</blockquote>
-<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
-<p><img data-src="20150829181722_777.png" /></p>
-<blockquote>
-<p>LSTM中的图标</p>
-</blockquote>
-<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
-<h4 id="lstm核心内容">2.LSTM核心内容</h4>
-<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
-<p><img data-src="20150829181723_640.png" /></p>
-<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
-<p><img data-src="20150829181723_567.png" /></p>
-<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
-<p>LSTM有三个门，来保护和控制细胞状态。</p>
-<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
-<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
-<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_259.png" /></p>
-<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
-<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
-<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_897.png" /></p>
-<h5 id="确定更新的信息">3.2确定更新的信息</h5>
-<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
-<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
-<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
-<p><img data-src="20150829181723_883.png" /></p>
-<h5 id="更新细胞状态">3.3更新细胞状态</h5>
-<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
-<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
-<p><img data-src="20150829181723_463.png" /></p>
-]]></content>
-      <tags>
-        <tag>LSTM</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用Helm中部署Harbor</title>
     <url>/p/deploy-harbor-on-K8s-with-helm/</url>
     <content><![CDATA[<p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor 在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub 或其他第三方镜像仓库。</p>
@@ -7960,6 +7909,57 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络介绍</title>
+    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
+    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
+<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
+<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
+<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
+<p><img data-src="20150829181722_450.png" /></p>
+<blockquote>
+<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
+</blockquote>
+<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
+<p><img data-src="20150829181722_631.png" /></p>
+<blockquote>
+<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
+</blockquote>
+<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
+<p><img data-src="20150829181722_777.png" /></p>
+<blockquote>
+<p>LSTM中的图标</p>
+</blockquote>
+<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
+<h4 id="lstm核心内容">2.LSTM核心内容</h4>
+<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
+<p><img data-src="20150829181723_640.png" /></p>
+<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
+<p><img data-src="20150829181723_567.png" /></p>
+<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
+<p>LSTM有三个门，来保护和控制细胞状态。</p>
+<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
+<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
+<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_259.png" /></p>
+<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
+<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
+<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_897.png" /></p>
+<h5 id="确定更新的信息">3.2确定更新的信息</h5>
+<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
+<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
+<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
+<p><img data-src="20150829181723_883.png" /></p>
+<h5 id="更新细胞状态">3.3更新细胞状态</h5>
+<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
+<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
+<p><img data-src="20150829181723_463.png" /></p>
+]]></content>
+      <tags>
+        <tag>LSTM</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>搭建hexo并推送到GitHub Pages</title>
     <url>/p/build-a-hexo-blog-and-push-to-GitHub-Pages/</url>
     <content><![CDATA[<p>之前因为重装系统丢掉了已经搭建好的Hexo博客配置文件。经过这件事以后我深刻地记住了备份的重要性。趁着刚刚搭建完博客，于是写一篇文章水一下！</p>
@@ -8023,27 +8023,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>数值分析第一章作业</title>
-    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，数值分析</p>
-<span id="more"></span>
-<p><img data-src="image-20201013093358782.png" /></p>
-<p><img data-src="image-20201013102937713.png" /></p>
-<p><img data-src="image-20201013104909315.png" /></p>
-<p><img data-src="image-20201013104922645.png" /></p>
-<p><img data-src="image-20201013104953613.png" /></p>
-<p><img data-src="image-20201013110136891.png" /></p>
-<p><img data-src="image-20201013110806596.png" /> <span class="math display">\[
-2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
-\]</span></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>牛客SQL刷题</title>
     <url>/p/niuke-SQL-brush-questions/</url>
     <content><![CDATA[<p>本文主要介绍牛客网上SQL刷题的题目。</p>
@@ -8096,6 +8075,27 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>SQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数值分析第一章作业</title>
+    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，数值分析</p>
+<span id="more"></span>
+<p><img data-src="image-20201013093358782.png" /></p>
+<p><img data-src="image-20201013102937713.png" /></p>
+<p><img data-src="image-20201013104909315.png" /></p>
+<p><img data-src="image-20201013104922645.png" /></p>
+<p><img data-src="image-20201013104953613.png" /></p>
+<p><img data-src="image-20201013110136891.png" /></p>
+<p><img data-src="image-20201013110806596.png" /> <span class="math display">\[
+2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
+\]</span></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
