@@ -216,26 +216,6 @@ VPN 解决方案。&lt;/p&gt;
   </entry>
   
   <entry>
-    <title>Go语言操作MySQL数据库</title>
-    <link href="https://fly97.cn/p/go-mysql/"/>
-    <id>https://fly97.cn/p/go-mysql/</id>
-    <published>2022-05-20T09:26:00.000Z</published>
-    <updated>2022-05-20T09:26:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p><p>关键词：<strong>golang</strong></p><span id="more"></span><h3 id="连接">连接</h3><p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p><p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers获取驱动列表。</p><p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p><p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p><h4 id="下载依赖">下载依赖</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure><h4 id="初始化链接">初始化链接</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure><ul><li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li><li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li><li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li></ul><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure><ul><li>验证数据库是否可用</li><li>如果必要的话建立一个连接</li></ul><h4 id="设置最大连接数">设置最大连接数</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure><ul><li>设置数据库最大连接数</li><li>如果n &gt;0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li><li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li></ul><h4 id="设置最大闲置连接数">设置最大闲置连接数</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure><ul><li>设置数据库最大闲置连接数</li><li>如果n大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li><li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li></ul>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;本文主要介绍了Go语言如何操作MySQL数据库。&lt;/p&gt;
-&lt;p&gt;关键词：&lt;strong&gt;golang&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="golang" scheme="https://fly97.cn/tags/golang/"/>
-    
-  </entry>
-  
-  <entry>
     <title>Go语言基础（二）读写json字符串</title>
     <link href="https://fly97.cn/p/go-json/"/>
     <id>https://fly97.cn/p/go-json/</id>
@@ -246,6 +226,26 @@ VPN 解决方案。&lt;/p&gt;
     
     
     <summary type="html">&lt;p&gt;本文主要介绍了Go语言中读写json的相关操作。&lt;/p&gt;
+&lt;p&gt;关键词：&lt;strong&gt;golang&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="golang" scheme="https://fly97.cn/tags/golang/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Go语言操作MySQL数据库</title>
+    <link href="https://fly97.cn/p/go-mysql/"/>
+    <id>https://fly97.cn/p/go-mysql/</id>
+    <published>2022-05-20T09:26:00.000Z</published>
+    <updated>2022-05-20T09:26:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p><p>关键词：<strong>golang</strong></p><span id="more"></span><h3 id="连接">连接</h3><p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p><p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers获取驱动列表。</p><p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p><p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p><h4 id="下载依赖">下载依赖</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure><h4 id="初始化链接">初始化链接</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure><ul><li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li><li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li><li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li></ul><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure><ul><li>验证数据库是否可用</li><li>如果必要的话建立一个连接</li></ul><h4 id="设置最大连接数">设置最大连接数</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure><ul><li>设置数据库最大连接数</li><li>如果n &gt;0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li><li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li></ul><h4 id="设置最大闲置连接数">设置最大闲置连接数</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure><ul><li>设置数据库最大闲置连接数</li><li>如果n大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li><li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;本文主要介绍了Go语言如何操作MySQL数据库。&lt;/p&gt;
 &lt;p&gt;关键词：&lt;strong&gt;golang&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
