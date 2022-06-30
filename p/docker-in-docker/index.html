@@ -276,23 +276,34 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
+        <p>啥是docker in
+docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
 <p>有人可能会问了，为啥要这么麻烦，直接裸机跑容器不就完了吗？</p>
 <p>读完这篇文章，你应该会有所了解。</p>
 <p>关键字：<strong>docker in docker</strong></p>
 <span id="more"></span>
 <h2 id="docker-in-dockerdind">docker in docker(dind)</h2>
-<p>有时需要在容器里面执行docker命令，比如在<strong>jenkins 容器内运行 docker 命令执行构建镜像</strong>等。</p>
+<p>有时需要在容器里面执行docker命令，比如在<strong>jenkins 容器内运行
+docker 命令执行构建镜像</strong>等。</p>
 <p>事实上，docker是支持嵌套的。但是直接在docker容器里面安装docker有点臃肿。</p>
-<p>更好的方法是：容器里面仅仅部署docker-cli（作为客户端），实际执行交给宿主机内的 docker-engine（服务端）</p>
+<p>更好的方法是：容器里面仅仅部署docker-cli（作为客户端），实际执行交给宿主机内的
+docker-engine（服务端）</p>
 <h2 id="两种方式">两种方式</h2>
-<p>一种方式是，通过宿主机的<code>docker.sock</code>文件，将宿主机docker服务端的socket文件挂载到容器内，同时将docker二进制文件挂载到容器内，这样，容器内就不需要安装docker程序。当容器内使用docker命令时，实际上调用的是宿主机的docker daemon和docker命令。也就是说，容器内并未真正运行docker server，但是能通过宿主机执行docker任务，从而实现轻量级docker in docker。这种情况下，真正执行docker命令的是跑在宿主机上的docker-engine，<strong>并不是真正的docker in docker</strong>。但是这种情况速度较快，然后存在一定的安全问题。<strong>不过，这种情况就是我们所需要的呀！！</strong></p>
-<p>还有一种方式是，启动一个<code>docker:dind</code> 容器A，再启动一个docker容器B，容器B指定DOCKER_HOST为A容器内的docker daemon。</p>
+<p>一种方式是，通过宿主机的<code>docker.sock</code>文件，将宿主机docker服务端的socket文件挂载到容器内，同时将docker二进制文件挂载到容器内，这样，容器内就不需要安装docker程序。当容器内使用docker命令时，实际上调用的是宿主机的docker
+daemon和docker命令。也就是说，容器内并未真正运行docker
+server，但是能通过宿主机执行docker任务，从而实现轻量级docker in
+docker。这种情况下，真正执行docker命令的是跑在宿主机上的docker-engine，<strong>并不是真正的docker
+in
+docker</strong>。但是这种情况速度较快，然后存在一定的安全问题。<strong>不过，这种情况就是我们所需要的呀！！</strong></p>
+<p>还有一种方式是，启动一个<code>docker:dind</code>
+容器A，再启动一个docker容器B，容器B指定DOCKER_HOST为A容器内的docker
+daemon。</p>
 <h3 id="使用宿主机的socket文件">使用宿主机的socket文件</h3>
 <p>本想着挂载宿主机的<code>docker.sock</code>文件和docker二进制文件到容器即可实现<code>dind</code>，无奈默认情况下<code>docker.sock</code>文件是经过tls证书加密的，而在默认情况下加密的根证书却没有找到，通过宿主机执行<code>docker info</code>命令会提示以下错误：</p>
 <p><img data-src="image-20220406163343550.png" /></p>
 <p>翻阅资料知道<code>docker daemon</code>可以通过暴露tcp端口实现通信，而默认情况<strong>不是加密的</strong>，于是这个路就通了！！</p>
-<h3 id="通过暴露宿主机的tcp端口实现通信">通过暴露宿主机的tcp端口实现通信</h3>
+<h3
+id="通过暴露宿主机的tcp端口实现通信">通过暴露宿主机的tcp端口实现通信</h3>
 <ol type="1">
 <li>查看宿主机<code>docker</code>服务单元文件地址</li>
 </ol>
@@ -368,8 +379,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/set-mail-push-in-jenkins/" rel="next" title="Jenkins实战（三）设置邮件推送">
-                  Jenkins实战（三）设置邮件推送 <i class="fa fa-chevron-right"></i>
+                <a href="/p/jenkins-and-CI/" rel="next" title="Jenkins实战（一）Jenkins和持续集成">
+                  Jenkins实战（一）Jenkins和持续集成 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>

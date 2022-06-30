@@ -274,12 +274,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>之前博客都是使用Github Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
+        <p>之前博客都是使用Github
+Actions实现自动构建的。最近不知道为啥老是不能构建成功，大概是因为资源被使用的太多了吧。。又想起来还有几个付费的heroku账户，于是便把构建仓库迁移到heroku平台。遂写一下这篇文章，也算是做个记录。</p>
 <p>关键词：<strong>heroku，自动化构建</strong></p>
 <span id="more"></span>
 <h2 id="安装heroku-cli并登录">安装heroku cli并登录</h2>
 <h3 id="安装">安装</h3>
-<p>官网提供了<a target="_blank" rel="noopener" href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
+<p>官网提供了<a
+target="_blank" rel="noopener" href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">snap</a>的安装方式，不过这里使用脚本安装</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://cli-assets.heroku.com/install.sh | sh</span><br></pre></td></tr></table></figure>
 <h3 id="登录">登录</h3>
 <p>这里使用<strong>非浏览器登录</strong>的方式，使用<code>-i</code>参数。</p>
@@ -289,18 +291,22 @@
 <p>heroku提供两种方式，第一种是部署预先构建的docker镜像到heroku；第二种是使用heroku.yml发布镜像到heroku平台。</p>
 <p><img data-src="image-20220409100956279.png" /></p>
 <p>为了简化步骤，这里先使用第一种方式。</p>
-<h3 id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
+<h3
+id="部署预先构建的docker镜像到heroku">部署预先构建的docker镜像到heroku</h3>
 <h4 id="登录heroku容器仓库">登录heroku容器仓库</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">heroku container:login</span><br></pre></td></tr></table></figure>
 <h4 id="编写流程的dockerfile">编写流程的Dockerfile</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">FROM node:16-bullseye-slim</span><br><span class="line">ENV GH_TOKEN=***</span><br><span class="line">ENV GH_REF=***</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line">ARG DEBIAN_FRONTEND=noninteractive</span><br><span class="line">WORKDIR /opt/</span><br><span class="line">COPY run.sh /opt</span><br><span class="line">RUN <span class="built_in">set</span> -ex \</span><br><span class="line">&amp;&amp; sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list \</span><br><span class="line">&amp;&amp; apt-get update \</span><br><span class="line">&amp;&amp; apt-get install wget git -y \</span><br><span class="line">&amp;&amp; wget -O /tmp/pandoc.deb -q https://github.com/jgm/pandoc/releases/download/2.14.2/pandoc-2.14.2-1-amd64.deb \</span><br><span class="line">&amp;&amp; dpkg -i /tmp/pandoc.deb \</span><br><span class="line">&amp;&amp; npm config <span class="built_in">set</span> registry https://registry.npmmirror.com \</span><br><span class="line">&amp;&amp; npm config get registry \</span><br><span class="line">&amp;&amp; npm i hexo-cli @next-theme/plugins -g --save \</span><br><span class="line">&amp;&amp; npm un hexo-renderer-marked \</span><br><span class="line">&amp;&amp; npm i hexo-renderer-pandoc -g --save</span><br><span class="line">CMD [<span class="string">&quot;bash&quot;</span>,<span class="string">&quot;run.sh&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github pages等其他可以托管静态文件的服务了。</p>
-<h4 id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
+<p>而bash脚本里面做的主要就是拉取仓库，利用hexo生成静态文件，然后推送到指定的仓库。这样可以利用github
+pages等其他可以托管静态文件的服务了。</p>
+<h4
+id="构建镜像并且推送到heroku的镜像仓库">构建镜像并且推送到heroku的镜像仓库</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">heroku container:push worker -a &lt;APP_NAME&gt;</span><br></pre></td></tr></table></figure>
 <p>ps：worker是区别于web的进程类型，由于这里不是web服务，故使用worker。</p>
 <p>折腾了半天，生成的镜像倒是可以推送新的静态文件到指定的仓库了，但是这个操作无法利用博客源码的更新自动执行！！！</p>
 <p><img data-src="image-20220409125928022.png" /></p>
-<p>由于我这里使用的是heroku cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
+<p>由于我这里使用的是heroku
+cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了。看来只能使用第二种方法，<strong>使用heroku.yml部署镜像到heroku了</strong></p>
 <h3 id="使用heroku.yml部署镜像">使用heroku.yml部署镜像</h3>
 <p>在博客源码的根目录增加heroku.yml，heroku.yml描述的就是容器需要完成的操作。</p>
 <p>如果是使用这种方法，那么就需要更改一下Dockerfile。因为heroku.yml和博客源码在同一目录，而拉取源码的操作就可以去掉了。</p>

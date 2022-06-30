@@ -278,16 +278,26 @@
 <p>返回你最多可以修读的课程数目。</p>
 <span id="more"></span>
 <p><strong>示例1：</strong></p>
-<p>输入：<code>courses = [[100, 200], [200, 1300], [1000, 1250], [2000, 3200]]</code> 输出：<code>3</code> 解释： 这里一共有 4 门课程，但是你最多可以修 3 门： 首先，修第 1 门课，耗费 100 天，在第 100 天完成，在第 101 天开始下门课。 第二，修第 3 门课，耗费 1000 天，在第 1100 天完成，在第 1101 天开始下门课程。 第三，修第 2 门课，耗时 200 天，在第 1300 天完成。 第 4 门课现在不能修，因为将会在第 3300 天完成它，这已经超出了关闭日期。</p>
+<p>输入：<code>courses = [[100, 200], [200, 1300], [1000, 1250], [2000, 3200]]</code>
+输出：<code>3</code> 解释： 这里一共有 4 门课程，但是你最多可以修 3 门：
+首先，修第 1 门课，耗费 100 天，在第 100 天完成，在第 101 天开始下门课。
+第二，修第 3 门课，耗费 1000 天，在第 1100 天完成，在第 1101
+天开始下门课程。 第三，修第 2 门课，耗时 200 天，在第 1300 天完成。 第 4
+门课现在不能修，因为将会在第 3300 天完成它，这已经超出了关闭日期。</p>
 <p><strong>示例2：</strong></p>
 <p>输入：<code>courses = [[1, 2]]</code> 输出：<code>1</code></p>
 <p><strong>示例3：</strong></p>
 <p>输入：<code>courses = [[3, 2],[4,3]]</code> 输出：<code>0</code></p>
 <h2 id="方法一优先队列贪心">方法一：优先队列+贪心</h2>
 <p><strong>思路</strong></p>
-<p>对于两门课<span class="math inline">\((t1, d1)\)</span>和<span class="math inline">\((t2, d2)\)</span>，如果后者关闭的时间较晚，即<span class="math inline">\(d1 \le d2\)</span>，那先学习前者，再学习后者，总是最优的。这是因为：</p>
+<p>对于两门课<span class="math inline">\((t1, d1)\)</span>和<span
+class="math inline">\((t2, d2)\)</span>，如果后者关闭的时间较晚，即<span
+class="math inline">\(d1 \le
+d2\)</span>，那先学习前者，再学习后者，总是最优的。这是因为：</p>
 <ul>
-<li><p>假设最开始学习的时间点为<span class="math inline">\(x\)</span>，如果先学习前者，再学习后者，那么需要满足： <span class="math display">\[
+<li><p>假设最开始学习的时间点为<span
+class="math inline">\(x\)</span>，如果先学习前者，再学习后者，那么需要满足：
+<span class="math display">\[
 \begin{cases}
 x+t_1 \le d_1 \\
 x+t_1+t_2\le d_2 \\
@@ -301,24 +311,56 @@ x+t_2 \le d_2 \\
 x+t_1+t_2\le d_1 \\
 \end{cases}
 \]</span></p>
-<p>如果 <span class="math inline">\(x+t_1+t_2 \le d_1\)</span>成立，由于<span class="math inline">\(d_1 \le d_2\)</span>，那么<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>同时成立。这说明，如果能【先学习后者，再学习前者】那么一定能【先学习前者，再学习后者】。如果<span class="math inline">\(x+t_1+t_2 \le d_2\)</span>成立，则不能推出<span class="math inline">\(x+t_2+t_1 \le d_1\)</span>成立。<strong>虽然能【先学习前者，再学习后者】，但不能【先学习后者，再学习前者】。</strong></p>
-<p>因此，我们可以将所有的课程按照关闭时间<span class="math inline">\(d\)</span>进行升序排序，再依次挑选课程并按照顺序进行学习。</p>
-<p>在遍历的过程中，假设我们当前遍历到了第<span class="math inline">\(i\)</span>门课<span class="math inline">\((t_i, d_i)\)</span>，而在前<span class="math inline">\(i-1\)</span>门课程中我们选择了<span class="math inline">\(k\)</span>门课<span class="math inline">\((t_{x1}, d_{x1}),(t_{x2}, d_{x2}), ... ,(t_{xk}, d_{xk})\)</span>，满足<span class="math inline">\(x_1&lt;x_2&lt; \cdots x_k\)</span>，那么有： <span class="math display">\[
+<p>如果 <span class="math inline">\(x+t_1+t_2 \le
+d_1\)</span>成立，由于<span class="math inline">\(d_1 \le
+d_2\)</span>，那么<span class="math inline">\(x+t_1+t_2 \le
+d_2\)</span>同时成立。这说明，如果能【先学习后者，再学习前者】那么一定能【先学习前者，再学习后者】。如果<span
+class="math inline">\(x+t_1+t_2 \le d_2\)</span>成立，则不能推出<span
+class="math inline">\(x+t_2+t_1 \le
+d_1\)</span>成立。<strong>虽然能【先学习前者，再学习后者】，但不能【先学习后者，再学习前者】。</strong></p>
+<p>因此，我们可以将所有的课程按照关闭时间<span
+class="math inline">\(d\)</span>进行升序排序，再依次挑选课程并按照顺序进行学习。</p>
+<p>在遍历的过程中，假设我们当前遍历到了第<span
+class="math inline">\(i\)</span>门课<span class="math inline">\((t_i,
+d_i)\)</span>，而在前<span
+class="math inline">\(i-1\)</span>门课程中我们选择了<span
+class="math inline">\(k\)</span>门课<span class="math inline">\((t_{x1},
+d_{x1}),(t_{x2}, d_{x2}), ... ,(t_{xk}, d_{xk})\)</span>，满足<span
+class="math inline">\(x_1&lt;x_2&lt; \cdots x_k\)</span>，那么有： <span
+class="math display">\[
 \begin{cases}
 t_{x1} \le d_{x1} \\
 t_{x1}+t_{x2} \le d_{x2} \\
 \cdots \\
 t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 \end{cases}
-\]</span> 如果上述选择方案是前<span class="math inline">\(i-1\)</span>门课程的【最优方案】：即不存在能选择<span class="math inline">\(k+1\)</span>门课程的方法，也不存在能选择<span class="math inline">\(k\)</span>门课程，且总时长更短的方案，那么我们可以基于该方案与第<span class="math inline">\(i\)</span>门课程<span class="math inline">\((t_i, d_i)\)</span>，构造出前<span class="math inline">\(i\)</span>门课程的最优方案：</p>
+\]</span> 如果上述选择方案是前<span
+class="math inline">\(i-1\)</span>门课程的【最优方案】：即不存在能选择<span
+class="math inline">\(k+1\)</span>门课程的方法，也不存在能选择<span
+class="math inline">\(k\)</span>门课程，且总时长更短的方案，那么我们可以基于该方案与第<span
+class="math inline">\(i\)</span>门课程<span class="math inline">\((t_i,
+d_i)\)</span>，构造出前<span
+class="math inline">\(i\)</span>门课程的最优方案：</p>
 <p><img data-src="image-20211214221952979.png" /></p>
-<p>这样一来，当我们遍历完所有的<span class="math inline">\(n\)</span>门课程后，就可以得到最终答案。</p>
+<p>这样一来，当我们遍历完所有的<span
+class="math inline">\(n\)</span>门课程后，就可以得到最终答案。</p>
 <p><strong>算法</strong></p>
-<p>我们需要一个数据结构支持【取出<span class="math inline">\(t\)</span>值最大的那门课程】，因此我们可以使用优先队列。</p>
-<p>依次遍历每一门课程，当遍历到<span class="math inline">\((t_i, d_i)\)</span>时：</p>
+<p>我们需要一个数据结构支持【取出<span
+class="math inline">\(t\)</span>值最大的那门课程】，因此我们可以使用优先队列。</p>
+<p>依次遍历每一门课程，当遍历到<span class="math inline">\((t_i,
+d_i)\)</span>时：</p>
 <ul>
-<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和小于等于<span class="math inline">\(d_i\)</span>，那么我们就把<span class="math inline">\(t_i\)</span>加入优先队列中；</li>
-<li>如果当前优先队列中所有课程的总时间与<span class="math inline">\(t_i\)</span>之和大于<span class="math inline">\(d_i\)</span>，那么我们找到优先队列的最大元素<span class="math inline">\(t_{xj}\)</span>。如果<span class="math inline">\(t_{xj} &gt; t_{i}\)</span>，则将它移出优先队列，并把<span class="math inline">\(t_i\)</span>加入优先队列中。</li>
+<li>如果当前优先队列中所有课程的总时间与<span
+class="math inline">\(t_i\)</span>之和小于等于<span
+class="math inline">\(d_i\)</span>，那么我们就把<span
+class="math inline">\(t_i\)</span>加入优先队列中；</li>
+<li>如果当前优先队列中所有课程的总时间与<span
+class="math inline">\(t_i\)</span>之和大于<span
+class="math inline">\(d_i\)</span>，那么我们找到优先队列的最大元素<span
+class="math inline">\(t_{xj}\)</span>。如果<span
+class="math inline">\(t_{xj} &gt;
+t_{i}\)</span>，则将它移出优先队列，并把<span
+class="math inline">\(t_i\)</span>加入优先队列中。</li>
 </ul>
 <p>在遍历完成之后，优先队列中包含的元素个数即为答案。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">scheduleCourse</span><span class="params">(courses [][]<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    sort.Slice(courses, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> courses[i][<span class="number">1</span>] &lt; courses[j][<span class="number">1</span>]</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    h := &amp;Heap&#123;&#125;</span><br><span class="line">    total := <span class="number">0</span> <span class="comment">// 优先队列中所有课程的总时间</span></span><br><span class="line">    <span class="keyword">for</span> _, course := <span class="keyword">range</span> courses &#123;</span><br><span class="line">        <span class="keyword">if</span> t := course[<span class="number">0</span>]; total+t &lt;= course[<span class="number">1</span>] &#123;</span><br><span class="line">            total += t</span><br><span class="line">            heap.Push(h, t)</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> h.Len() &gt; <span class="number">0</span> &amp;&amp; t &lt; h.IntSlice[<span class="number">0</span>] &#123;</span><br><span class="line">            total += t - h.IntSlice[<span class="number">0</span>]</span><br><span class="line">            h.IntSlice[<span class="number">0</span>] = t</span><br><span class="line">            heap.Fix(h, <span class="number">0</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h.Len()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Heap <span class="keyword">struct</span> &#123;</span><br><span class="line">    sort.IntSlice</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h Heap)</span></span> Less(i, j <span class="type">int</span>) <span class="type">bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> h.IntSlice[i] &gt; h.IntSlice[j]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span></span> Push(x <span class="keyword">interface</span>&#123;&#125;) &#123;</span><br><span class="line">    h.IntSlice = <span class="built_in">append</span>(h.IntSlice, x.(<span class="type">int</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Heap)</span></span> Pop() <span class="keyword">interface</span>&#123;&#125; &#123;</span><br><span class="line">    a := h.IntSlice</span><br><span class="line">    x := a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    h.IntSlice = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>

@@ -300,7 +300,9 @@
 <li>当前使用仓库的Git目录的<code>.git/config</code>文件，只针对该仓库。</li>
 </ol>
 <p>每一个级别覆盖上一级别的配置。即当<code>.git/config</code>文件存在时，不读取其他文件，以此类推。</p>
-<p>window中会查找 <code>$HOME</code>目录下（一般是<code>C:\\Users\\$USER</code>）的<code>.gitconfig</code>文件。Git同样会寻找 <code>/etc/gitconfig</code>文件，但是只限于安装Git时所选的目标位置。</p>
+<p>window中会查找
+<code>$HOME</code>目录下（一般是<code>C:\\Users\\$USER</code>）的<code>.gitconfig</code>文件。Git同样会寻找
+<code>/etc/gitconfig</code>文件，但是只限于安装Git时所选的目标位置。</p>
 <h3 id="用户信息">用户信息</h3>
 <p>设置用户名和邮件地址</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;wf09&quot;</span></span><br><span class="line">git config --global user.email wf.09@qq.com</span><br></pre></td></tr></table></figure>
@@ -315,7 +317,8 @@
 <p>Linux/Unix环境下，在<code>~/.ssh/config</code>文件下加入如下行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Host github.com *.github.com</span><br><span class="line">    User git</span><br><span class="line">    Port 22</span><br><span class="line">    HostName %h</span><br><span class="line">    IdentityFile ~/.ssh/id_ed25519</span><br><span class="line">    ProxyCommand nc -x 127.0.0.1:7890 %h %p%</span><br></pre></td></tr></table></figure>
 <p>其中<code>nc -x</code>后面跟的是socks5的代理地址</p>
-<p>Windows环境下，在 <code>C:\User\$USER\.ssh\config</code>文件下加入如下行</p>
+<p>Windows环境下，在
+<code>C:\User\$USER\.ssh\config</code>文件下加入如下行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Host github.com *.github.com *coding.net</span><br><span class="line">    User git</span><br><span class="line">    Port 22</span><br><span class="line">    HostName %h</span><br><span class="line">    IdentityFile /c/Users/wf09/.ssh/id_ed25519</span><br><span class="line">    ProxyCommand connect -S 127.0.0.1:10809 %h %p</span><br></pre></td></tr></table></figure>
 <p>其中<code>connect -S</code>后面跟的是socks5的代理地址</p>
 <h3 id="检查配置信息">检查配置信息</h3>
@@ -373,7 +376,8 @@
 <li>可以是由标准的<code>glob</code>模式进行匹配；</li>
 <li>匹配模式可以以<code>/</code>开头防止递归；</li>
 <li>匹配模式可以以<code>/</code>结尾制定目录</li>
-<li>要忽略制定模式意外的文件或目录，可以在模式前面加上 感叹号(!)并取反。</li>
+<li>要忽略制定模式意外的文件或目录，可以在模式前面加上
+感叹号(!)并取反。</li>
 </ul>
 <blockquote>
 <p>glob模式是shell所使用的简化的正则表达式：</p>
@@ -404,7 +408,8 @@
 <p>将提交信息和命令放在同一行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m <span class="string">&quot;update progit学习笔记&quot;</span></span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220504190442634.png" /></p>
-<p>可以看到，当前是在那个分支（main）提交的，本次提交的完整的SHA-1校验和<code>5f66f52</code> ，有三个文件修订过，有35行添加并且有一行删改。</p>
+<p>可以看到，当前是在那个分支（main）提交的，本次提交的完整的SHA-1校验和<code>5f66f52</code>
+，有三个文件修订过，有35行添加并且有一行删改。</p>
 <p>提交时记录的<strong>是放在暂存区的快照</strong>，任何还未暂存的文件仍然保持已修改状态，可以在下次提交的时候纳入版本管理。</p>
 <p>每提交一次，都是对项目做一次快照，以后可以<strong>回到这个状态</strong>，或者进行<strong>比较</strong></p>
 <h4 id="跳过使用暂存区">跳过使用暂存区</h4>
@@ -417,7 +422,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">rm</span> --cached file</span><br></pre></td></tr></table></figure>
 <p><code>git rm</code>命令后面可以列出文件或者目录的名字，也可以使用glob模式。注意<code>*</code>号后面的反斜杠<code>\</code>.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">rm</span> <span class="built_in">log</span>/\*<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
-<p>以上命令将删除<code>log/</code> 目录下所有拓展名为<code>.log</code>的所有文件。</p>
+<p>以上命令将删除<code>log/</code>
+目录下所有拓展名为<code>.log</code>的所有文件。</p>
 <h4 id="移动文件">移动文件</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">mv</span> file_from file_to</span><br></pre></td></tr></table></figure>
 <p>相当于运行了以下命令</p>
@@ -426,9 +432,11 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220504192609395.png" /></p>
 <ul>
-<li>在不传任何参数的默认情况下， <code>git log</code>会按照时间先后顺序列出所有的提交，最近的更新排在最上面。</li>
+<li>在不传任何参数的默认情况下，
+<code>git log</code>会按照时间先后顺序列出所有的提交，最近的更新排在最上面。</li>
 </ul>
-<h4 id="按补丁的格式显示最近1次提交引入的差异">按补丁的格式显示<strong>最近1次</strong>提交引入的差异</h4>
+<h4
+id="按补丁的格式显示最近1次提交引入的差异">按补丁的格式显示<strong>最近1次</strong>提交引入的差异</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> -p -1</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220504193112496.png" /></p>
 <h4 id="查看每次提交的简略统计信息">查看每次提交的简略统计信息</h4>
@@ -489,7 +497,8 @@
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>%ad</code></td>
-<td style="text-align: left;">作者修订日期（可以用 --date= 选项定制格式）</td>
+<td style="text-align: left;">作者修订日期（可以用 --date=
+选项定制格式）</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>%ar</code></td>
@@ -566,23 +575,28 @@
 </tr>
 <tr class="even">
 <td><code>--pretty</code></td>
-<td>使用其他格式显示历史提交信息。可用的选项包括 oneline，short，full，fuller 和 format（后跟指定格式）。</td>
+<td>使用其他格式显示历史提交信息。可用的选项包括
+oneline，short，full，fuller 和 format（后跟指定格式）。</td>
 </tr>
 </tbody>
 </table>
 <h4 id="限制输出长度">限制输出长度</h4>
-<p><code>-&lt;n&gt;</code> 选项的写法，其中的 <code>n</code> 可以是任何整数，表示仅显示最近的若干条提交。</p>
+<p><code>-&lt;n&gt;</code> 选项的写法，其中的 <code>n</code>
+可以是任何整数，表示仅显示最近的若干条提交。</p>
 <h4 id="限制输出时间">限制输出时间</h4>
 <p>列出所有<strong>最近两周内的</strong>提交</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --since=2.weeks</span><br></pre></td></tr></table></figure>
 <p>列出5天之前的提交</p>
 <p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --until 5.days</span><br></pre></td></tr></table></figure></p>
-<p>时间可以是<strong>具体的某一天 <code>"2008-01-15"</code></strong>，也可以是<strong>相对时间</strong> <code>"2 years 1 day 3 minutes ago"</code>。</p>
+<p>时间可以是<strong>具体的某一天
+<code>"2008-01-15"</code></strong>，也可以是<strong>相对时间</strong>
+<code>"2 years 1 day 3 minutes ago"</code>。</p>
 <h4 id="筛选commit作者">筛选commit作者</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --author wf09</span><br></pre></td></tr></table></figure>
 <h4 id="筛选commit关键字">筛选commit关键字</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --grep update</span><br></pre></td></tr></table></figure>
-<h4 id="筛选添加或移除了某些字符串的提交">筛选添加或移除了某些字符串的提交</h4>
+<h4
+id="筛选添加或移除了某些字符串的提交">筛选添加或移除了某些字符串的提交</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> -Supdate</span><br></pre></td></tr></table></figure>
 <h4 id="筛选某些文件和目录的历史提交">筛选某些文件和目录的历史提交</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> &lt;file_name&gt;</span><br></pre></td></tr></table></figure>
@@ -600,11 +614,13 @@
 <td style="text-align: left;">仅显示最近的 n 条提交</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>--since</code>, <code>--after</code></td>
+<td style="text-align: left;"><code>--since</code>,
+<code>--after</code></td>
 <td style="text-align: left;">仅显示指定时间之后的提交。</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>--until</code>, <code>--before</code></td>
+<td style="text-align: left;"><code>--until</code>,
+<code>--before</code></td>
 <td style="text-align: left;">仅显示指定时间之前的提交。</td>
 </tr>
 <tr class="even">
@@ -640,7 +656,8 @@
 <h4 id="撤销对文件的更改">撤销对文件的更改</h4>
 <p>还原到上次提交的状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- [filename]</span><br></pre></td></tr></table></figure>
-<p>注意：<code>git checkout --</code>会<strong>完全撤销对当前文件的更改</strong>，和 <code>git reset --hard</code>选项类似</p>
+<p>注意：<code>git checkout --</code>会<strong>完全撤销对当前文件的更改</strong>，和
+<code>git reset --hard</code>选项类似</p>
 
     </div>
 

@@ -286,7 +286,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第四章理解 Pod 和容器设计模式</strong>学习笔记。</p>
+        <p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第四章理解 Pod
+和容器设计模式</strong>学习笔记。</p>
 <p>关键词：<strong>k8s</strong></p>
 <span id="more"></span>
 <h3 id="为什么需要pod">为什么需要Pod</h3>
@@ -340,10 +341,12 @@
 <li>Node_B可用内存为2G</li>
 </ul>
 <p>比如现在没有Pod的概念，就只有两个容器，需要这两个容器<strong>运行在同一台机器上</strong>。如果调度器先把App调度到了Node_A上面，由于内存不足以再运行LogCollector，<strong>调度失败</strong>，必须重新调度。</p>
-<p>以上是一个非常典型的<strong>成组调度失败</strong>的例子，Task co-scheduling问题不是说不能解，在很多项目里，都有类似的解法。</p>
+<p>以上是一个非常典型的<strong>成组调度失败</strong>的例子，Task
+co-scheduling问题不是说不能解，在很多项目里，都有类似的解法。</p>
 <ul>
 <li><p>比如在Mesos中，他会进行<strong>资源囤积</strong>：即当资源满足了所有约束的任务时，才会开始调度，这是一个<strong>典型的成组调度</strong>的解法。在Mesos中，上文提到的两个"容器"不会立刻调度。<strong>但是这样的话调度效率会损失，因为需要等待；其次会因为互相等待而产生死锁。</strong></p></li>
-<li><p>另一种是Google的解法，他在Omega 系统中做了一个非常复杂且非常厉害的解法，被称为<strong>乐观调度</strong>：即不管冲突的异常情况，先调度，同时设置一个回滚机制，如果在调度过程中出现了冲突，即通过回滚来解决问题。这个方式来说更加优雅，也更加高效。<strong>但是实现机制非常复杂</strong>，因为<strong>悲观锁的设置一定要比乐观锁要简单</strong>。</p></li>
+<li><p>另一种是Google的解法，他在Omega
+系统中做了一个非常复杂且非常厉害的解法，被称为<strong>乐观调度</strong>：即不管冲突的异常情况，先调度，同时设置一个回滚机制，如果在调度过程中出现了冲突，即通过回滚来解决问题。这个方式来说更加优雅，也更加高效。<strong>但是实现机制非常复杂</strong>，因为<strong>悲观锁的设置一定要比乐观锁要简单</strong>。</p></li>
 </ul>
 <p>而像这样一个调度问题，在Kubernetes里，直接通过<strong>Pod</strong>一个概念解决了，因为在Kubernetes里，App容器和LogCollector容器是属于一个Pod的，在调度时必然是以一个Pod为单位进行调度，<strong>因此不存在这个问题</strong>。</p>
 <p><img data-src="image-20220505171036279.png" /></p>
@@ -356,7 +359,9 @@
 <li>比如两个进程会<strong>发生文件交换</strong>，例如一个写日志，一个读取日志；</li>
 <li>两个进程之间<strong>通过localhost或者本地的socket</strong>去通信；</li>
 <li>两个容器或者微服务之间，会发生非常频繁的RPC调用，出于性能的考虑，也应该是超亲密关系；</li>
-<li>两个容器或者应用，他们需要<strong>共享某些Linux NameSpace</strong>。最常见的例子就是一个容器需要加入另外一个容器的Network Namespace，这样就可以看到另外一个容器的网络设备信息；</li>
+<li>两个容器或者应用，他们需要<strong>共享某些Linux
+NameSpace</strong>。最常见的例子就是一个容器需要加入另外一个容器的Network
+Namespace，这样就可以看到另外一个容器的网络设备信息；</li>
 </ul>
 <p><img data-src="image-20220505193202869.png" /></p>
 <p>Pod解决了两个问题</p>
@@ -366,15 +371,26 @@
 </ol>
 <h3 id="pod的实现机制">Pod的实现机制</h3>
 <h4 id="pod要解决的问题">Pod要解决的问题</h4>
-<p>容器之间原本说被Linux Namespace和cgroups隔开的，所以现在实际要解决的事怎么打破隔离。</p>
+<p>容器之间原本说被Linux
+Namespace和cgroups隔开的，所以现在实际要解决的事怎么打破隔离。</p>
 <p>具体解法分两个部分：<strong>网络和存储</strong>。</p>
 <h5 id="共享网络">共享网络</h5>
-<p>现在有一个Pod，其中包含了容器A和容器B，他们两个需要共享Network Namespace。</p>
-<p>Kuberetes会在某个Pod里，额外起一个<strong>Infra Container容器</strong>来共享整个Pod的Network Namespace。</p>
-<p>Infra Container是一个非常小的镜像，是一个汇编语言写的、永远处于暂停状态的容器。由于有了这样一个Infra Container之后，<strong>其他所有容器都会通过加入Namespace的方式加入到Infra Container中的Network Namespace中。</strong></p>
-<p>因此一个Pod里面的所有容器网络视图是完全一样的，<strong>即他们看到的网络设备、IP地址、MAC地址等其他网络信息其实完全是一样的</strong>，这些都来自于Pod第一次创建这个Infra Container。</p>
-<p>在Pod里面一定有一个IP地址，是这个Pod的Network Namespace 对应的地址，也是Infra Container的IP地址。这个IP地址被Pod中的容器共享。这就是Pod的网络实现方式。</p>
-<p>在整个Pod里，必然是Infra Container第一个启动，而且整个Pod的生命周期等同于Infra Container的生命周期，与容器A和容器B是无关的。<strong>因此Kubernetes允许单独更新Pod里的某一个镜像，且更新时整个Pod也不会重建，也不会重启。</strong></p>
+<p>现在有一个Pod，其中包含了容器A和容器B，他们两个需要共享Network
+Namespace。</p>
+<p>Kuberetes会在某个Pod里，额外起一个<strong>Infra
+Container容器</strong>来共享整个Pod的Network Namespace。</p>
+<p>Infra
+Container是一个非常小的镜像，是一个汇编语言写的、永远处于暂停状态的容器。由于有了这样一个Infra
+Container之后，<strong>其他所有容器都会通过加入Namespace的方式加入到Infra
+Container中的Network Namespace中。</strong></p>
+<p>因此一个Pod里面的所有容器网络视图是完全一样的，<strong>即他们看到的网络设备、IP地址、MAC地址等其他网络信息其实完全是一样的</strong>，这些都来自于Pod第一次创建这个Infra
+Container。</p>
+<p>在Pod里面一定有一个IP地址，是这个Pod的Network Namespace
+对应的地址，也是Infra
+Container的IP地址。这个IP地址被Pod中的容器共享。这就是Pod的网络实现方式。</p>
+<p>在整个Pod里，必然是Infra
+Container第一个启动，而且整个Pod的生命周期等同于Infra
+Container的生命周期，与容器A和容器B是无关的。<strong>因此Kubernetes允许单独更新Pod里的某一个镜像，且更新时整个Pod也不会重建，也不会重启。</strong></p>
 <p><img data-src="image-20220505193219913.png" /></p>
 <h5 id="共享存储">共享存储</h5>
 <p>现在有两个容器，一个是容器A，另一个是容器B。两个容器需要进行文件共享。</p>
@@ -382,27 +398,38 @@
 <p>之前的例子，应用容器App写了日志，只要这个日志是在一个Volume中，只要声明挂载了同一个Volume，这个Volume就可以被另外一个LogCollector容器看到。</p>
 <p><img data-src="image-20220505194156672.png" /></p>
 <h3 id="详解容器设计模式">详解容器设计模式</h3>
-<p>举个例子，现在需要发布一个应用，这个应用是用JAVA写的，打包完了以后需要把他放在Tomcat的web APP目录下面，这样就可以启动起来了。</p>
+<p>举个例子，现在需要发布一个应用，这个应用是用JAVA写的，打包完了以后需要把他放在Tomcat的web
+APP目录下面，这样就可以启动起来了。</p>
 <p>如果需要打包成镜像，通常有几种做法：</p>
 <ul>
 <li>把WAR包和Tomcat打包进一个镜像里。<strong>此时无论要更新WAR包还是更新Tomcat都要重新做一个镜像。</strong></li>
-<li>镜像里只打包Tomcat。他就是一个Tomcat，但是需要使用数据卷的方式，从宿主机把WAR包挂载进Tomcat中，挂载到web APP目录下。<strong>此时需要维护一套分布式存储系统</strong>，因为master分配负载到工作节点是不一定的，有可能这次分配到节点A下一次就分配到节点B，所以必须有一套分布式存储系统，使得容器无论在A还是在B都可以找到这个WAR包。</li>
+<li>镜像里只打包Tomcat。他就是一个Tomcat，但是需要使用数据卷的方式，从宿主机把WAR包挂载进Tomcat中，挂载到web
+APP目录下。<strong>此时需要维护一套分布式存储系统</strong>，因为master分配负载到工作节点是不一定的，有可能这次分配到节点A下一次就分配到节点B，所以必须有一套分布式存储系统，使得容器无论在A还是在B都可以找到这个WAR包。</li>
 </ul>
 <blockquote>
-<p>即使有了分布式存储系统作Volume，还需要负责维护Volume里的WAR包，需要单独写一套Kubernetes Volume 插件，用于每次Pod启动之前，把应用所需要的WAR包下载到Volume里，最后才能被应用挂载到。</p>
+<p>即使有了分布式存储系统作Volume，还需要负责维护Volume里的WAR包，需要单独写一套Kubernetes
+Volume
+插件，用于每次Pod启动之前，把应用所需要的WAR包下载到Volume里，最后才能被应用挂载到。</p>
 </blockquote>
 <h5 id="init-container">Init Container</h5>
 <p>Kubernetes提供了一种在没有分布式存储的情况下也能发布应用的方式。</p>
-<p>首先定义一个Init Container，就是把WAR包从镜像里拷贝到一个Volume里。完成以后就退出。<strong>Init Container会比用户容器先启动，而且严格按照定义顺序来执行。</strong></p>
-<p>由于一个Pod里面的容器是共享Volume的，tomcat容器启动的时候把Init Container操作的Volume挂载为自己的APP目录，<strong>此时APP目录下一定会找到Init Contaier操作的WAR包。</strong></p>
-<p>有了Init Container，这个Pod就是一个自包含的“容器组”。不用担心没有分布式存储，Volume不是持久化的，它一定是可以公布的。</p>
-<p>通过组合两种不同角色的容器，并且按照像Init Container 这样的一种编排方式，统一的去打包应用。像这样的一个概念，在Kubernetes里就是一个非常经典的容器设计模式，叫做：Sidecar</p>
+<p>首先定义一个Init
+Container，就是把WAR包从镜像里拷贝到一个Volume里。完成以后就退出。<strong>Init
+Container会比用户容器先启动，而且严格按照定义顺序来执行。</strong></p>
+<p>由于一个Pod里面的容器是共享Volume的，tomcat容器启动的时候把Init
+Container操作的Volume挂载为自己的APP目录，<strong>此时APP目录下一定会找到Init
+Contaier操作的WAR包。</strong></p>
+<p>有了Init
+Container，这个Pod就是一个自包含的“容器组”。不用担心没有分布式存储，Volume不是持久化的，它一定是可以公布的。</p>
+<p>通过组合两种不同角色的容器，并且按照像Init Container
+这样的一种编排方式，统一的去打包应用。像这样的一个概念，在Kubernetes里就是一个非常经典的容器设计模式，叫做：Sidecar</p>
 <p><img data-src="image-20220505203809412.png" /></p>
 <h5 id="容器设计模式sidecar">容器设计模式：Sidecar</h5>
 <p><strong>在Pod里，定义一些专门的容器，用来执行主业务容器的一些辅助工作，这种容器设计模式被称为Sidecar。</strong></p>
 <p>还有一些其他操作：</p>
 <ul>
-<li><p>原本需要在<strong>容器里执行SSH需要干的事情</strong>，比如执行脚本，判断一些前置条件，其实都可以像Init Container或者Sidecar的方式去解决；</p></li>
+<li><p>原本需要在<strong>容器里执行SSH需要干的事情</strong>，比如执行脚本，判断一些前置条件，其实都可以像Init
+Container或者Sidecar的方式去解决；</p></li>
 <li><p><strong>日志收集</strong>，日志收集本身是一个进程，就可以打包作为pod的一部分；</p></li>
 <li><p><strong>Debug应用</strong>，现在Debug整个应用都可以在应用Pod里面再次定义一个小的额外的Container，因为在同一个Pod里，共享相同的Namespace</p></li>
 <li><p>查看其他容器的工作状态，不需要登陆到容器里去看，只要把监控组件装到额外的小容器里就行了。<strong>业务监控</strong>也可以通过Sidecar方式来做。</p></li>
@@ -410,16 +437,43 @@
 <p><strong>通过Sidecar可以把辅助功能从业务容器解耦，这个能力还可以重用</strong>，即同样的一个Sidecar容器可以被全公司的人共用。这就是设计模式的威力。</p>
 <p><img data-src="image-20220505203837861.png" /></p>
 <h4 id="sidecar应用与日志收集">Sidecar：应用与日志收集</h4>
-<p>前面提到的应用日志收集，业务容器将日志写在一个 Volume 里面，而由于 Volume 在 Pod 里面是被共享的，所以日志容器 —— 即 Sidecar 容器一定可以通过共享该 Volume，直接把日志文件读出来，然后存到远程存储里面，或者转发到另外一个例子。<strong>现在业界常用的 Fluentd 日志进程或日志组件，基本上都是这样的工作方式。</strong></p>
+<p>前面提到的应用日志收集，业务容器将日志写在一个 Volume 里面，而由于
+Volume 在 Pod 里面是被共享的，所以日志容器 —— 即 Sidecar
+容器一定可以通过共享该
+Volume，直接把日志文件读出来，然后存到远程存储里面，或者转发到另外一个例子。<strong>现在业界常用的
+Fluentd 日志进程或日志组件，基本上都是这样的工作方式。</strong></p>
 <p><img data-src="image-20220505203853464.png" /></p>
 <h4 id="sidecar代理容器">Sidecar：代理容器</h4>
-<p>假如现在有个 Pod 需要访问一个外部系统，或者一些外部服务，但是这些外部系统是一个集群，那么这个时候如何通过一个统一的、简单的方式，用一个 IP 地址，就把这些集群都访问到？有一种方法就是：修改代码。因为代码里记录了这些集群的地址；<strong>另外还有一种解耦的方法，即通过 Sidecar 代理容器。</strong></p>
-<p>简单说，<strong>单独写一个这么小的 Proxy，用来处理对接外部的服务集群，它对外暴露出来只有一个 IP 地址就可以了</strong>。所以接下来，业务容器主要访问 Proxy，然后由 Proxy 去连接这些服务集群，这里的关键在于 Pod 里面多个容器是通过 localhost 直接通信的，因为它们同属于一个 network Namespace，网络视图都一样，所以它们俩通信 localhost，并没有性能损耗。</p>
+<p>假如现在有个 Pod
+需要访问一个外部系统，或者一些外部服务，但是这些外部系统是一个集群，那么这个时候如何通过一个统一的、简单的方式，用一个
+IP
+地址，就把这些集群都访问到？有一种方法就是：修改代码。因为代码里记录了这些集群的地址；<strong>另外还有一种解耦的方法，即通过
+Sidecar 代理容器。</strong></p>
+<p>简单说，<strong>单独写一个这么小的
+Proxy，用来处理对接外部的服务集群，它对外暴露出来只有一个 IP
+地址就可以了</strong>。所以接下来，业务容器主要访问 Proxy，然后由 Proxy
+去连接这些服务集群，这里的关键在于 Pod 里面多个容器是通过 localhost
+直接通信的，因为它们同属于一个 network
+Namespace，网络视图都一样，所以它们俩通信
+localhost，并没有性能损耗。</p>
 <p><img data-src="image-20220505203959014.png" /></p>
 <h4 id="sidecar适配器容器">Sidecar：适配器容器</h4>
-<p>现在业务暴露出来的 API，比如说有个 API 的一个格式是 A，但是现在有一个外部系统要去访问我的业务容器，它只知道的一种格式是 API B ,所以要做一个工作，就是把业务容器怎么想办法改掉，要去改业务代码。但实际上，你可以<strong>通过一个 Adapter 帮你来做这层转换。</strong></p>
-<p>现在有个例子：现在业务容器暴露出来的监控接口是 /metrics，访问这个这个容器的 metrics 的这个 URL 就可以拿到了。可是现在，这个监控系统升级了，它访问的 URL 是 /health，metrics 不认识。那这个怎么办？<strong>可以不去改代码，而是额外写一个 Adapter，用来把所有对 health 的这个请求转发给 metrics</strong>，所以这个 Adapter 对外暴露的是 health 这样一个监控的 URL，这就可以了，你的业务就又可以工作了。</p>
-<p>这样的关键还在于 Pod 之中的容器是通过 localhost 直接通信的，所以没有性能损耗，并且这样一个 <strong>Adapter 容器可以被全公司重用起来</strong>，这些都是设计模式给我们带来的好处。</p>
+<p>现在业务暴露出来的 API，比如说有个 API 的一个格式是
+A，但是现在有一个外部系统要去访问我的业务容器，它只知道的一种格式是 API
+B
+,所以要做一个工作，就是把业务容器怎么想办法改掉，要去改业务代码。但实际上，你可以<strong>通过一个
+Adapter 帮你来做这层转换。</strong></p>
+<p>现在有个例子：现在业务容器暴露出来的监控接口是
+/metrics，访问这个这个容器的 metrics 的这个 URL
+就可以拿到了。可是现在，这个监控系统升级了，它访问的 URL 是
+/health，metrics
+不认识。那这个怎么办？<strong>可以不去改代码，而是额外写一个
+Adapter，用来把所有对 health 的这个请求转发给 metrics</strong>，所以这个
+Adapter 对外暴露的是 health 这样一个监控的
+URL，这就可以了，你的业务就又可以工作了。</p>
+<p>这样的关键还在于 Pod 之中的容器是通过 localhost
+直接通信的，所以没有性能损耗，并且这样一个 <strong>Adapter
+容器可以被全公司重用起来</strong>，这些都是设计模式给我们带来的好处。</p>
 <h3 id="总结">总结</h3>
 <p><img data-src="image-20220505204158684.png" /></p>
 

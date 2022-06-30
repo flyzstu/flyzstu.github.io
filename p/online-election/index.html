@@ -280,7 +280,10 @@
 <li><code>int q(int t)</code>根据前面描述的规则，返回在时刻<code>t</code>在选举中领先的候选人的编号。</li>
 </ul>
 <span id="more"></span>
-<p>输入： <code>["TopVotedCandidate", "q", "q", "q", "q", "q", "q"]</code> <code>[[[0, 1, 1, 0, 0, 1, 0], [0, 5, 10, 15, 20, 25, 30]], [3], [12], [25], [15], [24], [8]]</code> 输出： <code>[null, 0, 1, 1, 0, 0, 1]</code></p>
+<p>输入：
+<code>["TopVotedCandidate", "q", "q", "q", "q", "q", "q"]</code>
+<code>[[[0, 1, 1, 0, 0, 1, 0], [0, 5, 10, 15, 20, 25, 30]], [3], [12], [25], [15], [24], [8]]</code>
+输出： <code>[null, 0, 1, 1, 0, 0, 1]</code></p>
 <p>解释：</p>
 <ul>
 <li>时刻为0时第0张票投给了0号；
@@ -289,7 +292,8 @@
 </ul></li>
 <li>时刻为5时第1张票投给了1号；
 <ul>
-<li>时刻为8时此时票数分布是[0, 1]，因为1是最近获得选票的候选人，因此返回1；</li>
+<li>时刻为8时此时票数分布是[0,
+1]，因为1是最近获得选票的候选人，因此返回1；</li>
 </ul></li>
 <li>时刻为10时第2张票投给了1号；
 <ul>
@@ -299,17 +303,20 @@
 <li>时刻为20时第4张票投给了0号；</li>
 <li>时刻为25时第4张票投给了1号；
 <ul>
-<li>时刻为25时此时票数分布为[0, 1, 1, 0, 0, 1]，又因为1是最近获得票的候选人，因此返回1；</li>
+<li>时刻为25时此时票数分布为[0, 1, 1, 0, 0,
+1]，又因为1是最近获得票的候选人，因此返回1；</li>
 </ul></li>
 <li>时刻为30时第5张票投给了0号。</li>
 </ul>
 <h2 id="方法一预计算二分查找">方法一：预计算+二分查找</h2>
-<p>记<code>persons</code>的长度为<em>N</em>。我们对输入进行预计算，用一个长度为<em>N</em>的数组<code>tops</code>记录各时间段得票数领先的候选人。具体来说，<code>tops[i]</code>表示 <span class="math display">\[
+<p>记<code>persons</code>的长度为<em>N</em>。我们对输入进行预计算，用一个长度为<em>N</em>的数组<code>tops</code>记录各时间段得票数领先的候选人。具体来说，<code>tops[i]</code>表示
+<span class="math display">\[
 \begin{cases}
 times[i]≤t&lt;times[i+1],&amp; 0≤i&lt;N−1 \\
 t≥times[i],&amp; i=N-1
 \end{cases}
-\]</span> 的时间段的领先的候选人，这样的预计算可以通过对<em>persons</em>在<em>time</em>上的计数完成。</p>
+\]</span>
+的时间段的领先的候选人，这样的预计算可以通过对<em>persons</em>在<em>time</em>上的计数完成。</p>
 <p>具体实现方法是：</p>
 <ul>
 <li>用一个哈希表<code>voteCounts</code>记录不同的候选人的得票数，用一个变量<code>top</code>表示当前领先的候选人。按时间从小到大遍历<code>persons</code>和<code>times</code>，并更新<code>voteCounts</code>和<code>top</code>，把<code>top</code>放入<code>tops</code>。遍历结束后，我们可以得到一个长度为N的tops，表示各个时间段的票领先的候选人。</li>
@@ -319,7 +326,8 @@ t≥times[i],&amp; i=N-1
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> TopVotedCandidate <span class="keyword">struct</span> &#123;</span><br><span class="line">	tops        []<span class="type">int</span></span><br><span class="line">	times       []<span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Constructor</span><span class="params">(persons, times []<span class="type">int</span>)</span></span> TopVotedCandidate &#123;</span><br><span class="line">	tops := []<span class="type">int</span>&#123;&#125;</span><br><span class="line">	top := <span class="number">-1</span></span><br><span class="line">	voteCounts := <span class="keyword">map</span>[<span class="type">int</span>]<span class="type">int</span>&#123;<span class="number">-1</span>: <span class="number">-1</span>&#125;</span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> persons &#123;</span><br><span class="line">		voteCounts[p]++</span><br><span class="line">		<span class="keyword">if</span> voteCounts[p] &gt;= voteCounts[top] &#123;</span><br><span class="line">			top = p <span class="comment">// 记录上一个p</span></span><br><span class="line">		&#125;</span><br><span class="line">		tops = <span class="built_in">append</span>(tops, top)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> TopVotedCandidate&#123;tops, times&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *TopVotedCandidate)</span></span> Q(i <span class="type">int</span>) <span class="type">int</span> &#123;</span><br><span class="line">	<span class="comment">// 顺序查找</span></span><br><span class="line">	gap := <span class="number">10000000</span></span><br><span class="line">	ret := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> index, value := <span class="keyword">range</span> t.times &#123;</span><br><span class="line">		<span class="keyword">if</span> i-value &lt; gap &amp;&amp; i &gt;= value &#123;</span><br><span class="line">			gap = i - value</span><br><span class="line">			ret = index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(t.tops[ret])</span><br><span class="line">	<span class="keyword">return</span> t.tops[ret]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="手写二分查找">手写二分查找</h3>
 <ul>
-<li>区间<code>[left,right]</code>, <strong>left &lt;= right</strong>，i &gt; mid(left=mid+1)，i&lt;mid(right=mid-1)</li>
+<li>区间<code>[left,right]</code>, <strong>left &lt;= right</strong>，i
+&gt; mid(left=mid+1)，i&lt;mid(right=mid-1)</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *TopVotedCandidate)</span></span> Q(i <span class="type">int</span>) <span class="type">int</span> &#123;</span><br><span class="line">	<span class="comment">// 二分查找</span></span><br><span class="line">	mid := <span class="number">0</span></span><br><span class="line">	left := <span class="number">0</span></span><br><span class="line">	right := <span class="built_in">len</span>(t.times) - <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">		mid = left + (right-left)/<span class="number">2</span></span><br><span class="line">		<span class="keyword">if</span> i &gt; t.times[mid] &#123;</span><br><span class="line">			left = mid + <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> i &lt; t.times[mid] &#123;</span><br><span class="line">			right = mid - <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> t.tops[mid]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> t.tops[right]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="库函数二分查找">库函数二分查找</h3>

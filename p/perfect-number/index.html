@@ -275,16 +275,26 @@
 <p>给定一个整数，如果是完美数，返回<code>true</code>，否则返回<code>false</code></p>
 <span id="more"></span>
 <p>示例 1：</p>
-<p>输入：num = 28 输出：true 解释：28 = 1 + 2 + 4 + 7 + 14 1, 2, 4, 7, 和 14 是 28 的所有正因子。</p>
+<p>输入：num = 28 输出：true 解释：28 = 1 + 2 + 4 + 7 + 14 1, 2, 4, 7,
+和 14 是 28 的所有正因子。</p>
 <p>示例 2：</p>
 <p>输入：num = 6 输出：true</p>
 <p>示例 3：</p>
 <p>输入：num = 496 输出：true</p>
 <h2 id="方法一枚举">方法一：枚举</h2>
-<p>枚举<code>num</code> 的所有真因子，累加所有真因子之和，记作<code>sum</code>。若<code>sum=num</code>则返回<code>true</code>，否则返回<code>false</code>.</p>
-<p>在枚举时，只需要枚举不超过$  <span class="math inline">\(的数。这是因为如果\)</span>num<span class="math inline">\(有一个大于\)</span>  <span class="math inline">\(的因数\)</span>d<span class="math inline">\(，那么它一定有一个小于\)</span>  $的因数 <span class="math inline">\(frac{num}{d}\)</span>.</p>
-<p>在枚举时，若能找到一个因数<span class="math inline">\(d\)</span>，那么就找到了因数<span class="math inline">\(frac{num}{d}\)</span>.</p>
-<p>当<span class="math inline">\(d \\times d=num\)</span>时，这两个因数相同，此时不能重复计算。</p>
+<p>枚举<code>num</code>
+的所有真因子，累加所有真因子之和，记作<code>sum</code>。若<code>sum=num</code>则返回<code>true</code>，否则返回<code>false</code>.</p>
+<p>在枚举时，只需要枚举不超过$ <span
+class="math inline">\(的数。这是因为如果\)</span>num<span
+class="math inline">\(有一个大于\)</span> <span
+class="math inline">\(的因数\)</span>d<span
+class="math inline">\(，那么它一定有一个小于\)</span> $的因数 <span
+class="math inline">\(frac{num}{d}\)</span>.</p>
+<p>在枚举时，若能找到一个因数<span
+class="math inline">\(d\)</span>，那么就找到了因数<span
+class="math inline">\(frac{num}{d}\)</span>.</p>
+<p>当<span class="math inline">\(d \\times
+d=num\)</span>时，这两个因数相同，此时不能重复计算。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkPerfectNumber</span><span class="params">(num <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> sum <span class="type">int</span> = <span class="number">1</span> <span class="comment">// 和从1开始</span></span><br><span class="line">    <span class="keyword">for</span> d := <span class="number">2</span>; d * d &lt;= num; d ++ &#123;</span><br><span class="line">        <span class="keyword">if</span> num % d == <span class="number">0</span>&#123;</span><br><span class="line">            sum += d</span><br><span class="line">            <span class="keyword">if</span> d * d &lt; num &#123;</span><br><span class="line">                sum += num /d</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum == num</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>

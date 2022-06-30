@@ -279,11 +279,16 @@
 <p>关键词：<strong>k8s</strong></p>
 <span id="more"></span>
 <h3 id="准备工作">准备工作</h3>
-<p>这里是使用的开启了k8s集群的<strong>Docker Desktop For Mac</strong>。在Windows/Mac上使用K8s in Docker请查看上一篇文章。</p>
+<p>这里是使用的开启了k8s集群的<strong>Docker Desktop For
+Mac</strong>。在Windows/Mac上使用K8s in Docker请查看上一篇文章。</p>
 <p><img data-src="image-20220501231242091.png" /></p>
 <h3 id="创建developments">创建Developments</h3>
-<p>Deployment 是在 Pod 上层的一个抽象，它可以定义一组 Pod 的副本数目、以及这个 Pod 的版本。一般用 Deployment 这个抽象来做应用的真正的管理，而 Pod 是组成 Deployment 最小的单元。</p>
-<p>Kubernetes 是通过 Controller，也就是我们刚才提到的控制器去维护 Deployment 中 Pod 的数目，它也会去帮助 Deployment 自动恢复失败的 Pod。</p>
+<p>Deployment 是在 Pod 上层的一个抽象，它可以定义一组 Pod
+的副本数目、以及这个 Pod 的版本。一般用 Deployment
+这个抽象来做应用的真正的管理，而 Pod 是组成 Deployment 最小的单元。</p>
+<p>Kubernetes 是通过 Controller，也就是我们刚才提到的控制器去维护
+Deployment 中 Pod 的数目，它也会去帮助 Deployment 自动恢复失败的
+Pod。</p>
 <p>这里的给出一个Development的定义：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jixiao-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">jixiao</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">jixiao</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">jixiao</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">jixiao-jar</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">Never</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
 <p>TIPS：</p>
@@ -294,7 +299,8 @@
 <h3 id="创建service">创建Service</h3>
 <p>Service 提供了一个或者多个 Pod 实例的稳定访问地址。</p>
 <p>可以理解为Service 是 Pod和外部访问的桥梁。</p>
-<p>通过Servide访问Pod应用有多种方式，这里给出<strong>通过Service 连接到Pod，并通过端口转发访问的方式</strong>。</p>
+<p>通过Servide访问Pod应用有多种方式，这里给出<strong>通过Service
+连接到Pod，并通过端口转发访问的方式</strong>。</p>
 <p>这里创建一个Service：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">jixiao</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">jixiao</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">8080</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">jixiao</span></span><br></pre></td></tr></table></figure>
 <p>TIPS：</p>
@@ -302,7 +308,8 @@
 <li><p>这里通过<code>.spec.selector.app</code>的Value访问刚刚部署的<code>Developments</code>，<strong>即对应的Value要完全相同才行</strong>，简单理解为<code>app: jixiao</code>要出现在两个配置文件中即可。</p></li>
 <li><p><code>targetPort</code>指的是Pod暴露的端口，<code>port</code>指的是在Service中使用的端口。</p></li>
 </ul>
-<h3 id="集群外访问集群内service的方式">集群外访问集群内Service的方式</h3>
+<h3
+id="集群外访问集群内service的方式">集群外访问集群内Service的方式</h3>
 <h4 id="端口转发">端口转发</h4>
 <p>转发一个本地端口到Pod端口</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl port-forward service/jixiao 7777:80</span><br></pre></td></tr></table></figure>
@@ -315,13 +322,19 @@
 <p>新打开一个终端</p>
 <p><img data-src="image-20220501234321909.png" /></p>
 <h4 id="externalips">externalIPs</h4>
-<p>如果外部的 IP 路由到集群中一个或多个 Node 上，Kubernetes Service 会被暴露给这些 <strong>externalIPs</strong>。 通过外部 IP（作为目的 IP 地址）进入到集群，打到 Service 的端口上的流量， 将会被路由到 Service 的 Endpoint 上。</p>
+<p>如果外部的 IP 路由到集群中一个或多个 Node 上，Kubernetes Service
+会被暴露给这些 <strong>externalIPs</strong>。 通过外部 IP（作为目的 IP
+地址）进入到集群，打到 Service 的端口上的流量， 将会被路由到 Service 的
+Endpoint 上。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">server</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">server</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">8888</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">http</span></span><br><span class="line">  <span class="attr">externalIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.15</span><span class="number">.202</span></span><br></pre></td></tr></table></figure>
 <p>TIPS：</p>
 <p>如上配置可以通过<code>192.168.15.202:8888</code>访问到Service后面的Pods应用。</p>
 <h4 id="nodeport">NodePort</h4>
-<p>NodePort 服务是引导外部流量到你的服务的最原始方式。NodePort，正如这个名字所示，在所有节点（虚拟机）上开放一个特定端口，任何发送到该端口的流量都被转发到对应服务。</p>
-<p>然而，<a target="_blank" rel="noopener" href="https://kuboard.cn/learning/k8s-intermediate/service/service-types.html#nodeport">NodePort</a> 默认范围是30000-32767。这个端口号太大，不适合对外提供服务。</p>
+<p>NodePort
+服务是引导外部流量到你的服务的最原始方式。NodePort，正如这个名字所示，在所有节点（虚拟机）上开放一个特定端口，任何发送到该端口的流量都被转发到对应服务。</p>
+<p>然而，<a
+target="_blank" rel="noopener" href="https://kuboard.cn/learning/k8s-intermediate/service/service-types.html#nodeport">NodePort</a>
+默认范围是30000-32767。这个端口号太大，不适合对外提供服务。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">www2</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">www</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">nodePort:</span> <span class="number">30000</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">http</span></span><br></pre></td></tr></table></figure>
 
     </div>

@@ -273,15 +273,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavier NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
+        <p><strong>摘要：</strong>最近实验室买了两块嵌入式NVIDIA Jetson Xavier
+NX 开发板，学长拿来让我折腾下，遂有了这篇文章。</p>
 <p><strong>关键词：</strong>Jetson，NVIDIA，CUDA</p>
 <span id="more"></span>
 <h3 id="介绍">介绍</h3>
 <p>略</p>
 <h3 id="制作启动盘">制作启动盘</h3>
-<p>NVIDIA Jetson Xavie NX镜像下载地址：https://developer.nvidia.com/embedded/downloads#?search=Jetson%20NX</p>
+<p>NVIDIA Jetson Xavie
+NX镜像下载地址：https://developer.nvidia.com/embedded/downloads#?search=Jetson%20NX</p>
 <p><img data-src="image-20220526124139445.png" /></p>
-<p>板子使用的是SD卡作为引导盘和存储盘的，首先要格式化内存卡。使用<strong>SD Card Formatter</strong>格式化内存卡。<a target="_blank" rel="noopener" href="https://www.sdcard.org/downloads/formatter/eula_windows/">SD Card Formatter下载地址</a></p>
+<p>板子使用的是SD卡作为引导盘和存储盘的，首先要格式化内存卡。使用<strong>SD
+Card Formatter</strong>格式化内存卡。<a
+target="_blank" rel="noopener" href="https://www.sdcard.org/downloads/formatter/eula_windows/">SD Card
+Formatter下载地址</a></p>
 <p>格式化时注意<strong>盘符</strong>，随后点击<strong>Format</strong>.</p>
 <h4 id="烧录镜像到内存卡">烧录镜像到内存卡</h4>
 <p>使用<strong>balenaEtcher</strong>软件烧录镜像。下载地址：https://www.balena.io/etcher/</p>
@@ -293,14 +298,17 @@
 <h3 id="初始配置">初始配置</h3>
 <h4 id="采用m.2-key-m-ssd作为启动盘">采用M.2 Key M SSD作为启动盘</h4>
 <ol type="1">
-<li><p>打开Ubuntu18.04自带 Disks 工具，'Ctrl+F' 或点击右上角选择‘Format Disk' 并将其格式化为GPT 格式</p></li>
-<li><p>格式化时必须选择“Ext4”， 等待完成后，点击下方 '三角按钮'，mount 到固定目录如<code>/media/nvidia/xxxx</code></p></li>
+<li><p>打开Ubuntu18.04自带 Disks 工具，'Ctrl+F' 或点击右上角选择‘Format
+Disk' 并将其格式化为GPT 格式</p></li>
+<li><p>格式化时必须选择“Ext4”， 等待完成后，点击下方 '三角按钮'，mount
+到固定目录如<code>/media/nvidia/xxxx</code></p></li>
 <li><p>执行以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/jetsonhacks/rootOnNVMe.git</span><br><span class="line"><span class="built_in">cd</span> rootOnNVMe</span><br><span class="line">./copy-rootfs-ssd.sh</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./setup-service.sh</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h4 id="更改apt源">更改apt源</h4>
-<p>感谢<a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/">清华大学开源软件镜像</a>对开源软件的大力支持。</p>
+<p>感谢<a
+target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/">清华大学开源软件镜像</a>对开源软件的大力支持。</p>
 <p>备份原有源文件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/apt/sources.list /etc/apt/sources.list.bak</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
@@ -312,28 +320,36 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo install python3-pip</span><br><span class="line">python3 -m pip install -i https://mirrors.cloud.tencent.com/pypi/simple --upgrade pip</span><br><span class="line">python3 -m pip install config <span class="built_in">set</span> <span class="keyword">global</span>.index-url https://mirrors.cloud.tencent.com/pypi/simple</span><br></pre></td></tr></table></figure>
 <h4 id="风扇控制">风扇控制</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 255 &gt; /sys/devices/pwm-fan/target_pwm</span><br><span class="line"><span class="comment">#范围0-255,风扇默认是不开的</span></span><br></pre></td></tr></table></figure>
-<p>重启以后风扇是不转的，所以需要设置开机运行： 创建<code>/etc/rc.local</code>，并添加如下内容： （注：系统启动的时候会执行<code>/etc/rc.local</code>，如果已存在rc.local，则在<code>exit 0</code>之前加入那3句命令即可）</p>
+<p>重启以后风扇是不转的，所以需要设置开机运行：
+创建<code>/etc/rc.local</code>，并添加如下内容：
+（注：系统启动的时候会执行<code>/etc/rc.local</code>，如果已存在rc.local，则在<code>exit 0</code>之前加入那3句命令即可）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">sleep</span> 10</span><br><span class="line">sudo /usr/bin/jetson_clocks</span><br><span class="line">sudo sh -c <span class="string">&#x27;echo 255 &gt; /sys/devices/pwm-fan/target_pwm&#x27;</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
 <p>添加执行权限： <code>sudo chmod 755 /etc/rc.local</code></p>
 <p>以后重启就会自动开启最大性能并启动风扇了。</p>
 <h4 id="远程桌面">远程桌面</h4>
 <p>开机以后SSH默认是开启的。这里使用Nomachine作为远程桌面软件。Nomachine的专有NX协议在高延迟低带宽的链路上提供了近乎本地速度的响应能力。</p>
-<p><a target="_blank" rel="noopener" href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_5_arm64.deb">ARM64客户端下载链接</a></p>
-<p><a target="_blank" rel="noopener" href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_7.exe">Windows客户端下载链接</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_5_arm64.deb">ARM64客户端下载链接</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://fly97.coding.net/p/github-projects/d/nomachine/git/raw/master/nomachine_6.12.3_7.exe">Windows客户端下载链接</a></p>
 <h4 id="设置分辨率">设置分辨率</h4>
-<p>如果没有显示器连接，默认VNC 连接后的分辨率为640x480 ，将以下内容添加到<code>/etc/X11/xorg.conf</code>文件，将其设置为默认VNC分辨率设置。</p>
+<p>如果没有显示器连接，默认VNC 连接后的分辨率为640x480
+，将以下内容添加到<code>/etc/X11/xorg.conf</code>文件，将其设置为默认VNC分辨率设置。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Section <span class="string">&quot;Screen&quot;</span></span><br><span class="line">   Identifier    <span class="string">&quot;Default Screen&quot;</span></span><br><span class="line">   Monitor       <span class="string">&quot;Configured Monitor&quot;</span></span><br><span class="line">   Device        <span class="string">&quot;Tegra0&quot;</span></span><br><span class="line">   SubSection <span class="string">&quot;Display&quot;</span></span><br><span class="line">       Depth    24</span><br><span class="line">       Virtual 1024 768 <span class="comment"># Modify the resolution by editing these values</span></span><br><span class="line">   EndSubSection</span><br><span class="line">EndSection</span><br></pre></td></tr></table></figure>
 <h4 id="快捷设置代理">快捷设置代理</h4>
 <p>在<code>/home</code>目录下，把一下内容加入到<code>.bashrc</code>.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> proxy=<span class="string">&#x27;export all_proxy=http://127.0.0.1:10809</span></span><br><span class="line"><span class="string">export https_proxy=http://127.0.0.1:10809</span></span><br><span class="line"><span class="string">export socks_proxy=socks5://127.0.0.1:10808&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> unproxy=<span class="string">&#x27;unset all_proxy https_proxy socks_proxy&#x27;</span></span><br></pre></td></tr></table></figure>
 <h4 id="安装jtop">安装Jtop</h4>
-<p>Jtop（一个系统监视实用程序，可在终端上运行，并实时查看和控制 NVIDIA Jetson的状态 ）</p>
+<p>Jtop（一个系统监视实用程序，可在终端上运行，并实时查看和控制 NVIDIA
+Jetson的状态 ）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install python3-pip</span><br><span class="line">sudo pip3 install jetson-stats </span><br><span class="line">sudo jtop</span><br></pre></td></tr></table></figure>
 <h4 id="查看当前运行功率">查看当前运行功率</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#查询当前状态</span></span><br><span class="line">sudo nvpmodel --query</span><br><span class="line"><span class="comment">#切换状态</span></span><br><span class="line">sudo nvpmodel -m <span class="comment">#Mode_ID</span></span><br><span class="line"><span class="comment">#查看处理器状态</span></span><br><span class="line">sudo jetson_clocks --show</span><br><span class="line"><span class="comment">#如果jetson_clocks 后没有参数，则直接开启static MAX 模式</span></span><br><span class="line">sudo jetson=_clocks</span><br></pre></td></tr></table></figure>
 <h4 id="安装pytorch">安装Pytorch</h4>
-<p><a target="_blank" rel="noopener" href="https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048">下载地址</a></p>
-<p>根据自己的Python环境下载whl文件.这里是Python 3.6.9，安装的版本是PyTorch v1.7。</p>
+<p><a
+target="_blank" rel="noopener" href="https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048">下载地址</a></p>
+<p>根据自己的Python环境下载whl文件.这里是Python
+3.6.9，安装的版本是PyTorch v1.7。</p>
 <p>安装命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install python3-pip libopenblas-base libopenmpi-dev </span><br><span class="line">python3 -m pip install Cython</span><br><span class="line">python3 -m pip install numpy torch-1.7.0-cp36-cp36m-linux_aarch64.whl</span><br></pre></td></tr></table></figure>
 <h5 id="安装torchvision">安装torchvision</h5>
@@ -388,7 +404,9 @@
 <p>官方文档的cmake的配置情况：</p>
 <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">cmake \</span><br><span class="line">-<span class="variable constant_">DCMAKE_BUILD_TYPE</span>=Release \</span><br><span class="line">-<span class="variable constant_">DCMAKE_INSTALL_PREFIX</span>=<span class="regexp">/usr \</span></span><br><span class="line"><span class="regexp">-DBUILD_PNG=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_TIFF=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_TBB=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_JPEG=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_JASPER=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_ZLIB=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_EXAMPLES=ON \</span></span><br><span class="line"><span class="regexp">-DBUILD_JAVA=OFF \</span></span><br><span class="line"><span class="regexp">-DBUILD_opencv_python2=ON \</span></span><br><span class="line"><span class="regexp">-DBUILD_opencv_python3=OFF \</span></span><br><span class="line"><span class="regexp">-DENABLE_NEON=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENCL=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENMP=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_FFMPEG=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_GSTREAMER=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_GSTREAMER_0_10=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_CUDA=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_GTK=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_VTK=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_TBB=ON \</span></span><br><span class="line"><span class="regexp">-DWITH_1394=OFF \</span></span><br><span class="line"><span class="regexp">-DWITH_OPENEXR=OFF \</span></span><br><span class="line"><span class="regexp">-DCUDA_TOOLKIT_ROOT_DIR=/usr</span><span class="regexp">/local/cuda</span>-<span class="number">8.0</span> \</span><br><span class="line">-<span class="variable constant_">DCUDA_ARCH_BIN</span>=<span class="number">6.2</span> \</span><br><span class="line">-<span class="variable constant_">DCUDA_ARCH_PTX</span>=<span class="string">&quot;&quot;</span> \</span><br><span class="line">-<span class="variable constant_">DINSTALL_C_EXAMPLES</span>=<span class="variable constant_">ON</span> \</span><br><span class="line">-<span class="variable constant_">DINSTALL_TESTS</span>=<span class="variable constant_">OFF</span> \</span><br><span class="line">-<span class="variable constant_">DOPENCV_TEST_DATA_PATH</span>=../opencv_extra/testdata \</span><br><span class="line">../opencv</span><br></pre></td></tr></table></figure>
 <p>注意：<strong>请根据自己的的CUDA版本和实际路径修改参数！</strong></p>
-<p>参考链接：<a target="_blank" rel="noopener" href="https://docs.opencv.org/4.4.0/d6/d15/tutorial_building_tegra_cuda.html#tutorial_building_tegra_cuda_installing">OpenCV: Building OpenCV for Tegra with CUDA</a></p>
+<p>参考链接：<a
+target="_blank" rel="noopener" href="https://docs.opencv.org/4.4.0/d6/d15/tutorial_building_tegra_cuda.html#tutorial_building_tegra_cuda_installing">OpenCV:
+Building OpenCV for Tegra with CUDA</a></p>
 <h6 id="编译">编译</h6>
 <p>执行以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j1</span><br></pre></td></tr></table></figure>
@@ -403,7 +421,8 @@
 </ol>
 <p>编译时关闭如下tag：<strong>-DBUILD_JASPER=OFF</strong> 即可.</p>
 <ol start="2" type="1">
-<li><p><strong>fatal error: boostdesc_bgm.i: No such file or directory</strong></p>
+<li><p><strong>fatal error: boostdesc_bgm.i: No such file or
+directory</strong></p>
 <p>可参考：https://github.com/AastaNV/JEP/issues/20</p>
 <p>https://github.com/opencv/opencv_contrib/issues/1301#issuecomment-618262386</p></li>
 </ol>

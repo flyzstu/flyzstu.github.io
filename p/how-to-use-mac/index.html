@@ -290,7 +290,8 @@
 </blockquote>
 <p>略。</p>
 <h3 id="键盘问题">键盘问题</h3>
-<p>(⌃)Control-------------&gt; Ctrl (⌥)Option-------------&gt; Alt (⌘)Command--------&gt; Win</p>
+<p>(⌃)Control-------------&gt; Ctrl (⌥)Option-------------&gt; Alt
+(⌘)Command--------&gt; Win</p>
 <p><img data-src="webp" /></p>
 <p>如果不习惯这样的键位，可以在<strong>系统偏好设置——键盘——修饰键</strong>选项中更改Control和Win的位置，这样复制粘贴操作在两种系统的键盘上是一致的😄</p>
 <p><img data-src="image-20220522194414226.png" /></p>
@@ -333,12 +334,14 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ClientAliveInterval 30 <span class="comment"># 服务端每隔30秒向client发送一个数据包来保持链接</span></span><br><span class="line">ClientAliveCountMax 60 <span class="comment"># 如果发送60次client无回应断开连接</span></span><br></pre></td></tr></table></figure>
 <p>如果什么都不操作，服务端配置可以让连接保持 30s*60=30 min</p>
 <h4 id="共享ssh链接">共享ssh链接</h4>
-<p>如果需要在多个窗口中打开同一个服务器连接，可以尝试添加 <code>~/.ssh/config</code>，添加两行</p>
+<p>如果需要在多个窗口中打开同一个服务器连接，可以尝试添加
+<code>~/.ssh/config</code>，添加两行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ControlMaster auto</span><br><span class="line">ControlPath ~/.ssh/connection-%r@%h:%p</span><br></pre></td></tr></table></figure>
 <p>配置之后，第二条连接共享第一次建立的连接，加快速度。</p>
 <h4 id="添加长链接设置">添加长链接设置</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ControlPersist 4h</span><br></pre></td></tr></table></figure>
-<p>每次 SSH 连接建立之后，此条连接会被保持 4 小时，<strong>退出服务器之后依然可以重用</strong>。</p>
+<p>每次 SSH 连接建立之后，此条连接会被保持 4
+小时，<strong>退出服务器之后依然可以重用</strong>。</p>
 <h4 id="配置连接中转">配置连接中转</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ForwardAgent <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
 <p>当需要从一台服务器连接到另一台服务器，同时两台服务器需要传输数据，以上设置可以不用通过本地电脑中转。</p>

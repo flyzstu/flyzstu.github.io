@@ -295,11 +295,16 @@
 <p>与其他操作系统类似，一个ROS程序的不同组件要放在不同的文件夹下，这些文件夹是根据功能的不同来对文件进行组织的。</p>
 <ol type="1">
 <li>功能包（Package）：功能包构成ROS中的原子级。一个功能包具有创建ROS程序最小结构和最少内容。它可以包含ROS运行时进程（节点）、配置文件等。</li>
-<li>功能包清单（Package Manifest）：功能包清单提供关于功能包、许可证、依赖关系、编译标志等的信息。包清单又一个名为<strong>package.xml</strong>的文件管理。</li>
-<li>元功能包（Metapackage）：如果你希望将几个具有<strong>某些功能的包组织在一起</strong>，那么你将使用一个元功能包。这种包的组织形式<strong>之前被称</strong>为功能包集（Stack ）。功能包集被废除，现在使用元功能包实现这个功能。在ROS中，存在大量不同用途的元功能包，例如<strong>导航功能包集</strong>。</li>
-<li>元功能包清单（Metapackage manifest）：元功能包清单（package.xml）类似普通功能包但又一个XML格式的导出标记，他在结构上也有一定的限制。</li>
-<li>消息类型（Message（msg）type）：消息是一个进程发送到其他进程的消息。ROS 的消息类型的说明存储在<strong>my_package/msg/MyMessageType.msg</strong>中。</li>
-<li>服务类型（Service (srv) Type）：服务描述说明存储在<strong>my_package/srv/MyServiceType.srv</strong>中，为ROS中由每个进程提供的服务定义请求和响应数据结构。</li>
+<li>功能包清单（Package
+Manifest）：功能包清单提供关于功能包、许可证、依赖关系、编译标志等的信息。包清单又一个名为<strong>package.xml</strong>的文件管理。</li>
+<li>元功能包（Metapackage）：如果你希望将几个具有<strong>某些功能的包组织在一起</strong>，那么你将使用一个元功能包。这种包的组织形式<strong>之前被称</strong>为功能包集（Stack
+）。功能包集被废除，现在使用元功能包实现这个功能。在ROS中，存在大量不同用途的元功能包，例如<strong>导航功能包集</strong>。</li>
+<li>元功能包清单（Metapackage
+manifest）：元功能包清单（package.xml）类似普通功能包但又一个XML格式的导出标记，他在结构上也有一定的限制。</li>
+<li>消息类型（Message（msg）type）：消息是一个进程发送到其他进程的消息。ROS
+的消息类型的说明存储在<strong>my_package/msg/MyMessageType.msg</strong>中。</li>
+<li>服务类型（Service (srv)
+Type）：服务描述说明存储在<strong>my_package/srv/MyServiceType.srv</strong>中，为ROS中由每个进程提供的服务定义请求和响应数据结构。</li>
 </ol>
 <p>下面的截图说明了<strong>turtlesim</strong>功能包的内容。所看到的是一系列文件和文件夹，包含代码、图片、启动文件服务和消息。以下只是文件的一个简短列表。</p>
 <p><img data-src="image-20200923193232140.png" /></p>
@@ -308,9 +313,12 @@
 <p>下图所示是一个典型的工作空间。<img data-src="image-20200924144159317.png" /></p>
 <p>主要包含一下内容：</p>
 <ul>
-<li>源文件空间（Source space）：在源空间（src文件夹）中，放置了功能包、项目、复制的包等。<strong>最重要文件：CMakeLists.txt</strong>。当在工作空间配置包时，通过cmake调用CMakeLists.txt。这个文件是通过<strong>catkin_init_workspace</strong>命令创建的。</li>
-<li>编译空间（build space）：在build文件夹里，cmake和catkin为功能包和项目保存缓存信息、配置和其他中间文件。</li>
-<li>开发空间（Development （devel）space）：devel文件夹用来保存编译后的程序，这些是无需安装就能用来测试的程序。</li>
+<li>源文件空间（Source
+space）：在源空间（src文件夹）中，放置了功能包、项目、复制的包等。<strong>最重要文件：CMakeLists.txt</strong>。当在工作空间配置包时，通过cmake调用CMakeLists.txt。这个文件是通过<strong>catkin_init_workspace</strong>命令创建的。</li>
+<li>编译空间（build
+space）：在build文件夹里，cmake和catkin为功能包和项目保存缓存信息、配置和其他中间文件。</li>
+<li>开发空间（Development
+（devel）space）：devel文件夹用来保存编译后的程序，这些是无需安装就能用来测试的程序。</li>
 </ul>
 <p>用catkin编译包有两个选项。第一个是使用标准CMake工作流程。通过使用此方式。可以一次编译一个包，见以下命令：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cmake packageToBuild/</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
@@ -322,6 +330,10 @@
 <h5 id="功能包">功能包</h5>
 <p>包指的是一种特定结构的文件和文件夹组合。</p>
 <table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>目录</th>
@@ -426,8 +438,10 @@
 <h5 id="元功能包">元功能包</h5>
 <p>元包中只有一个文件，这个文件就是<strong>package.xml</strong>。它不包含其他文件，如代码等。</p>
 <p>元功能包用于指代其他按照类似功能特性分组的包，例如导航功能包集，ros_tutorials等。</p>
-<p>使用迁移的特定规则，可以讲ROS Fuerte中的功能包和功能包集转换为Kinetic等。具体参见http://wiki.ros.org/catkin/migrating_from_rosbuild。</p>
-<p>在下图中。可以看到在ros_tutorials元功能包中package.xml的内容。可以看到 &lt;export&gt;标记和&lt;run_depend&gt;标记。这些事功能包清单中必不可缺少的，在下图中也可以看到这些标记。</p>
+<p>使用迁移的特定规则，可以讲ROS
+Fuerte中的功能包和功能包集转换为Kinetic等。具体参见http://wiki.ros.org/catkin/migrating_from_rosbuild。</p>
+<p>在下图中。可以看到在ros_tutorials元功能包中package.xml的内容。可以看到
+&lt;export&gt;标记和&lt;run_depend&gt;标记。这些事功能包清单中必不可缺少的，在下图中也可以看到这些标记。</p>
 <p><img data-src="image-20200924160401768.png" /></p>
 <p>如果你想定位<strong>ros_tutorials</strong>元功能包，可以使用下面的命令：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rosstack find ros_tutorials</span><br></pre></td></tr></table></figure>
@@ -435,7 +449,8 @@
 <p><img data-src="image-20200924161034651.png" /></p>
 <p>查看里面的代码</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
-<p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack find</strong> 命令也可以用于查找元功能包。</p>
+<p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack
+find</strong> 命令也可以用于查找元功能包。</p>
 
     </div>
 

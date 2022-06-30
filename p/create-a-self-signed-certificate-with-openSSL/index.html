@@ -307,7 +307,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl ecparam -genkey -name prime256v1 -out ca.key</span><br></pre></td></tr></table></figure>
 <h4 id="生成ca根证书-1">生成CA根证书</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -x509 -subj <span class="string">&quot;/C=CN/CN=Root\ CA&quot;</span>  -days 7305 -key ca.key -out ca.crt -extensions v3_ca </span><br></pre></td></tr></table></figure>
-<p>这里的C=CN指的是国别代码，CN=Root CA的含义是CA根证书的名称是Root CA。</p>
+<p>这里的C=CN指的是国别代码，CN=Root CA的含义是CA根证书的名称是Root
+CA。</p>
 <h4 id="查看根证书详细信息">查看根证书详细信息</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> ca.crt -text -noout</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220508171315027.png" /></p>
@@ -326,7 +327,8 @@
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">authorityKeyIdentifier</span>=keyid,issuer</span><br><span class="line"><span class="attr">basicConstraints</span>=CA:<span class="literal">FALSE</span></span><br><span class="line"><span class="attr">keyUsage</span> = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment</span><br><span class="line"><span class="attr">subjectAltName</span> = @alt_names</span><br><span class="line"></span><br><span class="line"><span class="section">[alt_names]</span></span><br><span class="line"><span class="attr">DNS.1</span> = localhost</span><br></pre></td></tr></table></figure>
 <h4 id="再次生成域名证书">再次生成域名证书</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 7305 -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> harbor.local.csr -out harbor.crt -extfile v3.ext</span><br></pre></td></tr></table></figure>
-<h4 id="再次查看生成域名证书的详细信息">再次查看生成域名证书的详细信息</h4>
+<h4
+id="再次查看生成域名证书的详细信息">再次查看生成域名证书的详细信息</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> harbor.crt -text -noout</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220508172652252.png" /></p>
 <p>此时成功创建版本v3的ecc域名证书。</p>

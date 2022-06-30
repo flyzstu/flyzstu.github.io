@@ -272,7 +272,11 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>本文介绍了Fish的使用，使用Fish可以根据输入自动匹配历史命令。</p>
-<p><strong>摘要</strong>：Fish的官网宣传语是 Finally, a command line shell for the 90s。 翻译过来就是 Fish shell 是一个为90后准备的 shell。有人说：“二逼青年用bash，普通青年用zsh，文艺青年用fish。” 其次由于zsh 的速度实在是太慢，所以决定换用fish，fish速度快，智能提示强大。</p>
+<p><strong>摘要</strong>：Fish的官网宣传语是 Finally, a command line
+shell for the 90s。 翻译过来就是 Fish shell 是一个为90后准备的
+shell。有人说：“二逼青年用bash，普通青年用zsh，文艺青年用fish。”
+其次由于zsh
+的速度实在是太慢，所以决定换用fish，fish速度快，智能提示强大。</p>
 <p><strong>关键字</strong>：Fish</p>
 <span id="more"></span>
 <h4 id="fish入门使用">Fish入门使用</h4>
@@ -284,14 +288,18 @@
 <li>智能提示</li>
 <li>可以使用web网页的进行终端配置</li>
 </ul>
-<p>fish 有智能提示，一个命令一旦输入过一次，会自动显示上一次的全部命令，细心一点会发现会有一层灰色的字体表示上一次的命令，按<code>Ctrl+F</code>或者 右方向键<code>→</code>， 即可自动补全。</p>
+<p>fish
+有智能提示，一个命令一旦输入过一次，会自动显示上一次的全部命令，细心一点会发现会有一层灰色的字体表示上一次的命令，按<code>Ctrl+F</code>或者
+右方向键<code>→</code>， 即可自动补全。</p>
 <h5 id="网页配置fish">网页配置Fish</h5>
 <p><code>fish_config</code> 可以直接跳出网页版本配置fish的界面。</p>
 <p>web版本可以设置主题， 推荐其中的"Tomorrow Night"主题颜色。</p>
-<p>选择想要的主题，然后点击set theme即可设置主题。 在命令里按enter 即可退出web版本的界面。</p>
+<p>选择想要的主题，然后点击set theme即可设置主题。 在命令里按enter
+即可退出web版本的界面。</p>
 <p>在prompt里面可以自己选择fish终端的主题。</p>
 <h4 id="兼容bash">兼容Bash</h4>
-<p>由于fish 很多<strong>不兼容</strong>bash的功能导致了很多脚本无法运行，这一点是很多人吐槽fish的地方，我们需要一种方式来运行bash脚本。</p>
+<p>由于fish
+很多<strong>不兼容</strong>bash的功能导致了很多脚本无法运行，这一点是很多人吐槽fish的地方，我们需要一种方式来运行bash脚本。</p>
 <p>比如</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arc land --onto `git rev-parse --abbrev-ref HEAD` </span><br></pre></td></tr></table></figure>
 <p>只需要在前面添加一个bash -c 命令即可。</p>
@@ -305,7 +313,8 @@
 <p>其中function fish_prompt 函数用于定义fish终端的显示样式。</p>
 <p>我们只需要写一个fish_prompt函数即可。集成了git的分支名称以及当前的变化。</p>
 <p>显示的样式如下：</p>
-<p><strong>说明: ✔代表当前git项目是干净的。 %1 表示有一个文件未追踪 +1 表示一个文件已暂存</strong></p>
+<p><strong>说明: ✔代表当前git项目是干净的。 %1 表示有一个文件未追踪 +1
+表示一个文件已暂存</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 终端显示样式的配置</span></span><br><span class="line"><span class="keyword">function</span> fish_prompt --description <span class="string">&#x27;Write out the prompt&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> not <span class="built_in">set</span> -q __fish_prompt_normal</span><br><span class="line">        <span class="built_in">set</span> -g __fish_prompt_normal (set_color normal)</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    __fish_git_prompt &gt;/dev/null 2&gt;&amp;1</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> git_is_repo</span><br><span class="line">        <span class="keyword">if</span> not <span class="built_in">set</span> -q __git_cb</span><br><span class="line">            <span class="built_in">set</span> __git_cb (set_color blue)<span class="string">&quot; (&quot;</span>(set_color brred)(git branch | grep \* | sed <span class="string">&#x27;s/* //&#x27;</span>) (set_color -o bryellow)(__fish_git_prompt_informative_status)(set_color blue)<span class="string">&quot;)&quot;</span></span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> not <span class="built_in">set</span> -q __fish_prompt_cwd</span><br><span class="line">        <span class="built_in">set</span> -g __fish_prompt_cwd (set_color <span class="variable">$fish_color_cwd</span>)</span><br><span class="line">    end</span><br><span class="line">    <span class="built_in">printf</span> <span class="string">&#x27;%s%s%s%s &#x27;</span> <span class="string">&quot;<span class="variable">$__fish_prompt_cwd</span>&quot;</span> (prompt_pwd) <span class="string">&quot;<span class="variable">$__fish_prompt_normal</span>&quot;</span> <span class="variable">$__git_cb</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
 <h4 id="隐藏欢迎语">隐藏欢迎语</h4>
 <p>在confin.sh文件里添加如下函数即可</p>

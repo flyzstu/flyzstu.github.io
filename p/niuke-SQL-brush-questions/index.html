@@ -304,7 +304,8 @@
 <p>查询学校为北大、复旦和山大的同学</p>
 <p>推荐使用第二种方法</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where university = &#x27;北京大学&#x27; or university = &#x27;复旦大学&#x27; or university = &#x27;山东大学&#x27;;</span><br><span class="line">select device_id, gender, age, university, gpa from user_profile where university in(&#x27;北京大学&#x27;, &#x27;复旦大学&#x27;, &#x27;山东大学&#x27;); # 复用</span><br></pre></td></tr></table></figure>
-<p>查询gpa在3.5以上(不包括3.5)的山东大学用户 或 gpa在3.8以上(不包括3.8)的复旦大学同学</p>
+<p>查询gpa在3.5以上(不包括3.5)的山东大学用户 或
+gpa在3.8以上(不包括3.8)的复旦大学同学</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select device_id, gender, age, university, gpa from user_profile where (university  &#x27;复旦大学&#x27; and gpa &gt; 3.7) or (university = &#x27;山东大学&#x27; and gpa &gt; 3.5);</span><br></pre></td></tr></table></figure>
 <p>查看学校名称中含北京的用户</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select device_id, age, university from user_profile where university REGEXP &#x27;.*北京.*&#x27;; # 正则</span><br><span class="line">select device_id, age, university from user_profile where university LIKE &#x27;%北京%&#x27;; # 模糊匹配</span><br><span class="line">select device_id, age, university from user_profile where locate(&#x27;北京&#x27;, university) &gt; 0; # 查找子串</span><br></pre></td></tr></table></figure>

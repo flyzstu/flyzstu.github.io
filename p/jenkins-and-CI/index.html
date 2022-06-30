@@ -33,8 +33,7 @@
 <meta property="article:published_time" content="2022-04-06T06:57:00.000Z">
 <meta property="article:modified_time" content="2022-04-06T06:57:00.000Z">
 <meta property="article:author" content="fly97">
-<meta property="article:tag" content="jenkins">
-<meta property="article:tag" content="CI&#x2F;CD">
+<meta property="article:tag" content="Jenkins">
 <meta name="twitter:card" content="summary">
 
 
@@ -272,14 +271,17 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code> + 自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
+        <p>最近实习公司的项目要在甲方那边部署了，而现在还没有开发完毕。因此需要一个持续集成的系统，来实现<strong>定时构建镜像或者jar包的功能</strong>。现在我司是用的<code>coding webhook</code>
++
+自己实现的监听程序，当代码更新时，coding发送一个webhook通知到程序，根据webhook消息的内容来重启容器，从而实现了持续集成的功能。</p>
 <p>然而由于是自己实现的代码，在实际部署过程中遇到了很多bug，因此这套系统肯定不能部署在甲方爸爸那里。</p>
 <p>于是我就去网上搜索，发现jenkins是一个比较好用的持续集成开源软件，于是有了这一系列文章。</p>
 <p>关键词：<strong>jenkins，持续集成</strong></p>
 <span id="more"></span>
 <h2 id="为什么需要持续集成">为什么需要持续集成？</h2>
 <p>持续集成，Continuous Integration，简称CI。</p>
-<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile） 在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
+<p>随着软件开发复杂度的不断提高，团队开发成员间如何更好地协同工作以确保软件开发的质量已经慢慢成为开发过程中不可回避的问题。尤其是近些年来，敏捷（Agile）
+在软件工程领域越来越红火，如何能再不断变化的需求中快速适应和保证软件的质量也显得尤其的重要。</p>
 <p>持续集成正是针对这一类问题的一种软件开发实践。它倡导团队开发成员必须经常集成他们的工作，甚至每天都可能发生多次集成。而每次的集成都是通过自动化的构建来验证，包括<strong>自动编译、发布和测试</strong>，从而尽快地发现集成错误，让团队能够更快的开发内聚的软件。</p>
 <h3 id="持续集成的特点">持续集成的特点</h3>
 <ul>
@@ -295,18 +297,24 @@
 <h2 id="如何实现持续集成">如何实现持续集成？</h2>
 <h3 id="jenkins介绍">Jenkins介绍</h3>
 <p>Jenkins，原名Hudson，2011年改为现在的名字，它是一个开源的实现持续集成的软件工具。官方网站：http://jenkins-ci.org/。</p>
-<p>Jenkins 能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
+<p>Jenkins
+能实施监控集成中存在的错误，提供详细的日志文件和提醒功能，还能用图表的形式形象地展示项目构建的趋势和稳定性。</p>
 <p>目前持续集成（CI）已成为当前许多软件开发团队在整个软件开发生命周期内侧重于保证代码质量的常见做法。它是一种实践，旨在<strong>缓和和稳固软件</strong>的构建过程。并且能够帮助您的开发团队应对如下挑战：</p>
 <ul>
-<li><p>软件构建自动化 ：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
-<li><p>构建可持续的自动化检查 ：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
-<li><p>构建可持续的自动化测试 ：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
-<li><p>生成后后续过程的自动化 ：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
+<li><p>软件构建自动化
+：配置完成后，CI系统会依照预先制定的时间表，或者针对某一特定事件，对目标软件进行构建；</p></li>
+<li><p>构建可持续的自动化检查
+：CI系统能持续地获取新增或修改后签入的源代码，也就是说，当软件开发团队需要周期性的检查新增或修改后的代码时，CI系统会不断确认这些新代码是否破坏了原有软件的成功构建。这减少了开发者们在检查彼此相互依存的代码中变化情况需要花费的时间和精力；</p></li>
+<li><p>构建可持续的自动化测试
+：构建检查的扩展部分，构建后执行预先制定的一套测试规则，完成后触发通知(Email,RSS等等)给相关的当事人；</p></li>
+<li><p>生成后后续过程的自动化
+：当自动化检查和测试成功完成，软件构建的周期中可能也需要一些额外的任务，诸如生成文档、打包软件、部署构件到一个运行环境或者软件仓库。这样，构件才能更迅速地提供给用户使用；</p></li>
 </ul>
 <p>部署一个CI系统需要的最低要求是，<strong>一个可获取的源代码的仓库，一个包含构建脚本的项目。</strong></p>
 <h3 id="jenkins特点">Jenkins特点</h3>
 <ul>
-<li><p>易安装：仅一个 jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
+<li><p>易安装：仅一个
+jenkins.war文件，从官网下载该文件后，直接运行，无需额外的安装，无需安装数据库等；</p></li>
 <li><p>易配置：提供友好的GUI配置界面；</p></li>
 <li><p>变更支持：Jenkins能从代码仓库（Subversion/CVS）中获取并产生代码更新列表并输出到编译输出信息中；</p></li>
 <li><p>支持永久链接：用户是通过web来访问Jenkins的，而这些web页面的链接地址都是永久链接地址，因此，你可以在各种文档中直接使用该链接；</p></li>
@@ -345,16 +353,15 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/jenkins/" rel="tag"># jenkins</a>
-              <a href="/tags/CI-CD/" rel="tag"># CI/CD</a>
+              <a href="/tags/Jenkins/" rel="tag"># Jenkins</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/set-mail-push-in-jenkins/" rel="prev" title="Jenkins实战（三）设置邮件推送">
-                  <i class="fa fa-chevron-left"></i> Jenkins实战（三）设置邮件推送
+                <a href="/p/docker-in-docker/" rel="prev" title="Docker in docker">
+                  <i class="fa fa-chevron-left"></i> Docker in docker
                 </a>
             </div>
             <div class="post-nav-item">

@@ -276,18 +276,23 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor 在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub 或其他第三方镜像仓库。</p>
+        <p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor
+在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub
+或其他第三方镜像仓库。</p>
 <p>关键词：<strong>Harbor</strong></p>
 <span id="more"></span>
 <h3 id="安装helm">安装Helm</h3>
 <p>我们将 Helm 客户端安装在 k8s-master 节点上</p>
 <h4 id="用二进制版本安装">用二进制版本安装</h4>
 <ol type="1">
-<li>下载 <a target="_blank" rel="noopener" href="https://github.com/helm/helm/releases">需要的版本</a></li>
+<li>下载 <a
+target="_blank" rel="noopener" href="https://github.com/helm/helm/releases">需要的版本</a></li>
 <li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li>
 <li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li>
 </ol>
-<p>然后就可以执行客户端程序并 <a target="_blank" rel="noopener" href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>: <code>helm help</code>.</p>
+<p>然后就可以执行客户端程序并 <a
+target="_blank" rel="noopener" href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>:
+<code>helm help</code>.</p>
 <p><img data-src="image-20220507135650409.png" /></p>
 <h4 id="查看版本号">查看版本号</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure>
@@ -309,14 +314,22 @@
 <h4 id="解压缩">解压缩</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar xvf harbor-1.9.0.tgz</span><br><span class="line"><span class="built_in">cd</span> harbor</span><br></pre></td></tr></table></figure>
 <h4 id="修改配置">修改配置</h4>
-<p>修改配置文件<code>values.yaml</code>，具体查看<a target="_blank" rel="noopener" href="https://github.com/goharbor/harbor-helm/blob/master/README.md#configuration">GIthub配置列表</a>。</p>
+<p>修改配置文件<code>values.yaml</code>，具体查看<a
+target="_blank" rel="noopener" href="https://github.com/goharbor/harbor-helm/blob/master/README.md#configuration">GIthub配置列表</a>。</p>
 <p>这里修改了以下几个配置：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">nodePort</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">nodePort:</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30004</span></span><br><span class="line">      <span class="attr">https:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30005</span></span><br><span class="line">      <span class="attr">notary:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30006</span></span><br><span class="line"><span class="attr">externalURL:</span> <span class="string">http://192.168.232.167:30004</span></span><br><span class="line"><span class="attr">persistence:</span></span><br><span class="line">  <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">    <span class="attr">registry:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;registry&quot;</span></span><br><span class="line">    <span class="attr">chartmuseum:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;chartmuseum&quot;</span></span><br><span class="line">    <span class="attr">jobservice:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;jobservice&quot;</span></span><br><span class="line">    <span class="attr">database:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;database&quot;</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;redis&quot;</span></span><br></pre></td></tr></table></figure>
 <p>其中 <code>pvc-harbor</code> 是预先创建好的 PVC，创建过程略。</p>
 <p>部署 Harbor：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ helm install -g harbor/harbor -f values.yaml .</span><br><span class="line"></span><br><span class="line">NAME: harbor-1589352564</span><br><span class="line">LAST DEPLOYED: Wed May 13 14:49:25 2020</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">Please <span class="built_in">wait</span> <span class="keyword">for</span> several minutes <span class="keyword">for</span> Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at http://192.168.232.167:30004.</span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br></pre></td></tr></table></figure>
-<p>部署成功，等待 Harbor 启动完成，然后就可以通过<code>http://192.168.232.167:30004</code> 访问Harbor，默认用户名是admin，密码是Harbor12345。</p>
-<p>由于 Docker 自从 1.3.x 之后，docker registry 交互默认使用的是HTTPS，而我们搭建的 Harbor 使用的是HTTP，所以为了避免 pull/push 镜像时得到错误：<code>http: server gave HTTP response to HTTPS client</code>，需要修改 docker 的配置文件 <code>/etc/docker/daemon.json</code>，加入以下配置：</p>
+<p>部署成功，等待 Harbor
+启动完成，然后就可以通过<code>http://192.168.232.167:30004</code>
+访问Harbor，默认用户名是admin，密码是Harbor12345。</p>
+<p>由于 Docker 自从 1.3.x 之后，docker registry
+交互默认使用的是HTTPS，而我们搭建的 Harbor 使用的是HTTP，所以为了避免
+pull/push
+镜像时得到错误：<code>http: server gave HTTP response to HTTPS client</code>，需要修改
+docker 的配置文件
+<code>/etc/docker/daemon.json</code>，加入以下配置：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;192.168.232.167:30004&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 <p>保存后重启 docker 服务：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
@@ -325,14 +338,16 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull busybox:latest</span><br></pre></td></tr></table></figure>
 <p>修改 tag：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag busybox:latest 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
-<p>library 是 Harbor 的默认项目地址，也可以登录 Harbor 自行新建一个项目。</p>
+<p>library 是 Harbor 的默认项目地址，也可以登录 Harbor
+自行新建一个项目。</p>
 <p>使用 docker login 登录到 Harbor，并输入用户名和密码：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker login 192.168.232.167:30004</span><br></pre></td></tr></table></figure>
 <p>登录成功后，上传镜像到 Harbor：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
 <h3 id="后记">后记</h3>
 <p>上面的软件没有部署完，<strong>例如PVC和helm的架构还不懂，</strong>因此先告一段落。</p>
-<p>决定先使用<code>docker-compose</code>先部署<strong>Harbor</strong> 。</p>
+<p>决定先使用<code>docker-compose</code>先部署<strong>Harbor</strong>
+。</p>
 <h3 id="参考文档">参考文档</h3>
 <p>https://helm.sh/docs/using_helm/#installing-helm</p>
 <p>https://github.com/goharbor/harbor-helm</p>

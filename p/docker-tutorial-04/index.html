@@ -290,7 +290,9 @@
 <ul>
 <li>表明容器收到了<code>SIGKILL</code>信号，表示进程被杀掉，对应<code>kill -9</code>；</li>
 <li>引发<code>SIGKILL</code>的通常是用户手动执行的<code>docker kill</code>或者由docker守护进程发起的；</li>
-<li>在k8s中，如果Pod的limit资源设置比较小，引发运行内存不足导致 <code>OOMKillered</code>，此时<code>state</code>的 <code>OOMKilled</code>设置为<code>true</code>。通过<code>dmesg -T</code>也可看到oom日志</li>
+<li>在k8s中，如果Pod的limit资源设置比较小，引发运行内存不足导致
+<code>OOMKillered</code>，此时<code>state</code>的
+<code>OOMKilled</code>设置为<code>true</code>。通过<code>dmesg -T</code>也可看到oom日志</li>
 </ul>
 <h4 id="exit-139">Exit 139</h4>
 <ul>
@@ -299,15 +301,20 @@
 </ul>
 <h4 id="exit-143">Exit 143</h4>
 <ul>
-<li>表明容器收到了 <code>SIGTERM</code>信号，表示终端被关闭，对应<code>kill -15</code>；</li>
+<li>表明容器收到了
+<code>SIGTERM</code>信号，表示终端被关闭，对应<code>kill -15</code>；</li>
 <li>引发<code>SIGTERM</code>一般对应用户手动执行<code>docker stop</code>或者由docker守护进程发起的；</li>
-<li>有时<code>docker stop</code>命令也可能会导致<strong>Exit 137</strong>。在发生代码无法处理<code>SIGTERM</code>的情况下，docker守护进程等待10秒钟后发出<code>SIGKILL</code>强制退出。</li>
+<li>有时<code>docker stop</code>命令也可能会导致<strong>Exit
+137</strong>。在发生代码无法处理<code>SIGTERM</code>的情况下，docker守护进程等待10秒钟后发出<code>SIGKILL</code>强制退出。</li>
 </ul>
 <h4 id="不常用的一些-exit-code">不常用的一些 Exit Code</h4>
 <ul>
 <li><code>Exit 126</code>: 权限问题或命令不可执行</li>
-<li><code>Exit 127</code>: Shell脚本中可能出现错字且字符无法识别的情况</li>
-<li><code>Exit 1 或 255</code>：因为很多程序员写异常退出时习惯用 exit(1) 或 exit(-1)，-1 会根据转换规则转成 255。这个一般是自定义 code，要看具体逻辑。</li>
+<li><code>Exit 127</code>:
+Shell脚本中可能出现错字且字符无法识别的情况</li>
+<li><code>Exit 1 或 255</code>：因为很多程序员写异常退出时习惯用 exit(1)
+或 exit(-1)，-1 会根据转换规则转成 255。这个一般是自定义
+code，要看具体逻辑。</li>
 </ul>
 <h3 id="附录具有特殊含义的退出代码">附录：具有特殊含义的退出代码</h3>
 <table>
@@ -348,7 +355,9 @@
 <td>127</td>
 <td>调用的命令找不到</td>
 <td>illegal_command</td>
-<td><span class="math inline">\(PATH 拼写错误或者可能有问题 | | 128 | 退出参数无效 | exit 3.14159 | exit 只接受 0 - 255 范围内的整数参数 | | 128+n | 致命错误信号 | *kill -9* `\)</span>PPID` of script</td>
+<td><span class="math inline">\(PATH 拼写错误或者可能有问题 | | 128 |
+退出参数无效 | exit 3.14159 | exit 只接受 0 - 255 范围内的整数参数 | |
+128+n | 致命错误信号 | *kill -9* `\)</span>PPID` of script</td>
 </tr>
 <tr class="odd">
 <td>130</td>
@@ -365,7 +374,11 @@
 </tbody>
 </table>
 <ul>
-<li>根据上表，退出代码 1 - 2、126 - 165 和 255 [1] 具有特殊含义，因此对于用户指定的退出参数应避免使用。 以退出 127 结束脚本肯定会在故障排除时引起混淆（错误代码是“找不到命令”还是用户定义的？）。 但是，许多脚本使用退出 1 作为一般的错误救助。 <strong>由于退出代码 1 表示许多可能的错误，因此它在调试中并不是特别有用。</strong></li>
+<li>根据上表，退出代码 1 - 2、126 - 165 和 255 [1]
+具有特殊含义，因此对于用户指定的退出参数应避免使用。 以退出 127
+结束脚本肯定会在故障排除时引起混淆（错误代码是“找不到命令”还是用户定义的？）。
+但是，许多脚本使用退出 1 作为一般的错误救助。 <strong>由于退出代码 1
+表示许多可能的错误，因此它在调试中并不是特别有用。</strong></li>
 </ul>
 
     </div>

@@ -290,19 +290,28 @@
 <h5 id="启动服务">启动服务</h5>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service kms start</span><br><span class="line">service kms stop</span><br></pre></td></tr></table></figure>
 <h4 id="systemctl命令">systemctl命令</h4>
-<p>​ systemd是Linux系统最新的初始化系统(init),作用是提高系统的启动速度，尽可能启动较少的进程，尽可能更多进程并发启动。systemd对应的进程管理命令是<strong>systemctl</strong>。</p>
+<p>​
+systemd是Linux系统最新的初始化系统(init),作用是提高系统的启动速度，尽可能启动较少的进程，尽可能更多进程并发启动。systemd对应的进程管理命令是<strong>systemctl</strong>。</p>
 <p>还是以kms服务脚本为例</p>
-<p>新建一个<code>kms.service</code>文件，保存在 <code>/etc/systemd/system/kms.service</code>.</p>
+<p>新建一个<code>kms.service</code>文件，保存在
+<code>/etc/systemd/system/kms.service</code>.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=kms-service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">ExecStart=/usr/local/bin/kms</span><br><span class="line">ExecStop=/bin/kill -9 <span class="variable">$MAINPID</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-<p>可以看到service文件一般由：<strong>[Unit]</strong>、<strong>[Service]</strong>和<strong>[Install]</strong> 三部分组成</p>
+<p>可以看到service文件一般由：<strong>[Unit]</strong>、<strong>[Service]</strong>和<strong>[Install]</strong>
+三部分组成</p>
 <ol type="1">
-<li>[Unit] 主要是对这个服务的说明，内容， 文档介绍以及对一些依赖服务定义</li>
-<li>[Service] 服务的主体定义，主要定义服务的一些运行参数，及操作动作</li>
+<li>[Unit] 主要是对这个服务的说明，内容，
+文档介绍以及对一些依赖服务定义</li>
+<li>[Service]
+服务的主体定义，主要定义服务的一些运行参数，及操作动作</li>
 <li>[Install] 服务安装的相关设置，一般可设置为多用户的</li>
 </ol>
 <p><u>以下是具体参数</u></p>
 <p><strong>[Unit]</strong></p>
 <table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>参数</th>
@@ -328,7 +337,8 @@
 </tr>
 <tr class="odd">
 <td>Requires</td>
-<td>依赖其他的单元服务， 需要与列出的服务一起激活，若任何服务无法启动，则该单元不会被激活</td>
+<td>依赖其他的单元服务，
+需要与列出的服务一起激活，若任何服务无法启动，则该单元不会被激活</td>
 </tr>
 <tr class="even">
 <td>Wants</td>
@@ -359,7 +369,8 @@
 </tr>
 <tr class="odd">
 <td>PIDFile</td>
-<td>存放PID的文件路径, 对于type设置为<strong>forking</strong>建议使用该项</td>
+<td>存放PID的文件路径,
+对于type设置为<strong>forking</strong>建议使用该项</td>
 </tr>
 <tr class="even">
 <td>ExecStart</td>
@@ -383,11 +394,16 @@
 </tr>
 <tr class="odd">
 <td>Restart</td>
-<td>定义何种情况Systemd会自动重启当前服务，值： 包括<strong>always（总是重启）</strong>、<strong>no</strong> 、<strong>on-success</strong>、<strong>on-failure</strong>、<strong>on-abnormal</strong>、<strong>on-abort</strong>、<strong>on-watchdog</strong> 对于守护进程，推荐设为on-failure。对于那些允许发生错误退出的服务，可以设为on-abnormal</td>
+<td>定义何种情况Systemd会自动重启当前服务，值：
+包括<strong>always（总是重启）</strong>、<strong>no</strong>
+、<strong>on-success</strong>、<strong>on-failure</strong>、<strong>on-abnormal</strong>、<strong>on-abort</strong>、<strong>on-watchdog</strong>
+对于守护进程，推荐设为on-failure。对于那些允许发生错误退出的服务，可以设为on-abnormal</td>
 </tr>
 <tr class="even">
 <td>TimeoutStartSec</td>
-<td>等待启动的时间。如果守护进程服务没有在配置的时间内发送启动完成的信号，则该服务将被认为失败， 服务将退出。<br/>以秒为单位， “0”来禁用。默认为， 默认使用DefaultTimeoutStartSec=20，<br/>若使用Type=<strong>oneshot</strong>，则该模式默认情况下超时是禁用的</td>
+<td>等待启动的时间。如果守护进程服务没有在配置的时间内发送启动完成的信号，则该服务将被认为失败，
+服务将退出。<br/>以秒为单位， “0”来禁用。默认为，
+默认使用DefaultTimeoutStartSec=20，<br/>若使用Type=<strong>oneshot</strong>，则该模式默认情况下超时是禁用的</td>
 </tr>
 <tr class="odd">
 <td>TimeoutStopSec</td>
@@ -399,7 +415,9 @@
 </tr>
 <tr class="odd">
 <td>KillMode</td>
-<td>control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉<br/>process：只杀主进程<br/>mixed：主进程将收到 SIGTERM 信号，子进程收到 SIGKILL 信号<br/>none：没有进程会被杀掉，只是执行服务的 stop 命令。</td>
+<td>control-group（默认值）：当前控制组里面的所有子进程，都会被杀掉<br/>process：只杀主进程<br/>mixed：主进程将收到
+SIGTERM 信号，子进程收到 SIGKILL
+信号<br/>none：没有进程会被杀掉，只是执行服务的 stop 命令。</td>
 </tr>
 <tr class="even">
 <td>Environmen</td>
@@ -427,7 +445,8 @@
 <tbody>
 <tr class="odd">
 <td>WantedBy</td>
-<td>表示该服务所在的 Target， multi-user.target 可以设置为多用户模式具体参考手册systemd.unit(5)</td>
+<td>表示该服务所在的 Target， multi-user.target
+可以设置为多用户模式具体参考手册systemd.unit(5)</td>
 </tr>
 </tbody>
 </table>

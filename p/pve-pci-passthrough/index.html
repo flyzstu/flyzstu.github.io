@@ -301,13 +301,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Proxmox VE是一个既可以运行虚拟机也可以运行容器的虚拟化平台。Proxmox VE基于Debian Linux 开发，而且完全开源。处于灵活性的考虑，Proxmox VE同时支持两种虚拟化技术：KVM虚拟机和LXC容器。以下操作基于KVM虚拟机。</p>
+        <p>Proxmox VE是一个既可以运行虚拟机也可以运行容器的虚拟化平台。Proxmox
+VE基于Debian Linux 开发，而且完全开源。处于灵活性的考虑，Proxmox
+VE同时支持两种虚拟化技术：KVM虚拟机和LXC容器。以下操作基于KVM虚拟机。</p>
 <span id="more"></span>
-<p><strong>任务背景：</strong>实验室有一台闲置的服务器，配置是64GB内存，10GB NVIDIA RTX 2080 Ti 显卡，i9-10900K 20核CPU。组内有师姐需要跑深度学习代码，而师兄的项目需要在服务器上运行数据库。为了实现数据隔离（生产环境不影响开发环境），考虑了一下两种方案：</p>
-<p>1.Docker方案。服务器装ubuntu系统，每个任务运行一个docker 容器。优点是运行任务简单，直接<code>docker pull</code> 相应的容器即可。缺点对于不熟悉docker运维的人来说，维护相对复杂，有些任务需要持久化，需要将不同容器的不同目录映射到ubuntu下的目录。这样无法实现数据隔离，违背了初衷，而且无法实现<code>ip</code>直接访问，需要设置端口映射。遂放弃。</p>
+<p><strong>任务背景：</strong>实验室有一台闲置的服务器，配置是64GB内存，10GB
+NVIDIA RTX 2080 Ti 显卡，i9-10900K
+20核CPU。组内有师姐需要跑深度学习代码，而师兄的项目需要在服务器上运行数据库。为了实现数据隔离（生产环境不影响开发环境），考虑了一下两种方案：</p>
+<p>1.Docker方案。服务器装ubuntu系统，每个任务运行一个docker
+容器。优点是运行任务简单，直接<code>docker pull</code>
+相应的容器即可。缺点对于不熟悉docker运维的人来说，维护相对复杂，有些任务需要持久化，需要将不同容器的不同目录映射到ubuntu下的目录。这样无法实现数据隔离，违背了初衷，而且无法实现<code>ip</code>直接访问，需要设置端口映射。遂放弃。</p>
 <p>2.PVE-KVM方案。宿主机安装基于<code>debian</code>的<code>Proxmox VE</code>操作系统，不同的任务创建不同的客户机，根据<code>VM ID</code>和<code>ip</code>区分客户机。缺点是配置复杂。<strong><font color="red">不过生命在于折腾，生命不止，折腾不息。</font></strong></p>
 <h4 id="准备工作">准备工作</h4>
-<p>检查CPU是否支持VT-d ： https://ark.intel.com/content/www/cn/zh/ark.html</p>
+<p>检查CPU是否支持VT-d ：
+https://ark.intel.com/content/www/cn/zh/ark.html</p>
 <p><img data-src="image-20210112135114468.png" /></p>
 <h4 id="设置国内源">设置国内源</h4>
 <p>修改PVE Debian 源</p>
@@ -320,15 +327,22 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 执行完成后，浏览器Ctrl+F5强制刷新缓存</span></span><br><span class="line">sed -Ezi.bak <span class="string">&quot;s/(Ext.Msg.show\(\&#123;\s+title: gettext\(&#x27;No valid sub)/void\(\&#123; \/\/\1/g&quot;</span> /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js &amp;&amp; systemctl restart pveproxy.service</span><br></pre></td></tr></table></figure>
 <h4 id="修改节点名称">修改节点名称</h4>
 <ol type="1">
-<li><p>修改 <code>/etc/hostname</code> 、 <code>/etc/hosts</code> 、 <code>/etc/postfix/mail.cf</code>里的主机名称，保存</p></li>
-<li><p>复制 <code>/etc/pve/nodes/旧节点名称/</code> 所有文件 至 <code>/etc/pve/nodes/新节点名称/</code> 目录。</p>
+<li><p>修改 <code>/etc/hostname</code> 、 <code>/etc/hosts</code> 、
+<code>/etc/postfix/mail.cf</code>里的主机名称，保存</p></li>
+<li><p>复制 <code>/etc/pve/nodes/旧节点名称/</code> 所有文件 至
+<code>/etc/pve/nodes/新节点名称/</code> 目录。</p>
 <p>直接cp或者mv的话，这一步可能会报错</p>
-<p><font color="red">cannot create regular file ‘/etc/pve/nodes/新节点名称/qemu-server/***.conf’: File exists</font></p></li>
+<p><font color="red">cannot create regular file
+‘/etc/pve/nodes/新节点名称/qemu-server/***.conf’: File
+exists</font></p></li>
 <li><p>如果报错：</p>
 <ol type="1">
-<li>将旧节点 <code>/etc/pve/nodes/旧节点名称/qemu-server/</code> 目录下的所有 <strong>.conf</strong> 文件转移到其他地方，比如下载到本地</li>
+<li>将旧节点 <code>/etc/pve/nodes/旧节点名称/qemu-server/</code>
+目录下的所有 <strong>.conf</strong>
+文件转移到其他地方，比如下载到本地</li>
 <li>删除旧节点目录 <code>/etc/pve/nodes/旧节点名称/</code></li>
-<li>将备份的 <strong>.conf</strong> 文件转移回 <code>/etc/pve/nodes/新节点名称/qemu-server/</code> 目录</li>
+<li>将备份的 <strong>.conf</strong> 文件转移回
+<code>/etc/pve/nodes/新节点名称/qemu-server/</code> 目录</li>
 </ol></li>
 <li><p>重启PVE，在WEB端可以看到节点名称已更改，且旧节点已删除</p></li>
 <li><p>修改节点名称后，可能需要修改一下<strong>附加的存储、NFS目录等</strong></p></li>
@@ -370,7 +384,8 @@
 <ol type="1">
 <li>Ballooning需要客户机操作系统加载virtio_balloon驱动，然而并非每个客户机系统都有该驱动（如windows需要自己安装该驱动）</li>
 <li>如果有大量内存从客户机系统中回收，Ballooning可能会降低客户机操作系统运行的性能。一方面，内存的减少，可能会让客户机中作为磁盘数据缓存的内存被放到气球中，从而客户机中的磁盘I/O访问会增加；另一方面，如果处理机制不够好，也可能让客户机中正在运行的进程由于内存不足而执行失败。</li>
-<li>目前没有比较方便的、自动化的机制来管理ballooning，一般都是采用在QEMU monitor中执行balloon命令来实现ballooning的。没有对客户机的有效监控，没有自动化的ballooning机制，这可能会让生产环境中实现大规模自动化部署并不很方便。</li>
+<li>目前没有比较方便的、自动化的机制来管理ballooning，一般都是采用在QEMU
+monitor中执行balloon命令来实现ballooning的。没有对客户机的有效监控，没有自动化的ballooning机制，这可能会让生产环境中实现大规模自动化部署并不很方便。</li>
 <li>内存的动态增加或减少，可能会使内存被过度碎片化，从而降低内存使用时的性能。</li>
 </ol>
 <p>在PVE中可以简单的开启内存ballooning</p>
@@ -381,13 +396,15 @@
 <p>进入客户机，输入以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lspci | grep <span class="string">&quot;Red Hat&quot;</span></span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220503164147722.png" /></p>
-<p>如看到 <font color="red"><strong>Red Hat</strong>, Inc. Virtio memory balloon</font> 说明启用成功</p></li>
+<p>如看到 <font color="red"><strong>Red Hat</strong>, Inc. Virtio memory
+balloon</font> 说明启用成功</p></li>
 <li><p>查看宿主机回收了多少内存</p>
 <p>登录宿主机，如这里要查看编号为102客户机的内存回收情况，输入一下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">qm monitor 102 <span class="comment"># 进入qm shell</span></span><br><span class="line">qm&gt;info balloon</span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20220503164718636.png" /></p></li>
 </ol>
-<p>​ 这里的<code>free_mem</code>就是宿主机从客户机回收的内存大小，可以看到，总共分配了8G，这里回收了大概7G多。在客户机负载比较低的时候还是很有用的。</p>
+<p>​
+这里的<code>free_mem</code>就是宿主机从客户机回收的内存大小，可以看到，总共分配了8G，这里回收了大概7G多。在客户机负载比较低的时候还是很有用的。</p>
 <h4 id="创建虚拟机">创建虚拟机</h4>
 <p>千万注意不要设置自启动！！</p>
 <p><img data-src="image-20210112135351055.png" /></p>
@@ -445,7 +462,8 @@
 <p>其中100 是VM ID</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qm <span class="built_in">set</span> 100 -machine pc-q35-3.1</span><br></pre></td></tr></table></figure>
 <h5 id="添加显卡">添加显卡</h5>
-<p>添加PCI设备，注意ID要选择你的电脑对应的显卡ID。注意不要添加成其他设备，如Audio device等。</p>
+<p>添加PCI设备，注意ID要选择你的电脑对应的显卡ID。注意不要添加成其他设备，如Audio
+device等。</p>
 <p><img data-src="image-20210112153802857.png" /></p>
 <p><img data-src="image-20210112154050976.png" /></p>
 <h5 id="安装操作系统">安装操作系统</h5>
@@ -476,12 +494,17 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto wlp3s0</span><br><span class="line">iface wlp3s0 inet dhcp</span><br><span class="line">        wpa-ssid <span class="string">&quot;SSID&quot;</span></span><br><span class="line">        wpa-psk <span class="string">&quot;PASSWORD&quot;</span></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address 192.168.0.1</span><br><span class="line">        netmask 255.255.255.0</span><br><span class="line">        bridge_ports none</span><br><span class="line">        bridge_stp off</span><br><span class="line">        bridge_fd 0</span><br></pre></td></tr></table></figure>
 <h4 id="pve的四种网络模式">PVE的四种网络模式</h4>
 <h5 id="基于网桥的默认配置">基于网桥的默认配置</h5>
-<p>网桥相当于一个软件实现的物理交换机。所有虚拟机共享一个网桥，在多个域的网络环境中， 也可以创建多个网桥以分别对应不同网络域。理论上，每个Proxmox VE 最多可以支持4094个网桥。</p>
-<p>Proxmox VE 安装程序会创建一个名为vmbr0 的网桥，并和检测到的服务器第一块网卡桥接。</p>
+<p>网桥相当于一个软件实现的物理交换机。所有虚拟机共享一个网桥，在多个域的网络环境中，
+也可以创建多个网桥以分别对应不同网络域。理论上，每个Proxmox VE
+最多可以支持4094个网桥。</p>
+<p>Proxmox VE 安装程序会创建一个名为vmbr0
+的网桥，并和检测到的服务器第一块网卡桥接。</p>
 <p><img data-src="default-network-setup-bridge-16407688858982.svg" /></p>
-<p>配置文件<code>/etc/network/interfaces</code> 中的对应配置信息如下：</p>
+<p>配置文件<code>/etc/network/interfaces</code>
+中的对应配置信息如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">iface enp2s0 inet manual</span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address 192.168.10.2/24</span><br><span class="line">        gateway 192.168.10.1</span><br><span class="line">        bridge_ports enp2s0</span><br><span class="line">        bridge_stp off</span><br><span class="line">        bridge_fd 0</span><br><span class="line"></span><br><span class="line">iface enp4s0 inet manual</span><br><span class="line"></span><br><span class="line">iface wlp3s0 inet manual</span><br></pre></td></tr></table></figure>
-<p>在基于网桥的默认配置下，虚拟机看起来就和直接接入物理网络一样。尽管所有虚拟机共享 一根网线接入网络，但每台虚拟机都使用自己独立的MAC 地址访问网络。</p>
+<p>在基于网桥的默认配置下，虚拟机看起来就和直接接入物理网络一样。尽管所有虚拟机共享
+一根网线接入网络，但每台虚拟机都使用自己独立的MAC 地址访问网络。</p>
 <p><strong>注意：这种模式在当前是通过无线网卡连接外网的状态下可能无法正常工作！</strong></p>
 <h5 id="路由配置">路由配置</h5>
 <p>处于网络安全的考虑，大部分网络服务托管商一旦发现网络接口上有多个mac地址出现，托管商有可能立刻禁用相关网络接口。</p>
@@ -493,15 +516,21 @@
 <p>常见的应用场景是吗，你有一个可以和外部网络通信的IP地址，假定为（192.51.100.5），还有一个供虚拟机使用的IP地址段（203.0.113.16/29）。针对该场景，推荐使用以下配置：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto eno0</span><br><span class="line">iface eno0 inet static</span><br><span class="line">        address  198.51.100.5/29</span><br><span class="line">        gateway  198.51.100.1</span><br><span class="line">        post-up <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line">        post-up <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/conf/eno1/proxy_arp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address  203.0.113.17/28</span><br><span class="line">        bridge-ports none</span><br><span class="line">        bridge-stp off</span><br><span class="line">        bridge-fd 0</span><br></pre></td></tr></table></figure>
 <p>路由模式下，需要在PVE内部搭建DHCP服务器，以便在启动虚拟机时，动态获取网络配置（IP，网关等），该模式下无法直接访问PVE内部虚拟机。如果像直接访问，可以通过代理或者端口转发方式。</p>
-<h5 id="基于iptables的网络地址转换配置nat">基于iptables的网络地址转换配置（NAT）</h5>
-<p>利用地址转换技术，所有虚拟机可以使用内部私有IP 地址，并通过Proxmox VE 服务器的IP来访问外部网络。Iptables 将改写虚拟机和外部网络通信数据包，对于虚拟机向外部网络发出的数据包，将源IP 地址替换成服务器IP 地址，对于外部网络返回数据包，将目的地址替换为对应虚拟机IP 地址。</p>
+<h5
+id="基于iptables的网络地址转换配置nat">基于iptables的网络地址转换配置（NAT）</h5>
+<p>利用地址转换技术，所有虚拟机可以使用内部私有IP 地址，并通过Proxmox VE
+服务器的IP来访问外部网络。Iptables
+将改写虚拟机和外部网络通信数据包，对于虚拟机向外部网络发出的数据包，将源IP
+地址替换成服务器IP
+地址，对于外部网络返回数据包，将目的地址替换为对应虚拟机IP 地址。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto eno1</span><br><span class="line"><span class="comment">#real IP address</span></span><br><span class="line">iface eno1 inet static</span><br><span class="line">        address  198.51.100.5/24</span><br><span class="line">        gateway  198.51.100.1</span><br><span class="line"></span><br><span class="line">auto vmbr0</span><br><span class="line"><span class="comment">#private sub network</span></span><br><span class="line">iface vmbr0 inet static</span><br><span class="line">        address  10.10.10.1/24</span><br><span class="line">        bridge-ports none</span><br><span class="line">        bridge-stp off</span><br><span class="line">        bridge-fd 0</span><br><span class="line"></span><br><span class="line">        post-up   <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line">        post-up   iptables -t nat -A POSTROUTING -s <span class="string">&#x27;10.10.10.0/24&#x27;</span> -o eno1 -j MASQUERADE</span><br><span class="line">        post-down iptables -t nat -D POSTROUTING -s <span class="string">&#x27;10.10.10.0/24&#x27;</span> -o eno1 -j MASQUERADE</span><br></pre></td></tr></table></figure>
 <h4 id="lvc容器网络配置">LVC容器网络配置</h4>
 <p>在宿主机的网络配置是通过iptables进行NAT的基础下，设置容器的网络地址为静态配置，从而容器可以正常上网。</p>
 <h5 id="安装必要软件">安装必要软件</h5>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install proxmox-ve postfix open-iscsi -y</span><br></pre></td></tr></table></figure>
 <h5 id="下载导入模板">下载、导入模板</h5>
-<p><a target="_blank" rel="noopener" href="https://www.cxthhhhh.com/2020/11/08/system-image-the-latest-template-v1-2-of-ubuntu-20-04-lxc-ovz-ssh-enabled-time-zone-optimized.html">点此下载</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://www.cxthhhhh.com/2020/11/08/system-image-the-latest-template-v1-2-of-ubuntu-20-04-lxc-ovz-ssh-enabled-time-zone-optimized.html">点此下载</a></p>
 <h5 id="创建lvc容器">创建LVC容器</h5>
 <p>注意勾选<strong>无特权的容器</strong></p>
 <p><img data-src="image-20211229172815237.png" /></p>
