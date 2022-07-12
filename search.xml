@@ -635,6 +635,52 @@
       </tags>
   </entry>
   <entry>
+    <title>Go语言操作MySQL数据库</title>
+    <url>/p/go-mysql/</url>
+    <content><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p>
+<p>关键词：<strong>golang</strong></p>
+<span id="more"></span>
+<h3 id="连接">连接</h3>
+<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
+<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers 获取驱动列表。</p>
+<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
+<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
+<h4 id="下载依赖">下载依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
+<h4 id="初始化链接">初始化链接</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li>
+<li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
+<li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>验证数据库是否可用</li>
+<li>如果必要的话建立一个连接</li>
+</ul>
+<h4 id="设置最大连接数">设置最大连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大连接数</li>
+<li>如果n &gt; 0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
+<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
+</ul>
+<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大闲置连接数</li>
+<li>如果n 大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
+<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go语言基础（二）读写json字符串</title>
     <url>/p/go-json/</url>
     <content><![CDATA[<p>本文主要介绍了Go语言中读写json的相关操作。</p>
@@ -687,52 +733,6 @@
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line">jsonDATA, err = json.Marshal(msg) <span class="comment">// 不带缩进 </span></span><br><span class="line">json.MarshalIndent(c, <span class="string">&quot;&quot;</span>, <span class="string">&quot;     &quot;</span>) <span class="comment">// 带缩进</span></span><br></pre></td></tr></table></figure>
 <h4 id="完整代码">完整代码</h4>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	msg := &amp;Data&#123;&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg: %v\n&quot;</span>, msg)</span><br><span class="line">	jsonDATA, err := ioutil.ReadFile(<span class="string">&quot;data.json&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// fmt.Printf(&quot;jsonDATA: %s\n&quot;, string(jsonDATA))</span></span><br><span class="line">	err = json.Unmarshal(jsonDATA, msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg.Content: %v\n&quot;</span>, msg.Content)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg.MsgType: %v\n&quot;</span>, msg.MsgType)</span><br><span class="line">	<span class="comment">// jsonDATA, err = json.Marshal(msg) // 不带缩进</span></span><br><span class="line">	jsonDATA, err = json.MarshalIndent(msg, <span class="string">&quot;&quot;</span>, <span class="string">&quot;  &quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;string(jsonDATA): %v\n&quot;</span>, <span class="type">string</span>(jsonDATA))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go语言操作MySQL数据库</title>
-    <url>/p/go-mysql/</url>
-    <content><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p>
-<p>关键词：<strong>golang</strong></p>
-<span id="more"></span>
-<h3 id="连接">连接</h3>
-<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
-<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers 获取驱动列表。</p>
-<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
-<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
-<h4 id="下载依赖">下载依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
-<h4 id="初始化链接">初始化链接</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li>
-<li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
-<li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>验证数据库是否可用</li>
-<li>如果必要的话建立一个连接</li>
-</ul>
-<h4 id="设置最大连接数">设置最大连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大连接数</li>
-<li>如果n &gt; 0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
-<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
-</ul>
-<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大闲置连接数</li>
-<li>如果n 大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
-<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
-</ul>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -3360,28 +3360,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用Github Action定时重启IBM cloud foundry</title>
-    <url>/p/ibm-cloud-auto-restart/</url>
-    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
-<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
-<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
-<span id="more"></span>
-<h3 id="yml配置文件">yml配置文件</h3>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用方法">使用方法</h3>
-<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
-<h4 id="设置环境变量">设置环境变量</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
-<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
-<h4 id="效果图">效果图</h4>
-<p><img data-src="image-20200827193322808.png" /></p>
-<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
-]]></content>
-      <tags>
-        <tag>github</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>go语言设计与实现之反射</title>
     <url>/p/Reflections-in-go-language-base/</url>
     <content><![CDATA[<p>写日志收集项目的时候遇到了一个关于<code>reflect</code>的问题，于是有了这一篇文章。</p>
@@ -3601,6 +3579,28 @@
 ]]></content>
       <tags>
         <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Github Action定时重启IBM cloud foundry</title>
+    <url>/p/ibm-cloud-auto-restart/</url>
+    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
+<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
+<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
+<span id="more"></span>
+<h3 id="yml配置文件">yml配置文件</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用方法">使用方法</h3>
+<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
+<h4 id="设置环境变量">设置环境变量</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
+<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
+<h4 id="效果图">效果图</h4>
+<p><img data-src="image-20200827193322808.png" /></p>
+<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
+]]></content>
+      <tags>
+        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -4358,6 +4358,43 @@
       </tags>
   </entry>
   <entry>
+    <title>Ubuntu配置jdk-12环境</title>
+    <url>/p/install-jdk12-on-ubuntu2004/</url>
+    <content><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p>
+<p><strong>关键词：jdk，ubuntu，linux</strong></p>
+<span id="more"></span>
+<h3 id="下载jdk">下载jdk</h3>
+<p>下载相应版本的jdk，这里以jdk-12为例：</p>
+<p>https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html</p>
+<p><img data-src="image-20211130153041694.png" /></p>
+<p>此处需要登录Oracle账号。</p>
+<p>根据自己的系统类型选择即可，这里选择打包好的<strong>二进制文件.tar.gz</strong>。</p>
+<p>下载完上传到服务器即可。</p>
+<h3 id="安装jdk">安装jdk</h3>
+<h4 id="解压文件">解压文件</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvfz jdk-12.0.2_linux-x64_bin.tar.gz</span><br></pre></td></tr></table></figure>
+<p>移动到目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mv</span> jdk-12.0.2 /usr/local/</span><br></pre></td></tr></table></figure>
+<h4 id="设置环境变量">设置环境变量</h4>
+<p>设置环境变量一般有三种：</p>
+<ul>
+<li><code>/etc/profile</code>：对全部用户生效，对所有shell解释器生效；</li>
+<li><code>/etc/bash.bashrc</code>：对全部用户生效，对bash解释器生效；</li>
+<li><code>/home/&lt;user_name&gt;/.bashrc</code>：仅对当前用户名生效，对bash解释器生效。</li>
+</ul>
+<p>这里选择第二种。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/local/jdk-12.0.2</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="comment"># export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span></span><br></pre></td></tr></table></figure>
+<h3 id="检查jdk是否安装成功">检查jdk是否安装成功</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20211130155722694.png" /></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">javac -version</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20211130155802514.png" /></p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu安装kafka和zookeeper并设置开机自动启动</title>
     <url>/p/install-kafka-on-ubuntu2004/</url>
     <content><![CDATA[<p>kafka是一个分布式消息队列。具有高性能、持久化、多副本备份、横向扩展能力。生产者往队列里写消息，消费者从队列里取消息进行业务逻辑。一般在架构设计中起到解耦、削峰、异步处理的作用。kafka对外使用topic的概念，生产者往topic里写消息，消费者从读消息。为了做到水平扩展，一个topic实际是由多个partition组成的，遇到瓶颈时，可以通过增加partition的数量来进行横向扩容。单个parition内是保证消息有序。每新写一条消息，kafka就是在对应的文件append写，所以性能非常高。</p>
@@ -4460,43 +4497,6 @@
 ]]></content>
       <tags>
         <tag>DNS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu配置jdk-12环境</title>
-    <url>/p/install-jdk12-on-ubuntu2004/</url>
-    <content><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p>
-<p><strong>关键词：jdk，ubuntu，linux</strong></p>
-<span id="more"></span>
-<h3 id="下载jdk">下载jdk</h3>
-<p>下载相应版本的jdk，这里以jdk-12为例：</p>
-<p>https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html</p>
-<p><img data-src="image-20211130153041694.png" /></p>
-<p>此处需要登录Oracle账号。</p>
-<p>根据自己的系统类型选择即可，这里选择打包好的<strong>二进制文件.tar.gz</strong>。</p>
-<p>下载完上传到服务器即可。</p>
-<h3 id="安装jdk">安装jdk</h3>
-<h4 id="解压文件">解压文件</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvfz jdk-12.0.2_linux-x64_bin.tar.gz</span><br></pre></td></tr></table></figure>
-<p>移动到目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mv</span> jdk-12.0.2 /usr/local/</span><br></pre></td></tr></table></figure>
-<h4 id="设置环境变量">设置环境变量</h4>
-<p>设置环境变量一般有三种：</p>
-<ul>
-<li><code>/etc/profile</code>：对全部用户生效，对所有shell解释器生效；</li>
-<li><code>/etc/bash.bashrc</code>：对全部用户生效，对bash解释器生效；</li>
-<li><code>/home/&lt;user_name&gt;/.bashrc</code>：仅对当前用户名生效，对bash解释器生效。</li>
-</ul>
-<p>这里选择第二种。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/local/jdk-12.0.2</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="comment"># export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span></span><br></pre></td></tr></table></figure>
-<h3 id="检查jdk是否安装成功">检查jdk是否安装成功</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20211130155722694.png" /></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">javac -version</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20211130155802514.png" /></p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -6047,110 +6047,6 @@
       </tags>
   </entry>
   <entry>
-    <title>初探docker（四）| docker容器退出码</title>
-    <url>/p/docker-tutorial-04/</url>
-    <content><![CDATA[<p>本文主要介绍Docker容器退出状态码。</p>
-<p><strong>关键词：Docker</strong></p>
-<span id="more"></span>
-<h3 id="常见容器退出码解释">常见容器退出码解释</h3>
-<h4 id="exit-0">Exit 0</h4>
-<ul>
-<li>退出状态码表示特定容器没有附加前台进程</li>
-<li>该状态码表示<strong>容器正常退出</strong></li>
-<li>某些情况下，容器中的进程成功捕获到了外部收到的信号，并成功进程了处理，此时容器退出的状态码也是0。</li>
-</ul>
-<h4 id="exit-1">Exit 1</h4>
-<ul>
-<li>程序错误，例如Dockerfile引用了不存在的文件，如entrypoint引用了错误的包；</li>
-<li>程序错误可以很简单比如除以0，也可很复杂比如空引用和其他程序crash；</li>
-</ul>
-<h4 id="exit-137">Exit 137</h4>
-<ul>
-<li>表明容器收到了<code>SIGKILL</code>信号，表示进程被杀掉，对应<code>kill -9</code>；</li>
-<li>引发<code>SIGKILL</code>的通常是用户手动执行的<code>docker kill</code>或者由docker守护进程发起的；</li>
-<li>在k8s中，如果Pod的limit资源设置比较小，引发运行内存不足导致 <code>OOMKillered</code>，此时<code>state</code>的 <code>OOMKilled</code>设置为<code>true</code>。通过<code>dmesg -T</code>也可看到oom日志</li>
-</ul>
-<h4 id="exit-139">Exit 139</h4>
-<ul>
-<li>表明容器收到了<code>SIGENV</code>信号，表示无效的内存引用，对应<code>kill -11</code>；</li>
-<li>一般是代码或者基础镜像有问题</li>
-</ul>
-<h4 id="exit-143">Exit 143</h4>
-<ul>
-<li>表明容器收到了 <code>SIGTERM</code>信号，表示终端被关闭，对应<code>kill -15</code>；</li>
-<li>引发<code>SIGTERM</code>一般对应用户手动执行<code>docker stop</code>或者由docker守护进程发起的；</li>
-<li>有时<code>docker stop</code>命令也可能会导致<strong>Exit 137</strong>。在发生代码无法处理<code>SIGTERM</code>的情况下，docker守护进程等待10秒钟后发出<code>SIGKILL</code>强制退出。</li>
-</ul>
-<h4 id="不常用的一些-exit-code">不常用的一些 Exit Code</h4>
-<ul>
-<li><code>Exit 126</code>: 权限问题或命令不可执行</li>
-<li><code>Exit 127</code>: Shell脚本中可能出现错字且字符无法识别的情况</li>
-<li><code>Exit 1 或 255</code>：因为很多程序员写异常退出时习惯用 exit(1) 或 exit(-1)，-1 会根据转换规则转成 255。这个一般是自定义 code，要看具体逻辑。</li>
-</ul>
-<h3 id="附录具有特殊含义的退出代码">附录：具有特殊含义的退出代码</h3>
-<table>
-<colgroup>
-<col style="width: 9%" />
-<col style="width: 25%" />
-<col style="width: 20%" />
-<col style="width: 45%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>退出状态代码</th>
-<th>含义</th>
-<th>例子</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>捕获一般错误</td>
-<td>let "var1 = 1 / 0"</td>
-<td>各种各样的错误，例如“除以零”和其他不允许的操作</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>滥用shell内置函数（根据bash文档）</td>
-<td>empty_function() {}</td>
-<td>缺少关键字或命令，或权限问题（以及二进制文件比较失败的差异返回代码）</td>
-</tr>
-<tr class="odd">
-<td>126</td>
-<td>调用的命令无法执行</td>
-<td>/dev/null</td>
-<td>权限问题或命令不是可执行文件</td>
-</tr>
-<tr class="even">
-<td>127</td>
-<td>调用的命令找不到</td>
-<td>illegal_command</td>
-<td><span class="math inline">\(PATH 拼写错误或者可能有问题 | | 128 | 退出参数无效 | exit 3.14159 | exit 只接受 0 - 255 范围内的整数参数 | | 128+n | 致命错误信号 | *kill -9* `\)</span>PPID` of script</td>
-</tr>
-<tr class="odd">
-<td>130</td>
-<td>由 Ctrl-C 终止的脚本</td>
-<td>Ctrl-C</td>
-<td>Ctrl-C 是致命错误，错误信号是2</td>
-</tr>
-<tr class="even">
-<td>255*</td>
-<td>退出状态超出范围</td>
-<td>exit -1</td>
-<td>exit 只接受 0 - 255 范围内的整数</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>根据上表，退出代码 1 - 2、126 - 165 和 255 [1] 具有特殊含义，因此对于用户指定的退出参数应避免使用。 以退出 127 结束脚本肯定会在故障排除时引起混淆（错误代码是“找不到命令”还是用户定义的？）。 但是，许多脚本使用退出 1 作为一般的错误救助。 <strong>由于退出代码 1 表示许多可能的错误，因此它在调试中并不是特别有用。</strong></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探docker(三) | docker-compose 简介</title>
     <url>/p/docker-tutorial-03/</url>
     <content><![CDATA[<p>本文主要介绍<code>Docker Compose</code>.</p>
@@ -6334,6 +6230,110 @@
 <p>使用指定数目的GPU</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">test:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nvidia/cuda:10.2-base</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">nvidia-smi</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">reservations:</span></span><br><span class="line">          <span class="attr">devices:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">driver:</span> <span class="string">nvidia</span></span><br><span class="line">              <span class="attr">count:</span> <span class="number">1</span></span><br><span class="line">              <span class="attr">capabilities:</span> [<span class="string">gpu</span>]</span><br></pre></td></tr></table></figure>
 <p>使用全部的GPU <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">test:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">tensorflow/tensorflow:latest-gpu</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">python</span> <span class="string">-c</span> <span class="string">&quot;import tensorflow as tf;tf.test.gpu_device_name()&quot;</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">reservations:</span></span><br><span class="line">          <span class="attr">devices:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">capabilities:</span> [<span class="string">gpu</span>]</span><br></pre></td></tr></table></figure></p>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探docker（四）| docker容器退出码</title>
+    <url>/p/docker-tutorial-04/</url>
+    <content><![CDATA[<p>本文主要介绍Docker容器退出状态码。</p>
+<p><strong>关键词：Docker</strong></p>
+<span id="more"></span>
+<h3 id="常见容器退出码解释">常见容器退出码解释</h3>
+<h4 id="exit-0">Exit 0</h4>
+<ul>
+<li>退出状态码表示特定容器没有附加前台进程</li>
+<li>该状态码表示<strong>容器正常退出</strong></li>
+<li>某些情况下，容器中的进程成功捕获到了外部收到的信号，并成功进程了处理，此时容器退出的状态码也是0。</li>
+</ul>
+<h4 id="exit-1">Exit 1</h4>
+<ul>
+<li>程序错误，例如Dockerfile引用了不存在的文件，如entrypoint引用了错误的包；</li>
+<li>程序错误可以很简单比如除以0，也可很复杂比如空引用和其他程序crash；</li>
+</ul>
+<h4 id="exit-137">Exit 137</h4>
+<ul>
+<li>表明容器收到了<code>SIGKILL</code>信号，表示进程被杀掉，对应<code>kill -9</code>；</li>
+<li>引发<code>SIGKILL</code>的通常是用户手动执行的<code>docker kill</code>或者由docker守护进程发起的；</li>
+<li>在k8s中，如果Pod的limit资源设置比较小，引发运行内存不足导致 <code>OOMKillered</code>，此时<code>state</code>的 <code>OOMKilled</code>设置为<code>true</code>。通过<code>dmesg -T</code>也可看到oom日志</li>
+</ul>
+<h4 id="exit-139">Exit 139</h4>
+<ul>
+<li>表明容器收到了<code>SIGENV</code>信号，表示无效的内存引用，对应<code>kill -11</code>；</li>
+<li>一般是代码或者基础镜像有问题</li>
+</ul>
+<h4 id="exit-143">Exit 143</h4>
+<ul>
+<li>表明容器收到了 <code>SIGTERM</code>信号，表示终端被关闭，对应<code>kill -15</code>；</li>
+<li>引发<code>SIGTERM</code>一般对应用户手动执行<code>docker stop</code>或者由docker守护进程发起的；</li>
+<li>有时<code>docker stop</code>命令也可能会导致<strong>Exit 137</strong>。在发生代码无法处理<code>SIGTERM</code>的情况下，docker守护进程等待10秒钟后发出<code>SIGKILL</code>强制退出。</li>
+</ul>
+<h4 id="不常用的一些-exit-code">不常用的一些 Exit Code</h4>
+<ul>
+<li><code>Exit 126</code>: 权限问题或命令不可执行</li>
+<li><code>Exit 127</code>: Shell脚本中可能出现错字且字符无法识别的情况</li>
+<li><code>Exit 1 或 255</code>：因为很多程序员写异常退出时习惯用 exit(1) 或 exit(-1)，-1 会根据转换规则转成 255。这个一般是自定义 code，要看具体逻辑。</li>
+</ul>
+<h3 id="附录具有特殊含义的退出代码">附录：具有特殊含义的退出代码</h3>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 25%" />
+<col style="width: 20%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>退出状态代码</th>
+<th>含义</th>
+<th>例子</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>捕获一般错误</td>
+<td>let "var1 = 1 / 0"</td>
+<td>各种各样的错误，例如“除以零”和其他不允许的操作</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>滥用shell内置函数（根据bash文档）</td>
+<td>empty_function() {}</td>
+<td>缺少关键字或命令，或权限问题（以及二进制文件比较失败的差异返回代码）</td>
+</tr>
+<tr class="odd">
+<td>126</td>
+<td>调用的命令无法执行</td>
+<td>/dev/null</td>
+<td>权限问题或命令不是可执行文件</td>
+</tr>
+<tr class="even">
+<td>127</td>
+<td>调用的命令找不到</td>
+<td>illegal_command</td>
+<td><span class="math inline">\(PATH 拼写错误或者可能有问题 | | 128 | 退出参数无效 | exit 3.14159 | exit 只接受 0 - 255 范围内的整数参数 | | 128+n | 致命错误信号 | *kill -9* `\)</span>PPID` of script</td>
+</tr>
+<tr class="odd">
+<td>130</td>
+<td>由 Ctrl-C 终止的脚本</td>
+<td>Ctrl-C</td>
+<td>Ctrl-C 是致命错误，错误信号是2</td>
+</tr>
+<tr class="even">
+<td>255*</td>
+<td>退出状态超出范围</td>
+<td>exit -1</td>
+<td>exit 只接受 0 - 255 范围内的整数</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>根据上表，退出代码 1 - 2、126 - 165 和 255 [1] 具有特殊含义，因此对于用户指定的退出参数应避免使用。 以退出 127 结束脚本肯定会在故障排除时引起混淆（错误代码是“找不到命令”还是用户定义的？）。 但是，许多脚本使用退出 1 作为一般的错误救助。 <strong>由于退出代码 1 表示许多可能的错误，因此它在调试中并不是特别有用。</strong></li>
+</ul>
 ]]></content>
       <tags>
         <tag>docker</tag>
@@ -6548,6 +6548,29 @@
       </tags>
   </entry>
   <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img data-src="新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣二叉树基础之深度优先遍历</title>
     <url>/p/DFS-in-binary-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -6580,29 +6603,6 @@
 ]]></content>
       <tags>
         <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之二分法</title>
-    <url>/p/binary-search/</url>
-    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left, right)，这里以左闭右闭为例：</p>
-<p>定义target在左闭右闭区间[left, right]内：</p>
-<ul>
-<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
-<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
-</ul>
-<p><strong>示意图</strong></p>
-<p><img data-src="新建位图图像.bmp" /></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -7004,25 +7004,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <url>/p/swap-nodes-in-pairs/</url>
-    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<p><img data-src="swap_ex1.jpg" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
-<p><img data-src="image-20220214194056147.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣链表基础之删除链表的倒数第N个节点</title>
     <url>/p/remove-nth-node-from-end-of-list/</url>
     <content><![CDATA[<p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p>
@@ -7044,18 +7025,18 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之环形链表 II</title>
-    <url>/p/linked-list-cycle-ii/</url>
-    <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <url>/p/swap-nodes-in-pairs/</url>
+    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
 <span id="more"></span>
 <p><strong>示例</strong></p>
-<p><img data-src="circularlinkedlist.png" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><img data-src="swap_ex1.jpg" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
 <p><strong>思路</strong></p>
-<p>使用快慢指针法，分别定义fast和slow指针，从头节点出发，fast指针每次移动两个节点，slow重镇每次移动一个节点，如果fast指针和slow指针在途中相遇，说明这个链表有环。</p>
-<p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
+<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
+<p><img data-src="image-20220214194056147.png" /></p>
 <p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7084,6 +7065,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之环形链表 II</title>
+    <url>/p/linked-list-cycle-ii/</url>
+    <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<p><img data-src="circularlinkedlist.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用快慢指针法，分别定义fast和slow指针，从头节点出发，fast指针每次移动两个节点，slow重镇每次移动一个节点，如果fast指针和slow指针在途中相遇，说明这个链表有环。</p>
+<p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣链表基础之移除链表元素</title>
     <url>/p/remove-linked-list-elements/</url>
     <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
@@ -7097,6 +7097,29 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p><img data-src="image-20220207150257390.png" /></p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">    Val <span class="type">int</span></span><br><span class="line">    Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElements</span><span class="params">(head *ListNode, val <span class="type">int</span>)</span></span> *ListNode &#123;</span><br><span class="line">    dummy := &amp;ListNode&#123;&#125;</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    node := dummy</span><br><span class="line">    <span class="keyword">for</span> node.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> node.Next.Val == val&#123;</span><br><span class="line">            node.Next = node.Next.Next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            node = node.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之链表相交</title>
+    <url>/p/intersection-of-two-linked-lists-lcci/</url>
+    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
+<ul>
+<li>a + c + b = b + c + a</li>
+<li>若无交集，则a + b = b + a</li>
+</ul>
+<p><img data-src="image-20220216162953801.png" /></p>
+<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7139,29 +7162,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之链表相交</title>
-    <url>/p/intersection-of-two-linked-lists-lcci/</url>
-    <content><![CDATA[<p>给你两个单链表的头节点 <code>headA</code> 和 <code>headB</code> ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 <code>null</code> 。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>设交集链表长c，链表1除交集的长度为a，链表2除交集的长度为b，有</p>
-<ul>
-<li>a + c + b = b + c + a</li>
-<li>若无交集，则a + b = b + a</li>
-</ul>
-<p><img data-src="image-20220216162953801.png" /></p>
-<p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -8004,6 +8004,129 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络介绍</title>
+    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
+    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
+<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
+<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
+<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
+<p><img data-src="20150829181722_450.png" /></p>
+<blockquote>
+<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
+</blockquote>
+<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
+<p><img data-src="20150829181722_631.png" /></p>
+<blockquote>
+<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
+</blockquote>
+<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
+<p><img data-src="20150829181722_777.png" /></p>
+<blockquote>
+<p>LSTM中的图标</p>
+</blockquote>
+<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
+<h4 id="lstm核心内容">2.LSTM核心内容</h4>
+<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
+<p><img data-src="20150829181723_640.png" /></p>
+<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
+<p><img data-src="20150829181723_567.png" /></p>
+<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
+<p>LSTM有三个门，来保护和控制细胞状态。</p>
+<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
+<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
+<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_259.png" /></p>
+<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
+<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
+<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_897.png" /></p>
+<h5 id="确定更新的信息">3.2确定更新的信息</h5>
+<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
+<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
+<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
+<p><img data-src="20150829181723_883.png" /></p>
+<h5 id="更新细胞状态">3.3更新细胞状态</h5>
+<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
+<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
+<p><img data-src="20150829181723_463.png" /></p>
+]]></content>
+      <tags>
+        <tag>LSTM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Helm中部署Harbor</title>
+    <url>/p/deploy-harbor-on-K8s-with-helm/</url>
+    <content><![CDATA[<p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor 在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub 或其他第三方镜像仓库。</p>
+<p>关键词：<strong>Harbor</strong></p>
+<span id="more"></span>
+<h3 id="安装helm">安装Helm</h3>
+<p>我们将 Helm 客户端安装在 k8s-master 节点上</p>
+<h4 id="用二进制版本安装">用二进制版本安装</h4>
+<ol type="1">
+<li>下载 <a href="https://github.com/helm/helm/releases">需要的版本</a></li>
+<li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li>
+<li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li>
+</ol>
+<p>然后就可以执行客户端程序并 <a href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>: <code>helm help</code>.</p>
+<p><img data-src="image-20220507135650409.png" /></p>
+<h4 id="查看版本号">查看版本号</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure>
+<h4 id="安装命令补全">安装命令补全</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;source &lt;(helm completion bash)&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="修改helm仓库镜像">修改Helm仓库镜像</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add aliyun  https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220507135947826.png" /></p>
+<p>查看仓库列表</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
+<h3 id="安装harbor">安装Harbor</h3>
+<h4 id="添加harbor仓库">添加Harbor仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add harbor https://helm.goharbor.io</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
+<h4 id="搜索harbor">搜索Harbor</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm search repo harbor/harbor</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220507140154997.png" /></p>
+<h4 id="将harbor下载到本地">将Harbor下载到本地</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm fetch harbor/harbor</span><br></pre></td></tr></table></figure>
+<h4 id="解压缩">解压缩</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf harbor-1.9.0.tgz</span><br><span class="line"><span class="built_in">cd</span> harbor</span><br></pre></td></tr></table></figure>
+<h4 id="修改配置">修改配置</h4>
+<p>修改配置文件<code>values.yaml</code>，具体查看<a href="https://github.com/goharbor/harbor-helm/blob/master/README.md#configuration">GIthub配置列表</a>。</p>
+<p>这里修改了以下几个配置：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">nodePort</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">nodePort:</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30004</span></span><br><span class="line">      <span class="attr">https:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30005</span></span><br><span class="line">      <span class="attr">notary:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30006</span></span><br><span class="line"><span class="attr">externalURL:</span> <span class="string">http://192.168.232.167:30004</span></span><br><span class="line"><span class="attr">persistence:</span></span><br><span class="line">  <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">    <span class="attr">registry:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;registry&quot;</span></span><br><span class="line">    <span class="attr">chartmuseum:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;chartmuseum&quot;</span></span><br><span class="line">    <span class="attr">jobservice:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;jobservice&quot;</span></span><br><span class="line">    <span class="attr">database:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;database&quot;</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;redis&quot;</span></span><br></pre></td></tr></table></figure>
+<p>其中 <code>pvc-harbor</code> 是预先创建好的 PVC，创建过程略。</p>
+<p>部署 Harbor：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm install -g harbor/harbor -f values.yaml .</span><br><span class="line"></span><br><span class="line">NAME: harbor-1589352564</span><br><span class="line">LAST DEPLOYED: Wed May 13 14:49:25 2020</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">Please <span class="built_in">wait</span> <span class="keyword">for</span> several minutes <span class="keyword">for</span> Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at http://192.168.232.167:30004.</span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br></pre></td></tr></table></figure>
+<p>部署成功，等待 Harbor 启动完成，然后就可以通过<code>http://192.168.232.167:30004</code> 访问Harbor，默认用户名是admin，密码是Harbor12345。</p>
+<p>由于 Docker 自从 1.3.x 之后，docker registry 交互默认使用的是HTTPS，而我们搭建的 Harbor 使用的是HTTP，所以为了避免 pull/push 镜像时得到错误：<code>http: server gave HTTP response to HTTPS client</code>，需要修改 docker 的配置文件 <code>/etc/docker/daemon.json</code>，加入以下配置：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;192.168.232.167:30004&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>保存后重启 docker 服务：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h3 id="上传第一个镜像">上传第一个镜像</h3>
+<p>下载一个 busybox 镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull busybox:latest</span><br></pre></td></tr></table></figure>
+<p>修改 tag：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker tag busybox:latest 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
+<p>library 是 Harbor 的默认项目地址，也可以登录 Harbor 自行新建一个项目。</p>
+<p>使用 docker login 登录到 Harbor，并输入用户名和密码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login 192.168.232.167:30004</span><br></pre></td></tr></table></figure>
+<p>登录成功后，上传镜像到 Harbor：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker push 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
+<h3 id="后记">后记</h3>
+<p>上面的软件没有部署完，<strong>例如PVC和helm的架构还不懂，</strong>因此先告一段落。</p>
+<p>决定先使用<code>docker-compose</code>先部署<strong>Harbor</strong> 。</p>
+<h3 id="参考文档">参考文档</h3>
+<p>https://helm.sh/docs/using_helm/#installing-helm</p>
+<p>https://github.com/goharbor/harbor-helm</p>
+<p>https://www.cnblogs.com/dukuan/p/9963744.html</p>
+<p>https://blog.51cto.com/wangpengtai/2418636?source=dra</p>
+<p>http://kpali.me/2020/05/13/deploy-harbor-in-kubernetes.html</p>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+        <tag>harbor</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>应用编排与管理：Deployment</title>
     <url>/p/core-concept-about-resource-orchestration-and-management/</url>
     <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第七章应用编排与管理：Deployment</strong>学习笔记。</p>
@@ -8131,126 +8254,24 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>循环神经网络介绍</title>
-    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
-    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
-<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
-<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
-<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
-<p><img data-src="20150829181722_450.png" /></p>
-<blockquote>
-<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
-</blockquote>
-<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
-<p><img data-src="20150829181722_631.png" /></p>
-<blockquote>
-<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
-</blockquote>
-<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
-<p><img data-src="20150829181722_777.png" /></p>
-<blockquote>
-<p>LSTM中的图标</p>
-</blockquote>
-<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
-<h4 id="lstm核心内容">2.LSTM核心内容</h4>
-<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
-<p><img data-src="20150829181723_640.png" /></p>
-<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
-<p><img data-src="20150829181723_567.png" /></p>
-<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
-<p>LSTM有三个门，来保护和控制细胞状态。</p>
-<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
-<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
-<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_259.png" /></p>
-<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
-<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
-<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_897.png" /></p>
-<h5 id="确定更新的信息">3.2确定更新的信息</h5>
-<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
-<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
-<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
-<p><img data-src="20150829181723_883.png" /></p>
-<h5 id="更新细胞状态">3.3更新细胞状态</h5>
-<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
-<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
-<p><img data-src="20150829181723_463.png" /></p>
-]]></content>
-      <tags>
-        <tag>LSTM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用Helm中部署Harbor</title>
-    <url>/p/deploy-harbor-on-K8s-with-helm/</url>
-    <content><![CDATA[<p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor 在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub 或其他第三方镜像仓库。</p>
-<p>关键词：<strong>Harbor</strong></p>
+    <title>数值分析第一章作业</title>
+    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，数值分析</p>
 <span id="more"></span>
-<h3 id="安装helm">安装Helm</h3>
-<p>我们将 Helm 客户端安装在 k8s-master 节点上</p>
-<h4 id="用二进制版本安装">用二进制版本安装</h4>
-<ol type="1">
-<li>下载 <a href="https://github.com/helm/helm/releases">需要的版本</a></li>
-<li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li>
-<li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li>
-</ol>
-<p>然后就可以执行客户端程序并 <a href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>: <code>helm help</code>.</p>
-<p><img data-src="image-20220507135650409.png" /></p>
-<h4 id="查看版本号">查看版本号</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure>
-<h4 id="安装命令补全">安装命令补全</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;source &lt;(helm completion bash)&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="修改helm仓库镜像">修改Helm仓库镜像</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add aliyun  https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220507135947826.png" /></p>
-<p>查看仓库列表</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
-<h3 id="安装harbor">安装Harbor</h3>
-<h4 id="添加harbor仓库">添加Harbor仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add harbor https://helm.goharbor.io</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
-<h4 id="搜索harbor">搜索Harbor</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm search repo harbor/harbor</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220507140154997.png" /></p>
-<h4 id="将harbor下载到本地">将Harbor下载到本地</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm fetch harbor/harbor</span><br></pre></td></tr></table></figure>
-<h4 id="解压缩">解压缩</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf harbor-1.9.0.tgz</span><br><span class="line"><span class="built_in">cd</span> harbor</span><br></pre></td></tr></table></figure>
-<h4 id="修改配置">修改配置</h4>
-<p>修改配置文件<code>values.yaml</code>，具体查看<a href="https://github.com/goharbor/harbor-helm/blob/master/README.md#configuration">GIthub配置列表</a>。</p>
-<p>这里修改了以下几个配置：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">nodePort</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">nodePort:</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30004</span></span><br><span class="line">      <span class="attr">https:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30005</span></span><br><span class="line">      <span class="attr">notary:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30006</span></span><br><span class="line"><span class="attr">externalURL:</span> <span class="string">http://192.168.232.167:30004</span></span><br><span class="line"><span class="attr">persistence:</span></span><br><span class="line">  <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">    <span class="attr">registry:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;registry&quot;</span></span><br><span class="line">    <span class="attr">chartmuseum:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;chartmuseum&quot;</span></span><br><span class="line">    <span class="attr">jobservice:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;jobservice&quot;</span></span><br><span class="line">    <span class="attr">database:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;database&quot;</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;redis&quot;</span></span><br></pre></td></tr></table></figure>
-<p>其中 <code>pvc-harbor</code> 是预先创建好的 PVC，创建过程略。</p>
-<p>部署 Harbor：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm install -g harbor/harbor -f values.yaml .</span><br><span class="line"></span><br><span class="line">NAME: harbor-1589352564</span><br><span class="line">LAST DEPLOYED: Wed May 13 14:49:25 2020</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">Please <span class="built_in">wait</span> <span class="keyword">for</span> several minutes <span class="keyword">for</span> Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at http://192.168.232.167:30004.</span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br></pre></td></tr></table></figure>
-<p>部署成功，等待 Harbor 启动完成，然后就可以通过<code>http://192.168.232.167:30004</code> 访问Harbor，默认用户名是admin，密码是Harbor12345。</p>
-<p>由于 Docker 自从 1.3.x 之后，docker registry 交互默认使用的是HTTPS，而我们搭建的 Harbor 使用的是HTTP，所以为了避免 pull/push 镜像时得到错误：<code>http: server gave HTTP response to HTTPS client</code>，需要修改 docker 的配置文件 <code>/etc/docker/daemon.json</code>，加入以下配置：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;192.168.232.167:30004&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启 docker 服务：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<h3 id="上传第一个镜像">上传第一个镜像</h3>
-<p>下载一个 busybox 镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull busybox:latest</span><br></pre></td></tr></table></figure>
-<p>修改 tag：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker tag busybox:latest 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
-<p>library 是 Harbor 的默认项目地址，也可以登录 Harbor 自行新建一个项目。</p>
-<p>使用 docker login 登录到 Harbor，并输入用户名和密码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login 192.168.232.167:30004</span><br></pre></td></tr></table></figure>
-<p>登录成功后，上传镜像到 Harbor：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker push 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
-<h3 id="后记">后记</h3>
-<p>上面的软件没有部署完，<strong>例如PVC和helm的架构还不懂，</strong>因此先告一段落。</p>
-<p>决定先使用<code>docker-compose</code>先部署<strong>Harbor</strong> 。</p>
-<h3 id="参考文档">参考文档</h3>
-<p>https://helm.sh/docs/using_helm/#installing-helm</p>
-<p>https://github.com/goharbor/harbor-helm</p>
-<p>https://www.cnblogs.com/dukuan/p/9963744.html</p>
-<p>https://blog.51cto.com/wangpengtai/2418636?source=dra</p>
-<p>http://kpali.me/2020/05/13/deploy-harbor-in-kubernetes.html</p>
+<p><img data-src="image-20201013093358782.png" /></p>
+<p><img data-src="image-20201013102937713.png" /></p>
+<p><img data-src="image-20201013104909315.png" /></p>
+<p><img data-src="image-20201013104922645.png" /></p>
+<p><img data-src="image-20201013104953613.png" /></p>
+<p><img data-src="image-20201013110136891.png" /></p>
+<p><img data-src="image-20201013110806596.png" /> <span class="math display">\[
+2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
+\]</span></p>
 ]]></content>
       <tags>
-        <tag>k8s</tag>
-        <tag>harbor</tag>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
@@ -8314,27 +8335,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       <tags>
         <tag>git</tag>
         <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数值分析第一章作业</title>
-    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，数值分析</p>
-<span id="more"></span>
-<p><img data-src="image-20201013093358782.png" /></p>
-<p><img data-src="image-20201013102937713.png" /></p>
-<p><img data-src="image-20201013104909315.png" /></p>
-<p><img data-src="image-20201013104922645.png" /></p>
-<p><img data-src="image-20201013104953613.png" /></p>
-<p><img data-src="image-20201013110136891.png" /></p>
-<p><img data-src="image-20201013110806596.png" /> <span class="math display">\[
-2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
-\]</span></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
@@ -8582,74 +8582,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>离线安装docker</title>
-    <url>/p/offline-install-docker-offline/</url>
-    <content><![CDATA[<p>最近在部署项目，甲方的部署环境有可能内网环境，而我们现在的项目是部署在docker中的，所以需要记录一下如何离线安装docker。这里的步骤对于其他需要离线安装的deb包也是适用的。</p>
-<p>关键字：<strong>docker，离线安装</strong></p>
-<span id="more"></span>
-<h2 id="下载docker相关的依赖包">下载docker相关的依赖包</h2>
-<p>首先需要一台能上外网的机器，下载和docker相关的依赖。</p>
-<ol type="1">
-<li>安装必要工具，这里把相关依赖都下载下来</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -yd</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>安装GPG证书，这里以aliyun的为例</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure>
-<p>ps：一般发行版都有curl了，所以不用安装，实在没有也可以导出相关的deb包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install --reinstall curl -yd</span><br></pre></td></tr></table></figure>
-<ol start="3" type="1">
-<li>写入软件源信息</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo add-apt-repository <span class="string">&quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu <span class="subst">$(lsb_release -cs)</span> stable&quot;</span></span><br></pre></td></tr></table></figure>
-<ol start="4" type="1">
-<li>更新并导出Docker-CE相关的安装包</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get -y update</span><br><span class="line">sudo apt-get  install docker-ce -yd</span><br></pre></td></tr></table></figure>
-<ol start="5" type="1">
-<li>导出生成索引文件的安装包</li>
-</ol>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dpkg-dev -yd</span><br></pre></td></tr></table></figure></p>
-<ol start="6" type="1">
-<li>将docker相关的依赖包转移到U盘或者其他文件夹，准备下一步安装</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo tar zcvf docker.tar.gz docker <span class="comment"># 压缩</span></span><br><span class="line">sudo tar zxvf docker.tar.gz		  <span class="comment"># 解压</span></span><br></pre></td></tr></table></figure>
-<h2 id="在需要离线安装的主机上操作">在需要离线安装的主机上操作</h2>
-<p>这里有两者方案，第一种方案是使用<code>dpkg</code>进行安装，命令比较简单：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/docker</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
-<p>第二种方案，就是使用apt安装。需要首先创建apt本地仓库</p>
-<ol type="1">
-<li>离线安装dpkg-dev</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/dpkg-deb</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>利用上一步生成的docker安装包，建立deb包的依赖关系</li>
-</ol>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 777 -R /your-path</span><br><span class="line">sudo <span class="built_in">touch</span> /your-path/docker/Packages.gz</span><br><span class="line">sudo dpkg-scanpackages docker /dev/null  | gzip &gt; /your-path/docker/Packages.gz</span><br></pre></td></tr></table></figure></p>
-<ol start="3" type="1">
-<li>将所有下载的文件和生成的gz文件拷贝到离线的ubuntu机器上，将<code>/etc/apt/sources.list</code>原有内容注释掉，新增：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb file:/your-path /docker</span><br></pre></td></tr></table></figure>
-<ol start="4" type="1">
-<li>更新apt索引，这里设置允许不安全的仓库</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update --allow-insecure-repositories</span><br></pre></td></tr></table></figure>
-<ol start="5" type="1">
-<li>安装docker-ce</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install docker-ce -y</span><br></pre></td></tr></table></figure>
-<ol start="6" type="1">
-<li>查看是否安装成功</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo docker info</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220408123754001.png" /></p>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>理解Pod和容器设计模式</title>
     <url>/p/container-design-patterns/</url>
     <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第四章理解 Pod 和容器设计模式</strong>学习笔记。</p>
@@ -8791,6 +8723,74 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>离线安装docker</title>
+    <url>/p/offline-install-docker-offline/</url>
+    <content><![CDATA[<p>最近在部署项目，甲方的部署环境有可能内网环境，而我们现在的项目是部署在docker中的，所以需要记录一下如何离线安装docker。这里的步骤对于其他需要离线安装的deb包也是适用的。</p>
+<p>关键字：<strong>docker，离线安装</strong></p>
+<span id="more"></span>
+<h2 id="下载docker相关的依赖包">下载docker相关的依赖包</h2>
+<p>首先需要一台能上外网的机器，下载和docker相关的依赖。</p>
+<ol type="1">
+<li>安装必要工具，这里把相关依赖都下载下来</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -yd</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>安装GPG证书，这里以aliyun的为例</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<p>ps：一般发行版都有curl了，所以不用安装，实在没有也可以导出相关的deb包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install --reinstall curl -yd</span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>写入软件源信息</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo add-apt-repository <span class="string">&quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu <span class="subst">$(lsb_release -cs)</span> stable&quot;</span></span><br></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>更新并导出Docker-CE相关的安装包</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get -y update</span><br><span class="line">sudo apt-get  install docker-ce -yd</span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li>导出生成索引文件的安装包</li>
+</ol>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install dpkg-dev -yd</span><br></pre></td></tr></table></figure></p>
+<ol start="6" type="1">
+<li>将docker相关的依赖包转移到U盘或者其他文件夹，准备下一步安装</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo tar zcvf docker.tar.gz docker <span class="comment"># 压缩</span></span><br><span class="line">sudo tar zxvf docker.tar.gz		  <span class="comment"># 解压</span></span><br></pre></td></tr></table></figure>
+<h2 id="在需要离线安装的主机上操作">在需要离线安装的主机上操作</h2>
+<p>这里有两者方案，第一种方案是使用<code>dpkg</code>进行安装，命令比较简单：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/docker</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
+<p>第二种方案，就是使用apt安装。需要首先创建apt本地仓库</p>
+<ol type="1">
+<li>离线安装dpkg-dev</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /your-path/dpkg-deb</span><br><span class="line">sudo dpkg -i *.deb</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>利用上一步生成的docker安装包，建立deb包的依赖关系</li>
+</ol>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 777 -R /your-path</span><br><span class="line">sudo <span class="built_in">touch</span> /your-path/docker/Packages.gz</span><br><span class="line">sudo dpkg-scanpackages docker /dev/null  | gzip &gt; /your-path/docker/Packages.gz</span><br></pre></td></tr></table></figure></p>
+<ol start="3" type="1">
+<li>将所有下载的文件和生成的gz文件拷贝到离线的ubuntu机器上，将<code>/etc/apt/sources.list</code>原有内容注释掉，新增：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">deb file:/your-path /docker</span><br></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>更新apt索引，这里设置允许不安全的仓库</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update --allow-insecure-repositories</span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li>安装docker-ce</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install docker-ce -y</span><br></pre></td></tr></table></figure>
+<ol start="6" type="1">
+<li>查看是否安装成功</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo docker info</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220408123754001.png" /></p>
+]]></content>
+      <tags>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
