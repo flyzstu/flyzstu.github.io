@@ -289,8 +289,7 @@
 <p>补充：发布订阅模式下，放发布者消息量很大时，显然单个订阅者的处理能力是不足的，实际上现实场景中是<strong>多个订阅者节点组成一个订阅组</strong>负载均衡消费topic消息即<strong>分组订阅</strong>，这样订阅者很容易实现消费能力线性扩展。</p>
 <p>对于不同的消息订阅者，可以看作是一个topic下有多个Queue，每个Queue是点对点的方式，Queue之间是发布订阅方式。</p>
 <h2 id="kafka">kafka</h2>
-<p>Apache Kafka由著名社交公司LinkdIn开发，
-最初是被设计用来解决Linkedin公司内部海量日志传输等问题。</p>
+<p>Apache Kafka由著名社交公司LinkdIn开发， 最初是被设计用来解决Linkedin公司内部海量日志传输等问题。</p>
 <p>kafka实验Scala语言编写，于2011年开源并进入Apache孵化器，于2012年10月正式毕业，现为Apach顶级项目。</p>
 <h3 id="介绍">介绍</h3>
 <p>Kafka是一个分布式数据流平台，可以运行在单个服务器上，也可以在多台服务器上部署行程集群。它提供了发布和订阅功能，使用者可以发送数据到Kafka，也可以从Kafka中读取数据（以便进行后续的处理）。</p>
@@ -313,8 +312,7 @@
 <li>生产者从Kafka集群中获取分区leader信息</li>
 <li>生产者将消息发送给leader</li>
 <li>leader将消息写入本地磁盘</li>
-<li>follower从leader拉取数据
-：<strong>生产者把数据写入Leader之后，Leader其他的副本主动从Leader中拉取数据</strong></li>
+<li>follower从leader拉取数据 ：<strong>生产者把数据写入Leader之后，Leader其他的副本主动从Leader中拉取数据</strong></li>
 <li>follower将消息写入本地磁盘以后向leader发送ACK（回复确认）</li>
 <li>leader收到所有的follower的ACK后向生产者发送ACK（回复确认）</li>
 </ol>
@@ -335,11 +333,9 @@
 </ul>
 <p><strong>注意：若往不存在的topic写数据，kafka会自动创建topic，partition和replication的数量的默认配置都是1。</strong></p>
 <h3 id="topic和数据日志">Topic和数据日志</h3>
-<p><code>topic</code>是统一类别的消息记录（record）的集合。
-在Kafka中，一个主题通常有多个订阅者，对于每个主题，kafka集群维护了一个分区数据日志文件结构如下：</p>
+<p><code>topic</code>是统一类别的消息记录（record）的集合。 在Kafka中，一个主题通常有多个订阅者，对于每个主题，kafka集群维护了一个分区数据日志文件结构如下：</p>
 <p><img data-src="image-20211201152943721.png" style="zoom: 33%;" /></p>
-<p>每个partition都是一个有序而且不可变的消息记录集合，当新的数据写入时，就被追加到partition的末尾。在每个partition中，每条消息都会被分配一个顺序的唯一标识，这个表示被称为offset，<strong>即偏移量</strong>
-。</p>
+<p>每个partition都是一个有序而且不可变的消息记录集合，当新的数据写入时，就被追加到partition的末尾。在每个partition中，每条消息都会被分配一个顺序的唯一标识，这个表示被称为offset，<strong>即偏移量</strong> 。</p>
 <ul>
 <li><strong>Kafka只保证在同一个partition内部消息是有序的，在不同partition之间，不能保证消息有序。</strong></li>
 </ul>

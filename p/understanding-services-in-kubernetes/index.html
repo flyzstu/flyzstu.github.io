@@ -284,8 +284,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第八章理解Kubernetes
-Services</strong>学习笔记。</p>
+        <p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第八章理解Kubernetes Services</strong>学习笔记。</p>
 <p>关键词：<strong>k8s</strong></p>
 <span id="more"></span>
 <h3 id="需求来源">需求来源</h3>
@@ -293,15 +292,11 @@ Services</strong>学习笔记。</p>
 <p>传统的应用部署实在特定的机器上面部署，此时知道怎么去调用别的机器的IP地址。但是在K8s集群中应该是通过Pod去部署，而Pod的生命周期过程中，比如创建或者销毁，此时<strong>IP地址都会发生变化</strong>，<strong>不能指定IP去访问指定的应用。</strong></p>
 <p>K8s的应用部署中需要创建一个Pod组，而这些Pod组合需要一个统一的访问接口，以及怎么去控制流量负载均衡在这个组里，比如<strong>测试环境、预发环境和线上环境</strong>。部署过程中需要<strong>保持同样的部署模板以及访问方式</strong>，这样就可以用同一套应用的模板在不同的环境中直接发布。</p>
 <p><img data-src="image-20220516164957086.png" /></p>
-<h4
-id="servicek8s中服务发现和负载均衡">Service：K8s中服务发现和负载均衡</h4>
+<h4 id="servicek8s中服务发现和负载均衡">Service：K8s中服务发现和负载均衡</h4>
 <p>应用总是需要暴露到外部去访问，而Pod的网络和机器的网卡并不是一个IP段的，那么怎么让Pod暴露到外部访问呢？此时就需要<strong>服务发现</strong>。</p>
 <p><img data-src="image-20220516165007514.png" /></p>
-<p>K8s中的Service实现了服务发现和负载均衡。在K8s架构里，K8s
-Service向上提供了外部网络以及Pod网络的访问：外部网络可以通过Service访问，Pod网络也可以通过K8s
-Service访问；</p>
-<p>向下对接了一组Pod：可以通过K8s
-Service的方式负载均衡到一组Pod上，外部网络可以通过Service去访问Pod，不同Pod之间也可通过Service访问彼此。<strong>Service为他们互相之间访问提供了统一的IP地址。</strong></p>
+<p>K8s中的Service实现了服务发现和负载均衡。在K8s架构里，K8s Service向上提供了外部网络以及Pod网络的访问：外部网络可以通过Service访问，Pod网络也可以通过K8s Service访问；</p>
+<p>向下对接了一组Pod：可以通过K8s Service的方式负载均衡到一组Pod上，外部网络可以通过Service去访问Pod，不同Pod之间也可通过Service访问彼此。<strong>Service为他们互相之间访问提供了统一的IP地址。</strong></p>
 <h3 id="用例解读">用例解读</h3>
 <h4 id="service语法">Service语法</h4>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">get-hostname</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">get-hostname</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span> 			<span class="comment"># TCP协议</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">8888</span>              <span class="comment"># Service向外暴露的端口</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">http</span>        <span class="comment"># Pod的端口名</span></span><br><span class="line">  <span class="attr">externalIPs:</span>              <span class="comment"># 这个服务暴露在集群中的哪个Node上</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">192.168</span><span class="number">.15</span><span class="number">.202</span></span><br></pre></td></tr></table></figure>
@@ -331,9 +326,7 @@ Service的方式负载均衡到一组Pod上，外部网络可以通过Service去
 </ul></li>
 <li>通过环境变量访问。同一个Namespace里的Pod启动时，K8s会把Service中的一些IP地址，端口以及一些配置信息通过环境变量的方式发放到K8s的Pod里。Pod可以通过读取环境变量的方式访问到<strong>同一Namespace的环境变量</strong>。</li>
 </ul>
-<p>举个例子，一个名称为 <code>redis-master</code> 的 Service 暴露了 TCP
-端口 6379， 同时给它分配了 Cluster IP 地址 10.0.0.11，这个 Service
-生成了如下环境变量：</p>
+<p>举个例子，一个名称为 <code>redis-master</code> 的 Service 暴露了 TCP 端口 6379， 同时给它分配了 Cluster IP 地址 10.0.0.11，这个 Service 生成了如下环境变量：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">REDIS_MASTER_SERVICE_HOST=10.0.0.11</span><br><span class="line">REDIS_MASTER_SERVICE_PORT=6379</span><br><span class="line">REDIS_MASTER_PORT=tcp://10.0.0.11:6379</span><br><span class="line">REDIS_MASTER_PORT_6379_TCP=tcp://10.0.0.11:6379</span><br><span class="line">REDIS_MASTER_PORT_6379_TCP_PROTO=tcp</span><br><span class="line">REDIS_MASTER_PORT_6379_TCP_PORT=6379</span><br><span class="line">REDIS_MASTER_PORT_6379_TCP_ADDR=10.0.0.11</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>必须在创建服务以后才能在Pod中通过环境变量的方式访问。</p>
@@ -346,25 +339,17 @@ Service的方式负载均衡到一组Pod上，外部网络可以通过Service去
 <p>当集群中的pod访问my-service时，会直接解析到所有的service对应的IP地址，返回给Pod，然后Pod自己选择IP地址去直接访问。</p>
 <h4 id="向集群外部暴露service">向集群外部暴露Service</h4>
 <h5 id="nodeport">NodePort</h5>
-<p>NodePort
-服务是引导外部流量到你的服务的最原始方式。NodePort，正如这个名字所示，在所有节点（虚拟机）上开放一个特定端口，任何发送到该端口的流量都被转发到对应服务。</p>
+<p>NodePort 服务是引导外部流量到你的服务的最原始方式。NodePort，正如这个名字所示，在所有节点（虚拟机）上开放一个特定端口，任何发送到该端口的流量都被转发到对应服务。</p>
 <p><img data-src="58174ac44fdbacbbc89cec648260fcdf.png" /></p>
 <h5 id="loadbalancer">LoadBalancer</h5>
-<p>LoadBalancer 服务是暴露服务到 internet 的标准方式。在 GKE
-上，这种方式会启动一个 <a
-target="_blank" rel="noopener" href="https://cloud.google.com/compute/docs/load-balancing/network/">Network
-Load Balancer</a>，它将给你一个单独的 IP
-地址，转发所有流量到你的服务。</p>
+<p>LoadBalancer 服务是暴露服务到 internet 的标准方式。在 GKE 上，这种方式会启动一个 <a target="_blank" rel="noopener" href="https://cloud.google.com/compute/docs/load-balancing/network/">Network Load Balancer</a>，它将给你一个单独的 IP 地址，转发所有流量到你的服务。</p>
 <p><img data-src="d8631b315a7acdd6926ec5405ed1043f.png" /></p>
-<p>如果你想要直接暴露服务，这就是默认方式。所有通往你指定的端口的流量都会被转发到对应的服务。它没有过滤条件，没有路由等。这意味着你几乎可以发送任何种类的流量到该服务，像
-HTTP，TCP，UDP，Websocket，gRPC 或其它任意种类。</p>
-<p>这个方式的最大缺点是<strong>每个用到的 LoadBalancer
-都需要付费</strong>，这种方式仅在大型云服务公司上实现，这将是非常昂贵的。</p>
+<p>如果你想要直接暴露服务，这就是默认方式。所有通往你指定的端口的流量都会被转发到对应的服务。它没有过滤条件，没有路由等。这意味着你几乎可以发送任何种类的流量到该服务，像 HTTP，TCP，UDP，Websocket，gRPC 或其它任意种类。</p>
+<p>这个方式的最大缺点是<strong>每个用到的 LoadBalancer 都需要付费</strong>，这种方式仅在大型云服务公司上实现，这将是非常昂贵的。</p>
 <h5 id="external-ip">External IP</h5>
 <p>和LoadBalancer相比，LoadBalancer被某一个Node节点替换了，通过<strong>Node节点暴露的IP</strong>对外部提供服务。</p>
 <blockquote>
-<p><code>externalIPs</code> 不会被 Kubernetes
-管理，它属于集群管理员的职责范畴。</p>
+<p><code>externalIPs</code> 不会被 Kubernetes 管理，它属于集群管理员的职责范畴。</p>
 </blockquote>
 <h3 id="虚拟ip和service代理">虚拟IP和Service代理</h3>
 <p>在K8s集群中，每个Node运行一个<strong>kube-proxy</strong>进程，kube-proxy负责为Service实现了一种虚拟IP的形式。</p>
@@ -377,15 +362,13 @@ HTTP，TCP，UDP，Websocket，gRPC 或其它任意种类。</p>
 <li>即使应用和库进行了适当重新解析，DNS记录上的TTL值低或者为零可能会给DNS带来高负载，从而使管理变得困难。</li>
 </ul>
 <h4 id="userspace代理模式">userspace代理模式</h4>
-<p>kube-proxy会监视Kubernetes API
-Server对Service对象和Endpoint对象的添加和移除操作。</p>
+<p>kube-proxy会监视Kubernetes API Server对Service对象和Endpoint对象的添加和移除操作。</p>
 <p>对于每个Service，会在本地Node随机打开一个端口。任何连接到代理端口的请求，都会被代理到Service的后端Pod中的某个上面。使用Pod的策略是kube-proxy基于<code>.spec.SessionAffinity</code>来确定的。</p>
 <p>最后<strong>配置iptables规则</strong>，捕获到到达该Service的ClusterIP（虚拟IP）和Port的请求，<strong>并重定向到代理端口</strong>，代理端口再代理请求到后端Pod。</p>
 <p>默认情况下。userspace代理模式的kube-proxy使用<strong>轮转算法选择后端Pod</strong>。</p>
 <p><img data-src="services-userspace-overview-16527573586443.svg" /></p>
 <h4 id="iptables代理模式">iptables代理模式</h4>
-<p>kube-proxy会监视Kubernetes API
-Server对Service对象和Endpoint对象的添加和移除操作。</p>
+<p>kube-proxy会监视Kubernetes API Server对Service对象和Endpoint对象的添加和移除操作。</p>
 <p>对于每个Service，配置iptables规则，将到达该Service的ClusterIP和端口请求重定向到Service的一组后端的某个Pod上。</p>
 <p>对于每个Endpoints，配置iptables规则，这个规则<em>会<strong>选择一个后端组合</strong></em>。</p>
 <blockquote>
@@ -422,19 +405,14 @@ Server对Service对象和Endpoint对象的添加和移除操作。</p>
 <h3 id="架构设计">架构设计</h3>
 <p><img data-src="image-20220517101421542.png" /></p>
 <p>K8s服务发现以及K8s Service是如上的一个整体架构。</p>
-<p>K8s的master节点里面有API Server，API
-Server统一管理K8s所有对象，所有的组件都会注册到API
-Server上去监听对象的变化。</p>
+<p>K8s的master节点里面有API Server，API Server统一管理K8s所有对象，所有的组件都会注册到API Server上去监听对象的变化。</p>
 <p>这里面有三个关键组件：</p>
 <ul>
-<li>Cloud Controller
-Manager，CCM：负责配置LoadBalancer的一个负载均衡器提供给外部访问；</li>
-<li>CoreDNS：K8s集群的DNS组件，通过CoreDNS观测API
-Server里面的Service后端Pod的变化，配置Service的DNS解析，实现通过Service的名字直接访问到Service的虚拟IP，或者Headless类型的Service中的IP列表解析；</li>
+<li>Cloud Controller Manager，CCM：负责配置LoadBalancer的一个负载均衡器提供给外部访问；</li>
+<li>CoreDNS：K8s集群的DNS组件，通过CoreDNS观测API Server里面的Service后端Pod的变化，配置Service的DNS解析，实现通过Service的名字直接访问到Service的虚拟IP，或者Headless类型的Service中的IP列表解析；</li>
 <li>Kube-proxy：K8s网络节点代理，代理通过监听Service以及Pod变化，然后配置集群中的Node、Pod或者ClusterIP的访问；</li>
 </ul>
-<p>例如Client Pod去访问Service，首先Pod拿Service
-IP请求，请求到了宿主机网络后，就被kube-proxy所配置的iptables或者IPVS做拦截处理，之后负载均衡到每一个实际的后端Pod，这样就<strong>实现了负载均衡和服务发现</strong>。</p>
+<p>例如Client Pod去访问Service，首先Pod拿Service IP请求，请求到了宿主机网络后，就被kube-proxy所配置的iptables或者IPVS做拦截处理，之后负载均衡到每一个实际的后端Pod，这样就<strong>实现了负载均衡和服务发现</strong>。</p>
 <p>对于来自外部的流量，通过外部负载均衡器管理器（CCM）监听Service的变化，配置LoadBalancer，然后转发到节点的NodePort上，NodePort通过Kube-proxy配置iptables规则，把NodePort的流量转换成ClusterIP，然后转换成后端Pod的IP地址，<strong>这样就实现了负载均衡和服务发现。</strong></p>
 
     </div>

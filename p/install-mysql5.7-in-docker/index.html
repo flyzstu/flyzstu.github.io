@@ -278,27 +278,22 @@
 <span id="more"></span>
 <p>在docker中安装mysql可以随时启动另外的mysql服务端用于测试或者其他用途，缺点就是比较消耗资源，不过资源随时都能申请得到，毕竟世界加钱可及。</p>
 <h3 id="安装docker">安装docker</h3>
-<p>可以参考我的这一篇文章：<a
-href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想
-(fly97.cn)</a></p>
+<p>可以参考我的这一篇文章：<a href="https://fly97.cn/p/docker-tutorial-01/">初探docker(一) | 个人随想 (fly97.cn)</a></p>
 <h3 id="安装mysql容器">安装MySQL容器</h3>
-<p>以官方的MySQL5.7为例：<a target="_blank" rel="noopener" href="https://hub.docker.com/_/mysql">Mysql
-- Official Image | Docker Hub</a></p>
+<p>以官方的MySQL5.7为例：<a target="_blank" rel="noopener" href="https://hub.docker.com/_/mysql">Mysql - Official Image | Docker Hub</a></p>
 <p>首先确保docker服务已经正常启动：</p>
 <p>linux执行：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
 <p>笔者的系统是mac，因此打开<strong>Docker Destop</strong>即可。</p>
 <h4 id="拉取镜像">拉取镜像</h4>
-<p>拉取镜像前需要使用<code>docker login</code>登陆docker
-hub，这里以MySQL5.7为例：</p>
+<p>拉取镜像前需要使用<code>docker login</code>登陆docker hub，这里以MySQL5.7为例：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
 <h4 id="运行容器">运行容器</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql-5.7 \</span><br><span class="line">	-v /Users/wf09/develop/mysql/data:/var/lib/mysql \</span><br><span class="line">	-v /Users/wf09/develop/mysql/conf:/etc/mysql/conf.d \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -d -e MYSQL_ROOT_PASSWORD=adminadmin \</span><br><span class="line">  mysql:5 \</span><br><span class="line">  --character-set-server=utf8mb4 \</span><br><span class="line">  --character_set_connection=utf8mb4 \</span><br><span class="line">  --character_set_client=utf8mb4 \</span><br><span class="line">  --character_set_results=character_set_results \</span><br><span class="line">  --collation-server=utf8mb4_unicode_ci \</span><br><span class="line">  --collation_connection=utf8mb4_unicode_ci</span><br><span class="line"></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
 <p>其中：</p>
 <ul>
 <li><code>-v</code>参数是挂载本地文件到容器内部，<code>/var/lib/mysql</code>是mysql默认的数据文件保存路径；<code>/etc/mysql/conf.d</code>是附加配置目录，该目录下的.cnf文件都会被读取并覆盖原有的配置；</li>
-<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a
-target="_blank" rel="noopener" href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
+<li><code>-e</code>参数是为容器指定环境变量，<code>MYSQL_ROOT_PASSWORD</code>为容器指定密码，容器预设的环境变量可以在这里查看：<a target="_blank" rel="noopener" href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
 <li>最后的参数是指定字符集为<strong>utf8mb4</strong>，避免遇到mysql无法存放中文字符的问题。
 <ul>
 <li>查看当前数据库支持的字符集：<code>show variables like '%char%';</code></li>
@@ -346,8 +341,7 @@ target="_blank" rel="noopener" href="https://hub.docker.com/_/mysql">Docker Hub<
 <p><img data-src="image-20220315193804894.png" /></p>
 <p>根据一些“高人博客”的指点，在Dockerfile做了以下修改：</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> mysql:<span class="number">5</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">chown</span> -R mysql:mysql /var/log/mysql</span></span><br></pre></td></tr></table></figure>
-<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code>
-目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
+<p>上述指令的含义是将容器中的 <code>/var/log/mysql</code> 目录的所有者的用户和用户组修改为容器的内置用户<code>mysql:mysql</code></p>
 <p>仍旧失败，经过一翻查找，发现了原因，这里就不贴原文了，大致意思是：</p>
 <p><strong>容器中的<code>/var/log/mysql</code>这个目录一旦被映射到宿主机，Dockerfile中的命令就对它失去了作用</strong></p>
 <p>问题的根本原因在于，容器中的mysql用户没有写<code>/var/log/mysql</code>目录的权限，所有才会出现<strong><code>Permission denied</code></strong>.</p>

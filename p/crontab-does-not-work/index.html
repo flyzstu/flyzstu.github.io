@@ -271,29 +271,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>在生产环境下，添加了 crontab
-定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
+        <p>在生产环境下，添加了 crontab 定时计划任务，后面发现，定时任务并没有执行，在指定的文件夹下并没有相对应的日志产生。</p>
 <p><strong>关键词：crontab定时计划任务不执行</strong></p>
 <span id="more"></span>
 <h4 id="查看crontab服务状态">查看crontab服务状态</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serivice cron status</span><br></pre></td></tr></table></figure>
-<p>其中若出现
-<code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix
-是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
+<p>其中若出现 <code>(CRON) info (No MTA installed, discarding output)</code>字样，说明linux系统中没有安装<code>postfix</code>。Postfix 是一种电子邮件服务器软件。当crontab执行脚本时，会将输出通过本地的文本邮件的方式传递给当前用户，传递的内容存放在<code>/var/mail/&lt;当前用户名&gt;</code>文件中。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install postfix -y</span><br></pre></td></tr></table></figure>
-<h4
-id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
+<h4 id="将标准错误和标准输出重定向到文件">将标准错误和标准输出重定向到文件</h4>
 <p>当所有的输出重定向到文件以后，crontab就不会给本地用户发信息啦，也就解决了上节的问题。</p>
-<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写
-<code>*/1 * * * * r.sh</code></p>
-<p><code>r.sh</code>里写
-<code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
+<p><strong>为了将所有的输出</strong>都重定向到文件，可以在cron里写 <code>*/1 * * * * r.sh</code></p>
+<p><code>r.sh</code>里写 <code>a.sh &gt;&gt; /root/a.log 2&gt;&amp;1</code></p>
 <h5 id="附录linux重定向">附录：linux重定向</h5>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">command</span> &gt; filename 　　　　　把标准输出重定向到一个新文件中</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 　　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> 1 &gt; fielname 　　　　　把标准输出重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> &gt; filename 2&gt;&amp;1 　　　把标准输出和标准错误一起重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt; filename 　　　　把标准错误重定向到一个文件中</span><br><span class="line"><span class="built_in">command</span> 2 &gt;&gt; filename 　　　　把标准输出重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &gt;&gt; filename 2&gt;&amp;1 　　把标准输出和标准错误一起重定向到一个文件中(追加)</span><br><span class="line"><span class="built_in">command</span> &lt; filename &gt;filename2 　　把<span class="built_in">command</span>命令以filename文件作为标准输入，以filename2文件作为标准输出</span><br><span class="line"><span class="built_in">command</span> &lt; filename 　　　把<span class="built_in">command</span>命令以filename文件作为标准输入</span><br><span class="line"><span class="built_in">command</span> &lt;&lt; <span class="string">delimiter 　　把从标准输入中读入，直至遇到delimiter</span>分界符</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;m 　　　把文件描述符m作为标准输入</span><br><span class="line"><span class="built_in">command</span> &gt;&amp;m 　　　把标准输出重定向到文件描述符m中</span><br><span class="line"><span class="built_in">command</span> &lt;&amp;- 　　　把关闭标准输入 </span><br></pre></td></tr></table></figure>
-<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong>
-意思是把 标准错误输出 重定向到 标准输出.</p>
-<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和
-<strong>标准错误输出</strong> 都重定向到文件file中</p>
+<p><strong>&gt; 默认为标准输出重定向，与 1&gt; 相同 2&gt;&amp;1</strong> 意思是把 标准错误输出 重定向到 标准输出.</p>
+<p><strong>&amp;&gt;file</strong> 意思是把<strong>标准输出</strong> 和 <strong>标准错误输出</strong> 都重定向到文件file中</p>
 <p><strong>/dev/null是一个文件，这个文件比较特殊，所有传给它的东西它都丢弃掉</strong></p>
 
     </div>

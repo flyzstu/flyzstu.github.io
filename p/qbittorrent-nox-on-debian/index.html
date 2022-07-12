@@ -276,22 +276,17 @@
 <span id="more"></span>
 <h3 id="下载安装包">下载安装包</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3
-id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
+<h3 id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox
-的systemd启动脚本</p>
-<h3
-id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
+<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox 的systemd启动脚本</p>
+<h3 id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=qBittorrent Command Line Client</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=qbittorrent-nox</span><br><span class="line">Group=qbittorrent-nox</span><br><span class="line">UMask=007</span><br><span class="line">ExecStart=/usr/bin/qbittorrent-nox -d --webui-port=8090</span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
 <p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
 <h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
-<p>使用8090端口访问qbittorrent
-web页面，默认用户admin，密码adminadmin</p>
-<p>在tools-options-Web
-UI中找到Authentication，修改username及password。</p>
+<p>使用8090端口访问qbittorrent web页面，默认用户admin，密码adminadmin</p>
+<p>在tools-options-Web UI中找到Authentication，修改username及password。</p>
 
     </div>
 
@@ -326,13 +321,13 @@ UI中找到Authentication，修改username及password。</p>
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/ros-tutorial-03/" rel="prev" title="ROS实战（三）｜相机标定">
-                  <i class="fa fa-chevron-left"></i> ROS实战（三）｜相机标定
+                <a href="/p/rclone-on-debian/" rel="prev" title="Dedian10使用Rclone同步ondrive">
+                  <i class="fa fa-chevron-left"></i> Dedian10使用Rclone同步ondrive
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/rclone-on-debian/" rel="next" title="Dedian10使用Rclone同步ondrive">
-                  Dedian10使用Rclone同步ondrive <i class="fa fa-chevron-right"></i>
+                <a href="/p/serial-communication-on-jetson-xavier-nx/" rel="next" title="ROS实战（六）｜串口通信">
+                  ROS实战（六）｜串口通信 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
