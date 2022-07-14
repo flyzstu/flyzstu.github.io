@@ -286,14 +286,17 @@
 <p>具体请参考我的另外一篇文章<a href="https://fly97.cn/p/create-a-virtual-local-area-network-with-wireguard">使用WireGuard组建虚拟局域网</a>.</p>
 <h3 id="安装ipvs所需要的模块">安装IPVS所需要的模块</h3>
 <p>ipvs网络模式比iptables具有更优秀的性能</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k3s.conf</span></span><br><span class="line"><span class="string">ip_vs</span></span><br><span class="line"><span class="string">ip_vs_rr</span></span><br><span class="line"><span class="string">ip_vs_wrr</span></span><br><span class="line"><span class="string">ip_vs_sh</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k3s.conf</span></span><br><span class="line"><span class="string">ip_vs</span></span><br><span class="line"><span class="string">ip_vs_lc</span></span><br><span class="line"><span class="string">ip_vs_rr</span></span><br><span class="line"><span class="string">ip_vs_wrr</span></span><br><span class="line"><span class="string">ip_vs_sh</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>实时加载模块</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo modprobe ip_vs</span><br><span class="line">sudo modprobe ip_vs_lc</span><br><span class="line">sudo modprobe ip_vs_rr</span><br><span class="line">sudo modprobe ip_vs_wrr</span><br><span class="line">sudo modprobe ip_vs_sh</span><br></pre></td></tr></table></figure>
 <p>安装查看ipvs表软件包</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install ipvsadm -y</span><br></pre></td></tr></table></figure>
-<p>服务器起来以后，可以执行以下命令查看ipvs规则</p>
+<p>服务起来以后，可以执行以下命令查看ipvs规则</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipvsadm -<span class="built_in">ln</span></span><br></pre></td></tr></table></figure>
 <h2 id="安装master节点">安装master节点</h2>
-<p>国内用户可以使用</p>
+<p><del>国内用户可以使用</del></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -</span><br></pre></td></tr></table></figure>
+<p>上述网页由于未知原因挂掉了</p>
 <p>国际用户使用</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sfL https://get.k3s.io | sh -	</span><br></pre></td></tr></table></figure>
 <p>可以指定环境变量，在管道之后传递：</p>

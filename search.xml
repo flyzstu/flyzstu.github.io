@@ -55,6 +55,24 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker打包镜像文件</title>
+    <url>/p/export-docker-images-to-file/</url>
+    <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
+<p>但是这种情况也存在问题，一旦容器内的依赖（如maven、pip）发生变化，基础镜像就需要重新打包，这种情况还没想好需要怎么操作。。不过还是那句话，做了再说，遇到了问题再想办法解决。</p>
+<p>关键字：<strong>docker，打包镜像文件</strong></p>
+<span id="more"></span>
+<h4 id="打包镜像文件">打包镜像文件</h4>
+<p>第一个参数是文件名，第二个参数是镜像名</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker save -o jenkinsci.tar.gz jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
+<h4 id="读取镜像文件">读取镜像文件</h4>
+<p>第一个参数是文件名称</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker load -i jenkinsci.tar.gz</span><br><span class="line"><span class="comment"># Loaded image: jenkinsci/blueocean:latest</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DevOps实战（一）使用Docker搭建Gitlab社区版</title>
     <url>/p/install-gitlab-with-docker/</url>
     <content><![CDATA[<p>什么是DevOps？</p>
@@ -169,24 +187,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker打包镜像文件</title>
-    <url>/p/export-docker-images-to-file/</url>
-    <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
-<p>但是这种情况也存在问题，一旦容器内的依赖（如maven、pip）发生变化，基础镜像就需要重新打包，这种情况还没想好需要怎么操作。。不过还是那句话，做了再说，遇到了问题再想办法解决。</p>
-<p>关键字：<strong>docker，打包镜像文件</strong></p>
-<span id="more"></span>
-<h4 id="打包镜像文件">打包镜像文件</h4>
-<p>第一个参数是文件名，第二个参数是镜像名</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker save -o jenkinsci.tar.gz jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
-<h4 id="读取镜像文件">读取镜像文件</h4>
-<p>第一个参数是文件名称</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker load -i jenkinsci.tar.gz</span><br><span class="line"><span class="comment"># Loaded image: jenkinsci/blueocean:latest</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker的网络模式</title>
     <url>/p/Docker-network-mode/</url>
     <content><![CDATA[<p><code>docker</code>目前支持以下5种网络模式：</p>
@@ -210,6 +210,18 @@
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang时间处理</title>
+    <url>/p/time-processing-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
+<span id="more"></span>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -477,18 +489,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang时间处理</title>
-    <url>/p/time-processing-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
-<span id="more"></span>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>golang中的生产者消费者模型</title>
     <url>/p/producer-consumer-model-in-golang/</url>
     <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
@@ -635,52 +635,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Go语言操作MySQL数据库</title>
-    <url>/p/go-mysql/</url>
-    <content><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p>
-<p>关键词：<strong>golang</strong></p>
-<span id="more"></span>
-<h3 id="连接">连接</h3>
-<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
-<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers 获取驱动列表。</p>
-<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
-<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
-<h4 id="下载依赖">下载依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
-<h4 id="初始化链接">初始化链接</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li>
-<li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
-<li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>验证数据库是否可用</li>
-<li>如果必要的话建立一个连接</li>
-</ul>
-<h4 id="设置最大连接数">设置最大连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大连接数</li>
-<li>如果n &gt; 0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
-<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
-</ul>
-<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大闲置连接数</li>
-<li>如果n 大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
-<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go语言基础（二）读写json字符串</title>
     <url>/p/go-json/</url>
     <content><![CDATA[<p>本文主要介绍了Go语言中读写json的相关操作。</p>
@@ -733,6 +687,52 @@
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line">jsonDATA, err = json.Marshal(msg) <span class="comment">// 不带缩进 </span></span><br><span class="line">json.MarshalIndent(c, <span class="string">&quot;&quot;</span>, <span class="string">&quot;     &quot;</span>) <span class="comment">// 带缩进</span></span><br></pre></td></tr></table></figure>
 <h4 id="完整代码">完整代码</h4>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	msg := &amp;Data&#123;&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg: %v\n&quot;</span>, msg)</span><br><span class="line">	jsonDATA, err := ioutil.ReadFile(<span class="string">&quot;data.json&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// fmt.Printf(&quot;jsonDATA: %s\n&quot;, string(jsonDATA))</span></span><br><span class="line">	err = json.Unmarshal(jsonDATA, msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg.Content: %v\n&quot;</span>, msg.Content)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg.MsgType: %v\n&quot;</span>, msg.MsgType)</span><br><span class="line">	<span class="comment">// jsonDATA, err = json.Marshal(msg) // 不带缩进</span></span><br><span class="line">	jsonDATA, err = json.MarshalIndent(msg, <span class="string">&quot;&quot;</span>, <span class="string">&quot;  &quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;string(jsonDATA): %v\n&quot;</span>, <span class="type">string</span>(jsonDATA))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go语言操作MySQL数据库</title>
+    <url>/p/go-mysql/</url>
+    <content><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p>
+<p>关键词：<strong>golang</strong></p>
+<span id="more"></span>
+<h3 id="连接">连接</h3>
+<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
+<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers 获取驱动列表。</p>
+<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
+<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
+<h4 id="下载依赖">下载依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
+<h4 id="初始化链接">初始化链接</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li>
+<li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
+<li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>验证数据库是否可用</li>
+<li>如果必要的话建立一个连接</li>
+</ul>
+<h4 id="设置最大连接数">设置最大连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大连接数</li>
+<li>如果n &gt; 0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
+<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
+</ul>
+<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大闲置连接数</li>
+<li>如果n 大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
+<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
+</ul>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -3701,6 +3701,64 @@
       </tags>
   </entry>
   <entry>
+    <title>kafaka学习笔记之绪论</title>
+    <url>/p/introduction-to-kafaka-study-notes/</url>
+    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
+<p>关键词：<strong>kafaka</strong></p>
+<span id="more"></span>
+<h2 id="定义">定义</h2>
+<h3 id="传统定义">传统定义</h3>
+<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
+<h4 id="发布订阅">发布/订阅</h4>
+<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
+<h3 id="kafka最新定义">kafka最新定义</h3>
+<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
+<h2 id="应用场景">应用场景</h2>
+<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
+<ul>
+<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
+</ul>
+<p><img data-src="image-20220419165347641.png" /></p>
+<h3 id="解耦">解耦</h3>
+<ul>
+<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
+</ul>
+<p><img data-src="image-20220419165511301.png" /></p>
+<h3 id="异步通信">异步通信</h3>
+<ul>
+<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
+</ul>
+<p><img data-src="image-20220419165706773.png" /></p>
+<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
+<h3 id="点对点方式">点对点方式</h3>
+<ul>
+<li>消费者主动拉取数据，消息收到后清除消息</li>
+</ul>
+<p><img data-src="image-20220419165858779.png" /></p>
+<h3 id="发布订阅方式">发布订阅方式</h3>
+<ul>
+<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
+<li>消费者消费以后不删除数据</li>
+<li>每个消费者相互独立，都可以消费到数据</li>
+</ul>
+<p><img data-src="image-20220419170024390.png" /></p>
+<h2 id="基础架构">基础架构</h2>
+<p><img data-src="image-20220419170301160.png" /></p>
+<ol type="1">
+<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
+<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
+<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
+<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
+<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
+<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
+<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>kafaka</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kafaka学习笔记之快速入门</title>
     <url>/p/introduction-to-kafaka-study-notes-02/</url>
     <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
@@ -3873,64 +3931,6 @@
       </tags>
   </entry>
   <entry>
-    <title>kafaka学习笔记之绪论</title>
-    <url>/p/introduction-to-kafaka-study-notes/</url>
-    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
-<p>关键词：<strong>kafaka</strong></p>
-<span id="more"></span>
-<h2 id="定义">定义</h2>
-<h3 id="传统定义">传统定义</h3>
-<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
-<h4 id="发布订阅">发布/订阅</h4>
-<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
-<h3 id="kafka最新定义">kafka最新定义</h3>
-<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
-<h2 id="应用场景">应用场景</h2>
-<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
-<ul>
-<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
-</ul>
-<p><img data-src="image-20220419165347641.png" /></p>
-<h3 id="解耦">解耦</h3>
-<ul>
-<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
-</ul>
-<p><img data-src="image-20220419165511301.png" /></p>
-<h3 id="异步通信">异步通信</h3>
-<ul>
-<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
-</ul>
-<p><img data-src="image-20220419165706773.png" /></p>
-<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
-<h3 id="点对点方式">点对点方式</h3>
-<ul>
-<li>消费者主动拉取数据，消息收到后清除消息</li>
-</ul>
-<p><img data-src="image-20220419165858779.png" /></p>
-<h3 id="发布订阅方式">发布订阅方式</h3>
-<ul>
-<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
-<li>消费者消费以后不删除数据</li>
-<li>每个消费者相互独立，都可以消费到数据</li>
-</ul>
-<p><img data-src="image-20220419170024390.png" /></p>
-<h2 id="基础架构">基础架构</h2>
-<p><img data-src="image-20220419170301160.png" /></p>
-<ol type="1">
-<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
-<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
-<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
-<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
-<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
-<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
-<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>kafaka</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>nginx.conf配置文件详解</title>
     <url>/p/How-to-configure-nginx-conf/</url>
     <content><![CDATA[<p>本文主要介绍了nginx的配置文件。</p>
@@ -3970,6 +3970,27 @@
 ]]></content>
       <tags>
         <tag>office</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ssh-genkey参数</title>
+    <url>/p/ssh-genkey/</url>
+    <content><![CDATA[<p>什么是ssh-genkey？</p>
+<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
+<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
+<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
+<span id="more"></span>
+<h2 id="常用命令">常用命令</h2>
+<h3 id="生成密钥对">生成密钥对</h3>
+<p>默认生成 2048 位 RSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<p>生成 4096 位 RSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
+<p>生成 521 位 ECDSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ssh-genkey</tag>
       </tags>
   </entry>
   <entry>
@@ -4337,27 +4358,6 @@
       </tags>
   </entry>
   <entry>
-    <title>ssh-genkey参数</title>
-    <url>/p/ssh-genkey/</url>
-    <content><![CDATA[<p>什么是ssh-genkey？</p>
-<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
-<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
-<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
-<span id="more"></span>
-<h2 id="常用命令">常用命令</h2>
-<h3 id="生成密钥对">生成密钥对</h3>
-<p>默认生成 2048 位 RSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
-<p>生成 4096 位 RSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
-<p>生成 521 位 ECDSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ssh-genkey</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ubuntu配置jdk-12环境</title>
     <url>/p/install-jdk12-on-ubuntu2004/</url>
     <content><![CDATA[<p>本文介绍如何在Ubuntu 20.04 LTS系统上配置jdk开发环境。</p>
@@ -4655,6 +4655,119 @@
       <tags>
         <tag>openssl</tag>
         <tag>https</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用WSL链接Github仓库</title>
+    <url>/p/Use-WSL-to-link-Github-repositories/</url>
+    <content><![CDATA[<p>话不多说，先上教程。</p>
+<span id="more"></span>
+<h4 id="首先要安装wslwindows-subsystem-for-linux即适用于window10的linux子系统">1.首先，要安装WSL(Windows Subsystem for Linux)。即适用于Window10的Linux子系统。</h4>
+<ul>
+<li><p>打开开发者选项，选择开发人员模式。<img data-src="image-20191228201007723.png" /></p></li>
+<li><p>打开控制面板-程序，选择适用于Linux的Windows子系统。<img data-src="image-20191228201255121.png" /></p></li>
+<li><p>打开Windows应用商店，搜索linux，选择你喜欢的linux系统点击安装。这里以Ubuntu为例。</p>
+<p><img data-src="20200531102849.png" /></p></li>
+</ul>
+<p>第一次打开要选择用户名和密码，因为笔者已经安装完了，这里就不再截图了。到此为止WSL就安装好了。</p>
+<h4 id="使用wsl安装hexo相关软件并链接到github仓库">2.使用WSL安装hexo相关软件并链接到github仓库</h4>
+<p>打开刚刚安装好的Ubuntu，输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure>
+<h5 id="初始化git">初始化git：</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//进入项目</span><br><span class="line">cd Desktop/myproject</span><br><span class="line">//初始化git</span><br><span class="line"> git init</span><br></pre></td></tr></table></figure>
+<h5 id="创建ssh-key">创建ssh key：</h5>
+<p>为了让github能够识别是我们自己上传文件，需要创建ssh key</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;your_email@youremail.com&quot;</span><br></pre></td></tr></table></figure>
+<p>这里的<strong>your_email@youremail.com</strong>是你的<strong>邮箱地址</strong>，在输入后会询问你是否保存创建的ssh key，点回车就好，然后要求输入你要设置的密码，如果直接回车表示不设密码。然后会提示你ssh key已经创建好。</p>
+<h5 id="把密码导入github">把密码导入GitHub：</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>此时在终端会显示出刚刚创建好的ssh key，复制出来，在github在点击头像，然后点击setting，在找到SSH and GPG keys，创建一个new ssh key，然后将刚刚复制的ssh key填入即可。</p>
+<h5 id="验证是否连接成功">验证是否连接成功：</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+<p>如果回车看到：<strong>You’ve successfully authenticated, but GitHub does not provide shell access</strong> 。表示已成功连上github。</p>
+<h5 id="设置username和email">设置username和email：</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.name &quot;your name&quot;</span><br><span class="line">git config --global user.email &quot;your_email@youremail.com&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="添加远程地址">添加远程地址：</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git remote add origin git@github.com:yourName/yourRepo.git</span><br></pre></td></tr></table></figure>
+<p>后面的yourName和yourRepo分别是你的github的用户名和刚才新建的仓库名。</p>
+<h5 id="上传项目">上传项目：</h5>
+<p>依次运行以下命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git status</span><br><span class="line">git add .</span><br><span class="line">git commit -m &#x27;my project push&#x27;</span><br><span class="line">git push origin master  --force</span><br></pre></td></tr></table></figure>
+<p>这里的<strong>master</strong>指的是主分支名，如果是其他分支，则填写相应的分支名。</p>
+<p>这样我们就将我们的项目上传到github仓库。</p>
+<h5 id="备注私钥和公钥的权限问题">备注：私钥和公钥的权限问题</h5>
+<p>确认将 SSH 权限应用于公钥和私钥文件。</p>
+<ol type="1">
+<li><p>通过运行以下命令来检查 SSH 公钥文件：<code>ls -l /etc/ssh/*key.pub</code></p></li>
+<li><p>确认所有者是 root，组所有者是 root，并且文件权限设置为 0644 (-rw-r--r--)。</p></li>
+<li><p>通过运行以下命令来修复任何问题。</p>
+<p><code>chown root /etc/ssh/*key.pub</code></p>
+<p><code>chgrp root /etc/ssh/*key.pub</code></p>
+<p><code>chmod 644 /etc/ssh/*key.pub</code></p></li>
+<li><p>通过运行以下命令来检查 SSH 私钥文件：<code>ls -l /etc/ssh/*key</code></p></li>
+<li><p>通过运行以下命令来修复任何问题。</p>
+<p><code>chown root /etc/ssh/*key</code></p>
+<p><code>chgrp root /etc/ssh/*key</code></p>
+<p><code>chmod 644 /etc/ssh/*key</code></p></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>WSL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用WireGuard组建虚拟局域网</title>
+    <url>/p/create-a-virtual-local-area-network-with-wireguard/</url>
+    <content><![CDATA[<p>什么是wireguard？</p>
+<p>以下引用自 <a href="https://www.wireguard.com/">WireGuard</a> 项目主页:</p>
+<p>WireGuard 是一种极其简单但快速且现代的 VPN，它利用了最先进的加密技术。它的目标是比 IPsec 更快、更简单、更精简和更有用，同时避免令人头疼的问题。旨在提供比 OpenVPN 更高的性能。WireGuard 被设计为在嵌入式接口和超级计算机等上运行的通用 VPN，适用于许多不同的环境。最初仅支持 Linux 平台，现在可以进行跨平台（Windows、macOS、BSD、iOS、Android）的广泛部署。目前仍然在大力开发中，但已经被认为是业内最安全、最容易使用和最简单的 VPN 解决方案。</p>
+<p>本文主要介绍如何使用WireGuard组建虚拟局域网，并结合自己的实践经验，给出笔者在使用wireguard中遇到的问题。</p>
+<p>关键词：<strong>WireGuard</strong></p>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>有人可能会问，为什么不使用Frp或其他端口映射工具？需求之一是希望七层应用（包括DNS）都不需要特别的设置：而端口映射在应用层，每当有一个新的应用都要重新配置一遍。VPN虚拟出来的网络处于网络层，路由规则一次性配好后，就不需要再为了新的七层应用再配置一遍。</p>
+<p>部署前提：需要一台可以<strong>被公网访问</strong>的电脑，不管是通过DMZ，还是一对一NAT的方式，或者是其他方式。</p>
+<h2 id="基础设置">基础设置</h2>
+<h3 id="server端">Server端</h3>
+<p>为了方便，这里使用docker。</p>
+<p>注：安装docker环境不在本文的讨论范围内。</p>
+<p>安装Wireguard内核</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install wireguard-dkms -y</span><br></pre></td></tr></table></figure>
+<p>Docker开启IP地址转发</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/containerd.conf</span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo modprobe overlay</span><br><span class="line">sudo modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置必需的 sysctl 参数，这些参数在重新启动后仍然存在。</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数而无需重新启动</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
+<p>拉取Wireguard镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull lscr.io/linuxserver/wireguard:latest</span><br></pre></td></tr></table></figure>
+<p>设置Server端环境变量</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># env</span></span><br><span class="line">SERVERURL=1.2.3.4							 <span class="comment"># 任意client都可以直接访问的公网IP</span></span><br><span class="line">SERVERPORT=51820            	 <span class="comment"># Server向外暴露的端口</span></span><br><span class="line">PEERS=5                     	 <span class="comment"># Peer 数目</span></span><br><span class="line">PEERDNS=119.29.29.29        	 <span class="comment"># Peer DNS</span></span><br><span class="line">INTERNAL_SUBNET=192.168.7.0/24 <span class="comment"># 虚拟局域网IP</span></span><br><span class="line">ALLOWEDIPS=192.168.7.0/24      <span class="comment"># 允许被访问的IP</span></span><br></pre></td></tr></table></figure>
+<p>设置docker-compose.yml</p>
+<p>主要是server端容器配置</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3.3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">wireguard:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">lscr.io/linuxserver/wireguard:latest</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">env_file:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./env</span>                    <span class="comment"># 将上文的环境变量存为env</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">    	<span class="attr">TZ:</span> <span class="string">&quot;Asia/Shanghai&quot;</span></span><br><span class="line">      <span class="attr">PUID:</span> <span class="string">&quot;1000&quot;</span>               <span class="comment"># 配置文件映射到宿主机的UID</span></span><br><span class="line">      <span class="attr">PGID:</span> <span class="string">&quot;1000&quot;</span>               <span class="comment"># 配置文件映射到宿主机的PID</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/config</span>         <span class="comment"># 配置文件路径</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/lib/modules:/lib/modules</span></span><br><span class="line">    <span class="attr">cap_add:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">NET_ADMIN</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYS_MODULE</span></span><br><span class="line">    <span class="attr">sysctls:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">net.ipv4.conf.all.src_valid_mark=1</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">net.ipv4.ip_forward=1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">51820</span><span class="string">:51820/udp</span>         <span class="comment"># 向外映射的端口，需要开启UDP支持</span></span><br></pre></td></tr></table></figure>
+<p>启动Server端</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220610155805291.png" /></p>
+<h3 id="client端">Client端</h3>
+<p>从config目录下选择一个peerX，文件夹内的peerX.conf就是客户端的配置文件。</p>
+<p>客户端使用wg命令行的方式进行安装。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install wireguard-dkms -y  <span class="comment"># 如果当前内核版本大于5.6则不用安装</span></span><br><span class="line">sudo apt-get install wireguard-tools -y       </span><br></pre></td></tr></table></figure>
+<p>将配置文件复制到/etc/wireguard文件夹，执行以下命令启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wg-quick up peerX                      <span class="comment"># peerX要和配置文件名的basename一致</span></span><br></pre></td></tr></table></figure>
+<p>如果在启动过程发现了如下问题：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/bin/wg-quick: line 32: resolvconf: <span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
+<p>执行以下命令修复</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">ln</span> -s /usr/bin/resolvectl /usr/local/bin/resolvconf</span><br></pre></td></tr></table></figure>
+<p>启动完毕以后检查执行情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wg </span><br></pre></td></tr></table></figure>
+<p><img data-src="使用WireGuard组建虚拟局域网/image-20220610164755938.png" /></p>
+<h3 id="附加设置">附加设置</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PersistentKeepalive = 1</span><br></pre></td></tr></table></figure>
+<p>上面的设置是每隔1秒发送一个数据包，保持数据连接</p>
+<h2 id="进阶设置">进阶设置</h2>
+<h3 id="wireguard全互联架构">Wireguard全互联架构</h3>
+<h3 id="基于wireguard协议的vpn工具">基于WireGuard协议的VPN工具</h3>
+<p>未完待续...</p>
+]]></content>
+      <tags>
+        <tag>wireguard</tag>
       </tags>
   </entry>
   <entry>
@@ -4963,164 +5076,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用WSL链接Github仓库</title>
-    <url>/p/Use-WSL-to-link-Github-repositories/</url>
-    <content><![CDATA[<p>话不多说，先上教程。</p>
-<span id="more"></span>
-<h4 id="首先要安装wslwindows-subsystem-for-linux即适用于window10的linux子系统">1.首先，要安装WSL(Windows Subsystem for Linux)。即适用于Window10的Linux子系统。</h4>
-<ul>
-<li><p>打开开发者选项，选择开发人员模式。<img data-src="image-20191228201007723.png" /></p></li>
-<li><p>打开控制面板-程序，选择适用于Linux的Windows子系统。<img data-src="image-20191228201255121.png" /></p></li>
-<li><p>打开Windows应用商店，搜索linux，选择你喜欢的linux系统点击安装。这里以Ubuntu为例。</p>
-<p><img data-src="20200531102849.png" /></p></li>
-</ul>
-<p>第一次打开要选择用户名和密码，因为笔者已经安装完了，这里就不再截图了。到此为止WSL就安装好了。</p>
-<h4 id="使用wsl安装hexo相关软件并链接到github仓库">2.使用WSL安装hexo相关软件并链接到github仓库</h4>
-<p>打开刚刚安装好的Ubuntu，输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install git</span><br></pre></td></tr></table></figure>
-<h5 id="初始化git">初始化git：</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//进入项目</span><br><span class="line">cd Desktop/myproject</span><br><span class="line">//初始化git</span><br><span class="line"> git init</span><br></pre></td></tr></table></figure>
-<h5 id="创建ssh-key">创建ssh key：</h5>
-<p>为了让github能够识别是我们自己上传文件，需要创建ssh key</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;your_email@youremail.com&quot;</span><br></pre></td></tr></table></figure>
-<p>这里的<strong>your_email@youremail.com</strong>是你的<strong>邮箱地址</strong>，在输入后会询问你是否保存创建的ssh key，点回车就好，然后要求输入你要设置的密码，如果直接回车表示不设密码。然后会提示你ssh key已经创建好。</p>
-<h5 id="把密码导入github">把密码导入GitHub：</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-<p>此时在终端会显示出刚刚创建好的ssh key，复制出来，在github在点击头像，然后点击setting，在找到SSH and GPG keys，创建一个new ssh key，然后将刚刚复制的ssh key填入即可。</p>
-<h5 id="验证是否连接成功">验证是否连接成功：</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-<p>如果回车看到：<strong>You’ve successfully authenticated, but GitHub does not provide shell access</strong> 。表示已成功连上github。</p>
-<h5 id="设置username和email">设置username和email：</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.name &quot;your name&quot;</span><br><span class="line">git config --global user.email &quot;your_email@youremail.com&quot;</span><br></pre></td></tr></table></figure>
-<h5 id="添加远程地址">添加远程地址：</h5>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git remote add origin git@github.com:yourName/yourRepo.git</span><br></pre></td></tr></table></figure>
-<p>后面的yourName和yourRepo分别是你的github的用户名和刚才新建的仓库名。</p>
-<h5 id="上传项目">上传项目：</h5>
-<p>依次运行以下命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git status</span><br><span class="line">git add .</span><br><span class="line">git commit -m &#x27;my project push&#x27;</span><br><span class="line">git push origin master  --force</span><br></pre></td></tr></table></figure>
-<p>这里的<strong>master</strong>指的是主分支名，如果是其他分支，则填写相应的分支名。</p>
-<p>这样我们就将我们的项目上传到github仓库。</p>
-<h5 id="备注私钥和公钥的权限问题">备注：私钥和公钥的权限问题</h5>
-<p>确认将 SSH 权限应用于公钥和私钥文件。</p>
-<ol type="1">
-<li><p>通过运行以下命令来检查 SSH 公钥文件：<code>ls -l /etc/ssh/*key.pub</code></p></li>
-<li><p>确认所有者是 root，组所有者是 root，并且文件权限设置为 0644 (-rw-r--r--)。</p></li>
-<li><p>通过运行以下命令来修复任何问题。</p>
-<p><code>chown root /etc/ssh/*key.pub</code></p>
-<p><code>chgrp root /etc/ssh/*key.pub</code></p>
-<p><code>chmod 644 /etc/ssh/*key.pub</code></p></li>
-<li><p>通过运行以下命令来检查 SSH 私钥文件：<code>ls -l /etc/ssh/*key</code></p></li>
-<li><p>通过运行以下命令来修复任何问题。</p>
-<p><code>chown root /etc/ssh/*key</code></p>
-<p><code>chgrp root /etc/ssh/*key</code></p>
-<p><code>chmod 644 /etc/ssh/*key</code></p></li>
-</ol>
-]]></content>
-      <tags>
-        <tag>WSL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用WireGuard组建虚拟局域网</title>
-    <url>/p/create-a-virtual-local-area-network-with-wireguard/</url>
-    <content><![CDATA[<p>什么是wireguard？</p>
-<p>以下引用自 <a href="https://www.wireguard.com/">WireGuard</a> 项目主页:</p>
-<p>WireGuard 是一种极其简单但快速且现代的 VPN，它利用了最先进的加密技术。它的目标是比 IPsec 更快、更简单、更精简和更有用，同时避免令人头疼的问题。旨在提供比 OpenVPN 更高的性能。WireGuard 被设计为在嵌入式接口和超级计算机等上运行的通用 VPN，适用于许多不同的环境。最初仅支持 Linux 平台，现在可以进行跨平台（Windows、macOS、BSD、iOS、Android）的广泛部署。目前仍然在大力开发中，但已经被认为是业内最安全、最容易使用和最简单的 VPN 解决方案。</p>
-<p>本文主要介绍如何使用WireGuard组建虚拟局域网，并结合自己的实践经验，给出笔者在使用wireguard中遇到的问题。</p>
-<p>关键词：<strong>WireGuard</strong></p>
-<span id="more"></span>
-<h2 id="前言">前言</h2>
-<p>有人可能会问，为什么不使用Frp或其他端口映射工具？需求之一是希望七层应用（包括DNS）都不需要特别的设置：而端口映射在应用层，每当有一个新的应用都要重新配置一遍。VPN虚拟出来的网络处于网络层，路由规则一次性配好后，就不需要再为了新的七层应用再配置一遍。</p>
-<p>部署前提：需要一台可以<strong>被公网访问</strong>的电脑，不管是通过DMZ，还是一对一NAT的方式，或者是其他方式。</p>
-<h2 id="基础设置">基础设置</h2>
-<h3 id="server端">Server端</h3>
-<p>为了方便，这里使用docker。</p>
-<p>注：安装docker环境不在本文的讨论范围内。</p>
-<p>安装Wireguard内核</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install wireguard-dkms -y</span><br></pre></td></tr></table></figure>
-<p>Docker开启IP地址转发</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/containerd.conf</span></span><br><span class="line"><span class="string">overlay</span></span><br><span class="line"><span class="string">br_netfilter</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo modprobe overlay</span><br><span class="line">sudo modprobe br_netfilter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置必需的 sysctl 参数，这些参数在重新启动后仍然存在。</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables  = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_forward                 = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用 sysctl 参数而无需重新启动</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure>
-<p>拉取Wireguard镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull lscr.io/linuxserver/wireguard:latest</span><br></pre></td></tr></table></figure>
-<p>设置Server端环境变量</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># env</span></span><br><span class="line">SERVERURL=1.2.3.4							 <span class="comment"># 任意client都可以直接访问的公网IP</span></span><br><span class="line">SERVERPORT=51820            	 <span class="comment"># Server向外暴露的端口</span></span><br><span class="line">PEERS=5                     	 <span class="comment"># Peer 数目</span></span><br><span class="line">PEERDNS=119.29.29.29        	 <span class="comment"># Peer DNS</span></span><br><span class="line">INTERNAL_SUBNET=192.168.7.0/24 <span class="comment"># 虚拟局域网IP</span></span><br><span class="line">ALLOWEDIPS=192.168.7.0/24      <span class="comment"># 允许被访问的IP</span></span><br></pre></td></tr></table></figure>
-<p>设置docker-compose.yml</p>
-<p>主要是server端容器配置</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3.3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">wireguard:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">lscr.io/linuxserver/wireguard:latest</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">env_file:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./env</span>                    <span class="comment"># 将上文的环境变量存为env</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">    	<span class="attr">TZ:</span> <span class="string">&quot;Asia/Shanghai&quot;</span></span><br><span class="line">      <span class="attr">PUID:</span> <span class="string">&quot;1000&quot;</span>               <span class="comment"># 配置文件映射到宿主机的UID</span></span><br><span class="line">      <span class="attr">PGID:</span> <span class="string">&quot;1000&quot;</span>               <span class="comment"># 配置文件映射到宿主机的PID</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/config</span>         <span class="comment"># 配置文件路径</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/lib/modules:/lib/modules</span></span><br><span class="line">    <span class="attr">cap_add:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">NET_ADMIN</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">SYS_MODULE</span></span><br><span class="line">    <span class="attr">sysctls:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">net.ipv4.conf.all.src_valid_mark=1</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">net.ipv4.ip_forward=1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">51820</span><span class="string">:51820/udp</span>         <span class="comment"># 向外映射的端口，需要开启UDP支持</span></span><br></pre></td></tr></table></figure>
-<p>启动Server端</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220610155805291.png" /></p>
-<h3 id="client端">Client端</h3>
-<p>从config目录下选择一个peerX，文件夹内的peerX.conf就是客户端的配置文件。</p>
-<p>客户端使用wg命令行的方式进行安装。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install wireguard-dkms -y  <span class="comment"># 如果当前内核版本大于5.6则不用安装</span></span><br><span class="line">sudo apt-get install wireguard-tools -y       </span><br></pre></td></tr></table></figure>
-<p>将配置文件复制到/etc/wireguard文件夹，执行以下命令启动</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wg-quick up peerX                      <span class="comment"># peerX要和配置文件名的basename一致</span></span><br></pre></td></tr></table></figure>
-<p>如果在启动过程发现了如下问题：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/bin/wg-quick: line 32: resolvconf: <span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
-<p>执行以下命令修复</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">ln</span> -s /usr/bin/resolvectl /usr/local/bin/resolvconf</span><br></pre></td></tr></table></figure>
-<p>启动完毕以后检查执行情况</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wg </span><br></pre></td></tr></table></figure>
-<p><img data-src="使用WireGuard组建虚拟局域网/image-20220610164755938.png" /></p>
-<h3 id="附加设置">附加设置</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PersistentKeepalive = 1</span><br></pre></td></tr></table></figure>
-<p>上面的设置是每隔1秒发送一个数据包，保持数据连接</p>
-<h2 id="进阶设置">进阶设置</h2>
-<h3 id="wireguard全互联架构">Wireguard全互联架构</h3>
-<h3 id="基于wireguard协议的vpn工具">基于WireGuard协议的VPN工具</h3>
-<p>未完待续...</p>
-]]></content>
-      <tags>
-        <tag>wireguard</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用Zerotier搭建内网穿透服务</title>
-    <url>/p/how-to-use-Zerotier/</url>
-    <content><![CDATA[<p>什么是Zerotier？</p>
-<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
-<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
-<span id="more"></span>
-<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
-<h4 id="创建账号">创建账号</h4>
-<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
-<p><img data-src="image-20210128181221059.png" /></p>
-<p>根据自己需要，选择注册方式。</p>
-<p><img data-src="image-20210128181326421.png" /></p>
-<h4 id="创建网络">创建网络</h4>
-<p><img data-src="image-20210128181610919.png" /></p>
-<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
-<p><img data-src="image-20210128181706204.png" /></p>
-<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
-<p><img data-src="image-20210128181808319.png" /></p>
-<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
-<h4 id="加入网络">加入网络</h4>
-<p><img data-src="image-20210128181920181.png" /></p>
-<p>点击<code>Download</code>，进入下载页面。</p>
-<p><img data-src="image-20210128181957790.png" style="zoom:67%;" /></p>
-<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
-<p><img data-src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
-<p>等待下载完成，然后安装。</p>
-<p><img data-src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
-<p>打开以后会默认在任务栏运行。</p>
-<figure>
-<img data-src="image-20210128182448852.png" alt="image-20210128182448852" /><figcaption aria-hidden="true">image-20210128182448852</figcaption>
-</figure>
-<p>右键选择<code>Join a network</code>。</p>
-<p><img data-src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
-<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
-<p><img data-src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
-<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
-<p><img data-src="image-20210128182844550.png" /></p>
-<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
-<p><img data-src="image-20210128183032664.png" /></p>
-]]></content>
-      <tags>
-        <tag>Zerotier</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用acme.sh快速申请ssl证书</title>
     <url>/p/Use-acme-to-quickly-apply-for-an-ssl-certificate/</url>
     <content><![CDATA[<p><strong>acme.sh</strong> 实现了 <code>acme</code> 协议, 可以从 letsencrypt 生成免费的证书.</p>
@@ -5200,6 +5155,51 @@
 ]]></content>
       <tags>
         <tag>证书</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Zerotier搭建内网穿透服务</title>
+    <url>/p/how-to-use-Zerotier/</url>
+    <content><![CDATA[<p>什么是Zerotier？</p>
+<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
+<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
+<span id="more"></span>
+<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
+<h4 id="创建账号">创建账号</h4>
+<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
+<p><img data-src="image-20210128181221059.png" /></p>
+<p>根据自己需要，选择注册方式。</p>
+<p><img data-src="image-20210128181326421.png" /></p>
+<h4 id="创建网络">创建网络</h4>
+<p><img data-src="image-20210128181610919.png" /></p>
+<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
+<p><img data-src="image-20210128181706204.png" /></p>
+<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
+<p><img data-src="image-20210128181808319.png" /></p>
+<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
+<h4 id="加入网络">加入网络</h4>
+<p><img data-src="image-20210128181920181.png" /></p>
+<p>点击<code>Download</code>，进入下载页面。</p>
+<p><img data-src="image-20210128181957790.png" style="zoom:67%;" /></p>
+<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
+<p><img data-src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
+<p>等待下载完成，然后安装。</p>
+<p><img data-src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
+<p>打开以后会默认在任务栏运行。</p>
+<figure>
+<img data-src="image-20210128182448852.png" alt="image-20210128182448852" /><figcaption aria-hidden="true">image-20210128182448852</figcaption>
+</figure>
+<p>右键选择<code>Join a network</code>。</p>
+<p><img data-src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
+<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
+<p><img data-src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
+<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
+<p><img data-src="image-20210128182844550.png" /></p>
+<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
+<p><img data-src="image-20210128183032664.png" /></p>
+]]></content>
+      <tags>
+        <tag>Zerotier</tag>
       </tags>
   </entry>
   <entry>
@@ -5345,14 +5345,17 @@
 <p>具体请参考我的另外一篇文章<a href="https://fly97.cn/p/create-a-virtual-local-area-network-with-wireguard">使用WireGuard组建虚拟局域网</a>.</p>
 <h3 id="安装ipvs所需要的模块">安装IPVS所需要的模块</h3>
 <p>ipvs网络模式比iptables具有更优秀的性能</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k3s.conf</span></span><br><span class="line"><span class="string">ip_vs</span></span><br><span class="line"><span class="string">ip_vs_rr</span></span><br><span class="line"><span class="string">ip_vs_wrr</span></span><br><span class="line"><span class="string">ip_vs_sh</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k3s.conf</span></span><br><span class="line"><span class="string">ip_vs</span></span><br><span class="line"><span class="string">ip_vs_lc</span></span><br><span class="line"><span class="string">ip_vs_rr</span></span><br><span class="line"><span class="string">ip_vs_wrr</span></span><br><span class="line"><span class="string">ip_vs_sh</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>实时加载模块</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo modprobe ip_vs</span><br><span class="line">sudo modprobe ip_vs_lc</span><br><span class="line">sudo modprobe ip_vs_rr</span><br><span class="line">sudo modprobe ip_vs_wrr</span><br><span class="line">sudo modprobe ip_vs_sh</span><br></pre></td></tr></table></figure>
 <p>安装查看ipvs表软件包</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install ipvsadm -y</span><br></pre></td></tr></table></figure>
-<p>服务器起来以后，可以执行以下命令查看ipvs规则</p>
+<p>服务起来以后，可以执行以下命令查看ipvs规则</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ipvsadm -<span class="built_in">ln</span></span><br></pre></td></tr></table></figure>
 <h2 id="安装master节点">安装master节点</h2>
-<p>国内用户可以使用</p>
+<p><del>国内用户可以使用</del></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -</span><br></pre></td></tr></table></figure>
+<p>上述网页由于未知原因挂掉了</p>
 <p>国际用户使用</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sfL https://get.k3s.io | sh -	</span><br></pre></td></tr></table></figure>
 <p>可以指定环境变量，在管道之后传递：</p>
@@ -5742,149 +5745,6 @@
       </tags>
   </entry>
   <entry>
-    <title>初探docker(一) | docker的安装及常见命令</title>
-    <url>/p/docker-tutorial-01/</url>
-    <content><![CDATA[<p>本文介绍的是docker的安装及常见命令。</p>
-<p><strong>摘要：</strong><a href="https://www.docker.com/">Docker</a> 是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本。使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松。</p>
-<p><strong>关键词：</strong>Docker</p>
-<span id="more"></span>
-<h3 id="安装docker">安装Docker</h3>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">curl -fsSL get.docker.com -o get-docker.sh</span><br><span class="line"><span class="comment"># sudo sh get-docker.sh --mirror </span></span><br><span class="line">sudo sh get-docker.sh --mirror Aliyun</span><br></pre></td></tr></table></figure>
-<h3 id="启动docker-ce">启动Docker-CE</h3>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
-<h3 id="优雅的删除docker">优雅的删除docker</h3>
-<p>Debian系：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg -l | grep docker</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt remove --purge docker-ce docker-ce-cli</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /var/lib/docker</span><br></pre></td></tr></table></figure>
-<h3 id="测试-docker-是否安装正确">测试 Docker 是否安装正确</h3>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run hello-world</span><br><span class="line">以下是输出：</span><br><span class="line">Unable to find image &#x27;hello-world:latest&#x27; locally</span><br><span class="line">latest: Pulling from library/hello-world</span><br><span class="line">d1725b59e92d: Pull complete</span><br><span class="line">Digest: sha256:0add3ace90ecb4adbf7777e9aacf18357296e799f81cabc9fde470971e499788</span><br><span class="line">Status: Downloaded newer image for hello-world:latest</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the &quot;hello-world&quot; image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image which runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, which sent it</span><br><span class="line">    to your terminal.</span><br><span class="line"></span><br><span class="line">To try something more ambitious, you can run an Ubuntu container with:</span><br><span class="line"><span class="meta prompt_"> $ </span><span class="language-bash">docker run -it ubuntu bash</span></span><br><span class="line"></span><br><span class="line">Share images, automate workflows, and more with a free Docker ID:</span><br><span class="line"> https://hub.docker.com/</span><br><span class="line"></span><br><span class="line">For more examples and ideas, visit:</span><br><span class="line"> https://docs.docker.com/get-started/</span><br></pre></td></tr></table></figure>
-<h3 id="获取镜像加速器">获取镜像加速器</h3>
-<p>国内从 Docker Hub 拉取镜像有时会遇到困难，此时可以配置镜像加速器。国内很多云服务商都提供了国内加速器服务，例如：</p>
-<ul>
-<li><p>网易云加速器 <code>https://hub-mirror.c.163.com</code></p></li>
-<li><p>百度云加速器 <code>https://mirror.baidubce.com</code></p></li>
-<li><p><a href="https://cr.console.aliyun.com/cn-hangzhou/mirrors">阿里云加速器(需登录账号获取)</a></p></li>
-<li><p>DaoCloud</p>
-<p>执行以下命令即可：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="linux">Linux</h4>
-<p>对于使用 <a href="https://www.freedesktop.org/wiki/Software/systemd/">systemd</a> 的系统，请在 <code>/etc/docker/daemon.json</code> 中写入如下内容（如果文件不存在请新建该文件）：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://hub-mirror.c.163.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;https://mirror.baidubce.com&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意要保证该文件符合 <strong>json</strong> 规范，否则 Docker 将不能启动。</p>
-</blockquote>
-<p>之后重启服务。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<h4 id="windows-10">Windows 10</h4>
-<p>对于使用 <code>Windows 10</code> 的用户，在任务栏托盘 Docker 图标内右键菜单选择 <code>Settings</code>，打开配置窗口后在左侧导航菜单选择 <code>Docker Engine</code>，在右侧像下边一样编辑 json 文件，之后点击 <code>Apply &amp; Restart</code> 保存后 Docker 就会重启并应用配置的镜像地址了。</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://28wgvhgl.mirror.aliyuncs.com&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;debug&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;experimental&quot;</span><span class="punctuation">:</span> <span class="keyword">false</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20200718170304988.png" /></p>
-<h3 id="常见docker命令">常见docker命令</h3>
-<h4 id="取回容器">取回容器</h4>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull fly97/v2fly</span><br></pre></td></tr></table></figure>
-<h4 id="运行容器">运行容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run -d --name v2fly -v /etc/caddy:/etc/caddy  -p 443:443 fly97/v2fly</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-v ：启用目录挂载。冒号":"前面的目录是<strong>宿主机目录</strong>，后面的目录是<strong>容器内目录</strong>。</p>
-<p>-p：启用端口映射。</p>
-<p>-d：在后台运行容器并打印容器ID。</p>
-<p>--restart=always：保证每次docker服务重启后容器也自动重启</p>
-<p>--network</p>
-</blockquote>
-<p>​ 如果容器已经启动了而又想设置容器自动启动：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker update --restart=always &lt;CONTAINER ID/CONTAINER NAME&gt;</span><br></pre></td></tr></table></figure>
-<h4 id="进入容器">进入容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it $(docker ps| grep fly97/v2fly | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> /bin/sh</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>-i： 交互式操作。</p>
-<p>-t：启用终端运行。</p>
-<p>/bin/sh：打开交互式 Shell</p>
-</blockquote>
-<h4 id="查看当前运行的容器">查看当前运行的容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker ps </span><br></pre></td></tr></table></figure>
-<h4 id="运行容器-1">运行容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker start CONTAINER_NAME</span><br></pre></td></tr></table></figure>
-<h4 id="停止容器">停止容器</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker stop CONTAINER_NAME</span><br></pre></td></tr></table></figure>
-<h4 id="删除容器">删除容器</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker rm CONTAINER_NAME</span><br></pre></td></tr></table></figure>
-<h4 id="查看镜像">查看镜像</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
-<h4 id="删除镜像">删除镜像</h4>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker rmi IMAGE_ID</span><br></pre></td></tr></table></figure>
-<h4 id="清理镜像">清理镜像</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker image prune</span><br></pre></td></tr></table></figure>
-<h4 id="全部命令">全部命令</h4>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">PS</span> C:\Users\wf09\Desktop\v2fly<span class="literal">-docker</span>&gt; docker <span class="literal">--help</span></span><br><span class="line"></span><br><span class="line">Usage:  docker [<span class="type">OPTIONS</span>] COMMAND</span><br><span class="line"></span><br><span class="line">A self<span class="literal">-sufficient</span> runtime <span class="keyword">for</span> containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      <span class="literal">--config</span> string      Location of client config files (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker&quot;</span>)</span><br><span class="line">  <span class="literal">-c</span>, <span class="literal">--context</span> string     Name of the context to use to connect to the</span><br><span class="line">                           daemon (overrides DOCKER_HOST env var and</span><br><span class="line">                           default context <span class="built_in">set</span> with <span class="string">&quot;docker context use&quot;</span>)</span><br><span class="line">  <span class="literal">-D</span>, <span class="literal">--debug</span>              Enable debug mode</span><br><span class="line">  <span class="literal">-H</span>, <span class="literal">--host</span> list          Daemon socket(s) to connect to</span><br><span class="line">  <span class="literal">-l</span>, <span class="literal">--log-level</span> string   <span class="built_in">Set</span> the logging level</span><br><span class="line">                           (<span class="string">&quot;debug&quot;</span>|<span class="string">&quot;info&quot;</span>|<span class="string">&quot;warn&quot;</span>|<span class="string">&quot;error&quot;</span>|<span class="string">&quot;fatal&quot;</span>)</span><br><span class="line">                           (default <span class="string">&quot;info&quot;</span>)</span><br><span class="line">      <span class="literal">--tls</span>                Use TLS; implied by <span class="literal">--tlsverify</span></span><br><span class="line">      <span class="literal">--tlscacert</span> string   Trust certs signed only by this CA (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\ca.pem&quot;</span>)</span><br><span class="line">      <span class="literal">--tlscert</span> string     Path to TLS certificate file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\cert.pem&quot;</span>)</span><br><span class="line">      <span class="literal">--tlskey</span> string      Path to TLS key file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\key.pem&quot;</span>)</span><br><span class="line">      <span class="literal">--tlsverify</span>          Use TLS and verify the remote</span><br><span class="line">  <span class="literal">-v</span>, <span class="literal">--version</span>            Print version information and quit</span><br><span class="line"></span><br><span class="line">Management Commands:</span><br><span class="line">  builder     Manage builds</span><br><span class="line">  config      Manage Docker configs</span><br><span class="line">  container   Manage containers</span><br><span class="line">  context     Manage contexts</span><br><span class="line">  image       Manage images</span><br><span class="line">  network     Manage networks</span><br><span class="line">  node        Manage Swarm nodes</span><br><span class="line">  plugin      Manage plugins</span><br><span class="line">  secret      Manage Docker secrets</span><br><span class="line">  service     Manage services</span><br><span class="line">  stack       Manage Docker stacks</span><br><span class="line">  swarm       Manage Swarm</span><br><span class="line">  system      Manage Docker</span><br><span class="line">  trust       Manage trust on Docker images</span><br><span class="line">  volume      Manage volumes</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  attach      Attach local standard input, output, and error streams to a running container</span><br><span class="line">  build       Build an image from a Dockerfile</span><br><span class="line">  commit      Create a new image from a container<span class="string">&#x27;s changes</span></span><br><span class="line"><span class="string">  cp          Copy files/folders between a container and the local filesystem</span></span><br><span class="line"><span class="string">  create      Create a new container</span></span><br><span class="line"><span class="string">  diff        Inspect changes to files or directories on a container&#x27;</span>s filesystem</span><br><span class="line">  events      Get real time events from the server</span><br><span class="line">  exec        Run a command <span class="keyword">in</span> a running container</span><br><span class="line">  export      Export a container<span class="string">&#x27;s filesystem as a tar archive</span></span><br><span class="line"><span class="string">  history     Show the history of an image</span></span><br><span class="line"><span class="string">  images      List images</span></span><br><span class="line"><span class="string">  import      Import the contents from a tarball to create a filesystem image</span></span><br><span class="line"><span class="string">  info        Display system-wide information</span></span><br><span class="line"><span class="string">  inspect     Return low-level information on Docker objects</span></span><br><span class="line"><span class="string">  kill        Kill one or more running containers</span></span><br><span class="line"><span class="string">  load        Load an image from a tar archive or STDIN</span></span><br><span class="line"><span class="string">  login       Log in to a Docker registry</span></span><br><span class="line"><span class="string">  logout      Log out from a Docker registry</span></span><br><span class="line"><span class="string">  logs        Fetch the logs of a container</span></span><br><span class="line"><span class="string">  pause       Pause all processes within one or more containers</span></span><br><span class="line"><span class="string">  port        List port mappings or a specific mapping for the container</span></span><br><span class="line"><span class="string">  ps          List containers</span></span><br><span class="line"><span class="string">  pull        Pull an image or a repository from a registry</span></span><br><span class="line"><span class="string">  push        Push an image or a repository to a registry</span></span><br><span class="line"><span class="string">  rename      Rename a container</span></span><br><span class="line"><span class="string">  restart     Restart one or more containers</span></span><br><span class="line"><span class="string">  rm          Remove one or more containers</span></span><br><span class="line"><span class="string">  rmi         Remove one or more images</span></span><br><span class="line"><span class="string">  run         Run a command in a new container</span></span><br><span class="line"><span class="string">  save        Save one or more images to a tar archive (streamed to STDOUT by default)</span></span><br><span class="line"><span class="string">  search      Search the Docker Hub for images</span></span><br><span class="line"><span class="string">  start       Start one or more stopped containers</span></span><br><span class="line"><span class="string">  stats       Display a live stream of container(s) resource usage statistics</span></span><br><span class="line"><span class="string">  stop        Stop one or more running containers</span></span><br><span class="line"><span class="string">  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE</span></span><br><span class="line"><span class="string">  top         Display the running processes of a container</span></span><br><span class="line"><span class="string">  unpause     Unpause all processes within one or more containers</span></span><br><span class="line"><span class="string">  update      Update configuration of one or more containers</span></span><br><span class="line"><span class="string">  version     Show the Docker version information</span></span><br><span class="line"><span class="string">  wait        Block until one or more containers stop, then print their exit codes</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Run &#x27;</span>docker COMMAND <span class="literal">--help</span><span class="string">&#x27; for more information on a command.</span></span><br></pre></td></tr></table></figure>
-<h3 id="解决docker使用sudo的问题">解决docker使用sudo的问题</h3>
-<h4 id="创建docker组">创建docker组</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo groupadd docker</span><br></pre></td></tr></table></figure>
-<h4 id="将当前用户加入docker组">将当前用户加入docker组</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo gpasswd -a <span class="variable">$&#123;USER&#125;</span> docker</span><br></pre></td></tr></table></figure>
-<h4 id="重启服务">重启服务</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure>
-<h4 id="刷新docker组成员">刷新docker组成员</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">newgrp - docker</span><br></pre></td></tr></table></figure>
-<h3 id="构建docker镜像时处理configuring-tzdata交互输入">构建Docker镜像时处理'Configuring tzdata'交互输入</h3>
-<p>将tzdata设置为非交互方式</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ENV DEBIAN_FRONTEND=noninteractive</span><br></pre></td></tr></table></figure>
-<h3 id="docker容器内使用dpkg安装chrome浏览器失败">docker容器内使用dpkg安装chrome浏览器失败</h3>
-<p>使用<code>apt</code>离线安装即可，会自动帮你安装依赖</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line">apt install -f ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
-<h3 id="docker-访问外部-https-的数字证书验证问题">docker 访问外部 https 的数字证书验证问题</h3>
-<ol type="1">
-<li><p>alpine linux</p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apk --no-cache add ca-certificates \</span></span><br><span class="line"><span class="language-bash">  &amp;&amp; update-ca-certificates</span></span><br></pre></td></tr></table></figure></li>
-<li><p>ubuntu linux</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN apt-get install ca-certificates -y \</span><br><span class="line">  &amp;&amp; update-ca-certificates</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="修改docker时区">修改docker时区</h3>
-<ol type="1">
-<li><p>挂载宿主机时区文件 到容器内<code>/etc/localtime</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">- /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime</span><br></pre></td></tr></table></figure></li>
-<li><p>debian类镜像构建时指定环境变量</p>
-<ol type="1">
-<li>容器安装tzdata</li>
-</ol>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get install -f tzdata</span></span><br></pre></td></tr></table></figure>
-<ol start="2" type="1">
-<li>使用对应时区的环境变量</li>
-</ol>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> TZ=<span class="string">&quot;Asia/Shanghai&quot;</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="docker-inspect命令">docker inspect命令</h3>
-<h4 id="查看容器状态">查看容器状态</h4>
-<p>首先运行<code>docker inspect</code>查看容器信息</p>
-<p><img data-src="image-20220513100039060.png" /></p>
-<p>可以获取以下容器状态</p>
-<h5 id="查看容器是否正常运行">查看容器是否正常运行</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.State.Status&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
-<h5 id="查看容器是否正在重启">查看容器是否正在重启</h5>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.State.Restarting&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
-<h4 id="查看容器日志存放路径">查看容器日志存放路径</h4>
-<p>某些情况下需要删除日志文件路径，因此可以通过这个命令查看。查看定义日志的字段：</p>
-<p><img data-src="image-20220513100947538.png" /></p>
-<p>运行以下命令获取日志的地址</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.LogPath&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
-<p>然后在操作就好了</p>
-<h3 id="设置容器日志大小">设置容器日志大小</h3>
-<p>一般情况下Docker容器业务日志很大，处理起来不是很方便</p>
-<h4 id="指定容器">指定容器</h4>
-<p>docker-compose</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">    <span class="attr">summary:</span>        </span><br><span class="line">        <span class="attr">logging:</span></span><br><span class="line">            <span class="attr">driver:</span> <span class="string">&quot;json-file&quot;</span> <span class="comment"># 日志驱动</span></span><br><span class="line">            <span class="attr">options:</span></span><br><span class="line">                <span class="attr">max-size:</span> <span class="string">&quot;50m&quot;</span> <span class="comment">#[0-9+][k|m|g] 【文件的大小】</span></span><br><span class="line">                <span class="attr">max-file:</span> <span class="string">&quot;3&quot;</span>   <span class="comment">#[0-9+] 【文件数量】</span></span><br></pre></td></tr></table></figure>
-<p>docker cli</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--log-driver json-file  		  <span class="comment">#日志驱动</span></span><br><span class="line">--log-opt max-size=[0-9+][k|m|g]  <span class="comment">#文件的大小</span></span><br><span class="line">--log-opt max-file=[0-9+]		  <span class="comment">#文件数量</span></span><br></pre></td></tr></table></figure>
-<h4 id="全局设置">全局设置</h4>
-<p>编辑文件<code>/etc/docker/daemon.json</code>，增加以下日志的配置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;log-driver&quot;</span>:<span class="string">&quot;json-file&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log-opts&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;max-size&quot;</span>:<span class="string">&quot;500m&quot;</span>,</span><br><span class="line">        <span class="string">&quot;max-file&quot;</span>:<span class="string">&quot;3&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>初探Docker(二) | 使用Dockerfile定制镜像</title>
     <url>/p/docker-tutorial-02/</url>
     <content><![CDATA[<p>本文主要介绍了Dockerfile。</p>
@@ -6041,6 +5901,149 @@
 <p>SHELL 指令在 Windows 上特别有用，其中有两种常用且完全不同的原生 shell：cmd 和 powershell，以及包括 sh 在内的备用 shell。</p>
 <p>SHELL 指令可以出现多次。每个 SHELL 指令都会覆盖所有先前的 SHELL 指令，并影响所有后续指令。</p>
 <figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SHELL</span><span class="language-bash"> [<span class="string">&quot;executable&quot;</span>, <span class="string">&quot;parameters&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探docker(一) | docker的安装及常见命令</title>
+    <url>/p/docker-tutorial-01/</url>
+    <content><![CDATA[<p>本文介绍的是docker的安装及常见命令。</p>
+<p><strong>摘要：</strong><a href="https://www.docker.com/">Docker</a> 是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本。使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松。</p>
+<p><strong>关键词：</strong>Docker</p>
+<span id="more"></span>
+<h3 id="安装docker">安装Docker</h3>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">curl -fsSL get.docker.com -o get-docker.sh</span><br><span class="line"><span class="comment"># sudo sh get-docker.sh --mirror </span></span><br><span class="line">sudo sh get-docker.sh --mirror Aliyun</span><br></pre></td></tr></table></figure>
+<h3 id="启动docker-ce">启动Docker-CE</h3>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+<h3 id="优雅的删除docker">优雅的删除docker</h3>
+<p>Debian系：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg -l | grep docker</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt remove --purge docker-ce docker-ce-cli</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /var/lib/docker</span><br></pre></td></tr></table></figure>
+<h3 id="测试-docker-是否安装正确">测试 Docker 是否安装正确</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run hello-world</span><br><span class="line">以下是输出：</span><br><span class="line">Unable to find image &#x27;hello-world:latest&#x27; locally</span><br><span class="line">latest: Pulling from library/hello-world</span><br><span class="line">d1725b59e92d: Pull complete</span><br><span class="line">Digest: sha256:0add3ace90ecb4adbf7777e9aacf18357296e799f81cabc9fde470971e499788</span><br><span class="line">Status: Downloaded newer image for hello-world:latest</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the &quot;hello-world&quot; image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image which runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, which sent it</span><br><span class="line">    to your terminal.</span><br><span class="line"></span><br><span class="line">To try something more ambitious, you can run an Ubuntu container with:</span><br><span class="line"><span class="meta prompt_"> $ </span><span class="language-bash">docker run -it ubuntu bash</span></span><br><span class="line"></span><br><span class="line">Share images, automate workflows, and more with a free Docker ID:</span><br><span class="line"> https://hub.docker.com/</span><br><span class="line"></span><br><span class="line">For more examples and ideas, visit:</span><br><span class="line"> https://docs.docker.com/get-started/</span><br></pre></td></tr></table></figure>
+<h3 id="获取镜像加速器">获取镜像加速器</h3>
+<p>国内从 Docker Hub 拉取镜像有时会遇到困难，此时可以配置镜像加速器。国内很多云服务商都提供了国内加速器服务，例如：</p>
+<ul>
+<li><p>网易云加速器 <code>https://hub-mirror.c.163.com</code></p></li>
+<li><p>百度云加速器 <code>https://mirror.baidubce.com</code></p></li>
+<li><p><a href="https://cr.console.aliyun.com/cn-hangzhou/mirrors">阿里云加速器(需登录账号获取)</a></p></li>
+<li><p>DaoCloud</p>
+<p>执行以下命令即可：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="linux">Linux</h4>
+<p>对于使用 <a href="https://www.freedesktop.org/wiki/Software/systemd/">systemd</a> 的系统，请在 <code>/etc/docker/daemon.json</code> 中写入如下内容（如果文件不存在请新建该文件）：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://hub-mirror.c.163.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;https://mirror.baidubce.com&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意要保证该文件符合 <strong>json</strong> 规范，否则 Docker 将不能启动。</p>
+</blockquote>
+<p>之后重启服务。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h4 id="windows-10">Windows 10</h4>
+<p>对于使用 <code>Windows 10</code> 的用户，在任务栏托盘 Docker 图标内右键菜单选择 <code>Settings</code>，打开配置窗口后在左侧导航菜单选择 <code>Docker Engine</code>，在右侧像下边一样编辑 json 文件，之后点击 <code>Apply &amp; Restart</code> 保存后 Docker 就会重启并应用配置的镜像地址了。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://28wgvhgl.mirror.aliyuncs.com&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;debug&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;experimental&quot;</span><span class="punctuation">:</span> <span class="keyword">false</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20200718170304988.png" /></p>
+<h3 id="常见docker命令">常见docker命令</h3>
+<h4 id="取回容器">取回容器</h4>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull fly97/v2fly</span><br></pre></td></tr></table></figure>
+<h4 id="运行容器">运行容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run -d --name v2fly -v /etc/caddy:/etc/caddy  -p 443:443 fly97/v2fly</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-v ：启用目录挂载。冒号":"前面的目录是<strong>宿主机目录</strong>，后面的目录是<strong>容器内目录</strong>。</p>
+<p>-p：启用端口映射。</p>
+<p>-d：在后台运行容器并打印容器ID。</p>
+<p>--restart=always：保证每次docker服务重启后容器也自动重启</p>
+<p>--network</p>
+</blockquote>
+<p>​ 如果容器已经启动了而又想设置容器自动启动：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker update --restart=always &lt;CONTAINER ID/CONTAINER NAME&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="进入容器">进入容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it $(docker ps| grep fly97/v2fly | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span> /bin/sh</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-i： 交互式操作。</p>
+<p>-t：启用终端运行。</p>
+<p>/bin/sh：打开交互式 Shell</p>
+</blockquote>
+<h4 id="查看当前运行的容器">查看当前运行的容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker ps </span><br></pre></td></tr></table></figure>
+<h4 id="运行容器-1">运行容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker start CONTAINER_NAME</span><br></pre></td></tr></table></figure>
+<h4 id="停止容器">停止容器</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker stop CONTAINER_NAME</span><br></pre></td></tr></table></figure>
+<h4 id="删除容器">删除容器</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker rm CONTAINER_NAME</span><br></pre></td></tr></table></figure>
+<h4 id="查看镜像">查看镜像</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
+<h4 id="删除镜像">删除镜像</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker rmi IMAGE_ID</span><br></pre></td></tr></table></figure>
+<h4 id="清理镜像">清理镜像</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker image prune</span><br></pre></td></tr></table></figure>
+<h4 id="全部命令">全部命令</h4>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">PS</span> C:\Users\wf09\Desktop\v2fly<span class="literal">-docker</span>&gt; docker <span class="literal">--help</span></span><br><span class="line"></span><br><span class="line">Usage:  docker [<span class="type">OPTIONS</span>] COMMAND</span><br><span class="line"></span><br><span class="line">A self<span class="literal">-sufficient</span> runtime <span class="keyword">for</span> containers</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      <span class="literal">--config</span> string      Location of client config files (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker&quot;</span>)</span><br><span class="line">  <span class="literal">-c</span>, <span class="literal">--context</span> string     Name of the context to use to connect to the</span><br><span class="line">                           daemon (overrides DOCKER_HOST env var and</span><br><span class="line">                           default context <span class="built_in">set</span> with <span class="string">&quot;docker context use&quot;</span>)</span><br><span class="line">  <span class="literal">-D</span>, <span class="literal">--debug</span>              Enable debug mode</span><br><span class="line">  <span class="literal">-H</span>, <span class="literal">--host</span> list          Daemon socket(s) to connect to</span><br><span class="line">  <span class="literal">-l</span>, <span class="literal">--log-level</span> string   <span class="built_in">Set</span> the logging level</span><br><span class="line">                           (<span class="string">&quot;debug&quot;</span>|<span class="string">&quot;info&quot;</span>|<span class="string">&quot;warn&quot;</span>|<span class="string">&quot;error&quot;</span>|<span class="string">&quot;fatal&quot;</span>)</span><br><span class="line">                           (default <span class="string">&quot;info&quot;</span>)</span><br><span class="line">      <span class="literal">--tls</span>                Use TLS; implied by <span class="literal">--tlsverify</span></span><br><span class="line">      <span class="literal">--tlscacert</span> string   Trust certs signed only by this CA (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\ca.pem&quot;</span>)</span><br><span class="line">      <span class="literal">--tlscert</span> string     Path to TLS certificate file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\cert.pem&quot;</span>)</span><br><span class="line">      <span class="literal">--tlskey</span> string      Path to TLS key file (default</span><br><span class="line">                           <span class="string">&quot;C:\\Users\\wf09\\.docker\\key.pem&quot;</span>)</span><br><span class="line">      <span class="literal">--tlsverify</span>          Use TLS and verify the remote</span><br><span class="line">  <span class="literal">-v</span>, <span class="literal">--version</span>            Print version information and quit</span><br><span class="line"></span><br><span class="line">Management Commands:</span><br><span class="line">  builder     Manage builds</span><br><span class="line">  config      Manage Docker configs</span><br><span class="line">  container   Manage containers</span><br><span class="line">  context     Manage contexts</span><br><span class="line">  image       Manage images</span><br><span class="line">  network     Manage networks</span><br><span class="line">  node        Manage Swarm nodes</span><br><span class="line">  plugin      Manage plugins</span><br><span class="line">  secret      Manage Docker secrets</span><br><span class="line">  service     Manage services</span><br><span class="line">  stack       Manage Docker stacks</span><br><span class="line">  swarm       Manage Swarm</span><br><span class="line">  system      Manage Docker</span><br><span class="line">  trust       Manage trust on Docker images</span><br><span class="line">  volume      Manage volumes</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  attach      Attach local standard input, output, and error streams to a running container</span><br><span class="line">  build       Build an image from a Dockerfile</span><br><span class="line">  commit      Create a new image from a container<span class="string">&#x27;s changes</span></span><br><span class="line"><span class="string">  cp          Copy files/folders between a container and the local filesystem</span></span><br><span class="line"><span class="string">  create      Create a new container</span></span><br><span class="line"><span class="string">  diff        Inspect changes to files or directories on a container&#x27;</span>s filesystem</span><br><span class="line">  events      Get real time events from the server</span><br><span class="line">  exec        Run a command <span class="keyword">in</span> a running container</span><br><span class="line">  export      Export a container<span class="string">&#x27;s filesystem as a tar archive</span></span><br><span class="line"><span class="string">  history     Show the history of an image</span></span><br><span class="line"><span class="string">  images      List images</span></span><br><span class="line"><span class="string">  import      Import the contents from a tarball to create a filesystem image</span></span><br><span class="line"><span class="string">  info        Display system-wide information</span></span><br><span class="line"><span class="string">  inspect     Return low-level information on Docker objects</span></span><br><span class="line"><span class="string">  kill        Kill one or more running containers</span></span><br><span class="line"><span class="string">  load        Load an image from a tar archive or STDIN</span></span><br><span class="line"><span class="string">  login       Log in to a Docker registry</span></span><br><span class="line"><span class="string">  logout      Log out from a Docker registry</span></span><br><span class="line"><span class="string">  logs        Fetch the logs of a container</span></span><br><span class="line"><span class="string">  pause       Pause all processes within one or more containers</span></span><br><span class="line"><span class="string">  port        List port mappings or a specific mapping for the container</span></span><br><span class="line"><span class="string">  ps          List containers</span></span><br><span class="line"><span class="string">  pull        Pull an image or a repository from a registry</span></span><br><span class="line"><span class="string">  push        Push an image or a repository to a registry</span></span><br><span class="line"><span class="string">  rename      Rename a container</span></span><br><span class="line"><span class="string">  restart     Restart one or more containers</span></span><br><span class="line"><span class="string">  rm          Remove one or more containers</span></span><br><span class="line"><span class="string">  rmi         Remove one or more images</span></span><br><span class="line"><span class="string">  run         Run a command in a new container</span></span><br><span class="line"><span class="string">  save        Save one or more images to a tar archive (streamed to STDOUT by default)</span></span><br><span class="line"><span class="string">  search      Search the Docker Hub for images</span></span><br><span class="line"><span class="string">  start       Start one or more stopped containers</span></span><br><span class="line"><span class="string">  stats       Display a live stream of container(s) resource usage statistics</span></span><br><span class="line"><span class="string">  stop        Stop one or more running containers</span></span><br><span class="line"><span class="string">  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE</span></span><br><span class="line"><span class="string">  top         Display the running processes of a container</span></span><br><span class="line"><span class="string">  unpause     Unpause all processes within one or more containers</span></span><br><span class="line"><span class="string">  update      Update configuration of one or more containers</span></span><br><span class="line"><span class="string">  version     Show the Docker version information</span></span><br><span class="line"><span class="string">  wait        Block until one or more containers stop, then print their exit codes</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Run &#x27;</span>docker COMMAND <span class="literal">--help</span><span class="string">&#x27; for more information on a command.</span></span><br></pre></td></tr></table></figure>
+<h3 id="解决docker使用sudo的问题">解决docker使用sudo的问题</h3>
+<h4 id="创建docker组">创建docker组</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo groupadd docker</span><br></pre></td></tr></table></figure>
+<h4 id="将当前用户加入docker组">将当前用户加入docker组</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo gpasswd -a <span class="variable">$&#123;USER&#125;</span> docker</span><br></pre></td></tr></table></figure>
+<h4 id="重启服务">重启服务</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure>
+<h4 id="刷新docker组成员">刷新docker组成员</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">newgrp - docker</span><br></pre></td></tr></table></figure>
+<h3 id="构建docker镜像时处理configuring-tzdata交互输入">构建Docker镜像时处理'Configuring tzdata'交互输入</h3>
+<p>将tzdata设置为非交互方式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ENV DEBIAN_FRONTEND=noninteractive</span><br></pre></td></tr></table></figure>
+<h3 id="docker容器内使用dpkg安装chrome浏览器失败">docker容器内使用dpkg安装chrome浏览器失败</h3>
+<p>使用<code>apt</code>离线安装即可，会自动帮你安装依赖</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</span><br><span class="line">apt install -f ./google-chrome-stable_current_amd64.deb</span><br></pre></td></tr></table></figure>
+<h3 id="docker-访问外部-https-的数字证书验证问题">docker 访问外部 https 的数字证书验证问题</h3>
+<ol type="1">
+<li><p>alpine linux</p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apk --no-cache add ca-certificates \</span></span><br><span class="line"><span class="language-bash">  &amp;&amp; update-ca-certificates</span></span><br></pre></td></tr></table></figure></li>
+<li><p>ubuntu linux</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RUN apt-get install ca-certificates -y \</span><br><span class="line">  &amp;&amp; update-ca-certificates</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="修改docker时区">修改docker时区</h3>
+<ol type="1">
+<li><p>挂载宿主机时区文件 到容器内<code>/etc/localtime</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">- /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime</span><br></pre></td></tr></table></figure></li>
+<li><p>debian类镜像构建时指定环境变量</p>
+<ol type="1">
+<li>容器安装tzdata</li>
+</ol>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get install -f tzdata</span></span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>使用对应时区的环境变量</li>
+</ol>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ENV</span> TZ=<span class="string">&quot;Asia/Shanghai&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="docker-inspect命令">docker inspect命令</h3>
+<h4 id="查看容器状态">查看容器状态</h4>
+<p>首先运行<code>docker inspect</code>查看容器信息</p>
+<p><img data-src="image-20220513100039060.png" /></p>
+<p>可以获取以下容器状态</p>
+<h5 id="查看容器是否正常运行">查看容器是否正常运行</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.State.Status&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
+<h5 id="查看容器是否正在重启">查看容器是否正在重启</h5>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.State.Restarting&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
+<h4 id="查看容器日志存放路径">查看容器日志存放路径</h4>
+<p>某些情况下需要删除日志文件路径，因此可以通过这个命令查看。查看定义日志的字段：</p>
+<p><img data-src="image-20220513100947538.png" /></p>
+<p>运行以下命令获取日志的地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker inspect --format <span class="string">&#x27;&#123;&#123;.LogPath&#125;&#125;&#x27;</span> summary</span><br></pre></td></tr></table></figure>
+<p>然后在操作就好了</p>
+<h3 id="设置容器日志大小">设置容器日志大小</h3>
+<p>一般情况下Docker容器业务日志很大，处理起来不是很方便</p>
+<h4 id="指定容器">指定容器</h4>
+<p>docker-compose</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">    <span class="attr">summary:</span>        </span><br><span class="line">        <span class="attr">logging:</span></span><br><span class="line">            <span class="attr">driver:</span> <span class="string">&quot;json-file&quot;</span> <span class="comment"># 日志驱动</span></span><br><span class="line">            <span class="attr">options:</span></span><br><span class="line">                <span class="attr">max-size:</span> <span class="string">&quot;50m&quot;</span> <span class="comment">#[0-9+][k|m|g] 【文件的大小】</span></span><br><span class="line">                <span class="attr">max-file:</span> <span class="string">&quot;3&quot;</span>   <span class="comment">#[0-9+] 【文件数量】</span></span><br></pre></td></tr></table></figure>
+<p>docker cli</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--log-driver json-file  		  <span class="comment">#日志驱动</span></span><br><span class="line">--log-opt max-size=[0-9+][k|m|g]  <span class="comment">#文件的大小</span></span><br><span class="line">--log-opt max-file=[0-9+]		  <span class="comment">#文件数量</span></span><br></pre></td></tr></table></figure>
+<h4 id="全局设置">全局设置</h4>
+<p>编辑文件<code>/etc/docker/daemon.json</code>，增加以下日志的配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;log-driver&quot;</span>:<span class="string">&quot;json-file&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log-opts&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;max-size&quot;</span>:<span class="string">&quot;500m&quot;</span>,</span><br><span class="line">        <span class="string">&quot;max-file&quot;</span>:<span class="string">&quot;3&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>docker</tag>
@@ -6426,6 +6429,41 @@
       </tags>
   </entry>
   <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<span id="more"></span>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣二叉树之二叉搜索树</title>
     <url>/p/binary-search-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -6571,41 +6609,6 @@
       </tags>
   </entry>
   <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<span id="more"></span>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣数组基础之双指针有序数组的平方</title>
     <url>/p/minimum-size-subarray-sum/</url>
     <content><![CDATA[<p>题目：给你一个按 <strong>非递减顺序</strong> 排序的整数数组 <code>nums</code>，返回 <strong>每个数字的平方</strong> 组成的新数组，要求也按 <strong>非递减顺序</strong> 排序。</p>
@@ -6616,6 +6619,24 @@
 <p><img data-src="双指针03.png" /></p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="type">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之双指针长度最小的子数组</title>
+    <url>/p/minimum-size-subarray-sum/</url>
+    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：target = 7, nums = [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p><img data-src="双指针02.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="type">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -6638,24 +6659,6 @@
 <p><strong>示意图</strong></p>
 <p><img data-src="双指针.png" /></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElement</span><span class="params">(nums []<span class="type">int</span>, val <span class="type">int</span>)</span></span> <span class="type">int</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> slowIndex <span class="type">int</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> fastIndex := <span class="number">0</span>; fastIndex &lt; <span class="built_in">len</span>(nums);fastIndex++&#123;</span><br><span class="line">        <span class="keyword">if</span> nums[fastIndex] != val &#123;</span><br><span class="line">            nums[slowIndex] = nums[fastIndex]</span><br><span class="line">            slowIndex += <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> slowIndex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之双指针长度最小的子数组</title>
-    <url>/p/minimum-size-subarray-sum/</url>
-    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：target = 7, nums = [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p><img data-src="双指针02.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="type">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7004,6 +7007,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>力扣链表基础之两两交换链表中的节点</title>
+    <url>/p/swap-nodes-in-pairs/</url>
+    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<p><img data-src="swap_ex1.jpg" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
+<p><img data-src="image-20220214194056147.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣链表基础之删除链表的倒数第N个节点</title>
     <url>/p/remove-nth-node-from-end-of-list/</url>
     <content><![CDATA[<p>给你一个链表，删除链表的倒数第 <code>n</code> 个结点，并且返回链表的头结点。</p>
@@ -7025,18 +7047,18 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之两两交换链表中的节点</title>
-    <url>/p/swap-nodes-in-pairs/</url>
-    <content><![CDATA[<p>给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。</p>
+    <title>力扣链表基础之环形链表 II</title>
+    <url>/p/linked-list-cycle-ii/</url>
+    <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
 <span id="more"></span>
 <p><strong>示例</strong></p>
-<p><img data-src="swap_ex1.jpg" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：head = [1,2,3,4]</span><br><span class="line">输出：[2,1,4,3]</span><br></pre></td></tr></table></figure>
+<p><img data-src="circularlinkedlist.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
 <p><strong>思路</strong></p>
-<p>使用<strong>虚拟头节点</strong>。交换两个相邻元素。</p>
-<p><img data-src="image-20220214194056147.png" /></p>
+<p>使用快慢指针法，分别定义fast和slow指针，从头节点出发，fast指针每次移动两个节点，slow重镇每次移动一个节点，如果fast指针和slow指针在途中相遇，说明这个链表有环。</p>
+<p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
 <p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapPairs</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">    dummy := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    dummy.Next = head</span><br><span class="line">    cur := dummy</span><br><span class="line">    <span class="keyword">for</span> cur.Next != <span class="literal">nil</span> &amp;&amp; cur.Next.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        tmp := cur.Next</span><br><span class="line">        tmp1 := cur.Next.Next.Next</span><br><span class="line"></span><br><span class="line">        cur.Next = cur.Next.Next</span><br><span class="line">        cur.Next.Next = tmp</span><br><span class="line">        cur.Next.Next.Next = tmp1</span><br><span class="line"></span><br><span class="line">        cur = cur.Next.Next</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummy.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7058,25 +7080,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p><img data-src="008eGmZEly1gnrf1oboupg30gy0c44qp.gif" /></p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ListNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	Val  <span class="type">int</span></span><br><span class="line">	Next *ListNode</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverseList</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	<span class="keyword">var</span> pre *ListNode</span><br><span class="line">	cur := head</span><br><span class="line">	<span class="keyword">for</span> cur != <span class="literal">nil</span> &#123;</span><br><span class="line">		tmp := cur.Next</span><br><span class="line">		cur.Next = pre</span><br><span class="line">		pre = cur</span><br><span class="line">		cur = tmp</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pre</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣链表基础之环形链表 II</title>
-    <url>/p/linked-list-cycle-ii/</url>
-    <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<p><img data-src="circularlinkedlist.png" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用快慢指针法，分别定义fast和slow指针，从头节点出发，fast指针每次移动两个节点，slow重镇每次移动一个节点，如果fast指针和slow指针在途中相遇，说明这个链表有环。</p>
-<p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7235,6 +7238,40 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大话数据结构（二）| 栈和队列</title>
+    <url>/p/stack-and-ground/</url>
+    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
+<p><strong>关键词：数据结构</strong></p>
+<span id="more"></span>
+<h3 id="栈的定义">栈的定义</h3>
+<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
+<ul>
+<li>允许插入和删除的一端称为栈顶</li>
+<li>另一端被称为栈底</li>
+<li>不含任何元素的栈称为空栈</li>
+<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
+<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
+</ul>
+<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
+<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
+<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
+<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
+<ol type="1">
+<li>1、2、3进，3、2、1出。出栈次序为321。</li>
+<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
+<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
+<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
+<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
+</ol>
+<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
+<h3 id="抽象数据类型">抽象数据类型</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -7453,40 +7490,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>大话数据结构（二）| 栈和队列</title>
-    <url>/p/stack-and-ground/</url>
-    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
-<p><strong>关键词：数据结构</strong></p>
-<span id="more"></span>
-<h3 id="栈的定义">栈的定义</h3>
-<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
-<ul>
-<li>允许插入和删除的一端称为栈顶</li>
-<li>另一端被称为栈底</li>
-<li>不含任何元素的栈称为空栈</li>
-<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
-<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
-</ul>
-<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
-<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
-<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
-<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
-<ol type="1">
-<li>1、2、3进，3、2、1出。出栈次序为321。</li>
-<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
-<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
-<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
-<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
-</ol>
-<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
-<h3 id="抽象数据类型">抽象数据类型</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -7977,13 +7980,19 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
     <url>/p/common-operation-and-maintenance-operations/</url>
     <content><![CDATA[<p>关键词：<strong>运维操作</strong></p>
 <span id="more"></span>
+<p>### sudo无需输入密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;%sudo ALL=(ALL) NOPASSWD:ALL&quot;</span> &gt;&gt; /etc/sudoers</span><br></pre></td></tr></table></figure>
 <h3 id="修改源">修改源</h3>
-<h4 id="ubuntu">ubuntu</h4>
+<h4 id="amd64">amd64</h4>
+<h5 id="ubuntu">ubuntu</h5>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s/cn.archive.ubuntu.com/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list</span><br><span class="line">sudo sed -i <span class="string">&#x27;s/security.ubuntu.com/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
-<h4 id="debian">debian</h4>
+<h5 id="debian">debian</h5>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s/deb.debian.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list</span><br><span class="line">sudo sed -i <span class="string">&#x27;s|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g&#x27;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<h4 id="arm64">arm64</h4>
+<h5 id="ubuntu-1">ubuntu</h5>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s/ports.ubuntu.com/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list</span><br><span class="line">sudo sed -i <span class="string">&#x27;s/ports.ubuntu.com/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
 <h3 id="安装最新版nginx">安装最新版nginx</h3>
-<h4 id="ubuntu-1">ubuntu</h4>
+<h4 id="ubuntu-2">ubuntu</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install curl gnupg2 ca-certificates lsb-release ubuntu-keyring -y</span><br><span class="line">curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \</span><br><span class="line">    | sudo <span class="built_in">tee</span> /usr/share/keyrings/nginx-archive-keyring.gpg &gt;/dev/null</span><br><span class="line">gpg --dry-run --quiet --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg</span><br><span class="line"></span><br><span class="line"><span class="comment"># stable</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \</span></span><br><span class="line"><span class="string">http://nginx.org/packages/ubuntu `lsb_release -cs` nginx&quot;</span> \</span><br><span class="line">    | sudo <span class="built_in">tee</span> /etc/apt/sources.list.d/nginx.list</span><br><span class="line"><span class="comment"># 优先级</span></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n&quot;</span> \</span><br><span class="line">    | sudo <span class="built_in">tee</span> /etc/apt/preferences.d/99nginx</span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure>
 <h4 id="debian-1">debian</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring -y</span><br><span class="line">curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \</span><br><span class="line">    | sudo <span class="built_in">tee</span> /usr/share/keyrings/nginx-archive-keyring.gpg &gt;/dev/null</span><br><span class="line">gpg --dry-run --quiet --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg</span><br><span class="line"><span class="comment"># stable</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \</span></span><br><span class="line"><span class="string">http://nginx.org/packages/debian `lsb_release -cs` nginx&quot;</span> \</span><br><span class="line">    | sudo <span class="built_in">tee</span> /etc/apt/sources.list.d/nginx.list</span><br><span class="line"><span class="comment"># 优先级</span></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n&quot;</span> \</span><br><span class="line">    | sudo <span class="built_in">tee</span> /etc/apt/preferences.d/99nginx</span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure>
@@ -8001,129 +8010,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>运维</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>循环神经网络介绍</title>
-    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
-    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
-<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
-<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
-<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
-<p><img data-src="20150829181722_450.png" /></p>
-<blockquote>
-<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
-</blockquote>
-<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
-<p><img data-src="20150829181722_631.png" /></p>
-<blockquote>
-<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
-</blockquote>
-<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
-<p><img data-src="20150829181722_777.png" /></p>
-<blockquote>
-<p>LSTM中的图标</p>
-</blockquote>
-<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
-<h4 id="lstm核心内容">2.LSTM核心内容</h4>
-<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
-<p><img data-src="20150829181723_640.png" /></p>
-<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
-<p><img data-src="20150829181723_567.png" /></p>
-<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
-<p>LSTM有三个门，来保护和控制细胞状态。</p>
-<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
-<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
-<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_259.png" /></p>
-<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
-<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
-<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
-<p><img data-src="20150829181723_897.png" /></p>
-<h5 id="确定更新的信息">3.2确定更新的信息</h5>
-<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
-<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
-<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
-<p><img data-src="20150829181723_883.png" /></p>
-<h5 id="更新细胞状态">3.3更新细胞状态</h5>
-<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
-<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
-<p><img data-src="20150829181723_463.png" /></p>
-]]></content>
-      <tags>
-        <tag>LSTM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用Helm中部署Harbor</title>
-    <url>/p/deploy-harbor-on-K8s-with-helm/</url>
-    <content><![CDATA[<p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor 在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub 或其他第三方镜像仓库。</p>
-<p>关键词：<strong>Harbor</strong></p>
-<span id="more"></span>
-<h3 id="安装helm">安装Helm</h3>
-<p>我们将 Helm 客户端安装在 k8s-master 节点上</p>
-<h4 id="用二进制版本安装">用二进制版本安装</h4>
-<ol type="1">
-<li>下载 <a href="https://github.com/helm/helm/releases">需要的版本</a></li>
-<li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li>
-<li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li>
-</ol>
-<p>然后就可以执行客户端程序并 <a href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>: <code>helm help</code>.</p>
-<p><img data-src="image-20220507135650409.png" /></p>
-<h4 id="查看版本号">查看版本号</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure>
-<h4 id="安装命令补全">安装命令补全</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;source &lt;(helm completion bash)&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="修改helm仓库镜像">修改Helm仓库镜像</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add aliyun  https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220507135947826.png" /></p>
-<p>查看仓库列表</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
-<h3 id="安装harbor">安装Harbor</h3>
-<h4 id="添加harbor仓库">添加Harbor仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add harbor https://helm.goharbor.io</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
-<h4 id="搜索harbor">搜索Harbor</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm search repo harbor/harbor</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220507140154997.png" /></p>
-<h4 id="将harbor下载到本地">将Harbor下载到本地</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm fetch harbor/harbor</span><br></pre></td></tr></table></figure>
-<h4 id="解压缩">解压缩</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf harbor-1.9.0.tgz</span><br><span class="line"><span class="built_in">cd</span> harbor</span><br></pre></td></tr></table></figure>
-<h4 id="修改配置">修改配置</h4>
-<p>修改配置文件<code>values.yaml</code>，具体查看<a href="https://github.com/goharbor/harbor-helm/blob/master/README.md#configuration">GIthub配置列表</a>。</p>
-<p>这里修改了以下几个配置：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">nodePort</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">nodePort:</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30004</span></span><br><span class="line">      <span class="attr">https:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30005</span></span><br><span class="line">      <span class="attr">notary:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30006</span></span><br><span class="line"><span class="attr">externalURL:</span> <span class="string">http://192.168.232.167:30004</span></span><br><span class="line"><span class="attr">persistence:</span></span><br><span class="line">  <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">    <span class="attr">registry:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;registry&quot;</span></span><br><span class="line">    <span class="attr">chartmuseum:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;chartmuseum&quot;</span></span><br><span class="line">    <span class="attr">jobservice:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;jobservice&quot;</span></span><br><span class="line">    <span class="attr">database:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;database&quot;</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;redis&quot;</span></span><br></pre></td></tr></table></figure>
-<p>其中 <code>pvc-harbor</code> 是预先创建好的 PVC，创建过程略。</p>
-<p>部署 Harbor：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm install -g harbor/harbor -f values.yaml .</span><br><span class="line"></span><br><span class="line">NAME: harbor-1589352564</span><br><span class="line">LAST DEPLOYED: Wed May 13 14:49:25 2020</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">Please <span class="built_in">wait</span> <span class="keyword">for</span> several minutes <span class="keyword">for</span> Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at http://192.168.232.167:30004.</span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br></pre></td></tr></table></figure>
-<p>部署成功，等待 Harbor 启动完成，然后就可以通过<code>http://192.168.232.167:30004</code> 访问Harbor，默认用户名是admin，密码是Harbor12345。</p>
-<p>由于 Docker 自从 1.3.x 之后，docker registry 交互默认使用的是HTTPS，而我们搭建的 Harbor 使用的是HTTP，所以为了避免 pull/push 镜像时得到错误：<code>http: server gave HTTP response to HTTPS client</code>，需要修改 docker 的配置文件 <code>/etc/docker/daemon.json</code>，加入以下配置：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;192.168.232.167:30004&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启 docker 服务：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<h3 id="上传第一个镜像">上传第一个镜像</h3>
-<p>下载一个 busybox 镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull busybox:latest</span><br></pre></td></tr></table></figure>
-<p>修改 tag：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker tag busybox:latest 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
-<p>library 是 Harbor 的默认项目地址，也可以登录 Harbor 自行新建一个项目。</p>
-<p>使用 docker login 登录到 Harbor，并输入用户名和密码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login 192.168.232.167:30004</span><br></pre></td></tr></table></figure>
-<p>登录成功后，上传镜像到 Harbor：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker push 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
-<h3 id="后记">后记</h3>
-<p>上面的软件没有部署完，<strong>例如PVC和helm的架构还不懂，</strong>因此先告一段落。</p>
-<p>决定先使用<code>docker-compose</code>先部署<strong>Harbor</strong> 。</p>
-<h3 id="参考文档">参考文档</h3>
-<p>https://helm.sh/docs/using_helm/#installing-helm</p>
-<p>https://github.com/goharbor/harbor-helm</p>
-<p>https://www.cnblogs.com/dukuan/p/9963744.html</p>
-<p>https://blog.51cto.com/wangpengtai/2418636?source=dra</p>
-<p>http://kpali.me/2020/05/13/deploy-harbor-in-kubernetes.html</p>
-]]></content>
-      <tags>
-        <tag>k8s</tag>
-        <tag>harbor</tag>
       </tags>
   </entry>
   <entry>
@@ -8254,24 +8140,126 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>数值分析第一章作业</title>
-    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，数值分析</p>
-<span id="more"></span>
-<p><img data-src="image-20201013093358782.png" /></p>
-<p><img data-src="image-20201013102937713.png" /></p>
-<p><img data-src="image-20201013104909315.png" /></p>
-<p><img data-src="image-20201013104922645.png" /></p>
-<p><img data-src="image-20201013104953613.png" /></p>
-<p><img data-src="image-20201013110136891.png" /></p>
-<p><img data-src="image-20201013110806596.png" /> <span class="math display">\[
-2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
-\]</span></p>
+    <title>循环神经网络介绍</title>
+    <url>/p/Introduction-to-Recurren-Neural-Networks/</url>
+    <content><![CDATA[<p>什么是LSTM？ <span id="more"></span></p>
+<p>LSTM 即 Long Short Term 网络——一般就叫做LSTM——是一种特殊的RNN，可以学习长期依赖信息。LSTM由 <em>Hochreiter &amp; Schmidhuber</em> (1997) 提出， 并被 <em>Alex Graves</em> 进行了改良和推广。在很多问题，LSTM 都取得了相当巨大的成功，并得到了广泛的使用。</p>
+<p>LSTM 通过刻意的设计来避免长期依赖问题。记住长期的信息是 LSTM 的默认行为，而非需要付出很大代价才能获得的能力。</p>
+<p>所有的 RNN都具有一种重复神经网络模块的链式的形式，在标准的RNN中，这个重复的模块只有一个非常简单的结构，例如一个 <em>tanh</em> 层。</p>
+<p><img data-src="20150829181722_450.png" /></p>
+<blockquote>
+<p>上图即<strong>标准RNN中</strong>重复模块包含单一的层</p>
+</blockquote>
+<p>LSTM同样是这样的结构，但是重复的模块拥有一个不同的结构。不同于单一神经网络层，这里有四个，以一种非常特殊的方式进行交互。</p>
+<p><img data-src="20150829181722_631.png" /></p>
+<blockquote>
+<p>上图即<strong>LSTM</strong>中的重复模块包含的四个交互的层</p>
+</blockquote>
+<p>我们会一步一步的剖析LSTM解析图。现在，我们先来熟悉一下途中使用的各种元素的图标。</p>
+<p><img data-src="20150829181722_777.png" /></p>
+<blockquote>
+<p>LSTM中的图标</p>
+</blockquote>
+<p>在上面的图例中，每一条黑线传输着一整个向量，从一个节点的输出到其他节点的输入。粉色的圈代表 <em>pointwise</em> (逐点的)操作，诸如向量的和，而黄色的矩阵就是学习到的神经网络层。合在一起的线表示向量的连接，分开的线表示内容被复制，然后分发到不同的位置。</p>
+<h4 id="lstm核心内容">2.LSTM核心内容</h4>
+<p>LSTM的关键就是细胞状态（cell），水平线在图上方贯穿运行，细胞状态类似于传送带，直接在整个链上运行，只有一些少量的线性交互，信息在上面流传保持不变会很容易。</p>
+<p><img data-src="20150829181723_640.png" /></p>
+<p>LSTM 有通过精心设计的称作"<strong>门</strong>"的结构来去除或者增加信息到细胞状态的能力。门是一种让信息选择式通过的方法。他们包含一个 <em>sigmoid</em> 神经网络层和一个 <em>pointwise</em> 乘法操作。</p>
+<p><img data-src="20150829181723_567.png" /></p>
+<p><em>sigmoid</em> 层输出 0 到 1 之间的数值，描述每个部分有多少量可以通过。0 代表"不允许任何量通过"，1 就指"允许任何量通过"。</p>
+<p>LSTM有三个门，来保护和控制细胞状态。</p>
+<h4 id="逐步理解lstm">3.逐步理解LSTM</h4>
+<p>LSTM中第一步是决定会从细胞状态中丢弃什么信息。这个决定通过一个称为 <strong>忘记门层</strong> 的门来完成。该门会读取 \(h_{t-1}\) 和 \(x_{t}\) ，输出一个在 0 到 1 之间的数值给每个在细胞状态中的数字。1 表示"完全保留"，0 代表"完全舍弃"。</p>
+<p>让我们回到 <strong>语言模型</strong> 的例子中来基于已经看到的词预测下一个词。在这个问题中，细胞状态可能包含当前 <strong>主语</strong> 的类别，因此正确的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> 可以被选择出来。当我们看到新的 <strong>代词</strong> ，我们希望忘记旧的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_259.png" /></p>
+<h5 id="决定丢弃信息">3.1决定丢弃信息</h5>
+<p>下一步是确定什么样的新信息被存放在细胞状态中。这里包含两部分。第一，<em>sigmoid</em> 层称 "输入门层" 决定什么值我们将要更新。然后，一个 <em>tanh</em> 层创建一个一个新的候选值向量，\(\)，会被加入到状态中。下一步，我们会将这两个信息来产生对状态的更新。</p>
+<p>在我们 <strong>语言模型</strong> 的例子中，我们希望增加新的 <strong>代词</strong> 的类别到细胞状态中，来替代旧的需要忘记的 <strong>代词</strong>。</p>
+<p><img data-src="20150829181723_897.png" /></p>
+<h5 id="确定更新的信息">3.2确定更新的信息</h5>
+<p>现在是更新旧细胞状态的时间了，\(C_{t-1}\) 更新为 \(C_{t}\)</p>
+<p>我们把旧状态与 \(f_t\) 相乘，丢弃掉确定丢弃的信息，接着加上 \(i_t * _t\) ，这就是新的候选值。</p>
+<p>在 <strong>语言模型</strong> 的例子中，这就是我们实际根据前面确定的目标，丢弃 <strong>旧代词</strong> 的类别信息并添加新的信息的地方。</p>
+<p><img data-src="20150829181723_883.png" /></p>
+<h5 id="更新细胞状态">3.3更新细胞状态</h5>
+<p>最终，我们需要确定输出什么值，这个输出将会基于我们的细胞状态，但是也是一个过滤后的版本。首先，我们运行一个 <em>sigmoid</em> 层来确定细胞状态的哪个部分将输出出去。接着，我们把细胞状态通过 <em>tanh</em> 进行处理，得到一个在 -1 到 1 之间的值，并将它和 sigmoid 门的输出相乘，最终我们仅仅会输出我们确定输出的那部分。</p>
+<p>在 <strong>语言模型</strong> 的例子中，因为他就看到了一个 <strong>代词</strong> ，可能需要输出一个 <strong>代词</strong> 相关的信息。例如，可能输出是否代词是单数还是负数。如果是 <strong>动词</strong> 的话，我们也他要知道 <strong>动词</strong> 需要进行的词形变化。</p>
+<p><img data-src="20150829181723_463.png" /></p>
 ]]></content>
       <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
+        <tag>LSTM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Helm中部署Harbor</title>
+    <url>/p/deploy-harbor-on-K8s-with-helm/</url>
+    <content><![CDATA[<p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor 在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub 或其他第三方镜像仓库。</p>
+<p>关键词：<strong>Harbor</strong></p>
+<span id="more"></span>
+<h3 id="安装helm">安装Helm</h3>
+<p>我们将 Helm 客户端安装在 k8s-master 节点上</p>
+<h4 id="用二进制版本安装">用二进制版本安装</h4>
+<ol type="1">
+<li>下载 <a href="https://github.com/helm/helm/releases">需要的版本</a></li>
+<li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li>
+<li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li>
+</ol>
+<p>然后就可以执行客户端程序并 <a href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>: <code>helm help</code>.</p>
+<p><img data-src="image-20220507135650409.png" /></p>
+<h4 id="查看版本号">查看版本号</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure>
+<h4 id="安装命令补全">安装命令补全</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;source &lt;(helm completion bash)&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h4 id="修改helm仓库镜像">修改Helm仓库镜像</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add aliyun  https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220507135947826.png" /></p>
+<p>查看仓库列表</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
+<h3 id="安装harbor">安装Harbor</h3>
+<h4 id="添加harbor仓库">添加Harbor仓库</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add harbor https://helm.goharbor.io</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
+<h4 id="搜索harbor">搜索Harbor</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm search repo harbor/harbor</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220507140154997.png" /></p>
+<h4 id="将harbor下载到本地">将Harbor下载到本地</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm fetch harbor/harbor</span><br></pre></td></tr></table></figure>
+<h4 id="解压缩">解压缩</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf harbor-1.9.0.tgz</span><br><span class="line"><span class="built_in">cd</span> harbor</span><br></pre></td></tr></table></figure>
+<h4 id="修改配置">修改配置</h4>
+<p>修改配置文件<code>values.yaml</code>，具体查看<a href="https://github.com/goharbor/harbor-helm/blob/master/README.md#configuration">GIthub配置列表</a>。</p>
+<p>这里修改了以下几个配置：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">nodePort</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">nodePort:</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30004</span></span><br><span class="line">      <span class="attr">https:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30005</span></span><br><span class="line">      <span class="attr">notary:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30006</span></span><br><span class="line"><span class="attr">externalURL:</span> <span class="string">http://192.168.232.167:30004</span></span><br><span class="line"><span class="attr">persistence:</span></span><br><span class="line">  <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">    <span class="attr">registry:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;registry&quot;</span></span><br><span class="line">    <span class="attr">chartmuseum:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;chartmuseum&quot;</span></span><br><span class="line">    <span class="attr">jobservice:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;jobservice&quot;</span></span><br><span class="line">    <span class="attr">database:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;database&quot;</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;redis&quot;</span></span><br></pre></td></tr></table></figure>
+<p>其中 <code>pvc-harbor</code> 是预先创建好的 PVC，创建过程略。</p>
+<p>部署 Harbor：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm install -g harbor/harbor -f values.yaml .</span><br><span class="line"></span><br><span class="line">NAME: harbor-1589352564</span><br><span class="line">LAST DEPLOYED: Wed May 13 14:49:25 2020</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">Please <span class="built_in">wait</span> <span class="keyword">for</span> several minutes <span class="keyword">for</span> Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at http://192.168.232.167:30004.</span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br></pre></td></tr></table></figure>
+<p>部署成功，等待 Harbor 启动完成，然后就可以通过<code>http://192.168.232.167:30004</code> 访问Harbor，默认用户名是admin，密码是Harbor12345。</p>
+<p>由于 Docker 自从 1.3.x 之后，docker registry 交互默认使用的是HTTPS，而我们搭建的 Harbor 使用的是HTTP，所以为了避免 pull/push 镜像时得到错误：<code>http: server gave HTTP response to HTTPS client</code>，需要修改 docker 的配置文件 <code>/etc/docker/daemon.json</code>，加入以下配置：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;192.168.232.167:30004&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>保存后重启 docker 服务：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h3 id="上传第一个镜像">上传第一个镜像</h3>
+<p>下载一个 busybox 镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull busybox:latest</span><br></pre></td></tr></table></figure>
+<p>修改 tag：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker tag busybox:latest 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
+<p>library 是 Harbor 的默认项目地址，也可以登录 Harbor 自行新建一个项目。</p>
+<p>使用 docker login 登录到 Harbor，并输入用户名和密码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login 192.168.232.167:30004</span><br></pre></td></tr></table></figure>
+<p>登录成功后，上传镜像到 Harbor：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker push 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
+<h3 id="后记">后记</h3>
+<p>上面的软件没有部署完，<strong>例如PVC和helm的架构还不懂，</strong>因此先告一段落。</p>
+<p>决定先使用<code>docker-compose</code>先部署<strong>Harbor</strong> 。</p>
+<h3 id="参考文档">参考文档</h3>
+<p>https://helm.sh/docs/using_helm/#installing-helm</p>
+<p>https://github.com/goharbor/harbor-helm</p>
+<p>https://www.cnblogs.com/dukuan/p/9963744.html</p>
+<p>https://blog.51cto.com/wangpengtai/2418636?source=dra</p>
+<p>http://kpali.me/2020/05/13/deploy-harbor-in-kubernetes.html</p>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+        <tag>harbor</tag>
       </tags>
   </entry>
   <entry>
@@ -8335,6 +8323,27 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       <tags>
         <tag>git</tag>
         <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数值分析第一章作业</title>
+    <url>/p/Chapter-01-of-Numerical-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《数值分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，数值分析</p>
+<span id="more"></span>
+<p><img data-src="image-20201013093358782.png" /></p>
+<p><img data-src="image-20201013102937713.png" /></p>
+<p><img data-src="image-20201013104909315.png" /></p>
+<p><img data-src="image-20201013104922645.png" /></p>
+<p><img data-src="image-20201013104953613.png" /></p>
+<p><img data-src="image-20201013110136891.png" /></p>
+<p><img data-src="image-20201013110806596.png" /> <span class="math display">\[
+2^{256}=2^{16} \times 2^{16}=[(2^{4})^{2}]^{2}
+\]</span></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
       </tags>
   </entry>
   <entry>
@@ -8794,6 +8803,58 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>记MT7621平台刷入OpenWRT</title>
+    <url>/p/how-to-config-OpenWRT/</url>
+    <content><![CDATA[<p>什么是OpenWRT？</p>
+<span id="more"></span>
+<hr />
+<h3 id="安装luci相关">安装luci相关</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg install luci luci-base luci-i18n-base-zh-cn</span><br></pre></td></tr></table></figure>
+<h3 id="开启sftp">开启sftp</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install vsftpd openssh-sftp-server</span><br><span class="line">/etc/init.d/vsftpd enable</span><br><span class="line">/etc/init.d/vsftpd start</span><br></pre></td></tr></table></figure>
+<h3 id="opkg-腾讯源">opkg 腾讯源</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/opkg/distfeeds.conf</span><br></pre></td></tr></table></figure>
+<p>写入以下文字</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">src/gz openwrt_core https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/targets/ramips/mt7621/packages</span><br><span class="line">src/gz openwrt_base https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/base</span><br><span class="line">src/gz openwrt_packages  https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/packages</span><br><span class="line">src/gz openwrt_luci https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/luci</span><br><span class="line">src/gz openwrt_routing https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/routing</span><br><span class="line">src/gz openwrt_freifunk https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/freifunk</span><br><span class="line">src/gz openwrt_telephony https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/telephony</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="luci禁用缓存">luci禁用缓存</h3>
+<p>编辑/etc/config/luci</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">config internal &#x27;ccache&#x27;</span><br><span class="line">        option enable &#x27;0&#x27;</span><br></pre></td></tr></table></figure>
+<p>重启即可</p>
+<h3 id="扩容root分区">扩容root分区</h3>
+<p>安装依赖</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">opkg update &amp;&amp; opkg install block-mount kmod-fs-ext4 kmod-usb-storage kmod-usb-ohci kmod-usb-uhci e2fsprogs fdisk</span><br></pre></td></tr></table></figure>
+<p>查看sd卡信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">block info</span><br></pre></td></tr></table></figure>
+<p>有类似回显，其中<code>/dev/mmcblk0p1</code>就是sd卡</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/dev/mtdblock5: UUID=&quot;d1f1302b-91ce24ca-2c74336e-eea51b51&quot; VERSION=&quot;4.0&quot; MOUNT=&quot;/rom&quot; TYPE=&quot;squashfs&quot;</span><br><span class="line">/dev/mtdblock6: MOUNT=&quot;/overlay&quot; TYPE=&quot;jffs2&quot;</span><br><span class="line">/dev/mmcblk0p1: UUID=&quot;746ffc51-1f29-2646-b2cb-fc2c03fe3c1a&quot; LABEL=&quot;sdcard&quot; VERSION=&quot;1.0&quot; TYPE=&quot;ext4&quot;</span><br></pre></td></tr></table></figure>
+<p>格式化内存卡</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/mmcblk0p1</span><br></pre></td></tr></table></figure>
+<p>将下面的DEVICE换成你的sd卡分区</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">DEVICE=<span class="string">&quot;/dev/mmcblk0p1&quot;</span></span><br><span class="line"><span class="built_in">eval</span> $(block info <span class="string">&quot;<span class="variable">$&#123;DEVICE&#125;</span>&quot;</span> | grep -o -e <span class="string">&quot;UUID=\S*&quot;</span>)</span><br><span class="line">uci -q delete fstab.overlay</span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay=<span class="string">&quot;mount&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.uuid=<span class="string">&quot;<span class="variable">$&#123;UUID&#125;</span>&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.target=<span class="string">&quot;/overlay&quot;</span></span><br><span class="line">uci commit fstab</span><br></pre></td></tr></table></figure>
+<p>转移数据</p>
+<p>如有报错请先查看否自动挂载了sd卡，挂载sd卡时也可能出现如下报错，实测不影响。</p>
+<p>报错信息：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">root@GL-MT1300:~<span class="comment"># mount /dev/mmcblk0p1 /mnt/</span></span><br><span class="line">NTFS signature is missing.</span><br><span class="line">Failed to mount <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span>: Invalid argument</span><br><span class="line">The device <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span> doesn<span class="string">&#x27;t seem to have a valid NTFS.</span></span><br><span class="line"><span class="string">Maybe the wrong device is used? Or the whole disk instead of a</span></span><br><span class="line"><span class="string">partition (e.g. /dev/sda, not /dev/sda1)? Or the other way around?</span></span><br></pre></td></tr></table></figure>
+<p>执行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mount /dev/mmcblk0p1 /mnt</span><br><span class="line">cp -f -a /overlay/. /mnt</span><br><span class="line">umount /mnt</span><br></pre></td></tr></table></figure>
+<p>然后重启</p>
+<p>扩展分区前</p>
+<p><img data-src="image-20210122191844339.png" /></p>
+<p>扩展分区后</p>
+<p><img data-src="image-20210122191907269.png" /></p>
+<h3 id="单独编译openwrt-ipk">单独编译openwrt ipk</h3>
+<p>先执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make menuconfig </span><br></pre></td></tr></table></figure>
+<p>然后选中相关组件</p>
+<p>再执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make package/feeds/luci/luci-base/compile -j1 V=s</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>MT7621</tag>
+        <tag>OpenWRT</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>自然语言处理实战（一）｜NLTK入门教程.md</title>
     <url>/p/an-introduction-to-NLTK/</url>
     <content><![CDATA[<p>本文主要介绍了NLTK语言工具包。</p>
@@ -8850,58 +8911,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>自然语言处理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记MT7621平台刷入OpenWRT</title>
-    <url>/p/how-to-config-OpenWRT/</url>
-    <content><![CDATA[<p>什么是OpenWRT？</p>
-<span id="more"></span>
-<hr />
-<h3 id="安装luci相关">安装luci相关</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg install luci luci-base luci-i18n-base-zh-cn</span><br></pre></td></tr></table></figure>
-<h3 id="开启sftp">开启sftp</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install vsftpd openssh-sftp-server</span><br><span class="line">/etc/init.d/vsftpd enable</span><br><span class="line">/etc/init.d/vsftpd start</span><br></pre></td></tr></table></figure>
-<h3 id="opkg-腾讯源">opkg 腾讯源</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/opkg/distfeeds.conf</span><br></pre></td></tr></table></figure>
-<p>写入以下文字</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">src/gz openwrt_core https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/targets/ramips/mt7621/packages</span><br><span class="line">src/gz openwrt_base https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/base</span><br><span class="line">src/gz openwrt_packages  https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/packages</span><br><span class="line">src/gz openwrt_luci https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/luci</span><br><span class="line">src/gz openwrt_routing https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/routing</span><br><span class="line">src/gz openwrt_freifunk https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/freifunk</span><br><span class="line">src/gz openwrt_telephony https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/telephony</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="luci禁用缓存">luci禁用缓存</h3>
-<p>编辑/etc/config/luci</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">config internal &#x27;ccache&#x27;</span><br><span class="line">        option enable &#x27;0&#x27;</span><br></pre></td></tr></table></figure>
-<p>重启即可</p>
-<h3 id="扩容root分区">扩容root分区</h3>
-<p>安装依赖</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">opkg update &amp;&amp; opkg install block-mount kmod-fs-ext4 kmod-usb-storage kmod-usb-ohci kmod-usb-uhci e2fsprogs fdisk</span><br></pre></td></tr></table></figure>
-<p>查看sd卡信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">block info</span><br></pre></td></tr></table></figure>
-<p>有类似回显，其中<code>/dev/mmcblk0p1</code>就是sd卡</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/dev/mtdblock5: UUID=&quot;d1f1302b-91ce24ca-2c74336e-eea51b51&quot; VERSION=&quot;4.0&quot; MOUNT=&quot;/rom&quot; TYPE=&quot;squashfs&quot;</span><br><span class="line">/dev/mtdblock6: MOUNT=&quot;/overlay&quot; TYPE=&quot;jffs2&quot;</span><br><span class="line">/dev/mmcblk0p1: UUID=&quot;746ffc51-1f29-2646-b2cb-fc2c03fe3c1a&quot; LABEL=&quot;sdcard&quot; VERSION=&quot;1.0&quot; TYPE=&quot;ext4&quot;</span><br></pre></td></tr></table></figure>
-<p>格式化内存卡</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/mmcblk0p1</span><br></pre></td></tr></table></figure>
-<p>将下面的DEVICE换成你的sd卡分区</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">DEVICE=<span class="string">&quot;/dev/mmcblk0p1&quot;</span></span><br><span class="line"><span class="built_in">eval</span> $(block info <span class="string">&quot;<span class="variable">$&#123;DEVICE&#125;</span>&quot;</span> | grep -o -e <span class="string">&quot;UUID=\S*&quot;</span>)</span><br><span class="line">uci -q delete fstab.overlay</span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay=<span class="string">&quot;mount&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.uuid=<span class="string">&quot;<span class="variable">$&#123;UUID&#125;</span>&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.target=<span class="string">&quot;/overlay&quot;</span></span><br><span class="line">uci commit fstab</span><br></pre></td></tr></table></figure>
-<p>转移数据</p>
-<p>如有报错请先查看否自动挂载了sd卡，挂载sd卡时也可能出现如下报错，实测不影响。</p>
-<p>报错信息：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">root@GL-MT1300:~<span class="comment"># mount /dev/mmcblk0p1 /mnt/</span></span><br><span class="line">NTFS signature is missing.</span><br><span class="line">Failed to mount <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span>: Invalid argument</span><br><span class="line">The device <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span> doesn<span class="string">&#x27;t seem to have a valid NTFS.</span></span><br><span class="line"><span class="string">Maybe the wrong device is used? Or the whole disk instead of a</span></span><br><span class="line"><span class="string">partition (e.g. /dev/sda, not /dev/sda1)? Or the other way around?</span></span><br></pre></td></tr></table></figure>
-<p>执行以下命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mount /dev/mmcblk0p1 /mnt</span><br><span class="line">cp -f -a /overlay/. /mnt</span><br><span class="line">umount /mnt</span><br></pre></td></tr></table></figure>
-<p>然后重启</p>
-<p>扩展分区前</p>
-<p><img data-src="image-20210122191844339.png" /></p>
-<p>扩展分区后</p>
-<p><img data-src="image-20210122191907269.png" /></p>
-<h3 id="单独编译openwrt-ipk">单独编译openwrt ipk</h3>
-<p>先执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make menuconfig </span><br></pre></td></tr></table></figure>
-<p>然后选中相关组件</p>
-<p>再执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make package/feeds/luci/luci-base/compile -j1 V=s</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>MT7621</tag>
-        <tag>OpenWRT</tag>
       </tags>
   </entry>
   <entry>
