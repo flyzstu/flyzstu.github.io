@@ -635,6 +635,52 @@
       </tags>
   </entry>
   <entry>
+    <title>Go语言操作MySQL数据库</title>
+    <url>/p/go-mysql/</url>
+    <content><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p>
+<p>关键词：<strong>golang</strong></p>
+<span id="more"></span>
+<h3 id="连接">连接</h3>
+<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
+<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers 获取驱动列表。</p>
+<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
+<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
+<h4 id="下载依赖">下载依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
+<h4 id="初始化链接">初始化链接</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li>
+<li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
+<li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>验证数据库是否可用</li>
+<li>如果必要的话建立一个连接</li>
+</ul>
+<h4 id="设置最大连接数">设置最大连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大连接数</li>
+<li>如果n &gt; 0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
+<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
+</ul>
+<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大闲置连接数</li>
+<li>如果n 大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
+<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go语言基础（二）读写json字符串</title>
     <url>/p/go-json/</url>
     <content><![CDATA[<p>本文主要介绍了Go语言中读写json的相关操作。</p>
@@ -687,52 +733,6 @@
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line">jsonDATA, err = json.Marshal(msg) <span class="comment">// 不带缩进 </span></span><br><span class="line">json.MarshalIndent(c, <span class="string">&quot;&quot;</span>, <span class="string">&quot;     &quot;</span>) <span class="comment">// 带缩进</span></span><br></pre></td></tr></table></figure>
 <h4 id="完整代码">完整代码</h4>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	msg := &amp;Data&#123;&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg: %v\n&quot;</span>, msg)</span><br><span class="line">	jsonDATA, err := ioutil.ReadFile(<span class="string">&quot;data.json&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// fmt.Printf(&quot;jsonDATA: %s\n&quot;, string(jsonDATA))</span></span><br><span class="line">	err = json.Unmarshal(jsonDATA, msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg.Content: %v\n&quot;</span>, msg.Content)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;msg.MsgType: %v\n&quot;</span>, msg.MsgType)</span><br><span class="line">	<span class="comment">// jsonDATA, err = json.Marshal(msg) // 不带缩进</span></span><br><span class="line">	jsonDATA, err = json.MarshalIndent(msg, <span class="string">&quot;&quot;</span>, <span class="string">&quot;  &quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;string(jsonDATA): %v\n&quot;</span>, <span class="type">string</span>(jsonDATA))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go语言操作MySQL数据库</title>
-    <url>/p/go-mysql/</url>
-    <content><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p>
-<p>关键词：<strong>golang</strong></p>
-<span id="more"></span>
-<h3 id="连接">连接</h3>
-<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
-<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers 获取驱动列表。</p>
-<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
-<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
-<h4 id="下载依赖">下载依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
-<h4 id="初始化链接">初始化链接</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li>
-<li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
-<li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>验证数据库是否可用</li>
-<li>如果必要的话建立一个连接</li>
-</ul>
-<h4 id="设置最大连接数">设置最大连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大连接数</li>
-<li>如果n &gt; 0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
-<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
-</ul>
-<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大闲置连接数</li>
-<li>如果n 大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
-<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
-</ul>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -919,6 +919,55 @@
 <p>修改地址，<strong>Dashboard&gt;&gt;&gt;插件管理&gt;&gt;&gt;Plugin Manager&gt;&gt;&gt;高级</strong></p>
 <p><img data-src="image-20220509135702702.png" /></p>
 <h4 id="添加ssh密钥">添加SSH密钥</h4>
+]]></content>
+      <tags>
+        <tag>Jenkins</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Jenkins实战（四）构建hexo博客</title>
+    <url>/p/build-hexo-blog-with-jenkins/</url>
+    <content><![CDATA[<p>本文主要介绍如何在Jenkins上构建hexo博客。</p>
+<p>关键词：<strong>Jenkins</strong></p>
+<span id="more"></span>
+<h2 id="使用二进制文件进行构建">使用二进制文件进行构建</h2>
+<h3 id="需求来源">需求来源</h3>
+<p>博客源码是使用git托管在GitHub上的，之前使用的github action服务。由于滥用，github对actions的限制越发严格。</p>
+<p>自己有几台闲置的Linux主机，可以拿来构建博客。</p>
+<p>jenkins是著名的自动化构建软件，本次就拿构建博客做个小例子。</p>
+<h3 id="准备">准备</h3>
+<p>安装好jenkins的linux服务器，并运行jenkins。</p>
+<h3 id="创建项目">创建项目</h3>
+<h4 id="名称">名称</h4>
+<p>这里的名称可以任选。</p>
+<h4 id="源码管理">源码管理</h4>
+<p>源码管理选择Git，这里写我自己的仓库的链接。</p>
+<p><img data-src="image-20220630141619409.png" /></p>
+<ul>
+<li>注意Creditials要选择对应协议。如果是ssh协议就选ssh key，如果是https协议且是私有仓库，那就需要personal token。</li>
+</ul>
+<p>测试一下是否成功链接上了仓库：</p>
+<p>点一下运行，看看最后的结果</p>
+<p><img data-src="image-20220630143750474.png" /></p>
+<h4 id="设置构建触发器">设置构建触发器</h4>
+<p>这里选择轮训的方式：每隔5分钟拉一次，看看有没有更新，如果有更新了就继续运行下面的脚本。</p>
+<p><img data-src="image-20220630143959280.png" /></p>
+<h4 id="构建环境">构建环境</h4>
+<p>这里根据自己的需要选择即可。</p>
+<p><img data-src="image-20220630144212882.png" /></p>
+<h4 id="构建">构建</h4>
+<p>这里是整个流程的核心，这里运行bash脚本，执行生成博客静态文件的操作。</p>
+<p>首先需要安装好nodejs，然后安装hexo博客工具，这里不再赘述。</p>
+<p>这里有个小技巧：一般在主用户上设置的PATH环境变量上在jenkins用户是无法读取的，这里需要在节点配置上设置环境变量：</p>
+<p><strong>系统管理→Configure System→环境变量</strong></p>
+<p><img data-src="image-20220630153832331.png" /></p>
+<p>构建脚本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$WORKSPACE</span></span><br><span class="line"><span class="built_in">cp</span> -r /temp/node_modules .</span><br><span class="line">hexo g</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;构建失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">git <span class="built_in">clone</span> https://xxx</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;克隆失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">cp</span> -r flyzstu.github.io/.git public</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;复制失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">cd</span> public</span><br><span class="line">git config user.name <span class="string">&quot;flyzstu&quot;</span></span><br><span class="line">git config user.email <span class="string">&quot;flyzstu@gmail.com&quot;</span></span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Jenkins Service Auto Builder at <span class="subst">$(date +&#x27;%Y-%m-%d %H:%M:%S&#x27;)</span>&quot;</span></span><br><span class="line">git push --force --quiet</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;推送成功&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<p>这里分开构建，国外的使用github pages，国内使用又拍云。</p>
+<p>将生成好的静态文件通过upx的cli命令上传到又拍云。</p>
+<p>这里主要有一个bash脚本交互输入的用法。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$WORKSPACE</span>/public</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;ServiceName\nOperator\nPassword&quot;</span> | upx login</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;登录失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">upx <span class="built_in">sync</span> --strong</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;推送UPYUN成功&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用容器方式构建">使用容器方式构建</h2>
 ]]></content>
       <tags>
         <tag>Jenkins</tag>
@@ -1314,61 +1363,144 @@
       </tags>
   </entry>
   <entry>
-    <title>Jenkins实战（四）构建hexo博客</title>
-    <url>/p/build-hexo-blog-with-jenkins/</url>
-    <content><![CDATA[<p>本文主要介绍如何在Jenkins上构建hexo博客。</p>
-<p>关键词：<strong>Jenkins</strong></p>
-<span id="more"></span>
-<h2 id="使用二进制文件进行构建">使用二进制文件进行构建</h2>
-<h3 id="需求来源">需求来源</h3>
-<p>博客源码是使用git托管在GitHub上的，之前使用的github action服务。由于滥用，github对actions的限制越发严格。</p>
-<p>自己有几台闲置的Linux主机，可以拿来构建博客。</p>
-<p>jenkins是著名的自动化构建软件，本次就拿构建博客做个小例子。</p>
-<h3 id="准备">准备</h3>
-<p>安装好jenkins的linux服务器，并运行jenkins。</p>
-<h3 id="创建项目">创建项目</h3>
-<h4 id="名称">名称</h4>
-<p>这里的名称可以任选。</p>
-<h4 id="源码管理">源码管理</h4>
-<p>源码管理选择Git，这里写我自己的仓库的链接。</p>
-<p><img data-src="image-20220630141619409.png" /></p>
-<ul>
-<li>注意Creditials要选择对应协议。如果是ssh协议就选ssh key，如果是https协议且是私有仓库，那就需要personal token。</li>
-</ul>
-<p>测试一下是否成功链接上了仓库：</p>
-<p>点一下运行，看看最后的结果</p>
-<p><img data-src="image-20220630143750474.png" /></p>
-<h4 id="设置构建触发器">设置构建触发器</h4>
-<p>这里选择轮训的方式：每隔5分钟拉一次，看看有没有更新，如果有更新了就继续运行下面的脚本。</p>
-<p><img data-src="image-20220630143959280.png" /></p>
-<h4 id="构建环境">构建环境</h4>
-<p>这里根据自己的需要选择即可。</p>
-<p><img data-src="image-20220630144212882.png" /></p>
-<h4 id="构建">构建</h4>
-<p>这里是整个流程的核心，这里运行bash脚本，执行生成博客静态文件的操作。</p>
-<p>首先需要安装好nodejs，然后安装hexo博客工具，这里不再赘述。</p>
-<p>这里有个小技巧：一般在主用户上设置的PATH环境变量上在jenkins用户是无法读取的，这里需要在节点配置上设置环境变量：</p>
-<p><strong>系统管理→Configure System→环境变量</strong></p>
-<p><img data-src="image-20220630153832331.png" /></p>
-<p>构建脚本：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$WORKSPACE</span></span><br><span class="line"><span class="built_in">cp</span> -r /temp/node_modules .</span><br><span class="line">hexo g</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;构建失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">git <span class="built_in">clone</span> https://xxx</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;克隆失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">cp</span> -r flyzstu.github.io/.git public</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;复制失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">cd</span> public</span><br><span class="line">git config user.name <span class="string">&quot;flyzstu&quot;</span></span><br><span class="line">git config user.email <span class="string">&quot;flyzstu@gmail.com&quot;</span></span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Jenkins Service Auto Builder at <span class="subst">$(date +&#x27;%Y-%m-%d %H:%M:%S&#x27;)</span>&quot;</span></span><br><span class="line">git push --force --quiet</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;推送成功&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-<p>这里分开构建，国外的使用github pages，国内使用又拍云。</p>
-<p>将生成好的静态文件通过upx的cli命令上传到又拍云。</p>
-<p>这里主要有一个bash脚本交互输入的用法。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$WORKSPACE</span>/public</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;ServiceName\nOperator\nPassword&quot;</span> | upx login</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;登录失败&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">upx <span class="built_in">sync</span> --strong</span><br><span class="line"><span class="keyword">if</span> [ $? -ne 0 ]; <span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;推送UPYUN成功&quot;</span></span><br><span class="line">  <span class="built_in">exit</span> 255</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-<h2 id="使用容器方式构建">使用容器方式构建</h2>
-]]></content>
-      <tags>
-        <tag>Jenkins</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn</title>
     <url>/p/Install-longhorn-on-k8s/</url>
     <content><![CDATA[<p>本文主要介绍如何安装和使用云原生存储系统LongHorn。</p>
 <p>关键词：<strong>k8s</strong></p>
 <span id="more"></span>
 <h2 id="前言">前言</h2>
+<p>K8s存储最开始是通过Volume Plugin实现集成外部存储系统，即不同的存储系统对应不同的volume plugin。</p>
+<p>Volume Plugin实现代码全部放在了K8s主干代码中，也就是说这些查看与核心K8s二进制文件一起链接、编译、构建和发布。</p>
+<p>这种方案存在以下几个问题：</p>
+<ol type="1">
+<li>在K8s中添加新的存储系统支持需要在<strong>核心K8s（in-tree）</strong>增加插件代码，随着存储插件越来越多，K8s代码也会变得越来庞大。</li>
+<li>K8s与具体的存储plugin耦合在一起，一旦存储接口发任何变化都需要重新修改plugin代码，也就是说不得不修改K8s代码，导致K8s代维护越来越困难。</li>
+<li>如果这些plugin由bug或者存储系统故障导致crash，可能会导致整个K8s集群crash。这些查看运行时无法做权限管控，具有K8s所以组件的所有权限，存在一定的安全风险。</li>
+<li>插件的实现必须通过Golang语言编写并与K8s一起开源，可能对某些厂商不利。</li>
+</ol>
+<p>因此从1.8开始，K8s停止往K8s代码中增加新的存储支持，并推出了一种新的插件形式支持外部存储系统，即<strong>FlexVolume</strong>。</p>
+<p>FlexVolume类似于CNI插件，通过外部脚本集成外部存储接口。这些脚本默认放在<code>/usr/libexec/kubernetes/kubelet-plugins/volume/exec/</code>，需要安装到所有Node节点上。</p>
+<p>这样存储插件只需要通过<strong>外部脚本（out-of-tree）</strong>即可实现<code>attach</code>、<code>detach</code>、<code>mount</code>、<code>umount</code>等接口即可集成第三方存储，不需要动K8s源码，可以参考官方的一个<strong>LVM FlexVolume Demo[1]</strong>。</p>
+<p>但是这种方法也有问题：</p>
+<ul>
+<li>脚本文件放在host主机上，因此驱动不得不通过访问宿主机的根文件系统去运行脚本。</li>
+<li>这些插件还有第三方程序以来或者OS兼容性要求，还需要在所有的Node节点安装这些依赖并解决兼容性问题。</li>
+</ul>
+<p>因此这种方式虽然解决了in-tree的问题，但是这种方式用起来不太优雅，不太原生。</p>
+<p>因此Kubernetes从1.9开始就引入了Container Storage Interface（CSI）容器存储接口，并与1.13版本正式GA。</p>
+<p>CSI的实现方案和CRI类似，通过gRPC与volume driver进行通信，存储厂商需要实现三个服务接口Identify Service、Control Service、Node Service：</p>
+<ul>
+<li>Indentfy Service用于返回一些插件信息；</li>
+<li>Control Service实现Volume的CURD操作；</li>
+<li>Node Service运行在所有的Node节点，用于实现把volume挂载在当前Node节点的指定目录，该服务会监听一个Socket，controller通过这个socket进行通信，可以参考官方提供的例子：<strong>CSI Hostpath driver Sample[2]</strong>。</li>
+</ul>
+<p>更多CSI介绍可以参考官方的设计文档，<strong>CSI Volume Plugins in Kubernetes Design Doc[3]</strong>。</p>
+<p>通过CSI基本解决了in-tree以及FlexVolume的大多数问题，未来K8s会把in-tree的存储插件都迁移到CSI。</p>
+<p>当然Flex Volume Plugin也会与新的CSI Volume Plugin并存以便兼容现有的第三方FlexVolume存储插件。</p>
+<h3 id="为什么需要云原生分布式存储">为什么需要云原生分布式存储</h3>
+<p>通过CSI接口或者Flex Volume Plugin解决了K8s集成外部存储的问题。</p>
+<p>目前K8s以及能够支持非常多的外部存储系统了，如NFS、GlusterFS、Ceph、OpenStack等，这些存储系统目前主流的部署方式还是运行在K8s集群之外单独部署和维护，不符合All in K8s的原则。</p>
+<p>如何没有分布式存储，则不得不单独部署一套分布式存储。</p>
+<p>很多分布式存储部署还是比较复杂的。而K8s天生就具有快速部署和编排应用的能力，如果能把分布式存储的部署也能通过K8s编排起来，则显然能够大大降低分布式存储的部署和维护成本，甚至使用一条apply目录就可以部署一个集群。</p>
+<p>这里主要有两种思路：</p>
+<ul>
+<li>一是重新针对云原生平台设计一个分布式存储，这个分布式存储系统组件是为服务化的，能够复用K8s的调度、故障恢复和编排能力，如后面介绍的Longhorn、OpenEBS。</li>
+<li>二是设计微服务组件把已有的分布式存储系统包装管理起来，使原来的分布式存储能够运行在K8s平台上，实现通过K8s管理原有的分布式存储系统，如Rook</li>
+</ul>
+<h3 id="container-attached-storage容器存储的未来">Container Attached Storage，容器存储的未来？</h3>
+<p>我们都知道，组成云计算的三大基石为计算、存储和网络，K8s计算（Runtime）、存储（PV/PVC）和网络（Subnet/DNS/Service/Ingress）的设计都是开放的，可以集成不同的方案，比如网络通过CNI接口支持集成Flannel、Calico等方案，运行时（Runtime）通过CRI支持Docker、Rkt、Kata等运行时方案，存储通过Volume Plugin支持集成如AWS EBS、Ceph、OpenStack等存储系统。</p>
+<p>但是目前主流的方案中存储与计算、网络稍有不同，计算和网络都是以微服务的形式通过K8s统一编排管理的，即K8s既是计算和网络的消费者，也是计算和网络的编排者和管理者。</p>
+<p>而存储不一样，虽然K8s已经设计了PV/PVC机制来管理外部存储，但是只是弄了个标准接口集成，存储本身还是通过独立的存储系统来管理，K8s是压根不知道底层存储是如何编排和调度的。</p>
+<p>社区既然认为计算和网络都由K8s统一编排了，那存储也应该统一编排。</p>
+<p>于是社区提出了Container Attached Storage（CAS）的理念，这个理念的目标就是利用K8s来编排存储，从而实现K8s编排一切，这里的一切包括计算、存储、网络，还包括应用、服务和软件。</p>
+<p>CAS提出如下方案：</p>
+<ul>
+<li>每个Volume都由一个轻量级的Controller来管理，这个Controller可以是单独的Pod。</li>
+<li>这个Controller与使用该Volume的应用Pod在同一个Node（sidecar模式）</li>
+<li>不同的Volume的数据使用多个独立的Controller Pod进行管理。</li>
+</ul>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/cas-768x614-1.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>由于Pod是通过K8s编排和存储的，因此毫无疑问通过这种形式就实现了K8s的编排和调度。</p>
+<p>K8s目前毕竟是主流趋势，通过K8s编排和管理存储也必然是一种发展趋势。</p>
+<h2 id="云原生存储系统longhorn">云原生存储系统Longhorn</h2>
+<h3 id="longhorn简介">Longhorn简介</h3>
+<p><strong>Longhorn</strong>最初由Rancher公司开发并贡献给社区，专门针对K8s设计开发的<strong>云原生分布式块存储系统</strong>，因此和K8s契合度很高，主要体现在以下两个方面：</p>
+<ul>
+<li>本身运行在K8s平台上，通过容器和微服务方式运行；</li>
+<li>很好的和PV/PVC结合。</li>
+</ul>
+<p>与其他分布式块存储系统最大的不同点是，Longhorn并没有设计一个非常复杂的控制器来管理Volume数据卷，而是将控制器拆分成一个个非常轻量级的微控制器，这些控制器通过K8s等平台进行调度和编排。</p>
+<p>每个微控制器只管理一个Volume，这种基于微服务的设计使得每个Volume相对独立，控制器升级时开业先选择一部分卷进行操作，如果升级出现问题，可以快速选择回滚到旧版本，升级过程中之可能会影响正在升级的Volume。不会导致其他Volume IO中断。</p>
+<p>Longhorn的实现和CAS的设计理念基本上是一致的，相比Ceph来说简单很多，而又具备分布式块存储的系统的一些基本功能：</p>
+<ul>
+<li><p>支持多副本，不存在单点故障</p></li>
+<li><p>支持增量快照</p></li>
+<li><p>支持备份到其他外部存储系统，比如S3；</p></li>
+<li><p>精简配置</p></li>
+</ul>
+<p>Longhorn内置了一个Web UI，能够通过UI很方便的管理Node、Volume以及Backup。</p>
+<p>根据官方的说法，Longhorn不是为了取代其他的分布式块存储系统，而是为了设计一个更简单更适合容器环境的块存储系统，其他分布式存储有的一些高级功能Longhorn并没有实现，比如去重，压缩，分块，多路径等。</p>
+<p>Longhorn存储管理机制比较简单，当在Longhorn中Node节点增加物理存储时，其本质就是把Node对应的路径通过HostPath挂载到Pod中。</p>
+<h3 id="longhorn部署">Longhorn部署</h3>
+<h4 id="安装">安装</h4>
+<p>国外地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/master/deploy/longhorn.yaml</span><br></pre></td></tr></table></figure>
+<p>Gitee加速</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f https://gitee.com/mirrors/longhorn/raw/master/deploy/longhorn.yaml</span><br></pre></td></tr></table></figure>
+<p>最好是提前下载好镜像，参考地址：https://gitee.com/mirrors/longhorn/raw/master/deploy/longhorn-images.txt</p>
+<p>稍后片刻，查看运行状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods -n longhorn-system</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716153619243.png" alt="image-20220716153619243" /><figcaption aria-hidden="true">image-20220716153619243</figcaption>
+</figure>
+<p>如上图所示，说明安装成功。</p>
+<h4 id="访问ui">访问UI</h4>
+<p>查看UI Service的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get svc longhorn-frontend -o wide -n longhorn-system</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716154810558.png" alt="image-20220716154810558" /><figcaption aria-hidden="true">image-20220716154810558</figcaption>
+</figure>
+<p>可以看到服务类型是ClusterIP，此时只能<strong>在集群内部访问</strong>，由于我是远程管理的K8s集群，因此需要将过这个端口暴露出来。</p>
+<p>暂时先使用NodePort的方式暴露这个服务，等到后面弄清楚Ingress的原理以后再迁移过去。</p>
+<p>更改<code>longhorn-frontend</code>的配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl edit svc longhorn-frontend -n longhorn-system</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716155901649.png" alt="image-20220716155901649" /><figcaption aria-hidden="true">image-20220716155901649</figcaption>
+</figure>
+<p>等待生效以后，就可以访问UI了。</p>
+<p>访问的IP是集群的local IP，端口则是30000。NodePort的默认端口是30000-32767，这个好像可以根据kubelet的选项进行修改，这里测试原因就没必要修改啦。</p>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716161812262.png" /></p>
+<p>我在这个work01所在的节点上挂载了一块硬盘，挂载路径在<code>/mnt</code>，大小只有1T，不过这里为啥Allocated了2T。。真是百思不得其解。</p>
+<h4 id="声明pvc">声明PVC</h4>
+<p>对于动态PV来说，只需要设置好StorageClass+PVC，在设置Pod Volume时就可以使用Volume了</p>
+<p>安装好longhorn以后，默认安装了StorageClass</p>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716163325775.png" /></p>
+<p>因此只需要设置PVC</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-longborn-pvc</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">longhorn</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">3Gi</span></span><br></pre></td></tr></table></figure>
+<p>设置完PVC以后就可以设置Pod时候添加Volume了</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">nodeName:</span> <span class="string">worker01</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-1</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">args:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="string">--max_connections=10000</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--character-set-server=utf8mb4</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--collation-server=utf8mb4_general_ci</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--default-authentication-plugin=mysql_native_password</span></span><br><span class="line">    <span class="attr">env:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">      <span class="attr">value:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/var/lib/mysql</span>             <span class="comment"># 容器挂载路径</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">mysql-data</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">    <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">      <span class="attr">claimName:</span> <span class="string">mysql-longborn-pvc</span></span><br></pre></td></tr></table></figure>
+<p>当我兴冲冲的执行完<code>kubectl apply -f</code>之后，才发现我的Pod怎么也启动不起来，他总是显示</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rpc error: code = DeadlineExceeded desc = volume pvc-084b4ca7-c972-4de6-aa29-55101df79635 failed to attach to node worker01</span><br></pre></td></tr></table></figure>
+<p>而Longhorn Dashbroad UI总是显示</p>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716171407840.png" /></p>
+<p>经过查找，发现了原因：</p>
+<ul>
+<li>当前集群内只有1个worker节点，而默认的<strong>Default Replica Count</strong>被设置为3，因此控制器想做备份但是找不到合适的节点，因此调度失败；</li>
+<li>安装在节点的StorageClass有一个numberOfReplicas字段被设置为3，造成了调度失败；而尝试直接修改这个StorageClass却显示<strong>Forbidden: updates to parameters are forbidden.</strong>，猜测是因为某个策略禁止修改了此参数；</li>
+</ul>
+<p>解决方案：</p>
+<ol type="1">
+<li><del>删除现在的StorageClass资源清单</del></li>
+<li><del>更改StorageClass资源清单为符合要求，并重新应用</del></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl delete sc longhorn</span><br></pre></td></tr></table></figure>
+<p>但。。。这种方法也没用，删除这个StorageClass后又会立马生成。</p>
+<p>后来找到了方法：修改这个文件对应的ConfigMap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl edit cm longhorn-storageclass -n longhorn-system</span><br></pre></td></tr></table></figure>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716174724139.png" /></p>
+<p>BUTTTTTTTTTTTTTTTTTT，还是失败了。麻了。</p>
 ]]></content>
       <tags>
         <tag>k8s</tag>
@@ -2207,44 +2339,6 @@
       </tags>
   </entry>
   <entry>
-    <title>ROS实战（一）｜安装ROS Melodic</title>
-    <url>/p/ros-tutorial-01/</url>
-    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
-<p>此次记录的主要是软件安装过程中遇到的问题。</p>
-<span id="more"></span>
-<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
-<p>安装好Ubuntu 1804以后首先换源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line"><span class="built_in">cp</span> /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
-<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
-<h3 id="安装ros-melodic">安装ROS Melodic</h3>
-<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
-<h4 id="设置sources.list">设置sources.list</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h5 id="更新">【更新】</h5>
-<p>国科大ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>北外ROS源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="设置密钥">设置密钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
-<p>另一种方式</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
-<h4 id="安装">安装</h4>
-<p>桌面完整版：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
-<h3 id="初始化rosdep">初始化rosdep</h3>
-<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
-<h3 id="设置环境">设置环境</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;source /opt/ros/melodic/setup.bash&quot; &gt;&gt; ~/.bashrc</span><br><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h3 id="构建工厂依赖">构建工厂依赖</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ROS实战（三）｜相机标定</title>
     <url>/p/ros-tutorial-03/</url>
     <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
@@ -2291,6 +2385,44 @@
 <p>标定完毕。</p>
 <p><img data-src="calibration08.png" /></p>
 <p><img data-src="calibration09.png" /></p>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ROS实战（一）｜安装ROS Melodic</title>
+    <url>/p/ros-tutorial-01/</url>
+    <content><![CDATA[<p>最近的小车需要用到ROS，学习的过程做个记录。</p>
+<p>此次记录的主要是软件安装过程中遇到的问题。</p>
+<span id="more"></span>
+<h3 id="ubuntu1804-换源">ubuntu1804 换源</h3>
+<p>安装好Ubuntu 1804以后首先换源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install apt-transport-https ca-certificates -y</span><br><span class="line"><span class="built_in">cp</span> /etc/apt/sources.list /etc/apt/sources.list.bak</span><br><span class="line">sed -i <span class="string">&quot;s/cn.archive.ubuntu.com/mirrors.aliyun.com/g&quot;</span> /etc/apt/sources.list</span><br><span class="line">sed -i <span class="string">&quot;s/http/https/g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<p>其中，安装<code>apt-transport-https</code>并将安装协议更换到<code>https</code>以避免运营商缓存劫持。</p>
+<h3 id="安装ros-melodic">安装ROS Melodic</h3>
+<p>参考 <a href="http://wiki.ros.org/cn/melodic/Installation/Ubuntu">http://wiki.ros.org/cn/melodic/Installation/Ubuntu</a></p>
+<h4 id="设置sources.list">设置sources.list</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.aliyun.com/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h5 id="更新">【更新】</h5>
+<p>国科大ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.ustc.edu.cn/ros/ubuntu $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>北外ROS源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">&#x27;echo &quot;deb https://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main&quot; &gt; /etc/apt/sources.list.d/ros-latest.list&#x27;</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置密钥">设置密钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-key adv --keyserver <span class="string">&#x27;hkp://keyserver.ubuntu.com:80&#x27;</span> --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654</span><br></pre></td></tr></table></figure>
+<p>另一种方式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL <span class="string">&#x27;http://keyserver.ubuntu.com/pks/lookup?op=get&amp;search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654&#x27;</span> | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<h4 id="安装">安装</h4>
+<p>桌面完整版：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install ros-melodic-desktop-full -y</span><br></pre></td></tr></table></figure>
+<h3 id="初始化rosdep">初始化rosdep</h3>
+<p>初始化需要使用代理服务器，设置代理服务器后请修改<code>sudo</code>配置文件以传递环境变量。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo rosdep init</span><br><span class="line">rosdep update</span><br></pre></td></tr></table></figure>
+<h3 id="设置环境">设置环境</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo &quot;source /opt/ros/melodic/setup.bash&quot; &gt;&gt; ~/.bashrc</span><br><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="构建工厂依赖">构建工厂依赖</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>ROS</tag>
@@ -2384,6 +2516,34 @@
 </tr>
 </tbody>
 </table>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ROS实战（六）｜串口通信</title>
+    <url>/p/serial-communication-on-jetson-xavier-nx/</url>
+    <content><![CDATA[<p>利用Jetson Xavier和传感器模块进行串口通信</p>
+<span id="more"></span>
+<h3 id="硬件连接">硬件连接</h3>
+<p>默认情况下，Jetson Xavier NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分配为GPIO，建议使用下面标有其他功能的引脚。</p>
+<p>这里我们用的是UART1，设备地址<code>/dev/ttyTHS0</code>.</p>
+<p><img data-src="jetson_data_sheet.png" /></p>
+<p>其中，第8和10引脚就是我们需要的TXD和RXD引脚。</p>
+<p><img data-src="jetson_xavier_nx.jpg" /></p>
+<p><strong>注意：和电脑连接调试时需要注意，USB转TTL的RXD引脚需和板子的TXD引脚连接，USB转TTL的TXD引脚需和板子的RXD引脚相连。两者的GND引脚也要连起来。</strong></p>
+<h3 id="相关代码">相关代码</h3>
+<h4 id="安装相关依赖">安装相关依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install pyserial</span><br></pre></td></tr></table></figure>
+<h4 id="测试代码">测试代码</h4>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;UART Demonstration Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">serial_port = serial.Serial(</span><br><span class="line">    port=<span class="string">&quot;/dev/ttyTHS1&quot;</span>,                                      <span class="comment">#串口设备地址</span></span><br><span class="line">    baudrate=<span class="number">115200</span>,                                          <span class="comment">#信号波特率</span></span><br><span class="line">    bytesize=serial.EIGHTBITS,                                <span class="comment">#数据位</span></span><br><span class="line">    parity=serial.PARITY_NONE,  						    <span class="comment">#是否启用奇偶校验</span></span><br><span class="line">    stopbits=serial.STOPBITS_ONE,                             <span class="comment">#停止位</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Wait a second to let the port initialize</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># Send a simple header</span></span><br><span class="line">    serial_port.write(<span class="string">&quot;UART Demonstration Program\r\n&quot;</span>.encode())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> serial_port.inWaiting() &gt; <span class="number">0</span>:</span><br><span class="line">            data = serial_port.read()</span><br><span class="line">            <span class="built_in">print</span>(data)</span><br><span class="line">            serial_port.write(data)</span><br><span class="line">            <span class="comment"># if we get a carriage return, add a line feed too</span></span><br><span class="line">            <span class="comment"># \r is a carriage return; \n is a line feed</span></span><br><span class="line">            <span class="comment"># This is to help the tty program on the other end </span></span><br><span class="line">            <span class="comment"># Windows is \r\n for carriage return, line feed</span></span><br><span class="line">            <span class="comment"># Macintosh and Linux use \n</span></span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">&quot;\r&quot;</span>.encode():</span><br><span class="line">                <span class="comment"># For Windows boxen on the other end</span></span><br><span class="line">                serial_port.write(<span class="string">&quot;\n&quot;</span>.encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Exiting Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> exception_error:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Error occurred. Exiting Program&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Error: &quot;</span> + <span class="built_in">str</span>(exception_error))</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    serial_port.close()</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p><img data-src="uart_demo.png" /></p>
+<p>参考资料：</p>
+<p>https://www.jetsonhacks.com/2019/10/10/jetson-nano-uart/</p>
+<p>https://github.com/JetsonHacksNano/UARTDemo</p>
+<p>https://github.com/pyserial/pyserial</p>
+<p>​</p>
 ]]></content>
       <tags>
         <tag>ROS</tag>
@@ -2552,34 +2712,6 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">visudo</span><br></pre></td></tr></table></figure>
 <p>在最后一行输入</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;用户名&gt; ALL=(ALL) NOPASSWD: ALL </span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ROS实战（六）｜串口通信</title>
-    <url>/p/serial-communication-on-jetson-xavier-nx/</url>
-    <content><![CDATA[<p>利用Jetson Xavier和传感器模块进行串口通信</p>
-<span id="more"></span>
-<h3 id="硬件连接">硬件连接</h3>
-<p>默认情况下，Jetson Xavier NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分配为GPIO，建议使用下面标有其他功能的引脚。</p>
-<p>这里我们用的是UART1，设备地址<code>/dev/ttyTHS0</code>.</p>
-<p><img data-src="jetson_data_sheet.png" /></p>
-<p>其中，第8和10引脚就是我们需要的TXD和RXD引脚。</p>
-<p><img data-src="jetson_xavier_nx.jpg" /></p>
-<p><strong>注意：和电脑连接调试时需要注意，USB转TTL的RXD引脚需和板子的TXD引脚连接，USB转TTL的TXD引脚需和板子的RXD引脚相连。两者的GND引脚也要连起来。</strong></p>
-<h3 id="相关代码">相关代码</h3>
-<h4 id="安装相关依赖">安装相关依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install pyserial</span><br></pre></td></tr></table></figure>
-<h4 id="测试代码">测试代码</h4>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;UART Demonstration Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">serial_port = serial.Serial(</span><br><span class="line">    port=<span class="string">&quot;/dev/ttyTHS1&quot;</span>,                                      <span class="comment">#串口设备地址</span></span><br><span class="line">    baudrate=<span class="number">115200</span>,                                          <span class="comment">#信号波特率</span></span><br><span class="line">    bytesize=serial.EIGHTBITS,                                <span class="comment">#数据位</span></span><br><span class="line">    parity=serial.PARITY_NONE,  						    <span class="comment">#是否启用奇偶校验</span></span><br><span class="line">    stopbits=serial.STOPBITS_ONE,                             <span class="comment">#停止位</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># Wait a second to let the port initialize</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># Send a simple header</span></span><br><span class="line">    serial_port.write(<span class="string">&quot;UART Demonstration Program\r\n&quot;</span>.encode())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> serial_port.inWaiting() &gt; <span class="number">0</span>:</span><br><span class="line">            data = serial_port.read()</span><br><span class="line">            <span class="built_in">print</span>(data)</span><br><span class="line">            serial_port.write(data)</span><br><span class="line">            <span class="comment"># if we get a carriage return, add a line feed too</span></span><br><span class="line">            <span class="comment"># \r is a carriage return; \n is a line feed</span></span><br><span class="line">            <span class="comment"># This is to help the tty program on the other end </span></span><br><span class="line">            <span class="comment"># Windows is \r\n for carriage return, line feed</span></span><br><span class="line">            <span class="comment"># Macintosh and Linux use \n</span></span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">&quot;\r&quot;</span>.encode():</span><br><span class="line">                <span class="comment"># For Windows boxen on the other end</span></span><br><span class="line">                serial_port.write(<span class="string">&quot;\n&quot;</span>.encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Exiting Program&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> exception_error:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Error occurred. Exiting Program&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Error: &quot;</span> + <span class="built_in">str</span>(exception_error))</span><br><span class="line"></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    serial_port.close()</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-<p><img data-src="uart_demo.png" /></p>
-<p>参考资料：</p>
-<p>https://www.jetsonhacks.com/2019/10/10/jetson-nano-uart/</p>
-<p>https://github.com/JetsonHacksNano/UARTDemo</p>
-<p>https://github.com/pyserial/pyserial</p>
-<p>​</p>
 ]]></content>
       <tags>
         <tag>ROS</tag>
@@ -3266,6 +3398,25 @@
       </tags>
   </entry>
   <entry>
+    <title>golang中迭代channel和array</title>
+    <url>/p/how-to-iterate-channel-and-arrry-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍如何在golang中迭代channel和array。</p>
+<span id="more"></span>
+<h2 id="range循环切片">range循环切片</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> key, index := <span class="keyword">range</span> []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125; &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;key = %d, index = %d\n&quot;</span>, key, index)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="range循环channel">range循环channel</h2>
+<p>当channel关闭时<strong>自动退出循环</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> c := <span class="keyword">range</span> ch1 &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;c: %v\n&quot;</span>, c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="通道取值">通道取值</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  data1, ok := &lt;-ch1</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  data2, ok := &lt;-ch2</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;data1: %v, data2: %v\n&quot;</span>, data1, data2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="select多路复用">select多路复用</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> data := &lt;-ch1:</span><br><span class="line">    &#123;</span><br><span class="line">      fmt.Printf(<span class="string">&quot;data: %v\n&quot;</span>, data)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ch2:</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker in docker</title>
     <url>/p/docker-in-docker/</url>
     <content><![CDATA[<p>啥是docker in docker？字如其义，就是在docker里面实现docker，换句话说，就是如何在docker执行docker命令。</p>
@@ -3328,25 +3479,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang中迭代channel和array</title>
-    <url>/p/how-to-iterate-channel-and-arrry-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍如何在golang中迭代channel和array。</p>
-<span id="more"></span>
-<h2 id="range循环切片">range循环切片</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> key, index := <span class="keyword">range</span> []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125; &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;key = %d, index = %d\n&quot;</span>, key, index)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="range循环channel">range循环channel</h2>
-<p>当channel关闭时<strong>自动退出循环</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> c := <span class="keyword">range</span> ch1 &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;c: %v\n&quot;</span>, c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="通道取值">通道取值</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  data1, ok := &lt;-ch1</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  data2, ok := &lt;-ch2</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  &#125;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;data1: %v, data2: %v\n&quot;</span>, data1, data2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="select多路复用">select多路复用</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">  <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> data := &lt;-ch1:</span><br><span class="line">    &#123;</span><br><span class="line">      fmt.Printf(<span class="string">&quot;data: %v\n&quot;</span>, data)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ch2:</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>golang实现简易的tcp客户端和服务端</title>
     <url>/p/socket-in-golang/</url>
     <content><![CDATA[<p>在计算机通信领域，socket 被翻译为“套接字”，它是计算机之间进行<strong>通信</strong>的<strong>一种约定</strong>或一种方式。通过 socket 这种约定，一台计算机可以接收其他计算机的数据，也可以向其他计算机发送数据。</p>
@@ -3369,6 +3501,28 @@
       <tags>
         <tag>golang</tag>
         <tag>socket</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Github Action定时重启IBM cloud foundry</title>
+    <url>/p/ibm-cloud-auto-restart/</url>
+    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
+<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
+<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
+<span id="more"></span>
+<h3 id="yml配置文件">yml配置文件</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用方法">使用方法</h3>
+<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
+<h4 id="设置环境变量">设置环境变量</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
+<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
+<h4 id="效果图">效果图</h4>
+<p><img data-src="image-20200827193322808.png" /></p>
+<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
+]]></content>
+      <tags>
+        <tag>github</tag>
       </tags>
   </entry>
   <entry>
@@ -3594,28 +3748,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用Github Action定时重启IBM cloud foundry</title>
-    <url>/p/ibm-cloud-auto-restart/</url>
-    <content><![CDATA[<p>本文简单介绍了Github Action的用法，并使用Gihub Action定时重启IBM cloud foundry容器。</p>
-<p><strong>摘要：</strong>GitHub Actions是GitHub自家的持续集成及自动化工作流服务，它使用起来非常简单，只要在你的仓库根目录建立<code>.github/workflows</code>文件夹，将你的工作流配置(YML文件)放到这个目录下，就能启用GitHub Actions服务。</p>
-<p><strong>关键字</strong>：Github Action，IBM cloud foundry</p>
-<span id="more"></span>
-<h3 id="yml配置文件">yml配置文件</h3>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Auto</span> <span class="string">Restart</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">master</span> ]</span><br><span class="line">  <span class="attr">schedule:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">cron:</span> <span class="string">&#x27;0 0 * * *&#x27;</span>      <span class="comment"># 根据自己的需要设置何时重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">ibm-cloud-restart:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -</span></span><br><span class="line"><span class="string">        echo &quot;deb https://packages.cloudfoundry.org/debian stable main&quot; | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list</span></span><br><span class="line"><span class="string">        sudo apt-get update</span></span><br><span class="line"><span class="string">        sudo apt-get install cf-cli</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Login</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_ACCOUNT:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_ACCOUNT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">IBM_PASSWORD:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf login -a https://api.us-south.cf.cloud.ibm.com -u $IBM_ACCOUNT &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        $IBM_PASSWORD</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">IBM</span> <span class="string">Cloud</span> <span class="string">Apps</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cf a</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">IBM</span> <span class="string">Cloud</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">IBM_APP_NAME:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.IBM_APP_NAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">cf</span> <span class="string">restart</span> <span class="string">$IBM_APP_NAME</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用方法">使用方法</h3>
-<h4 id="fork仓库httpsgithub.comwf09ibmworkflow">fork仓库：https://github.com/wf09/IBMWorkflow</h4>
-<h4 id="设置环境变量">设置环境变量</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IBM_ACCOUNT：账户邮箱</span><br><span class="line"></span><br><span class="line">IBM_APP_NAME：app的名字</span><br><span class="line"></span><br><span class="line">IBM_PASSWORD：密码</span><br></pre></td></tr></table></figure>
-<p>设置完环境变量以后记得commit一下yml文件触发Action。</p>
-<h4 id="效果图">效果图</h4>
-<p><img data-src="image-20200827193322808.png" /></p>
-<p>PS：达拉斯的容器测试通过，其他的地区可能需要将<code>https://api.us-south.cf.cloud.ibm.com</code>修改成你所在的地区。</p>
-]]></content>
-      <tags>
-        <tag>github</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>K8s核心概念</title>
     <url>/p/core-concept-about-k8s/</url>
     <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第三章Kubernetes 核心概念</strong>学习笔记。</p>
@@ -3710,6 +3842,64 @@
 ]]></content>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>kafaka学习笔记之绪论</title>
+    <url>/p/introduction-to-kafaka-study-notes/</url>
+    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
+<p>关键词：<strong>kafaka</strong></p>
+<span id="more"></span>
+<h2 id="定义">定义</h2>
+<h3 id="传统定义">传统定义</h3>
+<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
+<h4 id="发布订阅">发布/订阅</h4>
+<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
+<h3 id="kafka最新定义">kafka最新定义</h3>
+<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
+<h2 id="应用场景">应用场景</h2>
+<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
+<ul>
+<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
+</ul>
+<p><img data-src="image-20220419165347641.png" /></p>
+<h3 id="解耦">解耦</h3>
+<ul>
+<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
+</ul>
+<p><img data-src="image-20220419165511301.png" /></p>
+<h3 id="异步通信">异步通信</h3>
+<ul>
+<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
+</ul>
+<p><img data-src="image-20220419165706773.png" /></p>
+<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
+<h3 id="点对点方式">点对点方式</h3>
+<ul>
+<li>消费者主动拉取数据，消息收到后清除消息</li>
+</ul>
+<p><img data-src="image-20220419165858779.png" /></p>
+<h3 id="发布订阅方式">发布订阅方式</h3>
+<ul>
+<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
+<li>消费者消费以后不删除数据</li>
+<li>每个消费者相互独立，都可以消费到数据</li>
+</ul>
+<p><img data-src="image-20220419170024390.png" /></p>
+<h2 id="基础架构">基础架构</h2>
+<p><img data-src="image-20220419170301160.png" /></p>
+<ol type="1">
+<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
+<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
+<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
+<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
+<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
+<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
+<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>kafaka</tag>
       </tags>
   </entry>
   <entry>
@@ -3885,64 +4075,6 @@
       </tags>
   </entry>
   <entry>
-    <title>kafaka学习笔记之绪论</title>
-    <url>/p/introduction-to-kafaka-study-notes/</url>
-    <content><![CDATA[<p>业务需要，最近在看尚硅谷的教程，本着好记性不如烂笔头的原则，有了这一系列的文章。</p>
-<p>关键词：<strong>kafaka</strong></p>
-<span id="more"></span>
-<h2 id="定义">定义</h2>
-<h3 id="传统定义">传统定义</h3>
-<p>kafka是一个<strong>分布式</strong>的基于<strong>发布/订阅模式</strong>的消息队列（Message Queue），主要应用于大数据实时处理。</p>
-<h4 id="发布订阅">发布/订阅</h4>
-<p>消息的发布者不会将数据直接发送给特定的订阅者，而是<strong>将发布的消息分为不同的类别</strong>，订阅者<strong>只接受感兴趣的消息</strong>。</p>
-<h3 id="kafka最新定义">kafka最新定义</h3>
-<p>kafka是一个<strong>开源的分布式事件流平台</strong>，用于高性能数据管道，流分析、数据集成、和关键任务应用。</p>
-<h2 id="应用场景">应用场景</h2>
-<h3 id="流量缓冲削峰">流量缓冲、削峰</h3>
-<ul>
-<li>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息处理速度不一致的情况。</li>
-</ul>
-<p><img data-src="image-20220419165347641.png" /></p>
-<h3 id="解耦">解耦</h3>
-<ul>
-<li>允许独立的扩展和修改两边的处理过程，只需确保他们遵守同样的接口约束。</li>
-</ul>
-<p><img data-src="image-20220419165511301.png" /></p>
-<h3 id="异步通信">异步通信</h3>
-<ul>
-<li>允许用户把一个消息放入队列，但是不立刻处理它，需要的时候再去处理。</li>
-</ul>
-<p><img data-src="image-20220419165706773.png" /></p>
-<h2 id="消息队列的两种方式">消息队列的两种方式</h2>
-<h3 id="点对点方式">点对点方式</h3>
-<ul>
-<li>消费者主动拉取数据，消息收到后清除消息</li>
-</ul>
-<p><img data-src="image-20220419165858779.png" /></p>
-<h3 id="发布订阅方式">发布订阅方式</h3>
-<ul>
-<li>可以有多个topic主题（浏览、点赞、收藏、评论）</li>
-<li>消费者消费以后不删除数据</li>
-<li>每个消费者相互独立，都可以消费到数据</li>
-</ul>
-<p><img data-src="image-20220419170024390.png" /></p>
-<h2 id="基础架构">基础架构</h2>
-<p><img data-src="image-20220419170301160.png" /></p>
-<ol type="1">
-<li>producer：消息生产者，就是向kafka broker发消息的客户端。</li>
-<li>consumer：消息消费者，就是向kafka broker取消息的客户端。</li>
-<li>consumer group（CG）：消费者组，多个consumer组成。<strong>消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个组内消费者消费；消费者组之间互不影响</strong>。所有消费者都属于某个消费者组。<strong>消费者组属于逻辑上的一个订阅者。</strong></li>
-<li>broker：一台kafka服务器就是一个broker，一个集群由多个broker组成。一个broker可以容纳多个topic。</li>
-<li>topic：生产者和消费者逻辑上操作的对象，即生产者向某个topic写数据，消费者从从某个topic读取数据。</li>
-<li>partition：每个topic有多个partition，可以提高broker的负载（生产者可以向同一个topic发送多条数据，数据可以存储在不同的partition）。每个topic在每个partition上的数据是不重复的。partition表现为一个个的文件夹。</li>
-<li>replica：副本。一个topic的每个partition都有若干个副本，副本分为leader和follower，leader是生产者和消费者物理上操作的对象，follower主动从leader拉取更新的内容。当某个分区的leader挂掉后，通过某种算法，将某一个follower升级为leader。</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>kafaka</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>nginx.conf配置文件详解</title>
     <url>/p/How-to-configure-nginx-conf/</url>
     <content><![CDATA[<p>本文主要介绍了nginx的配置文件。</p>
@@ -3982,27 +4114,6 @@
 ]]></content>
       <tags>
         <tag>office</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ssh-genkey参数</title>
-    <url>/p/ssh-genkey/</url>
-    <content><![CDATA[<p>什么是ssh-genkey？</p>
-<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
-<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
-<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
-<span id="more"></span>
-<h2 id="常用命令">常用命令</h2>
-<h3 id="生成密钥对">生成密钥对</h3>
-<p>默认生成 2048 位 RSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
-<p>生成 4096 位 RSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
-<p>生成 521 位 ECDSA 密钥</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>ssh-genkey</tag>
       </tags>
   </entry>
   <entry>
@@ -4370,6 +4481,27 @@
       </tags>
   </entry>
   <entry>
+    <title>ssh-genkey参数</title>
+    <url>/p/ssh-genkey/</url>
+    <content><![CDATA[<p>什么是ssh-genkey？</p>
+<p>ssh 公钥认证是ssh认证的方式之一。通过公钥认证可实现ssh免密码登陆，git的ssh方式也是通过公钥进行认证的。</p>
+<p>在用户目录的home目录下，有一个<code>.ssh</code>的目录，和当前用户ssh配置认证相关的文件，几乎都在这个目录下。</p>
+<p><code>ssh-keygen</code> 可用来生成ssh公钥认证所需的公钥和私钥文件。</p>
+<span id="more"></span>
+<h2 id="常用命令">常用命令</h2>
+<h3 id="生成密钥对">生成密钥对</h3>
+<p>默认生成 2048 位 RSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<p>生成 4096 位 RSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096</span><br></pre></td></tr></table></figure>
+<p>生成 521 位 ECDSA 密钥</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t ecdsa -b 521</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ssh-genkey</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu安装kafka和zookeeper并设置开机自动启动</title>
     <url>/p/install-kafka-on-ubuntu2004/</url>
     <content><![CDATA[<p>kafka是一个分布式消息队列。具有高性能、持久化、多副本备份、横向扩展能力。生产者往队列里写消息，消费者从队列里取消息进行业务逻辑。一般在架构设计中起到解耦、削峰、异步处理的作用。kafka对外使用topic的概念，生产者往topic里写消息，消费者从读消息。为了做到水平扩展，一个topic实际是由多个partition组成的，遇到瓶颈时，可以通过增加partition的数量来进行横向扩容。单个parition内是保证消息有序。每新写一条消息，kafka就是在对应的文件append写，所以性能非常高。</p>
@@ -4563,6 +4695,110 @@
       <tags>
         <tag>docker</tag>
         <tag>harbor</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用OpenSSL创建自签名ecc证书</title>
+    <url>/p/create-a-self-signed-certificate-with-openSSL/</url>
+    <content><![CDATA[<p>在搭建服务时，时不时需要使用https证书。而内网环境最好是使用自签名证书，便于管理。</p>
+<p>至于为什么要生成ECC证书而不是用RSA证书：ECC证书相对于RSA证书来说，体积小且速度快，而且内网使用不需要考虑兼容性。</p>
+<p>本文主要介绍如何使用OpenSSL创建自签名ecc证书。</p>
+<p>关键词：<strong>openssl，https</strong></p>
+<span id="more"></span>
+<h3 id="准备工作">准备工作</h3>
+<ul>
+<li>Mac mini</li>
+<li>LibreSSL 2.8.3</li>
+</ul>
+<p>这里还需要修改一下openssl的默认配置，使其可以生成版本v3的证书：</p>
+<p><img data-src="image-20220508170638980.png" /></p>
+<h3 id="生成ca根证书">生成CA根证书</h3>
+<p>为什么要使用CA根证书呢？</p>
+<p>使用自定义CA签发本地使用的https证书，便于管理：<strong>只需要把导入CA根证书，主机就可以正常使用自签名的证书。</strong></p>
+<h4 id="生成ca根证书的私钥">生成CA根证书的私钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl ecparam -genkey -name prime256v1 -out ca.key</span><br></pre></td></tr></table></figure>
+<h4 id="生成ca根证书-1">生成CA根证书</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -new -x509 -subj <span class="string">&quot;/C=CN/CN=Root\ CA&quot;</span>  -days 7305 -key ca.key -out ca.crt -extensions v3_ca </span><br></pre></td></tr></table></figure>
+<p>这里的C=CN指的是国别代码，CN=Root CA的含义是CA根证书的名称是Root CA。</p>
+<h4 id="查看根证书详细信息">查看根证书详细信息</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> ca.crt -text -noout</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220508171315027.png" /></p>
+<h3 id="生成域名证书">生成域名证书</h3>
+<h4 id="生成域名证书的私钥">生成域名证书的私钥</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl ecparam -genkey -name prime256v1 -out harbor.key</span><br></pre></td></tr></table></figure>
+<h4 id="生成域名证书签名请求csr">生成域名证书签名请求CSR</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -new -sha256 -subj <span class="string">&quot;/C=CN/CN=harbor.local&quot;</span> -key harbor.key -out harbor.local.csr</span><br></pre></td></tr></table></figure>
+<h4 id="生成域名证书-1">生成域名证书</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -req -days 7305 -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> harbor.local.csr -out harbor.crt -extensions v3_ca</span><br></pre></td></tr></table></figure>
+<h4 id="查看域名证书详细信息">查看域名证书详细信息</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> harbor.crt -text -noout</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220508172238988.png" /></p>
+<p>此时发现生成的证书版本并不是V3，需要一些信息修正。</p>
+<p>创建<code>v3.ext</code>文件，输入以下内容</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">authorityKeyIdentifier</span>=keyid,issuer</span><br><span class="line"><span class="attr">basicConstraints</span>=CA:<span class="literal">FALSE</span></span><br><span class="line"><span class="attr">keyUsage</span> = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment</span><br><span class="line"><span class="attr">subjectAltName</span> = @alt_names</span><br><span class="line"></span><br><span class="line"><span class="section">[alt_names]</span></span><br><span class="line"><span class="attr">DNS.1</span> = localhost</span><br></pre></td></tr></table></figure>
+<h4 id="再次生成域名证书">再次生成域名证书</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -req -days 7305 -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> harbor.local.csr -out harbor.crt -extfile v3.ext</span><br></pre></td></tr></table></figure>
+<h4 id="再次查看生成域名证书的详细信息">再次查看生成域名证书的详细信息</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> harbor.crt -text -noout</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220508172652252.png" /></p>
+<p>此时成功创建版本v3的ecc域名证书。</p>
+<h3 id="导入ca证书">导入CA证书</h3>
+<h4 id="mac-os">Mac OS</h4>
+<ol type="1">
+<li>打开钥匙串，找到证书</li>
+</ol>
+<p><img data-src="image-20220508173309850.png" /></p>
+<ol start="2" type="1">
+<li>将需要导入的CA证书移动到空白处，此时会发现证书未被信任</li>
+</ol>
+<p><img data-src="image-20220508173356932.png" /></p>
+<ol start="3" type="1">
+<li>右键此证书，查看简介，选择信任，修改选项使用此证书为<strong>始终信任</strong></li>
+</ol>
+<p><img data-src="image-20220508173609105.png" /></p>
+<ol start="4" type="1">
+<li>在钥匙串打开该CA签发域名证书的证书，会发现<strong>域名证书已经被信任</strong>。</li>
+</ol>
+<p><img data-src="image-20220508173744194.png" /></p>
+<h4 id="windows">Windows</h4>
+<ol type="1">
+<li>右键需要导入的根证书，选择安装，选择<strong>导入本地计算机</strong></li>
+</ol>
+<p><img data-src="image-20220508174220492.png" /></p>
+<ol start="2" type="1">
+<li>选择<strong>将证书放入下列存储</strong>，选择<strong>受信任的证书颁发机构</strong></li>
+</ol>
+<p><img data-src="image-20220508174340109.png" /></p>
+<ol start="3" type="1">
+<li>完成向导</li>
+</ol>
+<p><img data-src="image-20220508174403758.png" /></p>
+<ol start="4" type="1">
+<li>右键该CA签发的证书，此时发现证书没有问题。</li>
+</ol>
+<p><img data-src="image-20220508174651903.png" /></p>
+<h4 id="linux">Linux</h4>
+<p>大部分情况下我们都是在Linux系统上操作导入根证书的。</p>
+<p>这里以Ubuntu为例</p>
+<ol type="1">
+<li><p>在目录<code>/usr/share/ca-certificates</code>下创建一个存放额外证书的文件夹</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /usr/share/ca-certificates/local</span><br></pre></td></tr></table></figure></li>
+<li><p>拷贝证书到证书文件夹</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">cp</span> ca.crt /usr/share/ca-certificates/local/</span><br></pre></td></tr></table></figure></li>
+<li><p>执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg-reconfigure ca-certificates</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20220508175418532.png" /></p></li>
+</ol>
+<p>​ 选择yes，然后会提示选择证书，敲一下回车，ca证书就被选中</p>
+<p>​ <img data-src="image-20220508175641724.png" /></p>
+<ol start="4" type="1">
+<li><p>导入成功</p>
+<p><img data-src="image-20220508175724957.png" /></p></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>openssl</tag>
+        <tag>https</tag>
       </tags>
   </entry>
   <entry>
@@ -4871,110 +5107,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用OpenSSL创建自签名ecc证书</title>
-    <url>/p/create-a-self-signed-certificate-with-openSSL/</url>
-    <content><![CDATA[<p>在搭建服务时，时不时需要使用https证书。而内网环境最好是使用自签名证书，便于管理。</p>
-<p>至于为什么要生成ECC证书而不是用RSA证书：ECC证书相对于RSA证书来说，体积小且速度快，而且内网使用不需要考虑兼容性。</p>
-<p>本文主要介绍如何使用OpenSSL创建自签名ecc证书。</p>
-<p>关键词：<strong>openssl，https</strong></p>
-<span id="more"></span>
-<h3 id="准备工作">准备工作</h3>
-<ul>
-<li>Mac mini</li>
-<li>LibreSSL 2.8.3</li>
-</ul>
-<p>这里还需要修改一下openssl的默认配置，使其可以生成版本v3的证书：</p>
-<p><img data-src="image-20220508170638980.png" /></p>
-<h3 id="生成ca根证书">生成CA根证书</h3>
-<p>为什么要使用CA根证书呢？</p>
-<p>使用自定义CA签发本地使用的https证书，便于管理：<strong>只需要把导入CA根证书，主机就可以正常使用自签名的证书。</strong></p>
-<h4 id="生成ca根证书的私钥">生成CA根证书的私钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl ecparam -genkey -name prime256v1 -out ca.key</span><br></pre></td></tr></table></figure>
-<h4 id="生成ca根证书-1">生成CA根证书</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -new -x509 -subj <span class="string">&quot;/C=CN/CN=Root\ CA&quot;</span>  -days 7305 -key ca.key -out ca.crt -extensions v3_ca </span><br></pre></td></tr></table></figure>
-<p>这里的C=CN指的是国别代码，CN=Root CA的含义是CA根证书的名称是Root CA。</p>
-<h4 id="查看根证书详细信息">查看根证书详细信息</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> ca.crt -text -noout</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220508171315027.png" /></p>
-<h3 id="生成域名证书">生成域名证书</h3>
-<h4 id="生成域名证书的私钥">生成域名证书的私钥</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl ecparam -genkey -name prime256v1 -out harbor.key</span><br></pre></td></tr></table></figure>
-<h4 id="生成域名证书签名请求csr">生成域名证书签名请求CSR</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl req -new -sha256 -subj <span class="string">&quot;/C=CN/CN=harbor.local&quot;</span> -key harbor.key -out harbor.local.csr</span><br></pre></td></tr></table></figure>
-<h4 id="生成域名证书-1">生成域名证书</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -req -days 7305 -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> harbor.local.csr -out harbor.crt -extensions v3_ca</span><br></pre></td></tr></table></figure>
-<h4 id="查看域名证书详细信息">查看域名证书详细信息</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> harbor.crt -text -noout</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220508172238988.png" /></p>
-<p>此时发现生成的证书版本并不是V3，需要一些信息修正。</p>
-<p>创建<code>v3.ext</code>文件，输入以下内容</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">authorityKeyIdentifier</span>=keyid,issuer</span><br><span class="line"><span class="attr">basicConstraints</span>=CA:<span class="literal">FALSE</span></span><br><span class="line"><span class="attr">keyUsage</span> = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment</span><br><span class="line"><span class="attr">subjectAltName</span> = @alt_names</span><br><span class="line"></span><br><span class="line"><span class="section">[alt_names]</span></span><br><span class="line"><span class="attr">DNS.1</span> = localhost</span><br></pre></td></tr></table></figure>
-<h4 id="再次生成域名证书">再次生成域名证书</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -req -days 7305 -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -<span class="keyword">in</span> harbor.local.csr -out harbor.crt -extfile v3.ext</span><br></pre></td></tr></table></figure>
-<h4 id="再次查看生成域名证书的详细信息">再次查看生成域名证书的详细信息</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> harbor.crt -text -noout</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220508172652252.png" /></p>
-<p>此时成功创建版本v3的ecc域名证书。</p>
-<h3 id="导入ca证书">导入CA证书</h3>
-<h4 id="mac-os">Mac OS</h4>
-<ol type="1">
-<li>打开钥匙串，找到证书</li>
-</ol>
-<p><img data-src="image-20220508173309850.png" /></p>
-<ol start="2" type="1">
-<li>将需要导入的CA证书移动到空白处，此时会发现证书未被信任</li>
-</ol>
-<p><img data-src="image-20220508173356932.png" /></p>
-<ol start="3" type="1">
-<li>右键此证书，查看简介，选择信任，修改选项使用此证书为<strong>始终信任</strong></li>
-</ol>
-<p><img data-src="image-20220508173609105.png" /></p>
-<ol start="4" type="1">
-<li>在钥匙串打开该CA签发域名证书的证书，会发现<strong>域名证书已经被信任</strong>。</li>
-</ol>
-<p><img data-src="image-20220508173744194.png" /></p>
-<h4 id="windows">Windows</h4>
-<ol type="1">
-<li>右键需要导入的根证书，选择安装，选择<strong>导入本地计算机</strong></li>
-</ol>
-<p><img data-src="image-20220508174220492.png" /></p>
-<ol start="2" type="1">
-<li>选择<strong>将证书放入下列存储</strong>，选择<strong>受信任的证书颁发机构</strong></li>
-</ol>
-<p><img data-src="image-20220508174340109.png" /></p>
-<ol start="3" type="1">
-<li>完成向导</li>
-</ol>
-<p><img data-src="image-20220508174403758.png" /></p>
-<ol start="4" type="1">
-<li>右键该CA签发的证书，此时发现证书没有问题。</li>
-</ol>
-<p><img data-src="image-20220508174651903.png" /></p>
-<h4 id="linux">Linux</h4>
-<p>大部分情况下我们都是在Linux系统上操作导入根证书的。</p>
-<p>这里以Ubuntu为例</p>
-<ol type="1">
-<li><p>在目录<code>/usr/share/ca-certificates</code>下创建一个存放额外证书的文件夹</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /usr/share/ca-certificates/local</span><br></pre></td></tr></table></figure></li>
-<li><p>拷贝证书到证书文件夹</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">cp</span> ca.crt /usr/share/ca-certificates/local/</span><br></pre></td></tr></table></figure></li>
-<li><p>执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg-reconfigure ca-certificates</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220508175418532.png" /></p></li>
-</ol>
-<p>​ 选择yes，然后会提示选择证书，敲一下回车，ca证书就被选中</p>
-<p>​ <img data-src="image-20220508175641724.png" /></p>
-<ol start="4" type="1">
-<li><p>导入成功</p>
-<p><img data-src="image-20220508175724957.png" /></p></li>
-</ol>
-]]></content>
-      <tags>
-        <tag>openssl</tag>
-        <tag>https</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用WSL链接Github仓库</title>
     <url>/p/Use-WSL-to-link-Github-repositories/</url>
     <content><![CDATA[<p>话不多说，先上教程。</p>
@@ -5033,51 +5165,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用Zerotier搭建内网穿透服务</title>
-    <url>/p/how-to-use-Zerotier/</url>
-    <content><![CDATA[<p>什么是Zerotier？</p>
-<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
-<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
-<span id="more"></span>
-<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
-<h4 id="创建账号">创建账号</h4>
-<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
-<p><img data-src="image-20210128181221059.png" /></p>
-<p>根据自己需要，选择注册方式。</p>
-<p><img data-src="image-20210128181326421.png" /></p>
-<h4 id="创建网络">创建网络</h4>
-<p><img data-src="image-20210128181610919.png" /></p>
-<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
-<p><img data-src="image-20210128181706204.png" /></p>
-<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
-<p><img data-src="image-20210128181808319.png" /></p>
-<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
-<h4 id="加入网络">加入网络</h4>
-<p><img data-src="image-20210128181920181.png" /></p>
-<p>点击<code>Download</code>，进入下载页面。</p>
-<p><img data-src="image-20210128181957790.png" style="zoom:67%;" /></p>
-<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
-<p><img data-src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
-<p>等待下载完成，然后安装。</p>
-<p><img data-src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
-<p>打开以后会默认在任务栏运行。</p>
-<figure>
-<img data-src="image-20210128182448852.png" alt="image-20210128182448852" /><figcaption aria-hidden="true">image-20210128182448852</figcaption>
-</figure>
-<p>右键选择<code>Join a network</code>。</p>
-<p><img data-src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
-<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
-<p><img data-src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
-<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
-<p><img data-src="image-20210128182844550.png" /></p>
-<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
-<p><img data-src="image-20210128183032664.png" /></p>
-]]></content>
-      <tags>
-        <tag>Zerotier</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用WireGuard组建虚拟局域网</title>
     <url>/p/create-a-virtual-local-area-network-with-wireguard/</url>
     <content><![CDATA[<p>什么是wireguard？</p>
@@ -5130,6 +5217,51 @@
 ]]></content>
       <tags>
         <tag>wireguard</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Zerotier搭建内网穿透服务</title>
+    <url>/p/how-to-use-Zerotier/</url>
+    <content><![CDATA[<p>什么是Zerotier？</p>
+<p>ZeroTier将整个世界转变为单个数据中心或云区域。像将所有设备，虚拟机和应用程序都插入同一交换机一样，将它们联网。</p>
+<p>本文主要介绍如何使用Zerotier搭建内网穿透服务。</p>
+<span id="more"></span>
+<p>有两种连接方式，一种是创建自己管理的虚拟局域网，一种是加入别人已经建立的虚拟局域网。这里先说第一种。</p>
+<h4 id="创建账号">创建账号</h4>
+<p>https://www.zerotier.com/，点击<code>Sign up</code>.</p>
+<p><img data-src="image-20210128181221059.png" /></p>
+<p>根据自己需要，选择注册方式。</p>
+<p><img data-src="image-20210128181326421.png" /></p>
+<h4 id="创建网络">创建网络</h4>
+<p><img data-src="image-20210128181610919.png" /></p>
+<p>点击 <code>Create A Network</code>，创建自己管理的虚拟局域网。</p>
+<p><img data-src="image-20210128181706204.png" /></p>
+<p>创建成功以后会得到<code>Network ID</code>。点击网络ID，进入管理界面。</p>
+<p><img data-src="image-20210128181808319.png" /></p>
+<p>此时虚拟局域网内还没有设备，需要终端加入该网络。</p>
+<h4 id="加入网络">加入网络</h4>
+<p><img data-src="image-20210128181920181.png" /></p>
+<p>点击<code>Download</code>，进入下载页面。</p>
+<p><img data-src="image-20210128181957790.png" style="zoom:67%;" /></p>
+<p>根据自己的设备类型选择安装包。这里以Windows为例。</p>
+<p><img data-src="image-20210128182051328.png" alt="image-20210128182051328" style="zoom:50%;" /></p>
+<p>等待下载完成，然后安装。</p>
+<p><img data-src="image-20210128182357823.png" alt="image-20210128182357823" style="zoom:50%;" /></p>
+<p>打开以后会默认在任务栏运行。</p>
+<figure>
+<img data-src="image-20210128182448852.png" alt="image-20210128182448852" /><figcaption aria-hidden="true">image-20210128182448852</figcaption>
+</figure>
+<p>右键选择<code>Join a network</code>。</p>
+<p><img data-src="image-20210128182523631.png" alt="image-20210128182523631" style="zoom:50%;" /></p>
+<p>输入先前生成的网络ID，点击<code>Join</code>。其他选择默认设置即可。</p>
+<p><img data-src="image-20210128182553099.png" alt="image-20210128182553099" style="zoom: 67%;" /></p>
+<p>稍后片刻，返回到管理页面，允许自己的电脑加入该网络，即✔对应的设备。</p>
+<p><img data-src="image-20210128182844550.png" /></p>
+<p>得到虚拟网络的ip地址，之后再将另一个设备加入，就可以愉快的链接啦。</p>
+<p><img data-src="image-20210128183032664.png" /></p>
+]]></content>
+      <tags>
+        <tag>Zerotier</tag>
       </tags>
   </entry>
   <entry>
@@ -6579,41 +6711,6 @@
       </tags>
   </entry>
   <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<span id="more"></span>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣数组基础之二分法</title>
     <url>/p/binary-search/</url>
     <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。</p>
@@ -6654,6 +6751,41 @@
       </tags>
   </entry>
   <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<span id="more"></span>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣数组基础之双指针移除元素</title>
     <url>/p/remove-element/</url>
     <content><![CDATA[<p>题目：给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。</p>
@@ -6669,6 +6801,24 @@
 <p><strong>示意图</strong></p>
 <p><img data-src="双指针.png" /></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeElement</span><span class="params">(nums []<span class="type">int</span>, val <span class="type">int</span>)</span></span> <span class="type">int</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> slowIndex <span class="type">int</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> fastIndex := <span class="number">0</span>; fastIndex &lt; <span class="built_in">len</span>(nums);fastIndex++&#123;</span><br><span class="line">        <span class="keyword">if</span> nums[fastIndex] != val &#123;</span><br><span class="line">            nums[slowIndex] = nums[fastIndex]</span><br><span class="line">            slowIndex += <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> slowIndex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之双指针长度最小的子数组</title>
+    <url>/p/minimum-size-subarray-sum/</url>
+    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
+<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：target = 7, nums = [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p><img data-src="双指针02.png" /></p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="type">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -6699,24 +6849,6 @@
 </ul>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 螺旋矩阵 II</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generateMatrix</span><span class="params">(n <span class="type">int</span>)</span></span> [][]<span class="type">int</span> &#123;</span><br><span class="line">	<span class="comment">// 新建矩阵</span></span><br><span class="line">	<span class="keyword">var</span> ret = <span class="built_in">make</span>([][]<span class="type">int</span>, n)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ret); i++ &#123;</span><br><span class="line">		ret[i] = <span class="built_in">make</span>([]<span class="type">int</span>, n)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 定义左右上下边界</span></span><br><span class="line">	<span class="keyword">var</span> left, right, top, bottom <span class="type">int</span> = <span class="number">0</span>, n - <span class="number">1</span>, <span class="number">0</span>, n - <span class="number">1</span></span><br><span class="line">	<span class="keyword">var</span> begin <span class="type">int</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> begin &lt; n*n &#123;</span><br><span class="line">		<span class="comment">// 从左到右</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; right; i++ &#123;</span><br><span class="line">			ret[top][i] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		top++</span><br><span class="line">		<span class="comment">// 从上到下</span></span><br><span class="line">		<span class="keyword">for</span> i := top; i &lt; bottom; i++ &#123;</span><br><span class="line">			ret[i][right] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 从右到左</span></span><br><span class="line">		right--</span><br><span class="line">		<span class="keyword">for</span> i := right; i &gt;= <span class="number">1</span>; i-- &#123;</span><br><span class="line">			ret[bottom][i] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 从下到上</span></span><br><span class="line">		bottom--</span><br><span class="line">		<span class="keyword">for</span> i := bottom; i &gt;= <span class="number">1</span>; i-- &#123;</span><br><span class="line">			ret[i][left] = begin</span><br><span class="line">			begin++</span><br><span class="line">		&#125;</span><br><span class="line">		left++</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之双指针长度最小的子数组</title>
-    <url>/p/minimum-size-subarray-sum/</url>
-    <content><![CDATA[<p>题目：给定一个含有 n 个正整数的数组和一个正整数 target 。</p>
-<p>找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：target = 7, nums = [2,3,1,2,4,3]</span><br><span class="line">输出：2</span><br><span class="line">解释：子数组 [4,3] 是该条件下的长度最小的子数组</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p><img data-src="双指针02.png" /></p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(a, b <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a &lt;= b &#123;</span><br><span class="line">		<span class="keyword">return</span> a</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 双指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	left, right := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">	<span class="keyword">var</span> sum <span class="type">int</span></span><br><span class="line">	<span class="keyword">var</span> ret <span class="type">int</span> = <span class="built_in">len</span>(nums) + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		sum += nums[right]</span><br><span class="line">		<span class="comment">// fmt.Printf(&quot;sum: %v\n&quot;, sum)</span></span><br><span class="line">		<span class="keyword">if</span> sum &lt; target &#123;</span><br><span class="line">			right++</span><br><span class="line">			<span class="keyword">if</span> right &gt;= <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">				left++</span><br><span class="line">				right = left</span><br><span class="line">				sum = <span class="number">0</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ret = min(ret, right-left+<span class="number">1</span>)</span><br><span class="line">			<span class="comment">// fmt.Printf(&quot;ret: %v\n&quot;, ret)</span></span><br><span class="line">			left++</span><br><span class="line">			right = left</span><br><span class="line">			sum = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ret == <span class="built_in">len</span>(nums) + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7096,25 +7228,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
-    <title>力扣链表基础之环形链表 II</title>
-    <url>/p/linked-list-cycle-ii/</url>
-    <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<p><img data-src="circularlinkedlist.png" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>使用快慢指针法，分别定义fast和slow指针，从头节点出发，fast指针每次移动两个节点，slow重镇每次移动一个节点，如果fast指针和slow指针在途中相遇，说明这个链表有环。</p>
-<p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
-<p><strong>代码</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣链表基础之移除链表元素</title>
     <url>/p/remove-linked-list-elements/</url>
     <content><![CDATA[<p>题目：给你一个链表的头节点 <code>head</code> 和一个整数 <code>val</code> ，请你删除链表中所有满足 <code>Node.val == val</code> 的节点，并返回 <strong>新的头节点</strong> 。</p>
@@ -7151,6 +7264,25 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <p>两个cur结点分别指向headA和headB，然后依次向后迭代，当迭代到最后一个结点时，切换到另一个分支。若有交点，迭代a + c + b次后会迭代到<strong>交集所在的节点</strong>；若无交点，迭代a + b次后会<strong>迭代到NULL节点</strong>，此时return headA和headB任意节点皆可。</p>
 <p><strong>代码</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	curA, curB := headA, headB</span><br><span class="line">	<span class="keyword">for</span> curA != curB &#123;</span><br><span class="line">		<span class="keyword">if</span> curA != <span class="literal">nil</span> &#123;</span><br><span class="line">			curA = curA.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curA = headB</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> curB != <span class="literal">nil</span> &#123;</span><br><span class="line">			curB = curB.Next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			curB = headA</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> curA</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣链表基础之环形链表 II</title>
+    <url>/p/linked-list-cycle-ii/</url>
+    <content><![CDATA[<p>给定一个链表的头节点 <code>head</code> ，返回链表开始入环的第一个节点。 <em>如果链表无环，则返回 <code>null</code>。</em></p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<p><img data-src="circularlinkedlist.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3</span><br><span class="line">输出：Intersected at &#x27;8&#x27;</span><br><span class="line">解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。</span><br><span class="line">从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。</span><br><span class="line">在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>使用快慢指针法，分别定义fast和slow指针，从头节点出发，fast指针每次移动两个节点，slow重镇每次移动一个节点，如果fast指针和slow指针在途中相遇，说明这个链表有环。</p>
+<p>随后从头节点出发一个指针，从相遇节点也出发一个指针，这两个指针每次直走一个节点，那么当这两个指针相遇的时候就是环形入口的节点。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span></span> *ListNode &#123;</span><br><span class="line">	<span class="keyword">var</span> slow, fast = head, head</span><br><span class="line">	<span class="keyword">for</span> fast != <span class="literal">nil</span> &amp;&amp; fast.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">		slow = slow.Next</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		<span class="keyword">if</span> fast == slow &#123;</span><br><span class="line">            <span class="comment">//  从head出发</span></span><br><span class="line">			<span class="keyword">var</span> index, index1 = fast, head</span><br><span class="line">			<span class="keyword">for</span> index != index1 &#123;</span><br><span class="line">				index = index.Next</span><br><span class="line">				index1 = index1.Next</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> index</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>leetcode</tag>
@@ -7266,6 +7398,40 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大话数据结构（二）| 栈和队列</title>
+    <url>/p/stack-and-ground/</url>
+    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
+<p><strong>关键词：数据结构</strong></p>
+<span id="more"></span>
+<h3 id="栈的定义">栈的定义</h3>
+<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
+<ul>
+<li>允许插入和删除的一端称为栈顶</li>
+<li>另一端被称为栈底</li>
+<li>不含任何元素的栈称为空栈</li>
+<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
+<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
+</ul>
+<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
+<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
+<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
+<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
+<ol type="1">
+<li>1、2、3进，3、2、1出。出栈次序为321。</li>
+<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
+<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
+<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
+<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
+</ol>
+<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
+<h3 id="抽象数据类型">抽象数据类型</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -7484,40 +7650,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>大话数据结构（二）| 栈和队列</title>
-    <url>/p/stack-and-ground/</url>
-    <content><![CDATA[<p>本文主要介绍栈和队列。</p>
-<p><strong>关键词：数据结构</strong></p>
-<span id="more"></span>
-<h3 id="栈的定义">栈的定义</h3>
-<p>栈（stack）是限定仅仅在栈尾进行插入和删除操作的线性表。</p>
-<ul>
-<li>允许插入和删除的一端称为栈顶</li>
-<li>另一端被称为栈底</li>
-<li>不含任何元素的栈称为空栈</li>
-<li>栈被称为后进先出（LIFO，Last In First Out）的线性表</li>
-<li>栈的插入操作叫做进栈，栈的删除操作叫做出栈</li>
-</ul>
-<h4 id="进栈出栈变化形式">进栈出栈变化形式</h4>
-<p><strong>最先进栈的元素不一定最后出栈。</strong></p>
-<p>栈对线性表的插入和删除的位置进行了限制，并没有对元素进出的时间进行限制。在不是所有元素都进栈的情况下事先进入的元素也可以出栈，只要<strong>保证栈顶元素出栈</strong>即可。</p>
-<p>举例：假设有三个元素1、2、3依次进栈，出栈次序如何？</p>
-<ol type="1">
-<li>1、2、3进，3、2、1出。出栈次序为321。</li>
-<li>1进，1出，2进，2出，3进，3出。此时出栈次序为123。</li>
-<li>1进，2进，2出，1出，3进，3出。此时出栈次序为213。</li>
-<li>1进，1出，2进，3进，3出，2出。此时出栈次序为132。</li>
-<li>1进，2进，2出，3进，3出，1出。此时出栈次序为231。</li>
-</ol>
-<p>不可能出现312这样的答案，因为进栈的顺序是123，因此<strong>2一定先于1出栈</strong>。</p>
-<h3 id="抽象数据类型">抽象数据类型</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DATA</span><br><span class="line">	元素具有相同的类型，相邻具有前驱和后继的关系</span><br><span class="line">Operation</span><br><span class="line">	InitStack(*S): 初始化操作，建立一个空栈S</span><br><span class="line">	DestroyStack(*S): 若栈存在，则销毁它</span><br><span class="line">  ClearStack(*S): 将栈清空</span><br><span class="line">  StackEmpty(*S): 若栈为空，返回True；否则返回False</span><br><span class="line">  GetTop(S, *e): 若栈存在且非空，用e返回S的栈顶元素</span><br><span class="line">  Push(*S, e): 若栈存在，插入新元素e到栈并成为栈顶元素</span><br><span class="line">  Pop(*S, *e): 删除栈S中栈顶元素, 并用e返回其值</span><br><span class="line">  StackLength(S): 返回栈S的元素个数</span><br><span class="line">endADT</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -8067,7 +8199,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <li>PV和PVC</li>
 </ol>
 <h4 id="persistent-volumes">Persistent Volumes</h4>
-<p><img data-src="应用存储和持久化数据卷：核心知识/image-20220714164531327.png" /></p>
+<p><img data-src="image-20220714164531327.png" /></p>
 <p>以下的几种场景，Pod Volumes是不能解决的：</p>
 <ul>
 <li>Pod销毁重建，如用Deployment管理的Pod，在做镜像升级的时候，会产生新的Pod并删除旧的Pod，那新Pod和旧Pod如何复用数据？</li>
@@ -8077,21 +8209,21 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 </ul>
 <p>以上场景中，<strong>Pod Volume</strong>很难表达复用的语义，对其扩展也比较困难，因此K8s又引入了<strong>Persistent Volume</strong>概念。通过Persistent Volume，可以将计算和存储分离，通过不同的组件来管理存储资源和计算资源，然后解耦Pod和Volume之间声明周期的关联，这样把Pod删除以后，使用的PV依然存在，还可以被新建的Pod复用。</p>
 <h4 id="persistent-volumes-claim">Persistent Volumes Claim</h4>
-<p><img data-src="应用存储和持久化数据卷：核心知识/image-20220714171037554.png" /></p>
+<p><img data-src="image-20220714171037554.png" /></p>
 <p>用户在使用PV时实际上是通过PVC，PVC简化了k8s用户对存储的使用方式，做到了职责分离。通常用户在使用存储时，只需要声明存储大小和访问方式即可。</p>
 <p>访问模式指的是使用的存储可以被多个ndoe共享还是只能单node独占访问？只读访问还是读写访问？用户只关心这些东西，与存储相关的实现细节是不关心的。</p>
 <p>通过PV和PVC的概念，将用户需求与实现细节解耦，用户只需要通过PVC声明自己的存储需求。PV是由集群管理员和存储相关团队来统一运维和管控，这样的话，就简化了用户使用存储的方式，可以看到，PV和PVC的设计其实有点像面向对象的接口与实现的关系。用户在使用其功能时，只关心用户接口，不需关心内部复杂的实现细节。</p>
 <p>由于PV是由集群管理员统一管控的，接下来就看这个PV对象是如何产生的。</p>
 <h5 id="static-volume-provisioning">Static Volume Provisioning</h5>
 <p>静态PV</p>
-<p><img data-src="应用存储和持久化数据卷：核心知识/image-20220715134705456.png" /></p>
+<p><img data-src="image-20220715134705456.png" /></p>
 <ul>
 <li><p>静态PV：集群管理员事先去规划这个集群中的用户会怎样使用存储，它会先预分配一些存储，也就是预先创建一些 PV；然后用户在提交自己的存储需求（也就是 PVC）的时候，K8s 内部相关组件会帮助它把 PVC 和 PV 做绑定；之后用户再通过 pod 去使用存储的时候，就可以通过 PVC 找到相应的 PV，它就可以使用了。</p></li>
 <li><p>不足：静态产生方式有什么不足呢？可以看到，首先需要集群管理员预分配，预分配其实是很难预测用户真实需求的。举一个最简单的例子：如果用户需要的是 20G，然而集群管理员在分配的时候可能有 80G 、100G 的，但没有 20G 的，这样就很难满足用户的真实需求，也会造成资源浪费。有没有更好的方式呢？</p></li>
 </ul>
 <h5 id="dynamic-volume-provisioning">Dynamic Volume Provisioning</h5>
 <p>动态PV</p>
-<p><img data-src="应用存储和持久化数据卷：核心知识/image-20220715134954652.png" /></p>
+<p><img data-src="image-20220715134954652.png" /></p>
 <ul>
 <li>动态PV：集群管理员不预先分配PV，他写了一个配置文件，这个模版文件是用来表示创建某一类型存储（块存储和文件存储等）所需要的一些参数，这些参数是用户不关心的，给存储本身实现有关的参数，用户只需要提交自身的存储需求，也就是PVC文件，并在PVC中指定的存储模版（StorageClass）。</li>
 <li>apiServer结合PVC和StorageClass的信息，动态生成用户所需要的存储（PV），将PVC和PV进行绑定后，Pod可以使用PV了。通过StorageClass配置生成存储需要的存储模版，结合用户的需求创建PV对象，做到按需分配，在没有增加用户使用难度的同时也解放了集群管理员的运维工作。</li>
@@ -8128,7 +8260,7 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pv-claim</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">3Gi</span></span><br></pre></td></tr></table></figure>
 <p>上文中可以看到，PVC的size和access mode和刚刚创建的PV其实是匹配的；当用户在提交PVC的时候，K8s集群的相关组件就会把PV和PVC bound一起。之后用户在提交Pod yaml时，在volumes上写PVC声明，通过claimName声明要用那个PVC。然后挂载方式就喝前面讲的一样了，当提交完yaml，api server可以通过PVC找到对应的PV， 然后就可以使用存储了。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">nodeName:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-1</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">env:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">      <span class="attr">value:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span>             <span class="comment"># 容器挂载路径</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">cache</span>               <span class="comment"># 挂载路径内部建立子目录</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">host-data</span>               </span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/host</span></span><br><span class="line">      <span class="attr">readOnly:</span> <span class="literal">true</span>               <span class="comment"># 只读挂载</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-2</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">    <span class="attr">emptyDir:</span> &#123;&#125;                   <span class="comment"># 当Pod被分配至节点时，节点自动分配的目录。当Pod删除以后该目录也会被删除</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">host-data</span></span><br><span class="line">    <span class="attr">hostPath:</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/tmp/host-data</span>         <span class="comment"># 指定宿主机的目录，当Pod删除以后，该目录依然存在</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="动态pv使用">动态PV使用</h3>
+<h4 id="动态pv使用">动态PV使用</h4>
 <p>动态PV模式下系统管理员不在预分配PV，只是创建一个模版文件。</p>
 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfs-sc</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">example.com/external-nfs</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">server:</span> <span class="string">nfs-server.example.com</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">/share</span></span><br><span class="line">  <span class="attr">readOnly:</span> <span class="string">&quot;false&quot;</span></span><br><span class="line"><span class="attr">reclaimPolicy:</span> <span class="string">Delete</span></span><br></pre></td></tr></table></figure>
 <ul>
@@ -8941,6 +9073,58 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
       </tags>
   </entry>
   <entry>
+    <title>记MT7621平台刷入OpenWRT</title>
+    <url>/p/how-to-config-OpenWRT/</url>
+    <content><![CDATA[<p>什么是OpenWRT？</p>
+<span id="more"></span>
+<hr />
+<h3 id="安装luci相关">安装luci相关</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg install luci luci-base luci-i18n-base-zh-cn</span><br></pre></td></tr></table></figure>
+<h3 id="开启sftp">开启sftp</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install vsftpd openssh-sftp-server</span><br><span class="line">/etc/init.d/vsftpd enable</span><br><span class="line">/etc/init.d/vsftpd start</span><br></pre></td></tr></table></figure>
+<h3 id="opkg-腾讯源">opkg 腾讯源</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/opkg/distfeeds.conf</span><br></pre></td></tr></table></figure>
+<p>写入以下文字</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">src/gz openwrt_core https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/targets/ramips/mt7621/packages</span><br><span class="line">src/gz openwrt_base https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/base</span><br><span class="line">src/gz openwrt_packages  https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/packages</span><br><span class="line">src/gz openwrt_luci https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/luci</span><br><span class="line">src/gz openwrt_routing https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/routing</span><br><span class="line">src/gz openwrt_freifunk https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/freifunk</span><br><span class="line">src/gz openwrt_telephony https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/telephony</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="luci禁用缓存">luci禁用缓存</h3>
+<p>编辑/etc/config/luci</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">config internal &#x27;ccache&#x27;</span><br><span class="line">        option enable &#x27;0&#x27;</span><br></pre></td></tr></table></figure>
+<p>重启即可</p>
+<h3 id="扩容root分区">扩容root分区</h3>
+<p>安装依赖</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">opkg update &amp;&amp; opkg install block-mount kmod-fs-ext4 kmod-usb-storage kmod-usb-ohci kmod-usb-uhci e2fsprogs fdisk</span><br></pre></td></tr></table></figure>
+<p>查看sd卡信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">block info</span><br></pre></td></tr></table></figure>
+<p>有类似回显，其中<code>/dev/mmcblk0p1</code>就是sd卡</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/dev/mtdblock5: UUID=&quot;d1f1302b-91ce24ca-2c74336e-eea51b51&quot; VERSION=&quot;4.0&quot; MOUNT=&quot;/rom&quot; TYPE=&quot;squashfs&quot;</span><br><span class="line">/dev/mtdblock6: MOUNT=&quot;/overlay&quot; TYPE=&quot;jffs2&quot;</span><br><span class="line">/dev/mmcblk0p1: UUID=&quot;746ffc51-1f29-2646-b2cb-fc2c03fe3c1a&quot; LABEL=&quot;sdcard&quot; VERSION=&quot;1.0&quot; TYPE=&quot;ext4&quot;</span><br></pre></td></tr></table></figure>
+<p>格式化内存卡</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/mmcblk0p1</span><br></pre></td></tr></table></figure>
+<p>将下面的DEVICE换成你的sd卡分区</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">DEVICE=<span class="string">&quot;/dev/mmcblk0p1&quot;</span></span><br><span class="line"><span class="built_in">eval</span> $(block info <span class="string">&quot;<span class="variable">$&#123;DEVICE&#125;</span>&quot;</span> | grep -o -e <span class="string">&quot;UUID=\S*&quot;</span>)</span><br><span class="line">uci -q delete fstab.overlay</span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay=<span class="string">&quot;mount&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.uuid=<span class="string">&quot;<span class="variable">$&#123;UUID&#125;</span>&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.target=<span class="string">&quot;/overlay&quot;</span></span><br><span class="line">uci commit fstab</span><br></pre></td></tr></table></figure>
+<p>转移数据</p>
+<p>如有报错请先查看否自动挂载了sd卡，挂载sd卡时也可能出现如下报错，实测不影响。</p>
+<p>报错信息：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">root@GL-MT1300:~<span class="comment"># mount /dev/mmcblk0p1 /mnt/</span></span><br><span class="line">NTFS signature is missing.</span><br><span class="line">Failed to mount <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span>: Invalid argument</span><br><span class="line">The device <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span> doesn<span class="string">&#x27;t seem to have a valid NTFS.</span></span><br><span class="line"><span class="string">Maybe the wrong device is used? Or the whole disk instead of a</span></span><br><span class="line"><span class="string">partition (e.g. /dev/sda, not /dev/sda1)? Or the other way around?</span></span><br></pre></td></tr></table></figure>
+<p>执行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mount /dev/mmcblk0p1 /mnt</span><br><span class="line">cp -f -a /overlay/. /mnt</span><br><span class="line">umount /mnt</span><br></pre></td></tr></table></figure>
+<p>然后重启</p>
+<p>扩展分区前</p>
+<p><img data-src="image-20210122191844339.png" /></p>
+<p>扩展分区后</p>
+<p><img data-src="image-20210122191907269.png" /></p>
+<h3 id="单独编译openwrt-ipk">单独编译openwrt ipk</h3>
+<p>先执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make menuconfig </span><br></pre></td></tr></table></figure>
+<p>然后选中相关组件</p>
+<p>再执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make package/feeds/luci/luci-base/compile -j1 V=s</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>MT7621</tag>
+        <tag>OpenWRT</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>自然语言处理实战（一）｜NLTK入门教程.md</title>
     <url>/p/an-introduction-to-NLTK/</url>
     <content><![CDATA[<p>本文主要介绍了NLTK语言工具包。</p>
@@ -8997,58 +9181,6 @@ t_{x1}+t_{x2}+ \cdots +\le t_{x2} d_{xk}\\
 ]]></content>
       <tags>
         <tag>自然语言处理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记MT7621平台刷入OpenWRT</title>
-    <url>/p/how-to-config-OpenWRT/</url>
-    <content><![CDATA[<p>什么是OpenWRT？</p>
-<span id="more"></span>
-<hr />
-<h3 id="安装luci相关">安装luci相关</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg install luci luci-base luci-i18n-base-zh-cn</span><br></pre></td></tr></table></figure>
-<h3 id="开启sftp">开启sftp</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install vsftpd openssh-sftp-server</span><br><span class="line">/etc/init.d/vsftpd enable</span><br><span class="line">/etc/init.d/vsftpd start</span><br></pre></td></tr></table></figure>
-<h3 id="opkg-腾讯源">opkg 腾讯源</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/opkg/distfeeds.conf</span><br></pre></td></tr></table></figure>
-<p>写入以下文字</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">src/gz openwrt_core https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/targets/ramips/mt7621/packages</span><br><span class="line">src/gz openwrt_base https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/base</span><br><span class="line">src/gz openwrt_packages  https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/packages</span><br><span class="line">src/gz openwrt_luci https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/luci</span><br><span class="line">src/gz openwrt_routing https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/routing</span><br><span class="line">src/gz openwrt_freifunk https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/freifunk</span><br><span class="line">src/gz openwrt_telephony https://mirrors.cloud.tencent.com/openwrt/releases/19.07.2/packages/mipsel_24kc/telephony</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="luci禁用缓存">luci禁用缓存</h3>
-<p>编辑/etc/config/luci</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">config internal &#x27;ccache&#x27;</span><br><span class="line">        option enable &#x27;0&#x27;</span><br></pre></td></tr></table></figure>
-<p>重启即可</p>
-<h3 id="扩容root分区">扩容root分区</h3>
-<p>安装依赖</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">opkg update &amp;&amp; opkg install block-mount kmod-fs-ext4 kmod-usb-storage kmod-usb-ohci kmod-usb-uhci e2fsprogs fdisk</span><br></pre></td></tr></table></figure>
-<p>查看sd卡信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">block info</span><br></pre></td></tr></table></figure>
-<p>有类似回显，其中<code>/dev/mmcblk0p1</code>就是sd卡</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/dev/mtdblock5: UUID=&quot;d1f1302b-91ce24ca-2c74336e-eea51b51&quot; VERSION=&quot;4.0&quot; MOUNT=&quot;/rom&quot; TYPE=&quot;squashfs&quot;</span><br><span class="line">/dev/mtdblock6: MOUNT=&quot;/overlay&quot; TYPE=&quot;jffs2&quot;</span><br><span class="line">/dev/mmcblk0p1: UUID=&quot;746ffc51-1f29-2646-b2cb-fc2c03fe3c1a&quot; LABEL=&quot;sdcard&quot; VERSION=&quot;1.0&quot; TYPE=&quot;ext4&quot;</span><br></pre></td></tr></table></figure>
-<p>格式化内存卡</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/mmcblk0p1</span><br></pre></td></tr></table></figure>
-<p>将下面的DEVICE换成你的sd卡分区</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">DEVICE=<span class="string">&quot;/dev/mmcblk0p1&quot;</span></span><br><span class="line"><span class="built_in">eval</span> $(block info <span class="string">&quot;<span class="variable">$&#123;DEVICE&#125;</span>&quot;</span> | grep -o -e <span class="string">&quot;UUID=\S*&quot;</span>)</span><br><span class="line">uci -q delete fstab.overlay</span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay=<span class="string">&quot;mount&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.uuid=<span class="string">&quot;<span class="variable">$&#123;UUID&#125;</span>&quot;</span></span><br><span class="line">uci <span class="built_in">set</span> fstab.overlay.target=<span class="string">&quot;/overlay&quot;</span></span><br><span class="line">uci commit fstab</span><br></pre></td></tr></table></figure>
-<p>转移数据</p>
-<p>如有报错请先查看否自动挂载了sd卡，挂载sd卡时也可能出现如下报错，实测不影响。</p>
-<p>报错信息：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">root@GL-MT1300:~<span class="comment"># mount /dev/mmcblk0p1 /mnt/</span></span><br><span class="line">NTFS signature is missing.</span><br><span class="line">Failed to mount <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span>: Invalid argument</span><br><span class="line">The device <span class="string">&#x27;/dev/mmcblk0p1&#x27;</span> doesn<span class="string">&#x27;t seem to have a valid NTFS.</span></span><br><span class="line"><span class="string">Maybe the wrong device is used? Or the whole disk instead of a</span></span><br><span class="line"><span class="string">partition (e.g. /dev/sda, not /dev/sda1)? Or the other way around?</span></span><br></pre></td></tr></table></figure>
-<p>执行以下命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mount /dev/mmcblk0p1 /mnt</span><br><span class="line">cp -f -a /overlay/. /mnt</span><br><span class="line">umount /mnt</span><br></pre></td></tr></table></figure>
-<p>然后重启</p>
-<p>扩展分区前</p>
-<p><img data-src="image-20210122191844339.png" /></p>
-<p>扩展分区后</p>
-<p><img data-src="image-20210122191907269.png" /></p>
-<h3 id="单独编译openwrt-ipk">单独编译openwrt ipk</h3>
-<p>先执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make menuconfig </span><br></pre></td></tr></table></figure>
-<p>然后选中相关组件</p>
-<p>再执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make package/feeds/luci/luci-base/compile -j1 V=s</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>MT7621</tag>
-        <tag>OpenWRT</tag>
       </tags>
   </entry>
   <entry>
