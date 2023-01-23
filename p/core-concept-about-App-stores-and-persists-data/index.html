@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文是CNCF × Alibaba 云原生技术公开课的第九章应用存储和持久化数据卷：核心知识学习笔记。 关键词：k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="应用编排与管理：核心原理">
+<meta property="og:url" content="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="本文是CNCF × Alibaba 云原生技术公开课的第九章应用存储和持久化数据卷：核心知识学习笔记。 关键词：k8s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/image-20220714164531327.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/image-20220714171037554.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/image-20220715134705456.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/image-20220715134954652.png">
+<meta property="article:published_time" content="2022-07-14T07:26:00.000Z">
+<meta property="article:modified_time" content="2022-07-14T07:26:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/image-20220714164531327.png">
+
+
+<link rel="canonical" href="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/","path":"p/core-concept-about-App-stores-and-persists-data/","title":"应用编排与管理：核心原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>应用编排与管理：核心原理 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#volumes%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">Volumes介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pod-volumes"><span class="nav-number">1.1.</span> <span class="nav-text">Pod Volumes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#persistent-volumes"><span class="nav-number">1.2.</span> <span class="nav-text">Persistent Volumes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#persistent-volumes-claim"><span class="nav-number">1.3.</span> <span class="nav-text">Persistent Volumes Claim</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#static-volume-provisioning"><span class="nav-number">1.3.1.</span> <span class="nav-text">Static Volume Provisioning</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dynamic-volume-provisioning"><span class="nav-number">1.3.2.</span> <span class="nav-text">Dynamic Volume Provisioning</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E8%A7%A3%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">用例解读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pod-volumes-1"><span class="nav-number">2.1.</span> <span class="nav-text">Pod Volumes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81pv%E4%BD%BF%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">静态PV使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81pv%E4%BD%BF%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">动态PV使用</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://trying.fun/" title="https:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://xieandong.top/" title="http:&#x2F;&#x2F;xieandong.top" rel="noopener" target="_blank">谢安东个人博客</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="应用编排与管理：核心原理 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          应用编排与管理：核心原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-14 15:26:00" itemprop="dateCreated datePublished" datetime="2022-07-14T15:26:00+08:00">2022-07-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文是CNCF × Alibaba
+云原生技术公开课的<strong>第九章应用存储和持久化数据卷：核心知识</strong>学习笔记。</p>
+<p>关键词：<strong>k8s</strong></p>
+<span id="more"></span>
+<p>本文主要介绍以下部分：</p>
+<ol type="1">
+<li>K8s Volume使用场景</li>
+<li>PVC/PV/StrongeClass基本操作和概念解析</li>
+<li>PVC+PV体系的设计和实现原理</li>
+</ol>
+<h3 id="volumes介绍">Volumes介绍</h3>
+<h4 id="pod-volumes">Pod Volumes</h4>
+<p>首先来看Pod Volumes的使用场景：</p>
+<ul>
+<li>当Pod中的某一个容器在运行时异常退出，被kubelet重新拉起以后，如果保证之前容器产生的重要数据没有丢失？</li>
+<li>如果 同一个Pod的多个Pod容器想要共享数据，应该如何去做？</li>
+</ul>
+<p>以上两个场景，可以使用Volumes来很好解决，接下来来看一下Pod
+Volumes的常见类型：</p>
+<ol type="1">
+<li>本地存储：常见的有emptydir和hostpath；</li>
+<li>网络存储：网络存储的实现方式有两种，一种是<strong>in-tree</strong>，就是实现的代码是在k8s代码仓库中的，随着k8s对存储类型的增多，这种方式会给k8s本身的维护和发展带来很大的负担；另一种是out-in-tree，首先方式是给k8s<strong>解耦</strong>的，通过抽象接口将不同存储的driver实现从k8s代码仓库中剥离，因此out-of-tree是CNCF社区中主推的实现网络存储插件的方式；</li>
+<li>Project
+Volumes：将一些配置信息，如secret/configmap用卷的形式挂载到容器中，让容器中的程序可以通过POSIX接口（系统调用）来访问配置数据；</li>
+<li>PV和PVC</li>
+</ol>
+<h4 id="persistent-volumes">Persistent Volumes</h4>
+<p><img data-src="image-20220714164531327.png" /></p>
+<p>以下的几种场景，Pod Volumes是不能解决的：</p>
+<ul>
+<li>Pod销毁重建，如用Deployment管理的Pod，在做镜像升级的时候，会产生新的Pod并删除旧的Pod，那新Pod和旧Pod如何复用数据？</li>
+<li>宿主机宕机，要迁移Pod，此时StatefulSet管理的Pod，其实是已经实现了带卷迁移的语义。此时Pod
+Volumes显然是无法做到；</li>
+<li>多个Pod之间想要共享数据，如何声明？同一个Pod中多个容器想要共享数据，可以借助Pod
+Volumes来解决；当多个Pod共享数据时，就很难表达这种语义。</li>
+<li>如果相对数据卷做一些功能扩展性，如snapshot、resize这些功能，又应该怎么实现？</li>
+</ul>
+<p>以上场景中，<strong>Pod
+Volume</strong>很难表达复用的语义，对其扩展也比较困难，因此K8s又引入了<strong>Persistent
+Volume</strong>概念。通过Persistent
+Volume，可以将计算和存储分离，通过不同的组件来管理存储资源和计算资源，然后解耦Pod和Volume之间声明周期的关联，这样把Pod删除以后，使用的PV依然存在，还可以被新建的Pod复用。</p>
+<h4 id="persistent-volumes-claim">Persistent Volumes Claim</h4>
+<p><img data-src="image-20220714171037554.png" /></p>
+<p>用户在使用PV时实际上是通过PVC，PVC简化了k8s用户对存储的使用方式，做到了职责分离。通常用户在使用存储时，只需要声明存储大小和访问方式即可。</p>
+<p>访问模式指的是使用的存储可以被多个ndoe共享还是只能单node独占访问？只读访问还是读写访问？用户只关心这些东西，与存储相关的实现细节是不关心的。</p>
+<p>通过PV和PVC的概念，将用户需求与实现细节解耦，用户只需要通过PVC声明自己的存储需求。PV是由集群管理员和存储相关团队来统一运维和管控，这样的话，就简化了用户使用存储的方式，可以看到，PV和PVC的设计其实有点像面向对象的接口与实现的关系。用户在使用其功能时，只关心用户接口，不需关心内部复杂的实现细节。</p>
+<p>由于PV是由集群管理员统一管控的，接下来就看这个PV对象是如何产生的。</p>
+<h5 id="static-volume-provisioning">Static Volume Provisioning</h5>
+<p>静态PV</p>
+<p><img data-src="image-20220715134705456.png" /></p>
+<ul>
+<li><p>静态PV：集群管理员事先去规划这个集群中的用户会怎样使用存储，它会先预分配一些存储，也就是预先创建一些
+PV；然后用户在提交自己的存储需求（也就是 PVC）的时候，K8s
+内部相关组件会帮助它把 PVC 和 PV 做绑定；之后用户再通过 pod
+去使用存储的时候，就可以通过 PVC 找到相应的
+PV，它就可以使用了。</p></li>
+<li><p>不足：静态产生方式有什么不足呢？可以看到，首先需要集群管理员预分配，预分配其实是很难预测用户真实需求的。举一个最简单的例子：如果用户需要的是
+20G，然而集群管理员在分配的时候可能有 80G 、100G 的，但没有 20G
+的，这样就很难满足用户的真实需求，也会造成资源浪费。有没有更好的方式呢？</p></li>
+</ul>
+<h5 id="dynamic-volume-provisioning">Dynamic Volume Provisioning</h5>
+<p>动态PV</p>
+<p><img data-src="image-20220715134954652.png" /></p>
+<ul>
+<li>动态PV：集群管理员不预先分配PV，他写了一个配置文件，这个模版文件是用来表示创建某一类型存储（块存储和文件存储等）所需要的一些参数，这些参数是用户不关心的，给存储本身实现有关的参数，用户只需要提交自身的存储需求，也就是PVC文件，并在PVC中指定的存储模版（StorageClass）。</li>
+<li>apiServer结合PVC和StorageClass的信息，动态生成用户所需要的存储（PV），将PVC和PV进行绑定后，Pod可以使用PV了。通过StorageClass配置生成存储需要的存储模版，结合用户的需求创建PV对象，做到按需分配，在没有增加用户使用难度的同时也解放了集群管理员的运维工作。</li>
+</ul>
+<h3 id="用例解读">用例解读</h3>
+<p>来看一下Pod Volumes、PV、PVC、StrongeClass具体如何使用的？</p>
+<h4 id="pod-volumes-1">Pod Volumes</h4>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-1</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span>             <span class="comment"># 容器挂载路径</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">cache</span>               <span class="comment"># 挂载路径内部建立子目录</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">host-data</span>                 </span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/host</span></span><br><span class="line">      <span class="attr">readOnly:</span> <span class="literal">true</span>               <span class="comment"># 只读挂载</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-2</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">    <span class="attr">emptyDir:</span> &#123;&#125;                   <span class="comment"># 当Pod被分配至节点时，节点自动分配的目录。当Pod删除以后该目录也会被删除</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">host-data</span></span><br><span class="line">    <span class="attr">hostPath:</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/tmp/host-data</span>         <span class="comment"># 指定宿主机的目录，当Pod删除以后，该目录依然存在</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>.spec.volumes</code>：声明Pod的volume信息</li>
+<li><code>.spec.volumes.volumeMounts</code>：声明container如何使用Pod的Volumes</li>
+<li>当多个container共享同一个volume时，可以通过<code>spec.containers.volumeMounts.subPath</code>隔离不同容器在同一个volume上数据存储的路径。</li>
+</ul>
+<p>emptyDir、hostPath 都是本地存储，它们之间有什么细微的差别呢？</p>
+<ul>
+<li>emptyDir 其实是在 pod 创建的过程中会临时创建的一个目录，这个目录随着
+pod 删除也会被删除，里面的数据会被清空掉；hostPath
+顾名思义，其实就是宿主机上的一个路径，在 pod
+删除之后，这个目录还是存在的，它的数据也不会被丢失。这就是它们两者之间一个细微的差别。</li>
+</ul>
+<h4 id="静态pv使用">静态PV使用</h4>
+<p>静态PV首先是有管理员创建的，这里使用hostPath类型作为演示。</p>
+<p>⚠️在生产集群中，你不会使用
+hostPath。集群管理员会提供网络存储资源，比如 Google Compute Engine
+持久盘卷、NFS 共享卷或 Amazon Elastic Block Store 卷。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pv-volume</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">local</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">10Gi</span>                          <span class="comment"># 该Volume的总容量大小</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span>                        <span class="comment"># 设置该Volume只能被当前node挂载且都具有读写权限</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span>    <span class="comment"># 设置该Volume使用后被release之后的回收策略</span></span><br><span class="line">  <span class="attr">hostPath:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">&quot;/mnt/data&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>persistentVolumeReclaimPolicy</code>的意思就是这块存在被使用后，如果使用方Pod以及PVC都被删除，这个PV的回收策略。</li>
+</ul>
+<p>首先，用户需要创建一个<strong>PVC对象</strong>，PVC对象只需要指定<strong>存储需求</strong>，而不用关心存储本身的具体实现细节。</p>
+<p>存储需求包括：</p>
+<ul>
+<li>需要的volume大小</li>
+<li>访问方式：即这个存储的访问方式：这里声明为ReadWriteOnce，即只能在给node上读写
+<ul>
+<li>一般情况下文件存储的读写方式是ReadWriteMany，也就是多node读写访问；这里由于使用的是hostPath，因此只能设置ReadWriteOnce。</li>
+</ul></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pv-claim</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">manual</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">3Gi</span></span><br></pre></td></tr></table></figure>
+<p>上文中可以看到，PVC的size和access
+mode和刚刚创建的PV其实是匹配的；当用户在提交PVC的时候，K8s集群的相关组件就会把PV和PVC
+bound一起。之后用户在提交Pod
+yaml时，在volumes上写PVC声明，通过claimName声明要用那个PVC。然后挂载方式就喝前面讲的一样了，当提交完yaml，api
+server可以通过PVC找到对应的PV， 然后就可以使用存储了。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">nodeName:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-1</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">env:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">      <span class="attr">value:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span>             <span class="comment"># 容器挂载路径</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">cache</span>               <span class="comment"># 挂载路径内部建立子目录</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">host-data</span>               </span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/host</span></span><br><span class="line">      <span class="attr">readOnly:</span> <span class="literal">true</span>               <span class="comment"># 只读挂载</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-2</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">    <span class="attr">emptyDir:</span> &#123;&#125;                   <span class="comment"># 当Pod被分配至节点时，节点自动分配的目录。当Pod删除以后该目录也会被删除</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">host-data</span></span><br><span class="line">    <span class="attr">hostPath:</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/tmp/host-data</span>         <span class="comment"># 指定宿主机的目录，当Pod删除以后，该目录依然存在</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="动态pv使用">动态PV使用</h4>
+<p>动态PV模式下系统管理员不在预分配PV，只是创建一个模版文件。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfs-sc</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">example.com/external-nfs</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">server:</span> <span class="string">nfs-server.example.com</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">/share</span></span><br><span class="line">  <span class="attr">readOnly:</span> <span class="string">&quot;false&quot;</span></span><br><span class="line"><span class="attr">reclaimPolicy:</span> <span class="string">Delete</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>模版文件叫做StorageClass</p></li>
+<li><p>上述模版问卷需要填写一个是provisioner，这个就是创建PV对应的存储插件，使用StorageClass时需要提前安装存储插件</p>
+<ul>
+<li>上述模版文件对应的驱动是 NFS文件系统</li>
+</ul></li>
+<li><p><code>parameters</code>：是通过K8s创建存储时需要指定的一些细节参数，而这些参数是用户不需要关心的：像server、path、readOnly分别就是NFS文件服务器的地址、文件分享路径、是否只读等的一些参数</p></li>
+<li><p><code>reclaimPolicy</code>：是PV在Pod以及PVC被删除后的回收策略</p></li>
+</ul>
+<p>当向系统提交完StorageClass，也就是提交创建PV的模版之后，还是需要写一个PVC的资源清单：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pv-claim</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs-sc</span>  <span class="comment"># </span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">3Gi</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>storageClassName</code>：指定后端storageClassName，如不指定则使用默认的storageClassName；默认的sc通过注解<code>storageclass.kubernetes.io/is-default-class: true</code>标示。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/" title="应用编排与管理：核心原理">https://fly97.cn/p/core-concept-about-App-stores-and-persists-data/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/Advanced-operations-on-Jetson-Xavier/" rel="prev" title="ROS实战（七）Jetson Xavier NX 高级操作">
+                  <i class="fa fa-chevron-left"></i> ROS实战（七）Jetson Xavier NX 高级操作
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/Install-Rook-on-k8s/" rel="next" title="Kubernetes集群实践（八）Kubernetes安装云原生存储系统Rook">
+                  Kubernetes集群实践（八）Kubernetes安装云原生存储系统Rook <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

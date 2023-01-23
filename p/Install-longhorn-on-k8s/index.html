@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文主要介绍如何安装和使用云原生存储系统LongHorn。 关键词：k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn">
+<meta property="og:url" content="https://fly97.cn/p/Install-longhorn-on-k8s/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="本文主要介绍如何安装和使用云原生存储系统LongHorn。 关键词：k8s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/cas-768x614-1.png">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/image-20220716153619243.png">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/image-20220716154810558.png">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/image-20220716155901649.png">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/image-20220716161812262.png">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/image-20220716163325775.png">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/image-20220716171407840.png">
+<meta property="og:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/image-20220716174724139.png">
+<meta property="article:published_time" content="2022-05-04T05:25:00.000Z">
+<meta property="article:modified_time" content="2022-05-04T05:25:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fly97.cn/p/Install-longhorn-on-k8s/Kubernetes%E5%AE%89%E8%A3%85%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9FLongHorn/cas-768x614-1.png">
+
+
+<link rel="canonical" href="https://fly97.cn/p/Install-longhorn-on-k8s/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/Install-longhorn-on-k8s/","path":"p/Install-longhorn-on-k8s/","title":"Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BA%91%E5%8E%9F%E7%94%9F%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要云原生分布式存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#container-attached-storage%E5%AE%B9%E5%99%A8%E5%AD%98%E5%82%A8%E7%9A%84%E6%9C%AA%E6%9D%A5"><span class="nav-number">1.2.</span> <span class="nav-text">Container Attached
+Storage，容器存储的未来？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9Flonghorn"><span class="nav-number">2.</span> <span class="nav-text">云原生存储系统Longhorn</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#longhorn%E7%AE%80%E4%BB%8B"><span class="nav-number">2.1.</span> <span class="nav-text">Longhorn简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#longhorn%E9%83%A8%E7%BD%B2"><span class="nav-number">2.2.</span> <span class="nav-text">Longhorn部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AEui"><span class="nav-number">2.2.2.</span> <span class="nav-text">访问UI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A3%B0%E6%98%8Epvc"><span class="nav-number">2.2.3.</span> <span class="nav-text">声明PVC</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://trying.fun/" title="https:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://xieandong.top/" title="http:&#x2F;&#x2F;xieandong.top" rel="noopener" target="_blank">谢安东个人博客</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/Install-longhorn-on-k8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-04 13:25:00" itemprop="dateCreated datePublished" datetime="2022-05-04T13:25:00+08:00">2022-05-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文主要介绍如何安装和使用云原生存储系统LongHorn。</p>
+<p>关键词：<strong>k8s</strong></p>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>K8s存储最开始是通过Volume
+Plugin实现集成外部存储系统，即不同的存储系统对应不同的volume
+plugin。</p>
+<p>Volume
+Plugin实现代码全部放在了K8s主干代码中，也就是说这些查看与核心K8s二进制文件一起链接、编译、构建和发布。</p>
+<p>这种方案存在以下几个问题：</p>
+<ol type="1">
+<li>在K8s中添加新的存储系统支持需要在<strong>核心K8s（in-tree）</strong>增加插件代码，随着存储插件越来越多，K8s代码也会变得越来庞大。</li>
+<li>K8s与具体的存储plugin耦合在一起，一旦存储接口发任何变化都需要重新修改plugin代码，也就是说不得不修改K8s代码，导致K8s代维护越来越困难。</li>
+<li>如果这些plugin由bug或者存储系统故障导致crash，可能会导致整个K8s集群crash。这些查看运行时无法做权限管控，具有K8s所以组件的所有权限，存在一定的安全风险。</li>
+<li>插件的实现必须通过Golang语言编写并与K8s一起开源，可能对某些厂商不利。</li>
+</ol>
+<p>因此从1.8开始，K8s停止往K8s代码中增加新的存储支持，并推出了一种新的插件形式支持外部存储系统，即<strong>FlexVolume</strong>。</p>
+<p>FlexVolume类似于CNI插件，通过外部脚本集成外部存储接口。这些脚本默认放在<code>/usr/libexec/kubernetes/kubelet-plugins/volume/exec/</code>，需要安装到所有Node节点上。</p>
+<p>这样存储插件只需要通过<strong>外部脚本（out-of-tree）</strong>即可实现<code>attach</code>、<code>detach</code>、<code>mount</code>、<code>umount</code>等接口即可集成第三方存储，不需要动K8s源码，可以参考官方的一个<strong>LVM
+FlexVolume Demo[1]</strong>。</p>
+<p>但是这种方法也有问题：</p>
+<ul>
+<li>脚本文件放在host主机上，因此驱动不得不通过访问宿主机的根文件系统去运行脚本。</li>
+<li>这些插件还有第三方程序以来或者OS兼容性要求，还需要在所有的Node节点安装这些依赖并解决兼容性问题。</li>
+</ul>
+<p>因此这种方式虽然解决了in-tree的问题，但是这种方式用起来不太优雅，不太原生。</p>
+<p>因此Kubernetes从1.9开始就引入了Container Storage
+Interface（CSI）容器存储接口，并与1.13版本正式GA。</p>
+<p>CSI的实现方案和CRI类似，通过gRPC与volume
+driver进行通信，存储厂商需要实现三个服务接口Identify Service、Control
+Service、Node Service：</p>
+<ul>
+<li>Indentfy Service用于返回一些插件信息；</li>
+<li>Control Service实现Volume的CURD操作；</li>
+<li>Node
+Service运行在所有的Node节点，用于实现把volume挂载在当前Node节点的指定目录，该服务会监听一个Socket，controller通过这个socket进行通信，可以参考官方提供的例子：<strong>CSI
+Hostpath driver Sample[2]</strong>。</li>
+</ul>
+<p>更多CSI介绍可以参考官方的设计文档，<strong>CSI Volume Plugins in
+Kubernetes Design Doc[3]</strong>。</p>
+<p>通过CSI基本解决了in-tree以及FlexVolume的大多数问题，未来K8s会把in-tree的存储插件都迁移到CSI。</p>
+<p>当然Flex Volume Plugin也会与新的CSI Volume
+Plugin并存以便兼容现有的第三方FlexVolume存储插件。</p>
+<h3 id="为什么需要云原生分布式存储">为什么需要云原生分布式存储</h3>
+<p>通过CSI接口或者Flex Volume Plugin解决了K8s集成外部存储的问题。</p>
+<p>目前K8s以及能够支持非常多的外部存储系统了，如NFS、GlusterFS、Ceph、OpenStack等，这些存储系统目前主流的部署方式还是运行在K8s集群之外单独部署和维护，不符合All
+in K8s的原则。</p>
+<p>如何没有分布式存储，则不得不单独部署一套分布式存储。</p>
+<p>很多分布式存储部署还是比较复杂的。而K8s天生就具有快速部署和编排应用的能力，如果能把分布式存储的部署也能通过K8s编排起来，则显然能够大大降低分布式存储的部署和维护成本，甚至使用一条apply目录就可以部署一个集群。</p>
+<p>这里主要有两种思路：</p>
+<ul>
+<li>一是重新针对云原生平台设计一个分布式存储，这个分布式存储系统组件是为服务化的，能够复用K8s的调度、故障恢复和编排能力，如后面介绍的Longhorn、OpenEBS。</li>
+<li>二是设计微服务组件把已有的分布式存储系统包装管理起来，使原来的分布式存储能够运行在K8s平台上，实现通过K8s管理原有的分布式存储系统，如Rook</li>
+</ul>
+<h3 id="container-attached-storage容器存储的未来">Container Attached
+Storage，容器存储的未来？</h3>
+<p>我们都知道，组成云计算的三大基石为计算、存储和网络，K8s计算（Runtime）、存储（PV/PVC）和网络（Subnet/DNS/Service/Ingress）的设计都是开放的，可以集成不同的方案，比如网络通过CNI接口支持集成Flannel、Calico等方案，运行时（Runtime）通过CRI支持Docker、Rkt、Kata等运行时方案，存储通过Volume
+Plugin支持集成如AWS EBS、Ceph、OpenStack等存储系统。</p>
+<p>但是目前主流的方案中存储与计算、网络稍有不同，计算和网络都是以微服务的形式通过K8s统一编排管理的，即K8s既是计算和网络的消费者，也是计算和网络的编排者和管理者。</p>
+<p>而存储不一样，虽然K8s已经设计了PV/PVC机制来管理外部存储，但是只是弄了个标准接口集成，存储本身还是通过独立的存储系统来管理，K8s是压根不知道底层存储是如何编排和调度的。</p>
+<p>社区既然认为计算和网络都由K8s统一编排了，那存储也应该统一编排。</p>
+<p>于是社区提出了Container Attached
+Storage（CAS）的理念，这个理念的目标就是利用K8s来编排存储，从而实现K8s编排一切，这里的一切包括计算、存储、网络，还包括应用、服务和软件。</p>
+<p>CAS提出如下方案：</p>
+<ul>
+<li>每个Volume都由一个轻量级的Controller来管理，这个Controller可以是单独的Pod。</li>
+<li>这个Controller与使用该Volume的应用Pod在同一个Node（sidecar模式）</li>
+<li>不同的Volume的数据使用多个独立的Controller Pod进行管理。</li>
+</ul>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/cas-768x614-1.png"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>由于Pod是通过K8s编排和存储的，因此毫无疑问通过这种形式就实现了K8s的编排和调度。</p>
+<p>K8s目前毕竟是主流趋势，通过K8s编排和管理存储也必然是一种发展趋势。</p>
+<h2 id="云原生存储系统longhorn">云原生存储系统Longhorn</h2>
+<h3 id="longhorn简介">Longhorn简介</h3>
+<p><strong>Longhorn</strong>最初由Rancher公司开发并贡献给社区，专门针对K8s设计开发的<strong>云原生分布式块存储系统</strong>，因此和K8s契合度很高，主要体现在以下两个方面：</p>
+<ul>
+<li>本身运行在K8s平台上，通过容器和微服务方式运行；</li>
+<li>很好的和PV/PVC结合。</li>
+</ul>
+<p>与其他分布式块存储系统最大的不同点是，Longhorn并没有设计一个非常复杂的控制器来管理Volume数据卷，而是将控制器拆分成一个个非常轻量级的微控制器，这些控制器通过K8s等平台进行调度和编排。</p>
+<p>每个微控制器只管理一个Volume，这种基于微服务的设计使得每个Volume相对独立，控制器升级时开业先选择一部分卷进行操作，如果升级出现问题，可以快速选择回滚到旧版本，升级过程中之可能会影响正在升级的Volume。不会导致其他Volume
+IO中断。</p>
+<p>Longhorn的实现和CAS的设计理念基本上是一致的，相比Ceph来说简单很多，而又具备分布式块存储的系统的一些基本功能：</p>
+<ul>
+<li><p>支持多副本，不存在单点故障</p></li>
+<li><p>支持增量快照</p></li>
+<li><p>支持备份到其他外部存储系统，比如S3；</p></li>
+<li><p>精简配置</p></li>
+</ul>
+<p>Longhorn内置了一个Web
+UI，能够通过UI很方便的管理Node、Volume以及Backup。</p>
+<p>根据官方的说法，Longhorn不是为了取代其他的分布式块存储系统，而是为了设计一个更简单更适合容器环境的块存储系统，其他分布式存储有的一些高级功能Longhorn并没有实现，比如去重，压缩，分块，多路径等。</p>
+<p>Longhorn存储管理机制比较简单，当在Longhorn中Node节点增加物理存储时，其本质就是把Node对应的路径通过HostPath挂载到Pod中。</p>
+<h3 id="longhorn部署">Longhorn部署</h3>
+<h4 id="安装">安装</h4>
+<p>国外地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/master/deploy/longhorn.yaml</span><br></pre></td></tr></table></figure>
+<p>Gitee加速</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://gitee.com/mirrors/longhorn/raw/master/deploy/longhorn.yaml</span><br></pre></td></tr></table></figure>
+<p>最好是提前下载好镜像，参考地址：https://gitee.com/mirrors/longhorn/raw/master/deploy/longhorn-images.txt</p>
+<p>稍后片刻，查看运行状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n longhorn-system</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716153619243.png"
+alt="image-20220716153619243" />
+<figcaption aria-hidden="true">image-20220716153619243</figcaption>
+</figure>
+<p>如上图所示，说明安装成功。</p>
+<h4 id="访问ui">访问UI</h4>
+<p>查看UI Service的详细信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc longhorn-frontend -o wide -n longhorn-system</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716154810558.png"
+alt="image-20220716154810558" />
+<figcaption aria-hidden="true">image-20220716154810558</figcaption>
+</figure>
+<p>可以看到服务类型是ClusterIP，此时只能<strong>在集群内部访问</strong>，由于我是远程管理的K8s集群，因此需要将过这个端口暴露出来。</p>
+<p>暂时先使用NodePort的方式暴露这个服务，等到后面弄清楚Ingress的原理以后再迁移过去。</p>
+<p>更改<code>longhorn-frontend</code>的配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit svc longhorn-frontend -n longhorn-system</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716155901649.png"
+alt="image-20220716155901649" />
+<figcaption aria-hidden="true">image-20220716155901649</figcaption>
+</figure>
+<p>等待生效以后，就可以访问UI了。</p>
+<p>访问的IP是集群的local
+IP，端口则是30000。NodePort的默认端口是30000-32767，这个好像可以根据kubelet的选项进行修改，这里测试原因就没必要修改啦。</p>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716161812262.png" /></p>
+<p>我在这个work01所在的节点上挂载了一块硬盘，挂载路径在<code>/mnt</code>，大小只有1T，不过这里为啥Allocated了2T。。真是百思不得其解。</p>
+<h4 id="声明pvc">声明PVC</h4>
+<p>对于动态PV来说，只需要设置好StorageClass+PVC，在设置Pod
+Volume时就可以使用Volume了</p>
+<p>安装好longhorn以后，默认安装了StorageClass</p>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716163325775.png" /></p>
+<p>因此只需要设置PVC</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-longborn-pvc</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">longhorn</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">3Gi</span></span><br></pre></td></tr></table></figure>
+<p>设置完PVC以后就可以设置Pod时候添加Volume了</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysql-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">nodeName:</span> <span class="string">worker01</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-pod-1</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5</span></span><br><span class="line">    <span class="attr">args:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="string">--max_connections=10000</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--character-set-server=utf8mb4</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--collation-server=utf8mb4_general_ci</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--default-authentication-plugin=mysql_native_password</span></span><br><span class="line">    <span class="attr">env:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">      <span class="attr">value:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/var/lib/mysql</span>             <span class="comment"># 容器挂载路径</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">mysql-data</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql-data</span></span><br><span class="line">    <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">      <span class="attr">claimName:</span> <span class="string">mysql-longborn-pvc</span></span><br></pre></td></tr></table></figure>
+<p>当我兴冲冲的执行完<code>kubectl apply -f</code>之后，才发现我的Pod怎么也启动不起来，他总是显示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpc error: code = DeadlineExceeded desc = volume pvc-084b4ca7-c972-4de6-aa29-55101df79635 failed to attach to node worker01</span><br></pre></td></tr></table></figure>
+<p>而Longhorn Dashbroad UI总是显示</p>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716171407840.png" /></p>
+<p>经过查找，发现了原因：</p>
+<ul>
+<li>当前集群内只有1个worker节点，而默认的<strong>Default Replica
+Count</strong>被设置为3，因此控制器想做备份但是找不到合适的节点，因此调度失败；</li>
+<li>安装在节点的StorageClass有一个numberOfReplicas字段被设置为3，造成了调度失败；而尝试直接修改这个StorageClass却显示<strong>Forbidden:
+updates to parameters are
+forbidden.</strong>，猜测是因为某个策略禁止修改了此参数；</li>
+</ul>
+<p>解决方案：</p>
+<ol type="1">
+<li><del>删除现在的StorageClass资源清单</del></li>
+<li><del>更改StorageClass资源清单为符合要求，并重新应用</del></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete sc longhorn</span><br></pre></td></tr></table></figure>
+<p>但。。。这种方法也没用，删除这个StorageClass后又会立马生成。</p>
+<p>后来找到了方法：修改这个文件对应的ConfigMap</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm longhorn-storageclass -n longhorn-system</span><br></pre></td></tr></table></figure>
+<p><img data-src="Kubernetes安装云原生存储系统LongHorn/image-20220716174724139.png" /></p>
+<p>BUTTTTTTTTTTTTTTTTTT，还是失败了。麻了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/Install-longhorn-on-k8s/" title="Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn">https://fly97.cn/p/Install-longhorn-on-k8s/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/create-a-k8s-cluster-with-kubeadm/" rel="prev" title="Kubernetes集群实践（一）使用Kubeadm创建一个K8s集群">
+                  <i class="fa fa-chevron-left"></i> Kubernetes集群实践（一）使用Kubeadm创建一个K8s集群
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/core-concept-about-k8s/" rel="next" title="K8s核心概念">
+                  K8s核心概念 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

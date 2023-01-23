@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在debian中使用Coturn创建和配置自己的STUN&#x2F;TURN服务器 关键词：coturn，stun，turn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在debian中使用Coturn创建和配置自己的STUN&#x2F;TURN服务器">
+<meta property="og:url" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="在debian中使用Coturn创建和配置自己的STUN&#x2F;TURN服务器 关键词：coturn，stun，turn">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/image-20211212133649851.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/image-20211212133609907.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/image-20211212133729426.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/image-20211127213711931.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/image-20211127213631207.png">
+<meta property="og:image" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/image-20211127214043008.png">
+<meta property="article:published_time" content="2021-11-27T14:55:00.000Z">
+<meta property="article:modified_time" content="2021-11-27T14:55:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="coturn">
+<meta property="article:tag" content="STUN">
+<meta property="article:tag" content="TURN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fly97.cn/p/install-and-configure-coturn-in-debian/image-20211212133649851.png">
+
+
+<link rel="canonical" href="https://fly97.cn/p/install-and-configure-coturn-in-debian/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/install-and-configure-coturn-in-debian/","path":"p/install-and-configure-coturn-in-debian/","title":"在debian中使用Coturn创建和配置自己的STUN/TURN服务器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>在debian中使用Coturn创建和配置自己的STUN/TURN服务器 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85libevent"><span class="nav-number">1.</span> <span class="nav-text">安装libevent</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bopenssl%E7%89%88%E6%9C%AC"><span class="nav-number">1.1.</span> <span class="nav-text">查看openssl版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD2.1.12%E7%89%88%E6%9C%AClibevent"><span class="nav-number">1.2.</span> <span class="nav-text">下载2.1.12版本libevent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85openssl%E4%BE%9D%E8%B5%96"><span class="nav-number">1.3.</span> <span class="nav-text">安装openssl依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">1.4.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%8C%85"><span class="nav-number">1.5.</span> <span class="nav-text">打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F"><span class="nav-number">1.6.</span> <span class="nav-text">安装成功</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85coturn"><span class="nav-number">2.</span> <span class="nav-text">安装Coturn</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#turn%E6%95%B0%E6%8D%AE%E5%BA%93%E9%85%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">TURN数据库配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9turn%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">修改TURN服务配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8openssl%E7%94%9F%E6%88%90%E8%AF%81%E4%B9%A6%E5%92%8C%E5%AF%86%E9%92%A5"><span class="nav-number">2.3.</span> <span class="nav-text">使用openssl生成证书和密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.4.</span> <span class="nav-text">重启服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEdocker"><span class="nav-number">3.</span> <span class="nav-text">配置docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F%E6%90%AD%E5%BB%BA"><span class="nav-number">4.</span> <span class="nav-text">测试是否成功搭建</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://trying.fun/" title="https:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://xieandong.top/" title="http:&#x2F;&#x2F;xieandong.top" rel="noopener" target="_blank">谢安东个人博客</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/install-and-configure-coturn-in-debian/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="在debian中使用Coturn创建和配置自己的STUN/TURN服务器 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          在debian中使用Coturn创建和配置自己的STUN/TURN服务器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-27 22:55:00" itemprop="dateCreated datePublished" datetime="2021-11-27T22:55:00+08:00">2021-11-27</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在debian中使用Coturn创建和配置自己的STUN/TURN服务器</p>
+<p><strong>关键词</strong>：coturn，stun，turn</p>
+<span id="more"></span>
+<p>安装Coturn一般分为两步。</p>
+<p>第一步要查看安装的openssl版本，然后安装<a
+target="_blank" rel="noopener" href="https://github.com/libevent/libevent">libevent</a>。</p>
+<p>第二步是安装Coturn。</p>
+<h2 id="安装libevent">安装libevent</h2>
+<p>相关地址：</p>
+<ul>
+<li>https://github.com/libevent/libevent</li>
+<li>https://codechina.csdn.net/mirrors/libevent/libevent</li>
+</ul>
+<p><strong>注意</strong></p>
+<p>libevent与openssl的版本对应关系如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>libevent</th>
+<th>openssl</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2.1.x</td>
+<td>1.1</td>
+</tr>
+<tr class="even">
+<td>2.0.x</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<p>如果你的openssl是1.1版本及以上，请安装2.1.x版本的libevent；</p>
+<p>如果你的openssl是1.0版本及以上，请安装2.0.x版本的libevent。</p>
+<h3 id="查看openssl版本">查看openssl版本</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl version</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@iZuf68ohfhdne8i8wsvd1tZ:~<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL 1.1.1f  31 Mar 2020</span><br></pre></td></tr></table></figure>
+<p>这里使用2.1.12的版本进行安装。</p>
+<h3 id="下载2.1.12版本libevent">下载2.1.12版本libevent</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://codechina.csdn.net/mirrors/libevent/libevent/-/archive/release-2.1.12-stable/libevent-release-2.1.12-stable.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="安装openssl依赖">安装openssl依赖</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update &amp;&amp; sudo apt install libssl-dev -y</span><br></pre></td></tr></table></figure>
+<h3 id="编译">编译</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tar xvf libevent-release-2.1.12-stable.tar.gz</span><br><span class="line"><span class="built_in">cd</span> libevent-release-2.1.12-stable</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h3 id="打包">打包</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install checkinstall -y</span><br><span class="line">sudo checkinstall</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20211212133649851.png" /></p>
+<p>这里需要把3 - Version: [ stable ]
+修改成版本号，否则后面安装不成功。</p>
+<p><img data-src="image-20211212133609907.png" /></p>
+<h3 id="安装成功">安装成功</h3>
+<p><img data-src="image-20211212133729426.png" /></p>
+<h2 id="安装coturn">安装Coturn</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install coturn -y</span><br></pre></td></tr></table></figure>
+<p>可参考：https://www.webrtc-experiment.com/docs/TURN-server-installation-guide.html#coturn</p>
+<h3 id="turn数据库配置">TURN数据库配置</h3>
+<p><strong>增加用户：</strong>增加普通long-term
+TURN用户，用于WebRTC的登陆。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo turnadmin -a -u &lt;username&gt; -r &lt;realm&gt; -p &lt;password&gt;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>如果不用默认db也可以通过命令行配置需要使用的db文件路径</li>
+<li>需要sudo否则无法写入db文件，查询为空，或者给db文件改权限。</li>
+<li>如果没有安装sqlite并不会报错，只是查询为空。</li>
+</ul>
+<p><strong>安装sqlite</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install sqlite3 libsqlite3-dev</span><br></pre></td></tr></table></figure>
+<p>如果报错：<code>turnadmin: error while loading shared libraries: libmysqlclient.so.21</code></p>
+<p>需要安装libmysqlclient-dev：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libmysqlclient-dev</span><br></pre></td></tr></table></figure>
+<p><strong>查看当前的普通用户</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">turnadmin -l</span><br></pre></td></tr></table></figure>
+<p><strong>删除普通用户</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">turnadmin -d -u &lt;username&gt; -r &lt;realm&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="修改turn服务配置文件">修改TURN服务配置文件</h3>
+<p>配置文件路径为<code>/etc/turnserver.conf</code></p>
+<p>先将原来的默认配置复制一份，然后在添加新的配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mv</span> /etc/turnserver.conf /etc/turnserver.conf.bak</span><br><span class="line">sudo vim /etc/turnserver.conf</span><br></pre></td></tr></table></figure>
+<p>一些常用的配置：</p>
+<p>其中cert和pkey的文件地址请根据下一步<strong>使用openssl生成证书和密钥</strong>的文件路径来修改你的配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"># 本地监听外网的网卡设备，默认eth0</span><br><span class="line">listening-ip=172.17.62.224</span><br><span class="line">listening-device=eth0</span><br><span class="line"># TURN服务器UDP/TCP监听端口，默认：3478，同时根据协议会自动开启3479</span><br><span class="line"># 应该需要防火墙开放端口</span><br><span class="line">listening-port=3478</span><br><span class="line"># TURN服务器TLS监听端口，默认5349，自动开启5350</span><br><span class="line">tls-listening-port=5349</span><br><span class="line">#本地用于转发的网卡设备，默认eth0</span><br><span class="line">relay-device=eth0</span><br><span class="line"># UDP中继端口范围，用于UDP转发，注意安全组放通</span><br><span class="line"># (default values are 49152 and 65535)</span><br><span class="line">min-port=49152</span><br><span class="line">max-port=65535</span><br><span class="line"></span><br><span class="line"># 日志输出级别，turnserver 启动时加上 -v,可以得到更清晰的日志输出，默认关闭</span><br><span class="line">Verbose</span><br><span class="line"># 消息验证，WebRTC 的消息里会用到，默认关闭</span><br><span class="line">fingerprint</span><br><span class="line"></span><br><span class="line"># long-term验证机制，webrtc 通过 TURN中继使用的验证方式，默认关闭即不需要认证机制。</span><br><span class="line">lt-cred-mech</span><br><span class="line"></span><br><span class="line"># 默认域Realm</span><br><span class="line"># 当在数据库中没有显示的域关系定义时，或没有使用任何db时使用。</span><br><span class="line"># 配合long-term认证机制或者TURN REST API使用，需要设置。</span><br><span class="line">realm=deepsoft</span><br><span class="line"></span><br><span class="line"># TURN REST API 认证标记。</span><br><span class="line"># 但无法同时使用lt-cred-mech和use-auth-secret两种方式，保持注释</span><br><span class="line"># use-auth-secret</span><br><span class="line"># REST API 加密所需的&#x27;静态&#x27; KEY，同保持注释</span><br><span class="line"># static-auth-secret</span><br><span class="line"></span><br><span class="line"># 启用DH密钥交换算法</span><br><span class="line">dh2066</span><br><span class="line"># 认证文件和私钥，用户TLS加密传输。</span><br><span class="line">cert=/root/ssl/cert.pem </span><br><span class="line">pkey=/root/ssl/certs/key.pem</span><br><span class="line"></span><br><span class="line">#屏蔽multicast IP地址（224.0.0.0 and above）的 转发</span><br><span class="line">no-multicast-peers</span><br></pre></td></tr></table></figure>
+<h3 id="使用openssl生成证书和密钥">使用openssl生成证书和密钥</h3>
+<p>tls加密通信需要密钥，可以用openssl工具生成：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> ssl &amp;&amp; <span class="built_in">cd</span> ssl</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">openssl req -x509 -days 1000 -newkey rsa:2048 -keyout ./key.pem -out ./cert.pem -nodes </span><br><span class="line"><span class="comment"># 得到两个文件，拷贝到/cert/目录下备用</span></span><br><span class="line"><span class="comment"># The `req` command primarily creates and processes certificate requests in PKCS#10 format</span></span><br><span class="line"><span class="comment"># -x509 请求签名，输出一个自签名证书，自己充当CA认证</span></span><br><span class="line"><span class="comment"># -days 1000 默认30天，用于-x509天数设置</span></span><br><span class="line"><span class="comment"># -newkey rsa:2048 生成新的认证和私钥</span></span><br><span class="line"><span class="comment"># -nodes 对生成的私钥不加密</span></span><br></pre></td></tr></table></figure>
+<h3 id="重启服务">重启服务</h3>
+<p>配置文件修改完毕以后需要重启一下服务以便使配置文件生效。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service coturn restart</span><br></pre></td></tr></table></figure>
+<h2 id="配置docker">配置docker</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --user $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) \</span><br><span class="line">            --restart=always --name=my-turnserver \</span><br><span class="line">           --network=host \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/my.cnf:/etc/coturn/turnserver.conf \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/cert.pem:/cert.pem \</span><br><span class="line">           -v $(<span class="built_in">pwd</span>)/key.pem:/key.pem \</span><br><span class="line">        coturn/coturn:alpine</span><br></pre></td></tr></table></figure>
+<h2 id="测试是否成功搭建">测试是否成功搭建</h2>
+<p>https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</p>
+<p><img data-src="image-20211127213711931.png" style="zoom:33%;" /></p>
+<p><img data-src="image-20211127213631207.png" /></p>
+<p><img data-src="image-20211127214043008.png" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/install-and-configure-coturn-in-debian/" title="在debian中使用Coturn创建和配置自己的STUN&#x2F;TURN服务器">https://fly97.cn/p/install-and-configure-coturn-in-debian/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/coturn/" rel="tag"># coturn</a>
+              <a href="/tags/STUN/" rel="tag"># STUN</a>
+              <a href="/tags/TURN/" rel="tag"># TURN</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/slice-map-and-channel-in-golang/" rel="prev" title="Go语言中的切片、Map和Channel">
+                  <i class="fa fa-chevron-left"></i> Go语言中的切片、Map和Channel
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/producer-consumer-model-in-golang/" rel="next" title="golang中的生产者消费者模型">
+                  golang中的生产者消费者模型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

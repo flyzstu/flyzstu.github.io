@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文是CNCF × Alibaba 云原生技术公开课的第三章Kubernetes 核心概念学习笔记。 关键词：k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8s核心概念">
+<meta property="og:url" content="https://fly97.cn/p/core-concept-about-k8s/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="本文是CNCF × Alibaba 云原生技术公开课的第三章Kubernetes 核心概念学习笔记。 关键词：k8s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/kubernetes-high-level-component-archtecture.jpg">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/image-20220429212540202.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/image-20220429213903847.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/image-20220429220138689.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/image-20220430130241945.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/image-20220430132644760.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/image-20220430135024552.png">
+<meta property="og:image" content="https://fly97.cn/p/core-concept-about-k8s/image-20220430153116204.png">
+<meta property="article:published_time" content="2022-05-05T05:25:00.000Z">
+<meta property="article:modified_time" content="2022-05-05T05:25:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fly97.cn/p/core-concept-about-k8s/kubernetes-high-level-component-archtecture.jpg">
+
+
+<link rel="canonical" href="https://fly97.cn/p/core-concept-about-k8s/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/core-concept-about-k8s/","path":"p/core-concept-about-k8s/","title":"K8s核心概念"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>K8s核心概念 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#k8s%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">k8s的架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master"><span class="nav-number">1.1.</span> <span class="nav-text">Master</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#node"><span class="nav-number">1.2.</span> <span class="nav-text">Node</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">1.2.1.</span> <span class="nav-text">例子</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pod"><span class="nav-number">2.1.</span> <span class="nav-text">Pod</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8pod"><span class="nav-number">2.1.1.</span> <span class="nav-text">使用Pod</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volume"><span class="nav-number">2.2.</span> <span class="nav-text">Volume</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E6%9C%AC%E5%9C%B0%E5%8D%B7"><span class="nav-number">2.2.1.</span> <span class="nav-text">挂载本地卷</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E7%BD%91%E7%BB%9C%E5%8D%B7nfs"><span class="nav-number">2.2.2.</span> <span class="nav-text">挂载网络卷NFS</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deployment"><span class="nav-number">2.3.</span> <span class="nav-text">Deployment</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAdeployment"><span class="nav-number">2.3.1.</span> <span class="nav-text">创建Deployment</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#service"><span class="nav-number">2.4.</span> <span class="nav-text">Service</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8service"><span class="nav-number">2.4.1.</span> <span class="nav-text">使用Service</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://trying.fun/" title="https:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://xieandong.top/" title="http:&#x2F;&#x2F;xieandong.top" rel="noopener" target="_blank">谢安东个人博客</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/core-concept-about-k8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="K8s核心概念 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8s核心概念
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-05 13:25:00" itemprop="dateCreated datePublished" datetime="2022-05-05T13:25:00+08:00">2022-05-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第三章Kubernetes
+核心概念</strong>学习笔记。</p>
+<p>关键词：<strong>k8s</strong></p>
+<span id="more"></span>
+<h3 id="k8s的架构">k8s的架构</h3>
+<p>k8s的架构是比较典型的二层架构和server-client架构。Master作为中央的管控节点，会与Node进行一个链接。</p>
+<p>所有用户侧的组件，只会和Master进行连接，把希望的状态或者想执行的命令发给Master，Master会把这些命令发给相应的节点。</p>
+<p><img data-src="kubernetes-high-level-component-archtecture.jpg" /></p>
+<h4 id="master">Master</h4>
+<p>Master节点主要包含四个主要的组件：API
+Server、Controller、Scheduler以及etcd：</p>
+<p><img data-src="image-20220429212540202.png" /></p>
+<ul>
+<li>API Server：用来处理API操作，k8s的所有组件都会和API
+Server进行连接，组件和组件之间一般不进行独立链接，都要依赖API
+Server进行消息的传送。</li>
+<li>Controller：控制器。用来完成对集群状态的一些管理。例如<strong>自动对容器进行修复，或者自动进行水平扩张</strong>。</li>
+<li>Scheduler：调度器。顾名思义就是完成调度的操作。例如把一个用户提交的Container，依赖于它对CPU、对memory请求大小，找一台合适的节点，进行放置。</li>
+<li>etcd：分布式存储系统。API
+Server中所需要的原信息存在etcd中，etcd本身是一个高可用系统，通过etcd保证整个k8s
+Master节点的高可用性。</li>
+</ul>
+<h4 id="node">Node</h4>
+<p>Node是真正运行业务负载的，每个业务负载以<strong>Pod</strong>的形式运行。一个Pod中运行一个或者多个容器，真正运行这些Pod组件的是<strong>kubelet</strong>，也就是Node上面最关键的组件，它通过API
+Server接收到需要Pod运行的状态，然后提交到Container
+Runtime组件中，在OS上创建容器所需要的环境，最终把容器或者Pod运行起来。Node需要对存储和网络进行管理。K8s不直接管理存储和网络，K8s通过Storage
+Plugin或者Network Plugin进行管理，完成存储和网络操作。</p>
+<p><img data-src="image-20220429213903847.png" /></p>
+<p>在K8s自己的环境里，也会有k8s的Network，他是为了提供Service
+Network来进行组网。真正完成组网的组件是Kube-proxy。Kube-proxy利用iptable的能力来组建k8s集群的网络。以上就是Node上面的四个组件（Container
+Runtime、Storage Plugin、Network Plugin、Kube-proxy）。</p>
+<p>注意：K8s上的Node不会直接和用户进行交互，Node和用户之间的交互只会通过Master节点。用户通过Master节点下发这些信息。K8s上的每个Node，都会运行上面的这几个组件。</p>
+<h5 id="例子">例子</h5>
+<p>通过一个例子看K8s架构中的这些组件是如何进行交互的。</p>
+<p><img data-src="image-20220429220138689.png" /></p>
+<p>用户通过UI或者CLI提交一个Pod到K8s进行部署，这个Pod请求会首先通过UI或者CLI提交给K8s
+API Server，下一步API
+Server会把这个信息写入到存储系统etcd，之后Scheduler会通过API
+Server的watch机制得到这个信息：有一个Pod需要被调度。</p>
+<p>此时Scheduler会根据这个内存状态进行一次调度决策，在完成这次调度以后，Scheduler向API
+Server报告。此时API Server接收到消息以后，把这次结果写入etcd，然后API
+Server会通知相应的节点。相应节点的Kubelet会得到这个通知，Kubelet调用Container
+Runtime来启动配置这个容器和这个容器的运行环境，去调度Storage
+Plugin来配置存储，Network Plugin去配置网络。</p>
+<h3 id="核心概念">核心概念</h3>
+<h4 id="pod">Pod</h4>
+<p>Pod是K8s的一个最小调度和属性单元，用户可以通过K8s的Pod
+API来生产一个Pod，让K8s对这个Pod进行调度，也就是把他放到另一个K8s管理的节点上运行起来。</p>
+<p>一个Pod简单来说是一组容器的抽象，它包含一个或者多个容器。</p>
+<p>Pod包含一些其他所需要的资源，比如卷。</p>
+<p><img data-src="image-20220430130241945.png" /></p>
+<p>Pod的共享上下文包括一组Linux命名空间，控制组和可能一些其他的隔离方面，这些都是用来隔离Docker容器的技术。在Pod的上下文中，每个独立的应用可能会进一步实施隔离。</p>
+<p>就Docker使用的概念术语来说，<strong>Pod类似于共享名字空间和文件系统卷的一组Docker容器</strong>。</p>
+<p>Pod给这些容器提供了一个共享的运行环境，他们会共享同一个网络环境，这些容器可以用localhost来进行直接的连接。</p>
+<h5 id="使用pod">使用Pod</h5>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:1.14.2</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>要创建上面的Pod，请运行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f simple-pod.yaml</span><br></pre></td></tr></table></figure>
+<p>注意：Pod一般不是直接创建的，而是使用<strong>工作负载资源</strong>创建的，</p>
+<h4 id="volume">Volume</h4>
+<p>Volume用来管理K8s存储，Volume声明容器中的容器可以访问文件的目录。</p>
+<p>一个卷可以被挂载Pod中一个或者多个容器指定的路径下面。</p>
+<p>Volume本身是一个<strong>抽象</strong>的概念，一个Volume可以支持多种后端存储。K8s的Volume就支持了很多存储插件，可以支持<strong>本地的存储</strong>，也可以支持<strong>分布式存储</strong>。它也可以支持云存储，例如阿里云上的云盘、AWS上的云盘、Google上的云盘等。</p>
+<p><img data-src="image-20220430132644760.png" /></p>
+<p>Docker 也有 <a
+target="_blank" rel="noopener" href="https://docs.docker.com/storage/">卷（Volume）</a>
+的概念，但对它只有少量且松散的管理。 Docker
+卷是磁盘上或者另外一个容器内的一个目录。 Docker
+提供卷驱动程序，但是其功能非常有限。</p>
+<p>Kubernetes 支持很多类型的卷。 <a
+target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">Pod</a>
+可以同时使用任意数目的卷类型。 临时卷类型的生命周期与 Pod
+相同，但持久卷可以比 Pod 的存活期长。 当 Pod 不再存在时，Kubernetes
+也会销毁临时卷；不过 Kubernetes 不会销毁<strong>持久卷</strong>。
+对于给定 Pod 中任何类型的卷，在容器重启期间数据都不会丢失。</p>
+<h5 id="挂载本地卷">挂载本地卷</h5>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:1.14.2</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/mnt/logs</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">logs</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">go-logs</span></span><br><span class="line">        <span class="attr">hostPath:</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/logs</span></span><br></pre></td></tr></table></figure>
+<h5 id="挂载网络卷nfs">挂载网络卷NFS</h5>
+<p>待补充</p>
+<h4 id="deployment">Deployment</h4>
+<p>Deployment为<strong>Pod和ReplicaSet（副本）</strong>提供声明式的更新能力。</p>
+<p>Deployment是在Pod上层的抽象，用Deployment这个抽象来做应用的真正管理，而Pod是组成Deployment的最小单元。</p>
+<p>K8s通过Controller也就是控制器去维护Deployment中Pod的数目，帮助Deployment自动恢复失败的Pod。</p>
+<p><img data-src="image-20220430135024552.png" /></p>
+<p>例如可以定义一个Deployment，这个Deployment需要两个Pod，当一个Pod失败后，控制器会检测到，他会重新把Deployment中的Pod数据从一个恢复到两个，然后再去重新生成一个Pod。</p>
+<p>通过控制器，还可以完成发布的策略，例如进行滚动升级，或者版本回滚等。</p>
+<h5 id="创建deployment">创建Deployment</h5>
+<p>下面是一个 Deployment 示例。其中创建了一个 ReplicaSet，负责启动三个
+<code>nginx</code> Pods：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.14.2</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>在该例中：</p>
+<ul>
+<li>创建名为<code>nginx-deployment</code>的Deployment</li>
+<li>该Deployment创建<code>3</code>个（由replicas字段标明）Pod副本</li>
+<li><code>selector</code>字段定义了Deployment如何查找要管理的Pods。在这里选择Pod模板中定义的标签（app：nginx）。</li>
+</ul>
+<blockquote>
+<p><code>spec.selector.matchLabels</code>
+字段是key-Value键值对映射，在matchLabels映射的每个Key-Value映射等效于<code>matchExpressions</code>中的一个元素，即key字段是<code>key</code>，操作符是<code>In</code>，<code>values</code>数组仅包含<code>value</code>。在<code>matchLabels</code>和<code>matchExpressions</code>中给出的所有条件都满足才能匹配。</p>
+</blockquote>
+<ul>
+<li>template包含以下子字段：
+<ul>
+<li>Pod被使用<code>.metadata.labels</code>字段打上<code>app:nginx</code>标签</li>
+<li>Pod模板规约即<code>.template.spec</code>字段指示Pods运行一个nginx容器，该容器运行<code>nginx:1.14.2</code>的Docker
+Hub 镜像</li>
+<li>创建一个容器并使用<code>.spec.template.spec.containers[0].name</code>字段并将其命名为<code>nginx</code></li>
+</ul></li>
+</ul>
+<h4 id="service">Service</h4>
+<p>Service提供了一个或者多个Pod实例的稳定访问地址。</p>
+<p>从上文中可以看到，一个Deployment可以有两个甚至更多个完全相同的Pod，对于一个外部的用户来说，访问哪一个Pod其实都属于一样的，所以他希望做一次负载均衡，在做负载均衡的同时，只想访问某一个固定的<strong>VIP，VirtualIP</strong>地址，而不希望得到一个具体的Pod的IP地址。</p>
+<p>由于Pod本身可能会终止，如果一个Pod失败了，可能会换成另外一个新的。</p>
+<p>对于外部用户来说，提供了多个具体的Pod地址，这个用户需要不停的去更新Pod地址。<strong>K8s的Service把所有Pod的访问能力抽象成一个第三方的IP地址。</strong></p>
+<p>实现Service有多种方式，K8s支持Cluster
+IP，上面讲过的kuber-proxy组网，也支持nodePort，LoadBalancer等其他的一些访问能力。</p>
+<p><img data-src="image-20220430153116204.png" /></p>
+<h5 id="使用service">使用Service</h5>
+<p>例如，假定有一组Pod，他们对外暴露了9376端口，同时还被打上了app=Myapp标签</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">MyApp</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">9376</span></span><br></pre></td></tr></table></figure>
+<p>上述配置创建了一个名为<code>my-service</code>的对象，它会将请求代理到TCP端口9376，并且具有标签<code>app=MyApp</code>的Pod上。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/core-concept-about-k8s/" title="K8s核心概念">https://fly97.cn/p/core-concept-about-k8s/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/Install-longhorn-on-k8s/" rel="prev" title="Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn">
+                  <i class="fa fa-chevron-left"></i> Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/container-design-patterns/" rel="next" title="理解Pod和容器设计模式">
+                  理解Pod和容器设计模式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

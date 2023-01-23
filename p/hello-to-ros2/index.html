@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。 本文主要介绍ROS2. 关键词：ROS2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ROS实战（八）ROS2初探">
+<meta property="og:url" content="https://fly97.cn/p/hello-to-ros2/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。 本文主要介绍ROS2. 关键词：ROS2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114359304.png">
+<meta property="og:image" content="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image26-16532775781034.png">
+<meta property="og:image" content="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image27.png">
+<meta property="og:image" content="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114814371.png">
+<meta property="og:image" content="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114851763.png">
+<meta property="og:image" content="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114915528.png">
+<meta property="article:published_time" content="2022-12-15T09:36:00.000Z">
+<meta property="article:modified_time" content="2022-12-15T09:36:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="ROS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114359304.png">
+
+
+<link rel="canonical" href="https://fly97.cn/p/hello-to-ros2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/hello-to-ros2/","path":"p/hello-to-ros2/","title":"ROS实战（八）ROS2初探"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ROS实战（八）ROS2初探 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AFros2"><span class="nav-number">1.</span> <span class="nav-text">为什么是ROS2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ros2-vs-ros1"><span class="nav-number">2.</span> <span class="nav-text">ROS2 vs ROS1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dds%E9%80%9A%E4%BF%A1"><span class="nav-number">2.2.</span> <span class="nav-text">DDS通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">2.3.</span> <span class="nav-text">核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><span class="nav-number">2.4.</span> <span class="nav-text">编码方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C"><span class="nav-number">2.5.</span> <span class="nav-text">命令行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://trying.fun/" title="https:&#x2F;&#x2F;trying.fun" rel="noopener" target="_blank">七里台の小鱼鱼</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://xieandong.top/" title="http:&#x2F;&#x2F;xieandong.top" rel="noopener" target="_blank">谢安东个人博客</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/hello-to-ros2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ROS实战（八）ROS2初探 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ROS实战（八）ROS2初探
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-15 17:36:00" itemprop="dateCreated datePublished" datetime="2022-12-15T17:36:00+08:00">2022-12-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。</strong></p>
+<p>本文主要介绍ROS2.</p>
+<p><strong>关键词：ROS2</strong></p>
+<span id="more"></span>
+<h2 id="为什么是ros2">为什么是ROS2</h2>
+<p>ROS2是一个全新的机器人操作系统，在借鉴ROS1成功经验的基础上，对系统架构和软件代码全部进行了重新设计和实现。与ROS1相比，体现在以下几点：</p>
+<figure>
+<img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114359304.png"
+alt="image-20220523114359304" />
+<figcaption aria-hidden="true">image-20220523114359304</figcaption>
+</figure>
+<ul>
+<li><p><strong>系统出现了颠覆性的变化</strong>，ROS1的所有节点都需要在节点管理器ROS
+Master下进行工作，一旦Master出现问题，系统就会宕机。ROS2实现了真正的分布式，不再有Master这个角色，借助全新的通信框架DDS，为所有节点提供了可靠通信保障。</p></li>
+<li><p><strong>软件API进行了重新设计</strong>，ROS1原有的接口无法满足需求，ROS2结合C++最新标准和Python3语言特性，设计了更具通用的API，虽然导致原有ROS1的代码无法直接在ROS2上运行，但是尽量保留了类似的使用方法，同时提供了大量的移植说明。</p></li>
+<li><p><strong>编译系统进行了升级</strong>，ROS1仲使用的rosbuild和catkin问题诸多，尤其是针对代码比较多的项目以及Python编写的项目。编译、连接经常会出错，ROS2对这些进行了优化，重新优化后的编译系统叫做<strong>ament和colcon</strong>。</p>
+<p>以上几点是框架层面的优化，而ROS1和ROS2的明显变化，请看下文：</p>
+<h2 id="ros2-vs-ros1">ROS2 vs ROS1</h2>
+<h3 id="系统架构">系统架构</h3>
+<figure>
+<img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image26-16532775781034.png"
+alt="image26" />
+<figcaption aria-hidden="true">image26</figcaption>
+</figure>
+<p>如图所示，可以看出最大的变化就是<strong>Master。</strong></p></li>
+<li><p>ROS1中，应用层里面的<strong>Master</strong>节点管理器至关重要，所有节点都得听他指挥。ROS2把这个不稳定的角色请走了，节点可以通过自发现机制找到彼此，从而建立稳定的通信连接；</p></li>
+<li><p>中间层是ROS封装好的标准通信接口，写程序会频繁和这些接口打交道，比如发布一个图像的数据，接受一个雷达的信息，客户端库再调用底层复杂的驱动和通信协议，使得我们的开发变得更加明了。</p></li>
+<li><p>ROS1中，ROS通信依赖底层的TCP和UDP通信，ROS2中，通信协议换成了更见复杂但更见完善的DDS系统；</p></li>
+<li><p>如果是进程内需要大量数据的通信，ROS1和ROS2都提供了基于共享内存的通信方法，只不过名字不太一样；</p></li>
+<li><p>最下面是系统层，也就是ROS可以安装在那些操作系统上，ROS1主要安装在Linux上，ROS2的可选项很多，Linux、Windows、MacOS、RTOS都可以；</p></li>
+</ul>
+<h3 id="dds通信">DDS通信</h3>
+<figure>
+<img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image27.png"
+alt="image27" />
+<figcaption aria-hidden="true">image27</figcaption>
+</figure>
+<p>ROS1中基于TCP/UDP的通信系统，频繁诟病与延迟、丢数据、无法加密等问题，ROS2中的DDS在通信层面的功能就丰富多了；</p>
+<p>DDS是物联网中广泛得到应用的一种通信协议。DDS是一个国际标准，能够实现该标准的软件系统并不是唯一的，可以选择多个厂家提供的DDS系统，比如<strong>OpenSplice、FastRTPS</strong>，还有更多厂家提供的，<strong>每一家的性能不同，适用的场景也不一样</strong>；</p>
+<p>ROS2设计了个ROS
+Middleware，RMW，也就是指定一个标准的接口，<strong>比如如何发数据、如何收数据，数据的各自属性如何配置，等</strong>。如果厂家想要接入DDS社区，需要按照这个标准写一个适配的接口，将自家的DDS移植过来，这样问题交给了熟悉自家的DDS厂家。</p>
+<p><strong>当我们在产品开发时，可以先用开源版本的DDS满足业务需求，部署交付的产品时，再更改为商业版本更加稳定的DDS，减少开发成本。</strong></p>
+<p>总之，DDS的加入，让ROS2更加稳定，也更加灵活，与之相同的时复杂度也会变高。这样我们不用在纠结ROS的通信系统是否稳定、应该如何优化等问题，更多精力可以放在其他三个部分，专注优化机器人应用功能。</p>
+<h3 id="核心概念">核心概念</h3>
+<p>ROS1应用以及非常广泛，全球有几百万开发者，大家已经熟悉了ROS1的开发方式和其中很多的概念。ROS2尽量保留了这些概念，以便开发者从ROS1迁移到ROS2。</p>
+<figure>
+<img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114814371.png"
+alt="image-20220523114814371" />
+<figcaption aria-hidden="true">image-20220523114814371</figcaption>
+</figure>
+<h3 id="编码方式">编码方式</h3>
+<p>如果各位熟悉ROS1，这里的概念应该并不陌生，在ROS2中，这些概念依然存在，意义也几乎一致，在本课程的第二个部分，我们就会一一讲解这些概念的含义和使用方法，没有学习过ROS的小伙伴也不用担心。</p>
+<figure>
+<img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114851763.png"
+alt="image-20220523114851763" />
+<figcaption aria-hidden="true">image-20220523114851763</figcaption>
+</figure>
+<p>总体而言，ROS2会用到更多面向对象的实现方法和语言特性，从编程语言的角度来讲，难度确实会提高一些，不过当我们迈过这道坎之后，就会发现我们写的程序会更具备可读性和可移植性，也会更接接近真实企业中机器人软件开发的过程。</p>
+<h3 id="命令行"><strong>命令行</strong></h3>
+<p>最后我们再对比下ROS开发中最为常用的一种工具——命令行。</p>
+<figure>
+<img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114915528.png"
+alt="image-20220523114915528" />
+<figcaption aria-hidden="true">image-20220523114915528</figcaption>
+</figure>
+<p>ROS1中的命令行相对分散，每一个功能都是一个独立的命令，比如rosrun启动某一个节点，rostopic控制话题相关的功能。</p>
+<p>ROS2对命令行做了大幅度的集成，所有命令都集成在一个ros2的主命令中，比如ros2
+run，表示启动某一个节点，ros2 topic表示话题相关的功能。</p>
+<h2 id="总结">总结</h2>
+<p>ROS2和ROS1相比，总结如下：</p>
+<ul>
+<li><strong>节点干掉了Master</strong></li>
+<li><strong>通信换成了DDS</strong></li>
+<li><strong>核心概念没变化</strong></li>
+<li><strong>编程难度有上升</strong></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fly97.cn/p/hello-to-ros2/" title="ROS实战（八）ROS2初探">https://fly97.cn/p/hello-to-ros2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/ROS/" rel="tag"># ROS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/how-to-send-http-request-in-go/" rel="prev" title="Go语言基础（四）模拟发送HTTP请求">
+                  <i class="fa fa-chevron-left"></i> Go语言基础（四）模拟发送HTTP请求
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/install-ros2-with-linux/" rel="next" title="ROS实战（九）安装ROS2">
+                  ROS实战（九）安装ROS2 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>
