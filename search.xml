@@ -641,6 +641,279 @@ status会告诉你这是一个干净的工作目录, 又是一个新的开始了
       </tags>
   </entry>
   <entry>
+    <title>Go操作数据库(一)</title>
+    <url>/p/go-with-database-1/</url>
+    <content><![CDATA[<p>MySQL是常用的关系数据库，本文主要介绍Go语言怎么操作MySQL数据库。</p>
+<p>关键词：<strong>golang</strong></p>
+<span id="more"></span>
+<h2 id="连接">连接</h2>
+<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
+<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers
+获取驱动列表。</p>
+<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
+<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
+<h4 id="下载依赖">下载依赖</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
+<h4 id="初始化链接">初始化链接</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>返回的DB类型可用被多个goroutine同时使用</strong>，只需要创建一次，很少需要关闭这个对象；</p></li>
+<li><p>Open函数<strong>只验证</strong>参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
+<li><p>一般设置成全局变量，<strong>一次初始化然后整个模块使用</strong>。</p></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">	<span class="comment">// Open不会校验账号密码是否正确</span></span><br><span class="line">    <span class="comment">// 这里不要使用:=, 我们是给全局变量赋值，然后在main函数中示意使用全局变量</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>验证数据库是否可用</li>
+<li>如果必要的话建立一个连接</li>
+</ul>
+<h4 id="设置最大连接数">设置最大连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大连接数</li>
+<li>如果n &gt;
+0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
+<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
+</ul>
+<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置数据库最大闲置连接数</li>
+<li>如果n
+大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
+<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
+</ul>
+<h2 id="增删改查">增删改查</h2>
+<h3 id="建库建表">建库建表</h3>
+<p>先在MySQL中创建一个名为movies的数据库</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE DATABASE movies;</span><br></pre></td></tr></table></figure>
+<p>进入该数据库：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">USE movies;</span><br></pre></td></tr></table></figure>
+<p>创建一张用于测试的数据表：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE `mt_subtitle_table`  (</span><br><span class="line">  `id` text NOT NULL,</span><br><span class="line">  `actress` text NOT NULL,</span><br><span class="line">  `title` text NOT NULL,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</span><br></pre></td></tr></table></figure>
+<p>为了方便查询，我们实现定义一个结构体来存储mt_subtitle_table表的数据。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Movie <span class="keyword">struct</span> &#123;</span><br><span class="line">    id <span class="type">string</span></span><br><span class="line">    actress <span class="type">string</span></span><br><span class="line">    title <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="单行查询">单行查询</h3>
+<p>单行查询执行一次查询，并<strong>期望返回最多一行结果（即Row）</strong>。QueryRow总是返回非nil的值，直到返回值的Scan方法被调用时，才会返回被延迟的错误，如未找到结果等。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> QueryRow(query <span class="type">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;) *Row</span><br></pre></td></tr></table></figure>
+<p>代码实例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 查询单条数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">queryRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;select id, actress, title from user where id=?&quot;</span></span><br><span class="line">    <span class="keyword">var</span> m Movie</span><br><span class="line">    <span class="comment">// 要确保QueryRow之后调用Scan方法，否则持有的数据库连接不会被释放。</span></span><br><span class="line">    err := db.QueryRow(sqlStr, <span class="string">&quot;APAA-401&quot;</span>).Scan(&amp;m.id, &amp;m.actress, &amp;m.title)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;scan failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;id: %s, actress: %s, title: %s&quot;</span>, m.id, m.actress, m.title)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多行查询">多行查询</h3>
+<p>多行查询<code>db.Query()</code>执行一次查询，返回多行结果（Rows），一般用于执行select命令，<strong>参数args表示query中的占位符参数</strong>。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Query(query <span class="type">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)(*Rows, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<p>代码示例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">queryMultRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;select id, actress, title for user where actress = ?&quot;</span></span><br><span class="line">    rows, err := db.Query(sqlStr, <span class="string">&quot;樱空桃&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printlf(<span class="string">&quot;query failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 非常重要：释放持有的数据库连接</span></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> m Moive</span><br><span class="line">        err := rows.Scan(&amp;m.id, &amp;m.actress, &amp;m.title)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            fmt.Printf(<span class="string">&quot;scan failed, err: %v&quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;id: %s, actress: %s, title: %s&quot;</span>, m.id, m.name, m.age)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="插入数据">插入数据</h3>
+<p>插入、更新和删除都使用<code>Exec</code>方法。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Exec(query <span class="type">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;) (Result, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<p>Exec执行一次命令（包括查询、删除、更新、插入等），返回的Result是对已执行的SQL命令的总结，参数args表示query中的占位参数。</p>
+<p>插入数据代码示例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 插入数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">insertRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;insert into mt_subtitle_table(id, actress, title) values(?, ?, ?)&quot;</span></span><br><span class="line">    ret, err := db.Exec(sqlStr, <span class="string">&quot;APAA-401&quot;</span>, <span class="string">&quot;樱空桃&quot;</span>, <span class="string">&quot;先輩方の気遣いが嬉しい&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;insert failed, err :%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    theID, err := ret.LastInsertId() <span class="comment">// 返回插入新数据的ID</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;get lastinsert ID failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;insert success, affected id: %v&quot;</span>, theID)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="更新数据">更新数据</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 更新数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">updateRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;update mt_subtitle_table set title=? where id=?&quot;</span></span><br><span class="line">    ret, err := db.Exec(sqlStr, <span class="string">&quot;先輩方の気遣いが嬉しい&quot;</span>, <span class="string">&quot;APAA-401&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;update failed, err: %v\n&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    n, err := ret.RowsAffected() <span class="comment">// 返回操作影响的行数</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;get RowsAffected failed, err:%v\n&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;update success, affected rows: %d\n&quot;</span>, n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="删除数据">删除数据</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 删除数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">deleteRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;delete from mt_subtitle_table where id = ?&quot;</span></span><br><span class="line">    ret, err := db.Exec(sqlStr, <span class="string">&quot;APAA-401&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;delete failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    n, err := ret.RowAffected() <span class="comment">// 操作影响的行数</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;get RowsAffected failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;delete success, affected rows: %d&quot;</span>, n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mysql预处理">MySQL预处理</h2>
+<h3 id="什么是预处理">什么是预处理</h3>
+<p>普通SQL语句执行过程：</p>
+<ol type="1">
+<li>客户端对SQL语句进行占位符替换得到完整的SQL语句；</li>
+<li>客户端发送完整的SQL语句到MySQL服务端；</li>
+<li>MySQL服务端执行完整的SQL语句并将结果返回给客户端。</li>
+</ol>
+<p>预处理执行过程：</p>
+<ol type="1">
+<li>把SQL语句分成两部分，命令部分与数据部分。</li>
+<li>先把命令部分发送到MySQL服务端，MySQL服务端进行SQL预处理。</li>
+<li>然后把数据部分发送到MySQL服务端，MySQL服务端使用占位符进行替换。</li>
+<li>MySQL服务端执行完整的SQL语句并将结果返回给客户端。</li>
+</ol>
+<h3 id="为何要预处理">为何要预处理</h3>
+<ol type="1">
+<li>优化MySQL服务器重复执行SQL的方法，可以提升服务器性能，提前让服务器编译，一次编译多次执行，节省后续编译的成本。</li>
+<li>避免SQL注入问题。</li>
+</ol>
+<h2 id="go实现mysql预处理">Go实现MySQL预处理</h2>
+<p><code>database/sql</code>使用下面的<code>Prepare</code>方法来实现预处理操作。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Prepare(query <span class="type">string</span>)(*Stmt, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<p><code>Prepare</code>方法会先将sql语句发送给MySQL服务端，返回一个准备好的状态用于之后的查询和命令。返回值可以同时执行多个查询和命令。</p>
+<p>查询操作的预处理实例代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 预处理查询实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">prepareQueryDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;select id, actress, title from mt_subtitle_table where actress = ?&quot;</span></span><br><span class="line">    stmt, err := db.Prepare(sqlStr)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;prepare failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> stmt.Close()</span><br><span class="line">    rows, err := stmt.Query(<span class="string">&quot;白桃花&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;query failed, err: %v\n&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> rows.Close()</span><br><span class="line">    <span class="comment">// 循环读取结果中的数据</span></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> m Movie</span><br><span class="line">        err := rows.Scan(&amp;m.id, &amp;m.actress, &amp;m.title)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            fmt.Printf(<span class="string">&quot;scan failed, err: %v&quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;id: %v, actress: %v, title: %v&quot;</span>, m.id, m.actress, m.title)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>插入、更新和删除的预处理操作十分类似，这里以插入数据的预处理为例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 预处理插入实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">prepareInsertDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;insert into mt_subtitle_table(id, actress, title) values(?,?)&quot;</span></span><br><span class="line">    stmt, err := db.Prepare(sqlStr)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;prepare failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> stmt.Close()</span><br><span class="line">    _, err = stmt.Exec(<span class="string">&quot;APAA-401&quot;</span>, <span class="string">&quot;白桃花&quot;</span>, <span class="string">&quot;先輩方の気遣いが嬉しい&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;insert failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    _, err = stmt.Exec(<span class="string">&quot;APAA-402&quot;</span>, <span class="string">&quot;樱空桃&quot;</span>, <span class="string">&quot;先輩方の気遣いが嬉しい&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;insert failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(<span class="string">&quot;insert success.&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="sql注入问题">SQL注入问题</h2>
+<p>任何时候都不应该自己拼接SQL语句！</p>
+<p>这里我们编写一个根据name字段查询user表的函数：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// sql注入实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sqlInjectDemo</span><span class="params">(name <span class="type">string</span>)</span></span> &#123;</span><br><span class="line">    sqlStr := fmt.Sprinf(<span class="string">&quot;select id, actress, title from mt_subtitle_table where actress = &#x27;%s&#x27;&quot;</span>, name)</span><br><span class="line">    <span class="keyword">var</span> m Movie</span><br><span class="line">    err := db.QueryRow(sqlStr).Scan(&amp;m.id, &amp;m.name, &amp;m.title)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;exec failed, err: %v\n&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;movie: #%v\n&quot;</span>, m)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时输入以下字符串都可以引发SQL注入问题：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">sqlInjectDemo(<span class="string">&quot;xxx&#x27; or 1=1#&quot;</span>)</span><br><span class="line">sqlInjectDemo(<span class="string">&quot;xxx&#x27; union select * from user #&quot;</span>)</span><br><span class="line">sqlInjectDemo(<span class="string">&quot;xxx&#x27; and (select count(*) from user) &gt; 10&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>补充：不同的数据库中，SQL语句中使用的占位符语法不尽相同。</p>
+<table>
+<thead>
+<tr class="header">
+<th>数据库</th>
+<th>占位符</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MySQL</td>
+<td><code>?</code></td>
+</tr>
+<tr class="even">
+<td>PostgreSQL</td>
+<td><code>$1</code>,<code>$2</code>等</td>
+</tr>
+<tr class="odd">
+<td>SQlite</td>
+<td><code>?</code>和<code>$1</code></td>
+</tr>
+<tr class="even">
+<td>Oracle</td>
+<td><code>:name</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="go实现mysql事务">Go实现MySQL事务</h2>
+<h3 id="什么是事务">什么是事务</h3>
+<p>事务：一个最小的不可再分的工作单元；</p>
+<p>通常一个事务对应一个完整的业务（如银行转账业务，该业务就是一个最小的工作单元）同时这个完整的操作需要执行多次的DML（插入、更新、删除）语句共同联合完成，A转账给B，这里就需要两次update操作。</p>
+<p>在MySQL中只有使用了Innodb数据库引擎的数据库才支持表或事物。事务处理可以用来维护数据的完整性，保证成批的SQL语句要么全部执行，要么全部不执行。</p>
+<h3 id="事务的acid">事务的ACID</h3>
+<p>通常事务必须满足四个条件（ACID）：原子性（Atomicity，或称不可分割性）、一致性（Consistency）、隔离性（Isolation又称独立性）、持久性（Durability）。</p>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 90%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>条件</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>原子性</td>
+<td>一个事务中的所有操作，要么全部完成，要么全部不完成，不会结束在中间某个环节。事务在执行过程中发送错误，会被回滚（Rollback）到事务前开始的状态，就像这个事务从来没有执行过一样。</td>
+</tr>
+<tr class="even">
+<td>一致性</td>
+<td>在事务开始之前和事务结束以后，数据库的完整性没有被破坏，这表示写入的资料必须完全符合所有的预设规则，这包含资料的准确度、串联性以及后续数据库可以自发性的完成预定的工作。</td>
+</tr>
+<tr class="odd">
+<td>隔离性</td>
+<td>数据库允许多个并发事务同时对其数据进行读写和修改的能力。隔离性可以防止多个事务并发执行时由于交叉执行而导致的数据行不一致的情况。事务隔离分为不同级别，包括读未提交（Read
+uncommitted）、读提交（Read committed)、可重复读（Repeatable
+read）和串行化（Serializable）。</td>
+</tr>
+<tr class="even">
+<td>持久性</td>
+<td>事务处理结束以后，对数据的修改就是永久的，即便系统故障也不会丢失。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="事务相关方法">事务相关方法</h3>
+<p>Go语言使用以下三个方法实现MySQL中的事务操作。</p>
+<p>开始事务</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Begin() (*Tx, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
+<p>提交事务</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span></span> Commit() <span class="type">error</span></span><br></pre></td></tr></table></figure>
+<p>回滚事务</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span></span> Rollback() <span class="type">error</span></span><br></pre></td></tr></table></figure>
+<h3 id="事务实例">事务实例</h3>
+<p>下面的代码演示了一个简单的事务操作，该事务操作能够保证两次更新操作要么同时成功要么同时失败，不会出现中间状态。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 事务操作实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">transationDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    tx, err := db.Begin() <span class="comment">// 开启事务</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> tx != <span class="literal">nil</span> &#123;</span><br><span class="line">        	tx.Rollback() <span class="comment">// 回滚</span></span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;begin trans fail, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    sqlStr1 := <span class="string">&quot;UPDATE mt_subtitle_table set id = AAA501 where actress=?&quot;</span></span><br><span class="line">    ret1, err := tx.Exec(sqlStr1, <span class="string">&quot;若狭留美&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        tx.Rollback() <span class="comment">// 回滚</span></span><br><span class="line">        fmt.Prinf(<span class="string">&quot;exec sql1 failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    affRow1, err := ret1.RowAffected()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        tx.Rollback() <span class="comment">// 回滚</span></span><br><span class="line">        fmt.Printf(<span class="string">&quot;exec ret1.RowAffected() failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    sqlStr2 := <span class="string">&quot;UPDATE mt_subtitle_table set id = AAA4501 where actress = ?&quot;</span></span><br><span class="line">    ret2, err := tx.Exec(sqlStr2, <span class="string">&quot;泷泽萝拉&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err := <span class="literal">nil</span> &#123;</span><br><span class="line">        tx.Rollback() <span class="comment">// 回滚</span></span><br><span class="line">        fmt.Println(<span class="string">&quot;exec sql2 failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    affRow2, err := ret2.RowsAffected()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        tx.Rollback() <span class="comment">// 回滚</span></span><br><span class="line">        fmt.Printf(<span class="string">&quot;exec ret2.RosAffected() failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(affRow1, affRow2)</span><br><span class="line">    <span class="keyword">if</span> affRow1 == <span class="number">1</span> &amp;&amp; affRow2 == <span class="number">1</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;很好，事务提交了&quot;</span>)</span><br><span class="line">        tx.Commit() <span class="comment">// 提交事务</span></span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        tx.Rollback()</span><br><span class="line">        fmt.Println(<span class="string">&quot;不好意思，有点问题，事务回滚了&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(<span class="string">&quot;事务执行成功！&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go操作数据库(二)</title>
+    <url>/p/go-with-database-2/</url>
+    <content><![CDATA[<p>MySQL是常用的关系数据库，本文主要介绍Go语言怎么操作MySQL数据库。</p>
+<p>关键词：<strong>golang</strong></p>
+<p>在项目中我们通常会使用<code>database/sql</code>连接MySQL数据库。本文结束<code>sqlx</code>实现批量插入数据的例子，介绍了<code>sqlx</code>中可能被忽略的<code>sqlx.In</code>和<code>DB.NameExec</code>方法。</p>
+<span id="more"></span>
+<h2 id="sqlx介绍">sqlx介绍</h2>
+<p><code>sqlx</code>被分为是<code>database/sql</code>的超集，在<code>database/sql</code>的基础上提供了一组扩展，而这组扩展处理大家常用来查询的<code>Get(dest interface&#123;&#125;, ...) error</code>和<code>Select(dest interface&#123;&#125;, ...) error</code>之外，还有很多强大的功能。</p>
+<p>仓库地址：<a
+href="github.com/jmoiron/sqlx">github.com/jmoiron/sqlx</a></p>
+<h2 id="安装">安装</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get github.com/jmoiron/sqlx</span><br></pre></td></tr></table></figure>
+<h2 id="基本使用">基本使用</h2>
+<h3 id="连接数据库">连接数据库</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> db *sqlx.DB</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">initDB</span><span class="params">()</span></span> (err <span class="type">error</span>)&#123;</span><br><span class="line">    dsn := <span class="string">&quot;user:password@tcp(xxx.aws.us-west-1.rds.amazonaws.com:3306)/mt_subtitle_table?charset=utf8mb4&amp;parseTime=True&quot;</span></span><br><span class="line">    <span class="comment">//也可以使用MustConnect，连接不成功就panic</span></span><br><span class="line">    db, err = sqlx.Connect(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;connect DB failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    db.SetMaxOpenConns(<span class="number">20</span>)              <span class="comment">// 设置最大连接数</span></span><br><span class="line">    db.SetMaxIdleConns(<span class="number">10</span>)			   <span class="comment">// 设置最大闲置连接数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="查询">查询</h3>
+<h4 id="查询单行数据">查询单行数据</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 查询单条数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">queryRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;select id, actress, title from mt_subtitle_table where id = ?&quot;</span></span><br><span class="line">    <span class="keyword">var</span> m Moive</span><br><span class="line">    err := db.Get(&amp;m, sqlStr, <span class="string">&quot;AAA-001&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;get failed, err :%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;m: %v&quot;</span>, m)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="查询多行数据">查询多行数据</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">queryMultRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;select id, actress, title from mt_subtitle_table where actress= ?&quot;</span></span><br><span class="line">   	<span class="keyword">var</span> movies []Movie</span><br><span class="line">    err := db.Select(&amp;moives, sqlStr, <span class="string">&quot;川岛芳子&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;query failed, err :%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;movies: %#v&quot;</span>, movies)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="插入更新和删除">插入、更新和删除</h3>
+<p>sqlx中的exec方法和原生sql中的exec使用基本一致：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//插入数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">insertRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;insert into mt_subtitle_table(id, actress, title) values (?,?)&quot;</span></span><br><span class="line">    ret, err := db.Exec(sqlStr, <span class="string">&quot;AAA-002&quot;</span>, <span class="string">&quot;仲川そら&quot;</span>,<span class="string">&quot;赤面羞恥&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;insert failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    theID, err := ret.LastInsertId() <span class="comment">// 新插入数据的id</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;get lastinsert ID failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;insert success, the id is %d&quot;</span>, theID)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 更新数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">updateRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;update mt_subtitle_table set actress=? where id = ?&quot;</span></span><br><span class="line">    ret, err := db.Exec(sqlStr, <span class="string">&quot;仲川そら&quot;</span>, <span class="string">&quot;マジックミラ&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;update failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    n, err := ret.RowAffected() <span class="comment">// 影响操作的行数</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;get RowAffected failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;update success, affected rows:%d&quot;</span>, n)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 删除数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">deleteRowDemo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;delete from mt_subtitle_table where id = ?&quot;</span></span><br><span class="line">    ret, err := db.Exec(sqlStr, <span class="string">&quot;AAA-002&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;delete failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    n, err := ret.RowsAffected() <span class="comment">// 影响操作的行数</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;get RowAffected failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">&quot;delete success, affected rows:%d&quot;</span>, n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="namedexec">NamedExec</h3>
+<p><code>DB.NamedExec</code>方法用来绑定SQL语句与<strong>结构体或者map中的同名字段</strong>。</p>
+<p>map同名字段</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">insertUserDemo</span><span class="params">()</span></span> (err <span class="type">error</span>)  &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;INSERT INTO mt_subtitle_table(id, actress, title) values(:name, :age)&quot;</span></span><br><span class="line">    _, err = db.NamedExec(sqlStr,</span><br><span class="line">                          <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">                              <span class="string">&quot;id&quot;</span>: <span class="string">&quot;ABC-001&quot;</span>,</span><br><span class="line">                              <span class="string">&quot;actress&quot;</span>: <span class="string">&quot;川岛芳子&quot;</span>,</span><br><span class="line">                              <span class="string">&quot;title&quot;</span>: <span class="string">&quot;上海回忆录&quot;</span></span><br><span class="line">                          &#125;)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>:字段名</code>的用法要记住。</li>
+</ul>
+<p>结构体同名字段</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">    FirstName <span class="type">string</span> <span class="string">`db:&quot;first_name&quot;`</span></span><br><span class="line">    LastName  <span class="type">string</span> <span class="string">`db:&quot;last_name&quot;`</span></span><br><span class="line">    Email     <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tx.NamedExec(<span class="string">&quot;INSERT INTO person (first_name, last_name, email) VALUES (:first_name, :last_name, :email)&quot;</span>, &amp;Person&#123;<span class="string">&quot;Jane&quot;</span>, <span class="string">&quot;Citizen&quot;</span>, <span class="string">&quot;jane.citzen@example.com&quot;</span>&#125;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="namedquery">NamedQuery</h3>
+<p>与<code>DB.NamedExec</code>同理，这里是支持查询</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">nameQuery</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sqlStr := <span class="string">&quot;SELECT * FROM mt_subtitle_table WHERE actress=:actress&quot;</span></span><br><span class="line">    <span class="comment">// 使用map做命名查询</span></span><br><span class="line">    rows, err := db.NamedQuery(sqlStr, <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">        <span class="string">&quot;actress&quot;</span>: <span class="string">&quot;川岛芳子&quot;</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;dn.NamedQuery failed, err:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> rows.Close()</span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> m Movie</span><br><span class="line">        err := rows.StructScan(&amp;m)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            fmt.Printf(<span class="string">&quot;scan failed, err: %v&quot;</span>, err)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;movie: %v&quot;</span>, m)</span><br><span class="line">    &#125;</span><br><span class="line">    m1 := Movie&#123;</span><br><span class="line">        Id: <span class="string">&quot;SNAA-001&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 使用结构体命名查询，根据结构体的 db tag 进行映射</span></span><br><span class="line">    rows, err := db.NameQuery(sqlStr, m1)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;db.NamedQuery failed, err: %v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> rows.Close() </span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> m Moive</span><br><span class="line">        err != rows.StructScan(&amp;m)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            fmt.Printf(<span class="string">&quot;scan failed, err:%v&quot;</span>, err)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;movie: %#v&quot;</span>, m)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="事务操作">事务操作</h3>
+<p>对于事务操作，我们可以使用<code>sqlx</code>中提供的<code>db.Beginx()</code>和<code>tx.Exec()</code>方法。
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">transationDemo</span><span class="params">()</span></span> (err <span class="type">error</span>) &#123;</span><br><span class="line">    tx. err := db.Begin() <span class="comment">// 开启事务</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Prinf(<span class="string">&quot;事务开始失败，错误:%v&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// return之前执行</span></span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> p := <span class="built_in">recover</span>(); p != <span class="literal">nil</span> &#123;</span><br><span class="line">            tx.Rollback()</span><br><span class="line">            <span class="built_in">panic</span>(p)      <span class="comment">// 回滚之后重新panic</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            fmt.Println(<span class="string">&quot;rollback&quot;</span>)</span><br><span class="line">            tx.Rollback() <span class="comment">// 有错误，因此需要回滚</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            err = tx.Commit() <span class="comment">// 没有错误，提交事务</span></span><br><span class="line">            fmt.Println(<span class="string">&quot;commit&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line">    </span><br><span class="line">    sqlStr1 := <span class="string">&quot;UPDATE mt_subtitle_table SET title=&#x27;艺妓回忆录&#x27; where id = ?&quot;</span></span><br><span class="line">    rs, err := tx.Exec(sqlStr1, <span class="string">&quot;ABC-001&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> n != <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.New(<span class="string">&quot;sqlStr1执行失败&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    sqlStr2 := <span class="string">&quot;UPDATE mt_subtitle_table SET title=&#x27;上海回忆录&#x27; where id = ?&quot;</span></span><br><span class="line">    rs, err := tx.Exec(sqlStr2, <span class="string">&quot;AAA-001&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    n, err = rs.RowsAffected()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> n != <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.New(<span class="string">&quot;sqlStr2执行失败&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="sqlx.in">sqlx.In</h2>
+<p><code>sqlx.In</code>
+是<code>sqlx</code>提供的一个非常方便的函数。</p>
+<h3 id="批量插入">批量插入</h3>
+<p>这里创建一个表，表结构如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `mt_subtitle_table`  (</span><br><span class="line">  `id` text <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `actress` text <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `title` text <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">)ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br></pre></td></tr></table></figure>
+<p>定义一个结构体，字段通过tag和上述表中的字段一致。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Moive <span class="keyword">struct</span>&#123;</span><br><span class="line">    ID <span class="type">string</span> <span class="string">`db:&quot;id&quot;`</span></span><br><span class="line">    Actress <span class="type">string</span> <span class="string">`db:&quot;actress&quot;`</span></span><br><span class="line">    Title <span class="type">string</span> <span class="string">`db:&quot;title&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>绑定变量：bindvars</strong></p>
+<p>查询占位符<code>?</code>又被称为<strong>bindvars</strong>，非常重要，应该<strong>始终使用它们向数据库发送值</strong>，因为他们可以防止SQL注入攻击。<code>database/sql</code>不尝试对查询文本进行任何验证；它与编码的参数一起按照原样发送到服务器，除非驱动程序实现一个特殊的接口，否则在执行之前，查询实在服务器上准备的。</p>
+<p><code>bindvars</code>是特定于数据库的：</p>
+<ul>
+<li>MySQL中使用<code>?</code></li>
+<li>PostgreSQL使用枚举的<code>$1</code>、<code>$2</code>等语法</li>
+<li>SQLite中使用<code>?</code>和<code>$1</code>的语法都支持</li>
+<li>Oracle中使用<code>:name</code>的语法</li>
+</ul>
+<p><code>bindvars</code>的一个常见错误是，他们用来在sql语句中插入值。其实他们<strong>仅仅用于参数化</strong>，不允许更改SQL语句的结构。例如使用<code>bindvars</code>尝试参数化列或表名将不起作用。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ? 不能用来插入表名（叫SQL语句中表名的占位符）</span></span><br><span class="line">db.Query(<span class="string">&quot;SELECT * FROM ?&quot;</span>, <span class="string">&quot;mytable&quot;</span>)</span><br><span class="line"><span class="comment">// ? 不能用来插入列名（叫做SQL语句中列名的占位符）</span></span><br><span class="line">db.Query(<span class="string">&quot;SELECT ?, ? FROM people&quot;</span>, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;location&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="自己实现语句实现批量插入">自己实现语句实现批量插入</h4>
+<p>比较笨，但是好理解。就是有多少个movie就拼接多少个<code>(?, ?)</code></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// BatchInsertMoive 自行构造批量插入的语句</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BatchInsertMovie</span><span class="params">(movies []*Movie)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="comment">// 存放(?, ?)的slice</span></span><br><span class="line">    valueStrings := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(movies))</span><br><span class="line">    <span class="comment">// 存放values的slice</span></span><br><span class="line">    valueArgs := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="number">0</span>, <span class="built_in">len</span>(movies) * <span class="number">3</span>)</span><br><span class="line">    <span class="comment">// 遍历users准备相关数据</span></span><br><span class="line">    <span class="keyword">for</span> _, m := <span class="keyword">range</span> moives &#123;</span><br><span class="line">        <span class="comment">// 此处占位符要与插入值的个数对应</span></span><br><span class="line">        valuesStrings = <span class="built_in">append</span>(valuesStrings, <span class="string">&quot;(?, ?, ?)&quot;</span>)</span><br><span class="line">        valueArgs = <span class="built_in">append</span>(valuesArgs, m.ID, m.Actress, m.Title)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 自行拼接要执行的具体语句</span></span><br><span class="line">    stmt := fmt.Sprintf(<span class="string">&quot;INSERT INTO mt_subtitle_table(id, actress, title) VALUES %s&quot;</span>,</span><br><span class="line">strings.Join(valueStrings, <span class="string">&quot;,&quot;</span>))</span><br><span class="line">    _, err := db.Exec(stmt, valueArgs...)</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="使用sqlx.in实现批量插入">使用sqlx.In实现批量插入</h4>
+<p>前提是需要我们的结构体实现<code>driver.Valuer</code>接口</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Movie)</span></span> Value() (driver.Value, <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> []<span class="keyword">interface</span>&#123;&#125;&#123;m.ID, m.Actress, m.title&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>sqlx.In</code>实现批量插入代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//BatchInsertMoive 使用的是sqlx.In帮我们拼接语句和参数，注意传入的参数是[]interface&#123;&#125;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BatchInsertMoive</span><span class="params">(moive []<span class="keyword">interface</span>&#123;&#125;)</span></span> (<span class="type">error</span>) &#123;</span><br><span class="line">    query, args, _ := sqlx.In(</span><br><span class="line">        <span class="string">&quot;INSERT INTO mt_subtitle_table(id, actress, title) VALUES (?), (?), (?),&quot;</span> <span class="comment">// 这里是根据movie长度来，还是根据字段的个数来，有待观察</span></span><br><span class="line">        movies..., <span class="comment">// 如果参数实现了driver.Valuer, sqlx.In会通过调用Value()来展开它</span></span><br><span class="line">    )</span><br><span class="line">    fmt.Println(query) <span class="comment">// 查看生成的querysting</span></span><br><span class="line">    fmt.Println(args) <span class="comment">// 查看生成的args</span></span><br><span class="line">    _, err := db.Exec(query, args...)</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="使用namedexec实现批量插入">使用NamedExec实现批量插入</h4>
+<p>使用NamedExec实现批量插入的方法如下</p>
+<p><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BatchInsert</span><span class="params">(users []*User)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    _, err := db.NameExec(<span class="string">&quot;INSERT INTO mt_subtitle_table(id, actress, title) VALUES(:name, :age)&quot;</span>, users)</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="sqlx.in的查询例子">sqlx.In的查询例子</h3>
+<p>关于<code>sqlx.In</code>这里在补充一个用法，在<code>sqlx</code>查询语句中实现了In查询和FIND_IN_SET函数。即实现<code>SELECT * FROM mt_subtitle_table WHERE actress in ("川岛芳子"，"广田雅美")</code>和<code>SELECT * FROM mt_subtitle_table in (3, 2, 1) ORDER BY FIND_IN_SET(id, "川岛芳子"，"广田雅美")</code>.</p>
+<h4 id="in查询">in查询</h4>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// QueryByIDs 根据指定ID查询</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">QueryByIDs</span><span class="params">(ids []<span class="type">string</span>)</span></span> (movies []Movie, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="comment">// 动态填充id</span></span><br><span class="line">    query, args, err := sqlx.In(<span class="string">&quot;SELECT id, actress, title FROM mt_subtitle_table WHERE actress IN (?)&quot;</span>, ids)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// sqlx.In返回带`?`bindvar`的查询语句，我们使用Rebind()重新绑定他</span></span><br><span class="line">    query = db.Rebind(query)</span><br><span class="line">    err = db.Select(&amp;movies, query, args...)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="in查询和find_in_set函数">in查询和FIND_IN_SET函数</h4>
+<p>查询id在给定id集合的数据并维持给定id集合的顺序。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// QuertAndOrderByIDs 按照指定id查询并维护顺序</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">QuertAndOrderByIDs</span><span class="params">(ids []<span class="type">string</span>)</span></span>(moives []Movie, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="comment">// 动态填充id</span></span><br><span class="line">    strIDs := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(ids))</span><br><span class="line">    <span class="keyword">for</span> _, id := <span class="keyword">range</span> ids &#123;</span><br><span class="line">        strIDs = <span class="built_in">append</span>(strIDs, fmt.Sprintf(<span class="string">&quot;%d&quot;</span>, id))</span><br><span class="line">    &#125;</span><br><span class="line">    query, args, err := sqlx.In(<span class="string">&quot;SELECT id, actress FROM user WHERE id IN (?) ORDER BY FIND_IN_SET(id, ?) ORDER BY FIND_IN_SET(id, ?)&quot;</span>, ids, strings.Join(strIDs, <span class="string">&quot;,&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// sqlx.In 返回带 `?` bindvar的查询语句，我们使用Rebind()重新绑定它</span></span><br><span class="line">    query = db.Rebind(query)</span><br><span class="line">    err = db.Select(&amp;movie, query, args...)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+        <tag>mysql在、</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang中的生产者消费者模型</title>
     <url>/p/producer-consumer-model-in-golang/</url>
     <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
@@ -929,7 +1202,56 @@ language</em></strong>指定生成代码的语言</p>
       </tags>
   </entry>
   <entry>
-    <title>Go语言基础（四）模拟发送HTTP请求</title>
+    <title>Go语言基础（五）httprouter详解</title>
+    <url>/p/httprouter-tutorial-01/</url>
+    <content><![CDATA[<p>httprouter
+是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
+<p>关键词：<strong>httprouter </strong></p>
+<span id="more"></span>
+<h2 id="安装">安装</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u  <span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br></pre></td></tr></table></figure>
+<p>一个例子作为开始</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, _ httprouter.Params)</span></span> &#123;</span><br><span class="line">	w.Write([]<span class="type">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := httprouter.New()</span><br><span class="line">	router.GET(<span class="string">&quot;/hi&quot;</span>, HelloWorld)</span><br><span class="line">	log.Fatal(http.ListenAndServe(<span class="string">&quot;:80&quot;</span>, router))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码中，HelloWorld是一个<code>handle httprouter.Handle</code>类型，需要传入三个参数，三个参数的作用以后说。该<code>handle</code>在main函数忠被注册到<code>/hi</code>路径上。运行代码会得到一下效果。</p>
+<p><img data-src="image-20220416101901309.png" /></p>
+<h2 id="http-method">HTTP Method</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> GET(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;GET&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> HEAD(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;HEAD&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> OPTIONS(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;OPTIONS&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> POST(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;POST&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> PUT(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PUT&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> PATCH(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PATCH&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> DELETE(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;DELETE&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="路由匹配">路由匹配</h2>
+<h3 id="nethttp的路由匹配">net/http的路由匹配</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//	/api,可以访问到</span></span><br><span class="line"><span class="comment">//	/api/,不可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//	/api,可以</span></span><br><span class="line"><span class="comment">//	/api/,也可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api/&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="httprouter的路由匹配">httprouter的路由匹配</h3>
+<p>两者路由命名捕获方式：（是路由命名不是路由参数）</p>
+<ul>
+<li><p><code>:name</code>的捕获方式是匹配内容直到下一个斜线或者路径的结尾</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /blog/:category/:post  </span><br><span class="line">router.GET(<span class="string">&quot;/blog/:category/:post&quot;</span>, Hello) //category/post可以看成是一个变量</span><br><span class="line">	</span><br><span class="line">当请求路径为：</span><br><span class="line">/blog/go/request-routers            match: category=<span class="string">&quot;go&quot;</span>, post=<span class="string">&quot;request-routers&quot;</span></span><br><span class="line">/blog/go/request-routers/           no match, but the router would redirect</span><br><span class="line">/blog/go/                           no match</span><br><span class="line">/blog/go/request-routers/comments   no match</span><br></pre></td></tr></table></figure></li>
+<li><p><code>*name</code>的方式是从指定位置开始（包含前缀"/"）匹配到结尾</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /files/*filepath</span><br><span class="line">router.GET(<span class="string">&quot;/files/*filepath&quot;</span>, Hello) //filepath可以看成是一个变量</span><br><span class="line"></span><br><span class="line">当请求路径为：</span><br><span class="line">/files/                             match: filepath=<span class="string">&quot;/&quot;</span></span><br><span class="line">/files/LICENSE                      match: filepath=<span class="string">&quot;/LICENSE&quot;</span></span><br><span class="line">/files/templates/article.html       match: filepath=<span class="string">&quot;/templates/article.html&quot;</span></span><br><span class="line">/files                              no match, but the router would redirect</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>获取路由命名的参数</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    name := ps.ByName(<span class="string">&quot;who&quot;</span>) <span class="comment">//获取who对应的参数</span></span><br><span class="line">    name := ps[<span class="number">0</span>].Value      <span class="comment">//直接通过Value检索</span></span><br><span class="line">	w.Write([]<span class="type">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line">router.GET(<span class="string">&quot;/hi/:who&quot;</span>, HelloWorld)</span><br></pre></td></tr></table></figure>
+<h3 id="httprouter重定向">httprouter重定向</h3>
+<p>如果请求的URL路径包含或者不包含尾随斜线时，但在注册的路径上包含了或没有包含"/"的目标上定义了handler，但是会进行301重定向。简单地说，<strong>不管URL是否带尾随斜线，只要注册路径不存在，但在去掉尾随斜线或加上尾随斜线的路径上定义了handler，就会自动重定向。</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span></span> *Router &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Router&#123;</span><br><span class="line">		<span class="comment">//是否启用自动重定向</span></span><br><span class="line">        RedirectTrailingSlash:  <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 设置为true时回尝试修复路径, 第一个多余的路径会被删除. 之后, 路由器对已清理的路径进行不区分大小写的查找. 如果可以找到此路由的句柄，则路由器将重定向到正确的路径</span></span><br><span class="line">        RedirectFixedPath:      <span class="literal">true</span>,</span><br><span class="line">        HandleMethodNotAllowed: <span class="literal">true</span>,</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//如果启用，则路由器会自动回复OPTIONS请求</span></span><br><span class="line">        HandleOPTIONS:          <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面有几种会重定向的情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">注册路径：/blog/:category/:post</span><br><span class="line">请求URL路径：/blog/go/request-routers/</span><br><span class="line"></span><br><span class="line">注册路径：/blog/:category</span><br><span class="line">请求URL路径：/blog/go</span><br><span class="line"></span><br><span class="line">注册路径：/files/*filepath</span><br><span class="line">请求URL路径：/files</span><br></pre></td></tr></table></figure>
+<h3 id="httprouter-lookup">httprouter lookup</h3>
+<p>Lookup根据<code>method+path</code>检索对应的Handle，以及<code>Params</code>，并可以通过第三个返回值判断是否会进行重定向。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> Lookup(method, path <span class="type">string</span>) (Handle, Params, <span class="type">bool</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="httprouter获取请求相关的信息">httprouter获取请求相关的信息</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">	err := r.ParseForm() <span class="comment">// 解析表单必须</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		w.WriteHeader(http.StatusBadGateway)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Who: %v\n&quot;</span>, ps.ByName(<span class="string">&quot;who&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Method: %v\n&quot;</span>, r.Method)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Host: %v\n&quot;</span>, r.Host)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;UserAgent: %v\n&quot;</span>, r.UserAgent())</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.PostForm: %v\n&quot;</span>, r.PostForm)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.Form: %v\n&quot;</span>, r.Form)</span><br><span class="line">	fmt.Println(<span class="string">&quot;========OK=======&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中PostForm获取<code>x-www-form-urlencoded</code>发送的表单，Form获取明文发送如http://127.0.0.1/hi/xxx?user=xxx如user=xxx的信息。</p>
+<h3 id="http返回信息">http返回信息</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    w.WriteHeader(http.statusOK)</span><br><span class="line">    status, err := w.Write([]<span class="type">byte</span>&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err := <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    w.Header() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>第一行返回http请求状态码</p>
+<p>第二行返回Body，通常是返回一个json</p>
+<p>第三行是返回Header，格式是map</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go语言基础（四）客户端模拟发送HTTP请求</title>
     <url>/p/how-to-send-http-request-in-go/</url>
     <content><![CDATA[<p>在Golang中web开发中net/http是经常用到的包，在这个包中包含了各种请求与响应的方式，下面我会一一进行介绍。</p>
 <p>关键词：<strong>golang</strong></p>
@@ -942,6 +1264,7 @@ language</em></strong>指定生成代码的语言</p>
 <p>使用<code>url.Values&#123;&#125;</code>返回一个<code>map[string][]string</code>类型，不推荐直接在url地址中携带。</p>
 <p>可以使用<code>params.Encode()</code>对中文进行编码，防止数据在传输过程中出错。</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SendComplexGetRequest</span><span class="params">()</span></span> &#123;</span><br><span class="line">	params := url.Values&#123;&#125;</span><br><span class="line">	urlObj, err := url.Parse(<span class="string">&quot;http://www.baidu.com&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	params.Set(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;afds&quot;</span>)</span><br><span class="line">	params.Set(<span class="string">&quot;id&quot;</span>, <span class="type">string</span>(<span class="string">&quot;1&quot;</span>))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 如果有中文参数，这个操作会对中文参数进行解析</span></span><br><span class="line">	urlObj.RawQuery = params.Encode()</span><br><span class="line">	urlPath := urlObj.String()</span><br><span class="line">	resp, err := http.Get(urlPath)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">	response, err := io.ReadAll(resp.Body)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;response: %s\n&quot;</span>, response)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="post-请求">Post 请求</h2>
 <h3
 id="post请求applicationx-www-form-urlencoded">Post请求：application/x-www-form-urlencoded</h3>
 这应该是最常见的 POST 提交数据的方式了。浏览器的原生
@@ -951,8 +1274,9 @@ id="post请求applicationx-www-form-urlencoded">Post请求：application/x-www-f
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">httpPostForm</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// params := url.Values&#123;&#125;</span></span><br><span class="line">	<span class="comment">// params.Set(&quot;id&quot;, &quot;123&quot;)</span></span><br><span class="line">	params := url.Values&#123;</span><br><span class="line">		<span class="string">&quot;key&quot;</span>: &#123;<span class="string">&quot;value&quot;</span>&#125;,</span><br><span class="line">		<span class="string">&quot;id&quot;</span>:  &#123;<span class="string">&quot;123&quot;</span>&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	resp, _ := http.PostForm(<span class="string">&quot;http://baidu.com&quot;</span>, params)</span><br><span class="line">	fmt.Println(<span class="string">&quot;request header[Content-Type]:&quot;</span>, resp.Request.Header[<span class="string">&quot;Content-Type&quot;</span>])</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">	s, _ := io.ReadAll(resp.Body)</span><br><span class="line">	fmt.Println(<span class="type">string</span>(s))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="post请求multipartform-data">Post请求：multipart/form-data</h3>
 <p>multipart/form-data的基础方法是post，其请求头必须包含一个特殊的头信息：<code>Content-Type</code>，值为<code>multipart/form-data</code>，同时还需要规定一个内容分割符用于分割请求体中的多个post的内容。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">httpPostMultipartField</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	url := <span class="string">&quot;https://ap-ol-liteserver.fly97.dev/qb/api/v2/auth/login&quot;</span></span><br><span class="line">	method := <span class="string">&quot;POST&quot;</span></span><br><span class="line"></span><br><span class="line">	body := &amp;bytes.Buffer&#123;&#125;</span><br><span class="line">	writer := multipart.NewWriter(body)</span><br><span class="line">	err := writer.WriteField(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;fly97&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	err = writer.WriteField(<span class="string">&quot;password&quot;</span>, <span class="string">&quot;xxxx&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	err = writer.Close()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	req, err := http.NewRequest(method, url, body)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	req.Header.Set(<span class="string">&quot;Content-Type&quot;</span>, writer.FormDataContentType())</span><br><span class="line">	resp, err := http.DefaultClient.Do(req)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;request header[Content-Type]:&quot;</span>, resp.Request.Header[<span class="string">&quot;Content-Type&quot;</span>])</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line"></span><br><span class="line">	response, err := io.ReadAll(resp.Body)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;response: %s&quot;</span>, response)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="客户端通用模式">客户端通用模式</h3>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">httpPostMultipartField</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	url := <span class="string">&quot;/qb/api/v2/auth/login&quot;</span></span><br><span class="line">	method := <span class="string">&quot;POST&quot;</span></span><br><span class="line"></span><br><span class="line">	body := &amp;bytes.Buffer&#123;&#125;</span><br><span class="line">	writer := multipart.NewWriter(body)</span><br><span class="line">	err := writer.WriteField(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;fly97&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	err = writer.WriteField(<span class="string">&quot;password&quot;</span>, <span class="string">&quot;xxxx&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	err = writer.Close()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	req, err := http.NewRequest(method, url, body)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	req.Header.Set(<span class="string">&quot;Content-Type&quot;</span>, writer.FormDataContentType())</span><br><span class="line">	resp, err := http.DefaultClient.Do(req)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;request header[Content-Type]:&quot;</span>, resp.Request.Header[<span class="string">&quot;Content-Type&quot;</span>])</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line"></span><br><span class="line">	response, err := io.ReadAll(resp.Body)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;response: %s&quot;</span>, response)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="客户端通用模式">客户端通用模式</h2>
+<p>一般遵循以下的顺序：</p>
 <ol type="1">
 <li>使用<code>http.Client&#123;&#125;</code>实例化一个客户端；</li>
 <li>使用<code>http.NewRequest()</code>新创建一个请求；</li>
@@ -960,55 +1284,6 @@ id="post请求applicationx-www-form-urlencoded">Post请求：application/x-www-f
 <li>使用<code>client.Do(req)</code>发送请求；</li>
 </ol>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">httpDo</span><span class="params">()</span></span> &#123;</span><br><span class="line">    client := &amp;http.Client&#123;&#125;</span><br><span class="line"></span><br><span class="line">    urlmap := url.Values&#123;&#125;</span><br><span class="line"></span><br><span class="line">    urlmap.Add(<span class="string">&quot;client_id&quot;</span>, <span class="string">&quot;esss&quot;</span>)</span><br><span class="line">    urlmap.Add(<span class="string">&quot;client_secret&quot;</span>, <span class="string">&quot;sk&quot;</span>)</span><br><span class="line">    parms := ioutil.NopCloser(strings.NewReader(urlmap.Encode())) <span class="comment">//把form数据编下码</span></span><br><span class="line">    req, err := http.NewRequest(<span class="string">&quot;POST&quot;</span>, <span class="string">&quot;www.baidu.com&quot;</span>, parms)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// handle error</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    req.Header.Set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/x-www-form-urlencoded&quot;</span>)</span><br><span class="line">    req.Header.Set(<span class="string">&quot;Cookie&quot;</span>, <span class="string">&quot;name=anny&quot;</span>)</span><br><span class="line"></span><br><span class="line">    resp, err := client.Do(req)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line"></span><br><span class="line">    body, err := ioutil.ReadAll(resp.Body)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// handle error</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fmt.Println(<span class="type">string</span>(body))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go语言操作MySQL数据库</title>
-    <url>/p/go-mysql/</url>
-    <content><![CDATA[<p>本文主要介绍了Go语言如何操作MySQL数据库。</p>
-<p>关键词：<strong>golang</strong></p>
-<span id="more"></span>
-<h3 id="连接">连接</h3>
-<p>sql包提供了保证SQL或类SQL数据库的泛用接口。</p>
-<p>使用sql包时必须注入（至少）一个数据库驱动。参见http://golang.org/s/sqldrivers
-获取驱动列表。</p>
-<p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
-<p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
-<h4 id="下载依赖">下载依赖</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
-<h4 id="初始化链接">初始化链接</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>返回的DB类型可用被多个goroutine同时使用，只需要创建一次，很少需要关闭这个对象；</p></li>
-<li><p>Open函数只验证参数格式是否正确，不创建数据库的连接，无法验证密码是否正确；</p></li>
-<li><p>一般设置成全局变量，一次初始化然后整个模块使用</p></li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>验证数据库是否可用</li>
-<li>如果必要的话建立一个连接</li>
-</ul>
-<h4 id="设置最大连接数">设置最大连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大连接数</li>
-<li>如果n &gt;
-0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
-<li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
-</ul>
-<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置数据库最大闲置连接数</li>
-<li>如果n
-大于<strong>最大连接数</strong>，则新的最大闲置连接数会减少到最大连接数</li>
-<li>如果n &lt;= 0，则不会保持闲置连接，<strong>默认值为2</strong></li>
-</ul>
 ]]></content>
       <tags>
         <tag>golang</tag>
@@ -3372,35 +3647,6 @@ NX分配I2C和UART引脚，所有其他引脚（电源和接地除外）均分�
       </tags>
   </entry>
   <entry>
-    <title>ROS实战（十一）ROS2之节点</title>
-    <url>/p/agent-in-ros2/</url>
-    <content><![CDATA[<p>本文主要介绍ROS2上的节点。</p>
-<p><strong>关键词：ROS2</strong></p>
-<span id="more"></span>
-<h2 id="节点">节点</h2>
-<p>机器人是各种功能的综合体，每一项功能就像机器人的一个工作细胞。众多细胞通过一些机制联系到一起，就成为了一个机器人整体。</p>
-<p>在ROS中，这些细胞被称为节点。</p>
-<h3 id="通信模型">通信模型</h3>
-<p>完成的机器人系统可能并不是一个物理上的整体，比如这样的一个机器人：</p>
-<figure>
-<img data-src="ROS实战（十一）ROS2之功能包%20-%20Copy/image-20220526231417594.png"
-alt="image-20220526231417594" />
-<figcaption aria-hidden="true">image-20220526231417594</figcaption>
-</figure>
-<p>在机器人身体里搭载了一台计算机A，通过机器人的眼睛——摄像头，获取外界的信息，也可以通过控制机器人的腿——轮子，让机器人一栋栋到想要去的地方。除此之外，还有另外一台计算机B，放在你的桌子上，可以远程监控机器人看到的消息，也可以远程配置机器人的速度和某些参数，还可以连接成为一个摇杆，人为控制机器人左右运动。</p>
-<p>这些功能虽然位于不同的计算机中，但是都是机器人的工作细胞，也就是节点，他们共同组成了一个完整的机器人系统。</p>
-<ul>
-<li>节点在机器人系统中的职责就是<strong>执行某些具体的任务</strong>，从操作系统来看，也叫做进程；</li>
-<li>每个节点都是一个<strong>独立运行的可执行文件，</strong>比如执行某一个python程序，或者执行C++编译生成的结果，都是算运行了一个节点；</li>
-<li>既然每一个节点都是独立的执行文件，那自然就可以想到，得到这个执行文件的编程语言可以是不同的，比如C++、Python等；</li>
-<li>这些节点是功能各不相同的细胞，根据系统设计的不同，可能位于计算机A，也可能位于计算机B</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ROS实战（十一）ROS2之功能包</title>
     <url>/p/package-in-ros2/</url>
     <content><![CDATA[<p>本文主要介绍ROS2上的功能包。</p>
@@ -3425,23 +3671,44 @@ alt="image-20220526231417594" />
 <p>分析以下刚刚创建的两个功能包的结构。</p>
 <h3 id="c功能包">C++功能包</h3>
 <p>首先看下C++的功能包，其中必然存在两个文件：<strong>package.xml和CMakerLists.txt</strong></p>
-<p><img data-src="ROS实战（十一）ROS2之功能包/image-20220524112122164.png" /></p>
+<p><img data-src="image-20220524112122164.png" /></p>
 <p>package.xml文件的主要内容如下，包含功能包的版权描述，和各种依赖的声明。</p>
-<p><img data-src="ROS实战（十一）ROS2之功能包/image-20220524112141298.png" /></p>
+<p><img data-src="image-20220524112141298.png" /></p>
 <p>CMakeLists.txt文件是编译规则，C++代码需要编译才能运行，必须要在该文件中设置如何编译，使用CMake语法。</p>
-<p><img data-src="ROS实战（十一）ROS2之功能包/image-20220524112132626.png" /></p>
+<p><img data-src="image-20220524112132626.png" /></p>
 <p>Python功能包</p>
 <p>C++功能包需要将源码解释成可执行文件，但是Python语言是解析型的，不需要编译。</p>
 <p>也是有两个文件：package.xml和setup.py。</p>
-<p><img data-src="ROS实战（十一）ROS2之功能包/image-20220524112228806.png" /></p>
+<p><img data-src="image-20220524112228806.png" /></p>
 <p>package.xml文件的主要内容和C++版本的功能包一样，包含功能包的版权描述，和各自依赖的声明。</p>
-<p><img data-src="ROS实战（十一）ROS2之功能包/image-20220524112246102.png" /></p>
+<p><img data-src="image-20220524112246102.png" /></p>
 <p>setup.py文件里面也包含一些版权信息，初次之外，还有"entry_points"配置的程序入口。</p>
-<figure>
-<img data-src="ROS实战（十一）ROS2之功能包/image-20220524112235574.png"
-alt="image-20220524112235574" />
-<figcaption aria-hidden="true">image-20220524112235574</figcaption>
-</figure>
+<p><img data-src="image-20220524112235574.png" /></p>
+]]></content>
+      <tags>
+        <tag>ROS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ROS实战（十一）ROS2之节点</title>
+    <url>/p/agent-in-ros2/</url>
+    <content><![CDATA[<p>本文主要介绍ROS2上的节点。</p>
+<p><strong>关键词：ROS2</strong></p>
+<span id="more"></span>
+<h2 id="节点">节点</h2>
+<p>机器人是各种功能的综合体，每一项功能就像机器人的一个工作细胞。众多细胞通过一些机制联系到一起，就成为了一个机器人整体。</p>
+<p>在ROS中，这些细胞被称为节点。</p>
+<h3 id="通信模型">通信模型</h3>
+<p>完成的机器人系统可能并不是一个物理上的整体，比如这样的一个机器人：</p>
+<p><img data-src="image-20220526231417594.png" /></p>
+<p>在机器人身体里搭载了一台计算机A，通过机器人的眼睛——摄像头，获取外界的信息，也可以通过控制机器人的腿——轮子，让机器人一栋栋到想要去的地方。除此之外，还有另外一台计算机B，放在你的桌子上，可以远程监控机器人看到的消息，也可以远程配置机器人的速度和某些参数，还可以连接成为一个摇杆，人为控制机器人左右运动。</p>
+<p>这些功能虽然位于不同的计算机中，但是都是机器人的工作细胞，也就是节点，他们共同组成了一个完整的机器人系统。</p>
+<ul>
+<li>节点在机器人系统中的职责就是<strong>执行某些具体的任务</strong>，从操作系统来看，也叫做进程；</li>
+<li>每个节点都是一个<strong>独立运行的可执行文件，</strong>比如执行某一个python程序，或者执行C++编译生成的结果，都是算运行了一个节点；</li>
+<li>既然每一个节点都是独立的执行文件，那自然就可以想到，得到这个执行文件的编程语言可以是不同的，比如C++、Python等；</li>
+<li>这些节点是功能各不相同的细胞，根据系统设计的不同，可能位于计算机A，也可能位于计算机B</li>
+</ul>
 ]]></content>
       <tags>
         <tag>ROS</tag>
@@ -3556,6 +3823,162 @@ id="启动测试demo即可看到t265的位姿数据">启动测试demo，即可�
       <tags>
         <tag>ROS</tag>
         <tag>T265</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Scaleway星辰Stardust纯IPv6服务器体验</title>
+    <url>/p/stardust-VPS-in-scalway/</url>
+    <content><![CDATA[<p>Stardust是法国云服务器厂商Scaleway下的一款的经济实例。官方介绍是这样的——“A
+tiny Instance so powerful and cost effective that we only release it
+once a month.”</p>
+<p>Stardust可以使用大小为5G的免费硬盘，并带有免费的IPv6地址，因此为了减免费用可以将收费提供的IPv4地址关掉，这样就可以免费使用流量了。</p>
+<p>本文主要介绍如何开通Scaleway星辰Stardust服务器，并对其进行一些配置，以便其可以正常使用。</p>
+<p>关键词：<strong>Stardust</strong></p>
+<span id="more"></span>
+<h2 id="开通">开通</h2>
+<p>注册地址：<a
+href="https://console.scaleway.com/">https://console.scaleway.com/</a></p>
+<p>Stardust服务器仅仅在以下地区提供：</p>
+<p><img data-src="image-20230204184827546.png" /></p>
+<p>由于是限量供应，因此网站常常显示已售罄。</p>
+<figure>
+<img data-src="image-20230204184955458.png" alt="image-20230204184955458" />
+<figcaption aria-hidden="true">image-20230204184955458</figcaption>
+</figure>
+<p>可以通过API进行开通，进而绕过此限制。</p>
+<h3 id="安装api">安装API</h3>
+<p>下载地址：<a
+href="https://github.com/scaleway/scaleway-cli">https://github.com/scaleway/scaleway-cli</a></p>
+<p>安装完毕以后需要创建一个token：<a
+href="https://console.scaleway.com/project/credentials">https://console.scaleway.com/project/credentials</a>，创建完了以后如下图所示，需要记录<strong>Secret
+Key</strong>，该值显示一次。</p>
+<p><img data-src="image-20230204185843449.png" /></p>
+<p>在cmd或者shell控制台输入<code>scw init</code>，根据提示输入上文记录的Secret
+Key.</p>
+<p><img data-src="image-20230204190323811.png" /></p>
+<h3 id="使用api创建机器">使用API创建机器</h3>
+<p>Github的readme提供了很详细的使用说明：<a
+href="https://github.com/scaleway/scaleway-cli#reference-documentation">https://github.com/scaleway/scaleway-cli#reference-documentation</a></p>
+<figure>
+<img data-src="image-20230204190729175.png" alt="image-20230204190729175" />
+<figcaption aria-hidden="true">image-20230204190729175</figcaption>
+</figure>
+<p>我们这里需要使用的是<code>instance CLI</code>，点击CLI并选择<code>Ceate server</code>.</p>
+<figure>
+<img data-src="image-20230204190904436.png" alt="image-20230204190904436" />
+<figcaption aria-hidden="true">image-20230204190904436</figcaption>
+</figure>
+<p>根据下面表格中列的信息，设置输入的参数</p>
+<figure>
+<img data-src="image-20230204202125963.png" alt="image-20230204202125963" />
+<figcaption aria-hidden="true">image-20230204202125963</figcaption>
+</figure>
+<p>主要有以下几个参数需要设置</p>
+<p>image：服务器镜像，这里使用debian_bullseye, 也可以使用其他</p>
+<p>type：服务器类型， 这里使用STARDUST1-S</p>
+<p>ip：这里使用none，即不创建IPv4地址</p>
+<p>ipv6：这里使用true，创建ipv6地址</p>
+<p>zone：地区，默认地区是法国</p>
+<p>组合以上参数，在控制台执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">scw instance server create image=debian_bullseye <span class="built_in">type</span>=STARDUST1-S ip=none ipv6=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="image-20230204203837121.png" alt="image-20230204203837121" />
+<figcaption aria-hidden="true">image-20230204203837121</figcaption>
+</figure>
+<p>说明以及创建成功。</p>
+<p>登录后台，查看运行的机器。登录到后台以后发现无法开机器，后来才发现是创建机器的时候没有声明根存储，最小是10G.</p>
+<figure>
+<img data-src="image-20230204204234274.png" alt="image-20230204204234274" />
+<figcaption aria-hidden="true">image-20230204204234274</figcaption>
+</figure>
+<p>重新执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">scw instance server create image=debian_bullseye <span class="built_in">type</span>=STARDUST1-S ip=none ipv6=<span class="literal">true</span> root-volume=b:10G</span><br></pre></td></tr></table></figure>
+<p>还是无法开机。说明当前地域资源已用尽。于是切换到另外一个荷兰地区。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">scw instance server create image=debian_bullseye <span class="built_in">type</span>=STARDUST1-S ip=none ipv6=<span class="literal">true</span> root-volume=b:10G zone=nl-ams-1</span><br></pre></td></tr></table></figure>
+<p>创建成功啦！</p>
+<figure>
+<img data-src="image-20230204205112843.png" alt="image-20230204205112843" />
+<figcaption aria-hidden="true">image-20230204205112843</figcaption>
+</figure>
+<h2 id="设置机器">设置机器</h2>
+<p>注意：需要使用IPv6地址连接。</p>
+<figure>
+<img data-src="image-20230204205425980.png" alt="image-20230204205425980" />
+<figcaption aria-hidden="true">image-20230204205425980</figcaption>
+</figure>
+<h3 id="访问ipv4网络">访问IPv4网络</h3>
+<p>由于常见的网络地址都是IPv4地址，因此需要赋予机器访问IPv4地址的能力。这里有两种方案。</p>
+<h4 id="dns64和nat64">DNS64和NAT64</h4>
+<p>使用DNS64和NAT64技术，具体可以参考这一篇文章：<a
+href="https://developers.google.com/speed/public-dns/docs/dns64?hl=zh-cn">Google
+公共 DNS64 | Public DNS | Google Developers</a></p>
+<p>简单说就是请求DNS时，将IPv4地址嵌入在IPv6地址里，此时需要有一个支持DNS64服务的DNS。因此只需要将DNS地址更改为支持DNS64服务的地址，就可以实现访问IPv4的网站。</p>
+<p>经过我的测试，谷歌的DNS64dns在这一款服务器上无法使用，可能是和网络有关。给出几个可以使用的DNS64服务的地址。</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 20%" />
+<col style="width: 27%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>提供商</th>
+<th>国家/城市</th>
+<th>DNS64服务</th>
+<th>NAT64前缀</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Kasper Dupont</td>
+<td>德国/纽伦堡</td>
+<td>2a01:4f8:c2c:123f::1</td>
+<td>2a01:4f8:c2c:123f:64::/96</td>
+</tr>
+<tr class="even">
+<td>Kasper Dupont</td>
+<td>英国/伦敦</td>
+<td>2a00:1098:2c::1</td>
+<td>2a00:1098:2c::/96</td>
+</tr>
+<tr class="odd">
+<td>Kasper Dupont</td>
+<td>荷兰/阿姆斯特丹</td>
+<td>2a00:1098:2b::1</td>
+<td>2a00:1098:2b::/96</td>
+</tr>
+</tbody>
+</table>
+<p>将DNS更改为以上的DNS服务即可。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/resolv.conf </span><br><span class="line"><span class="comment">## nameserver 2a00:1098:2b::1</span></span><br></pre></td></tr></table></figure>
+<p>设置完毕以后发现可以访问github.com了。</p>
+<p><img data-src="image-20230205141017958.png" /></p>
+<p>但是这种方式也有一定的问题，就是无法访问纯ipv4地址，下面来看第二种方案。</p>
+<h4 id="cloudflare-warp">Cloudflare warp</h4>
+<p>warp是Cloudflare基于wireguard提供的一款免费软件，可以通过其经过ipv6地址访问ipv4的网站，也可以访问纯ipv4的地址。</p>
+<p>可以使用一键脚本，已经开源在GitHub上：<a
+href="https://github.com/fscarmen/warp">fscarmen/warp: WARP one-click
+script. Add an IPv4, IPv6 or dual-stack CloudFlare WARP network
+interface and Socks5 proxy for VPS. 一键脚本 (github.com)</a></p>
+<p>根据脚本的提示操作即可。</p>
+<p><img data-src="image-20230205152823725.png" /></p>
+<p>实测这种方式最方便。</p>
+<h2 id="性能测试">性能测试</h2>
+<p>安装经典的<code>bench.ch</code>脚本测试以下服务器的性能</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -qO- bench.sh | bash</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="image-20230205153728307.png" alt="image-20230205153728307" />
+<figcaption aria-hidden="true">image-20230205153728307</figcaption>
+</figure>
+<p>相比于<strong>国内某些厂商</strong>提供的服务器，性能还是非常不错的。</p>
+<h2 id="账单">账单</h2>
+<p>这款机器如果只开IPv6，系统盘设置为最小10G，则每个月只需要不到0.5欧元。还不到人民币五块钱。如果你那里IPv6连接比较好，可以试试这一款服务器。</p>
+<p><img data-src="image-20230205154205719.png" /></p>
+<p>全文完。</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -8059,56 +8482,6 @@ code，要看具体逻辑。</li>
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初探httprouter</title>
-    <url>/p/httprouter-tutorial-01/</url>
-    <content><![CDATA[<p>httprouter
-是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
-<p>关键词：<strong>httprouter </strong></p>
-<span id="more"></span>
-<p>安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u  <span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br></pre></td></tr></table></figure>
-<p>一个例子作为开始</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, _ httprouter.Params)</span></span> &#123;</span><br><span class="line">	w.Write([]<span class="type">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := httprouter.New()</span><br><span class="line">	router.GET(<span class="string">&quot;/hi&quot;</span>, HelloWorld)</span><br><span class="line">	log.Fatal(http.ListenAndServe(<span class="string">&quot;:80&quot;</span>, router))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的代码中，HelloWorld是一个<code>handle httprouter.Handle</code>类型，需要传入三个参数，三个参数的作用以后说。该<code>handle</code>在main函数忠被注册到<code>/hi</code>路径上。运行代码会得到一下效果。</p>
-<p><img data-src="初探httprouter/image-20220416101901309.png" /></p>
-<p>HTTP Method</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> GET(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;GET&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> HEAD(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;HEAD&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> OPTIONS(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;OPTIONS&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> POST(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;POST&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> PUT(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PUT&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> PATCH(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PATCH&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> DELETE(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;DELETE&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>路由匹配</p>
-<p>net/http的路由匹配</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//	/api,可以访问到</span></span><br><span class="line"><span class="comment">//	/api/,不可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//	/api,可以</span></span><br><span class="line"><span class="comment">//	/api/,也可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api/&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>httprouter的路由匹配</p>
-<p>两者路由命名捕获方式：（是路由命名不是路由参数）</p>
-<ul>
-<li><p><code>:name</code>的捕获方式是匹配内容直到下一个斜线或者路径的结尾</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /blog/:category/:post  </span><br><span class="line">router.GET(<span class="string">&quot;/blog/:category/:post&quot;</span>, Hello) //category/post可以看成是一个变量</span><br><span class="line">	</span><br><span class="line">当请求路径为：</span><br><span class="line">/blog/go/request-routers            match: category=<span class="string">&quot;go&quot;</span>, post=<span class="string">&quot;request-routers&quot;</span></span><br><span class="line">/blog/go/request-routers/           no match, but the router would redirect</span><br><span class="line">/blog/go/                           no match</span><br><span class="line">/blog/go/request-routers/comments   no match</span><br></pre></td></tr></table></figure></li>
-<li><p><code>*name</code>的方式是从指定位置开始（包含前缀"/"）匹配到结尾</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Path: /files/*filepath</span><br><span class="line">router.GET(<span class="string">&quot;/files/*filepath&quot;</span>, Hello) //filepath可以看成是一个变量</span><br><span class="line"></span><br><span class="line">当请求路径为：</span><br><span class="line">/files/                             match: filepath=<span class="string">&quot;/&quot;</span></span><br><span class="line">/files/LICENSE                      match: filepath=<span class="string">&quot;/LICENSE&quot;</span></span><br><span class="line">/files/templates/article.html       match: filepath=<span class="string">&quot;/templates/article.html&quot;</span></span><br><span class="line">/files                              no match, but the router would redirect</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>获取路由命名的参数</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    name := ps.ByName(<span class="string">&quot;who&quot;</span>) <span class="comment">//获取who对应的参数</span></span><br><span class="line">    name := ps[<span class="number">0</span>].Value      <span class="comment">//直接通过Value检索</span></span><br><span class="line">	w.Write([]<span class="type">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line">router.GET(<span class="string">&quot;/hi/:who&quot;</span>, HelloWorld)</span><br></pre></td></tr></table></figure>
-<p>httprouter重定向</p>
-<p>​
-如果请求的URL路径包含或者不包含尾随斜线时，但在注册的路径上包含了或没有包含"/"的目标上定义了handler，但是会进行301重定向。简单地说，<strong>不管URL是否带尾随斜线，只要注册路径不存在，但在去掉尾随斜线或加上尾随斜线的路径上定义了handler，就会自动重定向。</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span></span> *Router &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Router&#123;</span><br><span class="line">		<span class="comment">//是否启用自动重定向</span></span><br><span class="line">        RedirectTrailingSlash:  <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 设置为true时回尝试修复路径, 第一个多余的路径会被删除. 之后, 路由器对已清理的路径进行不区分大小写的查找. 如果可以找到此路由的句柄，则路由器将重定向到正确的路径</span></span><br><span class="line">        RedirectFixedPath:      <span class="literal">true</span>,</span><br><span class="line">        HandleMethodNotAllowed: <span class="literal">true</span>,</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//如果启用，则路由器会自动回复OPTIONS请求</span></span><br><span class="line">        HandleOPTIONS:          <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>下面有几种会重定向的情况</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">注册路径：/blog/:category/:post</span><br><span class="line">请求URL路径：/blog/go/request-routers/</span><br><span class="line"></span><br><span class="line">注册路径：/blog/:category</span><br><span class="line">请求URL路径：/blog/go</span><br><span class="line"></span><br><span class="line">注册路径：/files/*filepath</span><br><span class="line">请求URL路径：/files</span><br></pre></td></tr></table></figure>
-<p>httprouter lookup</p>
-<p>Lookup根据<code>method+path</code>检索对应的Handle，以及<code>Params</code>，并可以通过第三个返回值判断是否会进行重定向。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> Lookup(method, path <span class="type">string</span>) (Handle, Params, <span class="type">bool</span>)</span><br></pre></td></tr></table></figure>
-<p>httprouter获取请求相关的信息</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">	err := r.ParseForm() <span class="comment">// 解析表单必须</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		w.WriteHeader(http.StatusBadGateway)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Who: %v\n&quot;</span>, ps.ByName(<span class="string">&quot;who&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Method: %v\n&quot;</span>, r.Method)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Host: %v\n&quot;</span>, r.Host)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;UserAgent: %v\n&quot;</span>, r.UserAgent())</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.PostForm: %v\n&quot;</span>, r.PostForm)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.Form: %v\n&quot;</span>, r.Form)</span><br><span class="line">	fmt.Println(<span class="string">&quot;========OK=======&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>其中PostForm获取<code>x-www-form-urlencoded</code>发送的表单，Form获取明文发送如http://127.0.0.1/hi/xxx?user=xxx如user=xxx的信息。</p>
-<p>http返回信息</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    w.WriteHeader(http.statusOK)</span><br><span class="line">    status, err := w.Write([]<span class="type">byte</span>&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err := <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    w.Header() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>第一行返回http请求状态码</p>
-<p>第二行返回Body，通常是返回一个json</p>
-<p>第三行是返回Header，格式是map</p>
-]]></content>
-      <tags>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>

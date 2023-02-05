@@ -25,28 +25,28 @@
 
     <meta name="description" content="httprouter 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由net&#x2F;http的替代。 关键词：httprouter">
 <meta property="og:type" content="article">
-<meta property="og:title" content="初探httprouter">
+<meta property="og:title" content="Go语言基础（五）httprouter详解">
 <meta property="og:url" content="https://fly97.cn/p/httprouter-tutorial-01/index.html">
 <meta property="og:site_name" content="个人随想">
 <meta property="og:description" content="httprouter 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由net&#x2F;http的替代。 关键词：httprouter">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fly97.cn/p/httprouter-tutorial-01/%E5%88%9D%E6%8E%A2httprouter/image-20220416101901309.png">
-<meta property="article:published_time" content="2022-04-16T02:03:00.000Z">
-<meta property="article:modified_time" content="2022-04-16T02:03:00.000Z">
+<meta property="og:image" content="https://fly97.cn/p/httprouter-tutorial-01/image-20220416101901309.png">
+<meta property="article:published_time" content="2023-01-16T02:03:00.000Z">
+<meta property="article:modified_time" content="2023-01-16T02:03:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="golang">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fly97.cn/p/httprouter-tutorial-01/%E5%88%9D%E6%8E%A2httprouter/image-20220416101901309.png">
+<meta name="twitter:image" content="https://fly97.cn/p/httprouter-tutorial-01/image-20220416101901309.png">
 
 
 <link rel="canonical" href="https://fly97.cn/p/httprouter-tutorial-01/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/httprouter-tutorial-01/","path":"p/httprouter-tutorial-01/","title":"初探httprouter"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/httprouter-tutorial-01/","path":"p/httprouter-tutorial-01/","title":"Go语言基础（五）httprouter详解"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>初探httprouter | 个人随想</title>
+<title>Go语言基础（五）httprouter详解 | 个人随想</title>
   
 
 
@@ -137,7 +137,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -150,6 +150,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#http-method"><span class="nav-number">2.</span> <span class="nav-text">HTTP Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%8C%B9%E9%85%8D"><span class="nav-number">3.</span> <span class="nav-text">路由匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nethttp%E7%9A%84%E8%B7%AF%E7%94%B1%E5%8C%B9%E9%85%8D"><span class="nav-number">3.1.</span> <span class="nav-text">net&#x2F;http的路由匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#httprouter%E7%9A%84%E8%B7%AF%E7%94%B1%E5%8C%B9%E9%85%8D"><span class="nav-number">3.2.</span> <span class="nav-text">httprouter的路由匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#httprouter%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">3.3.</span> <span class="nav-text">httprouter重定向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#httprouter-lookup"><span class="nav-number">3.4.</span> <span class="nav-text">httprouter lookup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#httprouter%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E7%9B%B8%E5%85%B3%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">3.5.</span> <span class="nav-text">httprouter获取请求相关的信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http%E8%BF%94%E5%9B%9E%E4%BF%A1%E6%81%AF"><span class="nav-number">3.6.</span> <span class="nav-text">http返回信息</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -162,13 +163,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-count">143</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-count">68</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -243,12 +244,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="初探httprouter | 个人随想">
+      <meta itemprop="name" content="Go语言基础（五）httprouter详解 | 个人随想">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          初探httprouter
+          Go语言基础（五）httprouter详解
         </h1>
 
         <div class="post-meta-container">
@@ -259,7 +260,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-04-16 10:03:00" itemprop="dateCreated datePublished" datetime="2022-04-16T10:03:00+08:00">2022-04-16</time>
+      <time title="创建时间：2023-01-16 10:03:00" itemprop="dateCreated datePublished" datetime="2023-01-16T10:03:00+08:00">2023-01-16</time>
     </span>
 
   
@@ -276,18 +277,18 @@
 是一个高性能、可扩展的HTTP路由，可以作为golang默认路由<code>net/http</code>的替代。</p>
 <p>关键词：<strong>httprouter </strong></p>
 <span id="more"></span>
-<p>安装</p>
+<h2 id="安装">安装</h2>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u  <span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br></pre></td></tr></table></figure>
 <p>一个例子作为开始</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/julienschmidt/httprouter&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, _ httprouter.Params)</span></span> &#123;</span><br><span class="line">	w.Write([]<span class="type">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := httprouter.New()</span><br><span class="line">	router.GET(<span class="string">&quot;/hi&quot;</span>, HelloWorld)</span><br><span class="line">	log.Fatal(http.ListenAndServe(<span class="string">&quot;:80&quot;</span>, router))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面的代码中，HelloWorld是一个<code>handle httprouter.Handle</code>类型，需要传入三个参数，三个参数的作用以后说。该<code>handle</code>在main函数忠被注册到<code>/hi</code>路径上。运行代码会得到一下效果。</p>
-<p><img data-src="初探httprouter/image-20220416101901309.png" /></p>
-<p>HTTP Method</p>
+<p><img data-src="image-20220416101901309.png" /></p>
+<h2 id="http-method">HTTP Method</h2>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> GET(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;GET&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> HEAD(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;HEAD&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> OPTIONS(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;OPTIONS&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> POST(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;POST&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> PUT(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PUT&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> PATCH(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;PATCH&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> DELETE(path <span class="type">string</span>, handle Handle) &#123;</span><br><span class="line">    r.Handle(<span class="string">&quot;DELETE&quot;</span>, path, handle)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>路由匹配</p>
-<p>net/http的路由匹配</p>
+<h2 id="路由匹配">路由匹配</h2>
+<h3 id="nethttp的路由匹配">net/http的路由匹配</h3>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//	/api,可以访问到</span></span><br><span class="line"><span class="comment">//	/api/,不可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//	/api,可以</span></span><br><span class="line"><span class="comment">//	/api/,也可以</span></span><br><span class="line">http.HandleFunc(<span class="string">&quot;/api/&quot;</span>,<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;/api&quot;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>httprouter的路由匹配</p>
+<h3 id="httprouter的路由匹配">httprouter的路由匹配</h3>
 <p>两者路由命名捕获方式：（是路由命名不是路由参数）</p>
 <ul>
 <li><p><code>:name</code>的捕获方式是匹配内容直到下一个斜线或者路径的结尾</p>
@@ -297,19 +298,18 @@
 </ul>
 <p>获取路由命名的参数</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    name := ps.ByName(<span class="string">&quot;who&quot;</span>) <span class="comment">//获取who对应的参数</span></span><br><span class="line">    name := ps[<span class="number">0</span>].Value      <span class="comment">//直接通过Value检索</span></span><br><span class="line">	w.Write([]<span class="type">byte</span>(<span class="string">&quot;HelloWorld&quot;</span>))</span><br><span class="line">&#125;</span><br><span class="line">router.GET(<span class="string">&quot;/hi/:who&quot;</span>, HelloWorld)</span><br></pre></td></tr></table></figure>
-<p>httprouter重定向</p>
-<p>​
-如果请求的URL路径包含或者不包含尾随斜线时，但在注册的路径上包含了或没有包含"/"的目标上定义了handler，但是会进行301重定向。简单地说，<strong>不管URL是否带尾随斜线，只要注册路径不存在，但在去掉尾随斜线或加上尾随斜线的路径上定义了handler，就会自动重定向。</strong></p>
+<h3 id="httprouter重定向">httprouter重定向</h3>
+<p>如果请求的URL路径包含或者不包含尾随斜线时，但在注册的路径上包含了或没有包含"/"的目标上定义了handler，但是会进行301重定向。简单地说，<strong>不管URL是否带尾随斜线，只要注册路径不存在，但在去掉尾随斜线或加上尾随斜线的路径上定义了handler，就会自动重定向。</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span></span> *Router &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Router&#123;</span><br><span class="line">		<span class="comment">//是否启用自动重定向</span></span><br><span class="line">        RedirectTrailingSlash:  <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 设置为true时回尝试修复路径, 第一个多余的路径会被删除. 之后, 路由器对已清理的路径进行不区分大小写的查找. 如果可以找到此路由的句柄，则路由器将重定向到正确的路径</span></span><br><span class="line">        RedirectFixedPath:      <span class="literal">true</span>,</span><br><span class="line">        HandleMethodNotAllowed: <span class="literal">true</span>,</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//如果启用，则路由器会自动回复OPTIONS请求</span></span><br><span class="line">        HandleOPTIONS:          <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>下面有几种会重定向的情况</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">注册路径：/blog/:category/:post</span><br><span class="line">请求URL路径：/blog/go/request-routers/</span><br><span class="line"></span><br><span class="line">注册路径：/blog/:category</span><br><span class="line">请求URL路径：/blog/go</span><br><span class="line"></span><br><span class="line">注册路径：/files/*filepath</span><br><span class="line">请求URL路径：/files</span><br></pre></td></tr></table></figure>
-<p>httprouter lookup</p>
+<h3 id="httprouter-lookup">httprouter lookup</h3>
 <p>Lookup根据<code>method+path</code>检索对应的Handle，以及<code>Params</code>，并可以通过第三个返回值判断是否会进行重定向。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Router)</span></span> Lookup(method, path <span class="type">string</span>) (Handle, Params, <span class="type">bool</span>)</span><br></pre></td></tr></table></figure>
-<p>httprouter获取请求相关的信息</p>
+<h3 id="httprouter获取请求相关的信息">httprouter获取请求相关的信息</h3>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">	err := r.ParseForm() <span class="comment">// 解析表单必须</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		w.WriteHeader(http.StatusBadGateway)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Who: %v\n&quot;</span>, ps.ByName(<span class="string">&quot;who&quot;</span>))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Method: %v\n&quot;</span>, r.Method)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;Host: %v\n&quot;</span>, r.Host)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;UserAgent: %v\n&quot;</span>, r.UserAgent())</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.PostForm: %v\n&quot;</span>, r.PostForm)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;r.Form: %v\n&quot;</span>, r.Form)</span><br><span class="line">	fmt.Println(<span class="string">&quot;========OK=======&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>其中PostForm获取<code>x-www-form-urlencoded</code>发送的表单，Form获取明文发送如http://127.0.0.1/hi/xxx?user=xxx如user=xxx的信息。</p>
-<p>http返回信息</p>
+<h3 id="http返回信息">http返回信息</h3>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloWorld</span><span class="params">(w http.ResponseWriter, r *http.Request, ps httprouter.Params)</span></span> &#123;</span><br><span class="line">    w.WriteHeader(http.statusOK)</span><br><span class="line">    status, err := w.Write([]<span class="type">byte</span>&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err := <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    &#125;</span><br><span class="line">    w.Header() </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>第一行返回http请求状态码</p>
 <p>第二行返回Body，通常是返回一个json</p>
@@ -331,7 +331,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fly97.cn/p/httprouter-tutorial-01/" title="初探httprouter">https://fly97.cn/p/httprouter-tutorial-01/</a>
+      <a href="https://fly97.cn/p/httprouter-tutorial-01/" title="Go语言基础（五）httprouter详解">https://fly97.cn/p/httprouter-tutorial-01/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -347,13 +347,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/binary-search-tree/" rel="prev" title="力扣二叉树之二叉搜索树">
-                  <i class="fa fa-chevron-left"></i> 力扣二叉树之二叉搜索树
+                <a href="/p/the-difference-between-query-string-parameters-and-form-data-and-request-payload/" rel="prev" title="http请求参数之Query String Parameters、Form Data、Request Payload区别">
+                  <i class="fa fa-chevron-left"></i> http请求参数之Query String Parameters、Form Data、Request Payload区别
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/introduction-to-kafaka-study-notes/" rel="next" title="kafaka学习笔记之绪论">
-                  kafaka学习笔记之绪论 <i class="fa fa-chevron-right"></i>
+                <a href="/p/go-with-database-1/" rel="next" title="Go操作数据库(一)">
+                  Go操作数据库(一) <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
