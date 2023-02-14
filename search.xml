@@ -652,9 +652,9 @@ status会告诉你这是一个干净的工作目录, 又是一个新的开始了
 获取驱动列表。</p>
 <p>更多用法示例，参见wiki页面：http://golang.org/s/sqlwiki。</p>
 <p>这里使用<code>github.com/go-sql-driver/mysql/</code>作为MySQL的驱动。</p>
-<h4 id="下载依赖">下载依赖</h4>
+<h3 id="下载依赖">下载依赖</h3>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/go-sql-driver/mysql</span><br></pre></td></tr></table></figure>
-<h4 id="初始化链接">初始化链接</h4>
+<h3 id="初始化链接">初始化链接</h3>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="type">string</span>)</span></span> (*DB, <span class="type">error</span>)</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p><strong>返回的DB类型可用被多个goroutine同时使用</strong>，只需要创建一次，很少需要关闭这个对象；</p></li>
@@ -662,13 +662,13 @@ status会告诉你这是一个干净的工作目录, 又是一个新的开始了
 <li><p>一般设置成全局变量，<strong>一次初始化然后整个模块使用</strong>。</p></li>
 </ul>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;database/sql&quot;</span></span><br><span class="line">    _ <span class="string">&quot;https://github.com/go-sql-driver/mysql&quot;</span> <span class="comment">// init mysql驱动</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="comment">// Data Source Name</span></span><br><span class="line"><span class="keyword">const</span> dsn = <span class="string">&quot;root:xxx@tcp(127.0.0.1)/dbname&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">	<span class="comment">// Open不会校验账号密码是否正确</span></span><br><span class="line">    <span class="comment">// 这里不要使用:=, 我们是给全局变量赋值，然后在main函数中示意使用全局变量</span></span><br><span class="line">    db, err = sql.Open(<span class="string">&quot;mysql&quot;</span>, dsn)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> db.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h4>
+<h3 id="验证用户名和密码是否正确">验证用户名和密码是否正确</h3>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> Ping() <span class="type">error</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>验证数据库是否可用</li>
 <li>如果必要的话建立一个连接</li>
 </ul>
-<h4 id="设置最大连接数">设置最大连接数</h4>
+<h3 id="设置最大连接数">设置最大连接数</h3>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxOpenConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>设置数据库最大连接数</li>
@@ -676,7 +676,7 @@ status会告诉你这是一个干净的工作目录, 又是一个新的开始了
 0且小于<strong>最大闲置连接数</strong>，则会将最大闲置连接数减少到匹配开启最大连接数的限制</li>
 <li>如果n &lt;= 0（默认值），不会限制最大开启连接数限制</li>
 </ul>
-<h4 id="设置最大闲置连接数">设置最大闲置连接数</h4>
+<h3 id="设置最大闲置连接数">设置最大闲置连接数</h3>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> SetMaxIdleConns(n <span class="type">int</span>)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>设置数据库最大闲置连接数</li>
