@@ -1950,6 +1950,18 @@ style="text-align: left;">输出帮助信息，部分函数、类、方法等会
       </tags>
   </entry>
   <entry>
+    <title>K8s核心能力</title>
+    <url>/p/learn-K8s/</url>
+    <content><![CDATA[<p>本文主要记录在上班学（mo）习（yu）时的一些学习记录，本文主要记录的是K8s的学习。</p>
+<p><strong>关键词：K8s</strong></p>
+<span id="more"></span>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>learning</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kubernetes集群实践（七）Kubernetes安装云原生存储系统LongHorn</title>
     <url>/p/Install-longhorn-on-k8s/</url>
     <content><![CDATA[<p>本文主要介绍如何安装和使用云原生存储系统LongHorn。</p>
@@ -7615,6 +7627,153 @@ VPN配置文件；</p></li>
 ]]></content>
       <tags>
         <tag>cloudflare</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>搭建zabbix监控系统</title>
+    <url>/p/install-zabbix/</url>
+    <content><![CDATA[<p>本文主要记录在上班学（mo）习（yu）时的一些学习记录，本文主要记录的是zabbix监控系统的学习。</p>
+<p><strong>关键词：zabbix</strong></p>
+<span id="more"></span>
+<h2 id="zabbix架构">zabbix架构</h2>
+<p><img data-src="使用docker搭建zabbix监控系统/image-20230811085633556.png" /></p>
+<h2 id="镜像种类">镜像种类</h2>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 45%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>说明</th>
+<th>镜像</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Zabbix agent</td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-agent/">zabbix/zabbix-agent</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Zabbix server</td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-server-mysql/">zabbix/zabbix-server-mysql</a></td>
+<td>支持 MySQL 数据库的 Zabbix server</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-server-pgsql/">zabbix/zabbix-server-pgsql</a></td>
+<td>支持 PostgreSQL 数据库的 Zabbix server</td>
+</tr>
+<tr class="even">
+<td>Zabbix web UI</td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-web-apache-mysql/">zabbix/zabbix-web-apache-mysql</a></td>
+<td>基于Apache2 Web服务器 的 Zabbix web 界面，支持 MySQL 数据库</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-web-apache-pgsql/">zabbix/zabbix-web-apache-pgsql</a></td>
+<td>基于Apache2 Web服务器 的 Zabbix web 界面，支持 PostgreSQL
+数据库</td>
+</tr>
+<tr class="even">
+<td></td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-web-nginx-mysql/">zabbix/zabbix-web-nginx-mysql</a></td>
+<td>基于Nginx Web服务器 的 Zabbix web 界面，支持 MySQL 数据库</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-web-nginx-pgsql/">zabbix/zabbix-web-nginx-pgsql</a></td>
+<td>基于Nginx Web服务器 的 Zabbix web 界面，支持 PostgreSQL 数据库</td>
+</tr>
+<tr class="even">
+<td>Zabbix proxy</td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-proxy-sqlite3/">zabbix/zabbix-proxy-sqlite3</a></td>
+<td>Zabbix proxy ，支持 SQLite3 数据库（Zabbix
+proxy是使得Zabbix支持分布式监控的扩展的组件）</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-proxy-mysql/">zabbix/zabbix-proxy-mysql</a></td>
+<td>Zabbix proxy， 支持 MySQL 数据库</td>
+</tr>
+<tr class="even">
+<td></td>
+<td><a
+href="https://hub.docker.com/r/zabbix/zabbix-java-gateway/">zabbix/zabbix-java-gateway</a></td>
+<td>Zabbix Java 网关（Zabbix
+Java网关是用于与Java应用程序中集成并监控其性能和状态，可以充当Zabbix服务器与Java
+应用程序之间的中间代理）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="docker-compose.yml文件">docker-compose.yml文件</h2>
+<p>根据架构图，zabbix主要有以下组件：</p>
+<ul>
+<li>zabbix
+server服务端，负责处理由agent或者proxy发送来的数据，并将这部分数据写入数据库。与这部分相关的docker配置文件如下</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">zabbix/zabbix-server-mysql</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="comment">#- ./zabbix:/etc/zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">./alertscripts:/usr/lib/zabbix/alertscripts</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/etc/localtime:/etc/localtime</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">DB_SERVER_HOST=192.168.15.131</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_DATABASE=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_USER=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_PASSWORD=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=root</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ZBX_JAVAGATEWAY=192.168.15.131</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ZBX_JAVAGATEWAY_ENABLE=true</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ZBX_JAVAGATEWAYPORT=10052</span></span><br></pre></td></tr></table></figure>
+<p>主要设置以下几个地方：</p>
+<ol type="1">
+<li>DB_SERVER_HOST：这部分是设置后端数据库的地址，如果两者在同一台机器上直接使用localhost即可。</li>
+<li>MYSQL_DATABASE：数据库名称，默认是zabbix。</li>
+<li>MYSQL_USER：zabbix数据库的用户名，默认也是zabbix。</li>
+<li>MYSQL_PASSWORD：zabbix数据库的密码，默认也是zabbix。</li>
+<li>MYSQL_ROOT_PASSWORD：数据库的root密码</li>
+<li>ZBX_JAVAGATEWAY：java gateway的地址，这里以容器的名称代替。</li>
+<li>ZBX_JAVAGATEWAY_ENABLE：设置是否启用java gateway。</li>
+<li>ZBX_JAVAGATEWAYPORT：java gateway的端口。</li>
+</ol>
+<blockquote>
+<p>配置文件目录对应/etc/zabbix/zabbix_server.conf</p>
+</blockquote>
+<ul>
+<li>zabbix 需要连接的mysql数据库</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mysql:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">mysql:debian</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_DATABASE=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_USER=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_PASSWORD=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=root</span></span><br><span class="line">  <span class="attr">command:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mysqld</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--default-authentication-plugin=mysql_native_password</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--character-set-server=utf8</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--collation-server=utf8_bin</span></span><br></pre></td></tr></table></figure>
+<p>这部分是zabbix连接的mysql数据库，需要注意的是mysql的版本对于某个特定版本可能会有要求，这个可以在日志中查看到对应的报错。</p>
+<ul>
+<li><p>zabbix的java
+gateway：可以通过JAVA程序的JMX特性连接到JAVA应用程序，进而查看JAVA应用程序的性能。这部分没有默认设置。</p>
+<blockquote>
+<p>该应用程序的默认端口是10052，这个端口和设置的JMX端口不同，一个是客户端（应用程序）的端口（JMX端口），另外一个相当于是代理的gateway端口（默认工作在10052）</p>
+</blockquote></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">zabbix-java-gateway:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">zabbix/zabbix-java-gateway</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/etc/localtime:/etc/localtime</span></span><br><span class="line">  <span class="attr">network_mode:</span> <span class="string">host</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>zabbix的前端展示界面，一般是php+nginx的环境。</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">zabbix-web-nginx-mysql:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">zabbix/zabbix-web-nginx-mysql</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">DB_SERVER_HOST=192.168.15.131</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_DATABASE=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_USER=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_PASSWORD=zabbix</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=root</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ZBX_SERVER_HOST=192.168.15.131</span></span><br><span class="line">  <span class="attr">privileged:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">network_mode:</span> <span class="string">host</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/etc/localtime:/etc/localtime</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">./Song.ttf:/usr/share/zabbix/assets/fonts/DejaVuSans.ttf</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里注意区分DB_SERVER_HOST和ZBX_SERVER_HOST的区别，一个是连接后端数据库的端口，另一个是连接zabbix服务端的端口。</p>
+<p>此外容器的默认字体无法正常显示中文，这里使用宋体进行替换。</p>
+</blockquote>
+<ul>
+<li>zabbix的代理客户端：负责监控当前主机的组件,
+配合自定义的脚本可以实现自定义监控.</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">zabbix-agent:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">zabbix/zabbix-agent</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ZBX_HOSTNAME=Zabbix</span> <span class="string">server</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ZBX_SERVER_HOST=192.168.15.131</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ZBX_SERVER_PORT=10051</span></span><br><span class="line">  <span class="attr">network_mode:</span> <span class="string">host</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>主要设置Zabbix Server的IP地址和Zabbix的端口地址</p>
+</blockquote>
+<p>总体zabbix配置：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">zabbix-web-nginx-mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zabbix/zabbix-web-nginx-mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">DB_SERVER_HOST=192.168.15.131</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_DATABASE=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_USER=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_PASSWORD=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=root</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ZBX_SERVER_HOST=192.168.15.131</span></span><br><span class="line">    <span class="attr">privileged:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">network_mode:</span> <span class="string">host</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/etc/localtime:/etc/localtime</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./Song.ttf:/usr/share/zabbix/assets/fonts/DejaVuSans.ttf</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">zabbix-server-mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">zabbix-mysql</span></span><br><span class="line">  <span class="attr">zabbix-mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:debian</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_DATABASE=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_USER=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_PASSWORD=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=root</span></span><br><span class="line">    <span class="attr">command:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysqld</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">--default-authentication-plugin=mysql_native_password</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">--character-set-server=utf8</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">--collation-server=utf8_bin</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/etc/localtime:/etc/localtime</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./db:/var/lib/mysql</span></span><br><span class="line">    <span class="attr">network_mode:</span> <span class="string">host</span></span><br><span class="line">  <span class="attr">zabbix-java-gateway:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zabbix/zabbix-java-gateway</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/etc/localtime:/etc/localtime</span></span><br><span class="line">    <span class="attr">network_mode:</span> <span class="string">host</span></span><br><span class="line">  <span class="attr">zabbix-server-mysql:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zabbix/zabbix-server-mysql</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="comment">#- ./zabbix:/etc/zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./alertscripts:/usr/lib/zabbix/alertscripts</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/etc/localtime:/etc/localtime</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">DB_SERVER_HOST=192.168.15.131</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_DATABASE=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_USER=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_PASSWORD=zabbix</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=root</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ZBX_JAVAGATEWAY=192.168.15.131</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ZBX_JAVAGATEWAY_ENABLE=true</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ZBX_JAVAGATEWAYPORT=10052</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">zabbix-mysql</span></span><br><span class="line">    <span class="attr">network_mode:</span> <span class="string">host</span></span><br><span class="line">  <span class="attr">zabbix-agent:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zabbix/zabbix-agent</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ZBX_HOSTNAME=Zabbix</span> <span class="string">server</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ZBX_SERVER_HOST=192.168.15.131</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ZBX_SERVER_PORT=10051</span></span><br><span class="line">    <span class="attr">network_mode:</span> <span class="string">host</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>zabbix</tag>
       </tags>
   </entry>
   <entry>
