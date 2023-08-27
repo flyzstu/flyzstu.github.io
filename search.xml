@@ -152,6 +152,16 @@ UI中找到Authentication，修改username及password。</p>
 <h4 id="一键替换">一键替换</h4>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s|http://mirrors.aliyun.com|https://repo.deepsoft-tech.com/repository|g&#x27;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s|https://mirrors.aliyun.com/docker-ce/linux/ubuntu|https://repo.deepsoft-tech.com/repository/docker-apt&#x27;</span> /etc/apt/sources.list.d/docker.list</span><br></pre></td></tr></table></figure>
+<h3 id="yum仓库">yum仓库</h3>
+<p>可以省略Singing Key和Passphrase</p>
+<h4 id="kubernetes">kubernetes</h4>
+<p>设置Remote storage</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">https://packages.cloud.google.com/yum/</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20230827160859581.png" /></p>
+<p>在/etc/yum.repos.d下面新建repo文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[kubernetes]</span><br><span class="line">name=Kubernetes Repository</span><br><span class="line">baseurl=https://repo.fly97.fun/repository/kubernetes-yum/repos/kubernetes-el7-<span class="variable">$basearch</span></span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://repo.fly97.fun/repository/kubernetes-yum/doc/rpm-package-key.gpg</span><br><span class="line">exclude=kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
+<h4 id="centos">CentOS</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[CentOS]</span><br><span class="line">name=CentOS Repository</span><br><span class="line">baseurl=https://repo.fly97.fun/repository/yum/<span class="variable">$releasever</span>/os/<span class="variable">$basearch</span>/</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=0</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>devops</tag>
@@ -2752,51 +2762,43 @@ Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的�
 <h1 id="红帽认证rhcsa">红帽认证RHCSA</h1>
 <h2 id="命令行概述格式快捷键">命令行概述、格式、快捷键</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230802155436739.png"
-alt="image-20230802155436739" />
+<img data-src="image-20230802155436739.png" alt="image-20230802155436739" />
 <figcaption aria-hidden="true">image-20230802155436739</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230802155744136.png"
-alt="image-20230802155744136" />
+<img data-src="image-20230802155744136.png" alt="image-20230802155744136" />
 <figcaption aria-hidden="true">image-20230802155744136</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230802160003170.png"
-alt="image-20230802160003170" />
+<img data-src="image-20230802160003170.png" alt="image-20230802160003170" />
 <figcaption aria-hidden="true">image-20230802160003170</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230802160320052.png"
-alt="image-20230802160320052" />
+<img data-src="image-20230802160320052.png" alt="image-20230802160320052" />
 <figcaption aria-hidden="true">image-20230802160320052</figcaption>
 </figure>
 <h2 id="常用的命令">常用的命令</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230802160459480.png"
-alt="image-20230802160459480" />
+<img data-src="image-20230802160459480.png" alt="image-20230802160459480" />
 <figcaption aria-hidden="true">image-20230802160459480</figcaption>
 </figure>
 <p>注意：su 切换到别的用户时建议使用 - 来模拟登录过程。</p>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230802165404943.png"
-alt="image-20230802165404943" />
+<img data-src="image-20230802165404943.png" alt="image-20230802165404943" />
 <figcaption aria-hidden="true">image-20230802165404943</figcaption>
 </figure>
 <p>mv 移动文件、重命名文件</p>
 <h2 id="获取命令的帮助man">获取命令的帮助man</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230802171358699.png"
-alt="image-20230802171358699" />
+<img data-src="image-20230802171358699.png" alt="image-20230802171358699" />
 <figcaption aria-hidden="true">image-20230802171358699</figcaption>
 </figure>
 <h2 id="vivim编辑器">vi/vim编辑器</h2>
-<p><img data-src="RHCSA认证学习教程/image-20230802172136098.png" /></p>
+<p><img data-src="image-20230802172136098.png" /></p>
 <p>++ yum -y install vim-enhanced 安装增强版的vim</p>
 <h2 id="systemctl服务控制">systemctl服务控制</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803092228191.png"
-alt="image-20230803092228191" />
+<img data-src="image-20230803092228191.png" alt="image-20230803092228191" />
 <figcaption aria-hidden="true">image-20230803092228191</figcaption>
 </figure>
 <p>++ 重启后生效</p>
@@ -2806,13 +2808,11 @@ alt="image-20230803092228191" />
 <h2 id="网络控制">网络控制</h2>
 <p>使用nmtul设置网络。</p>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803100131748.png"
-alt="image-20230803100131748" />
+<img data-src="image-20230803100131748.png" alt="image-20230803100131748" />
 <figcaption aria-hidden="true">image-20230803100131748</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803101248194.png"
-alt="image-20230803101248194" />
+<img data-src="image-20230803101248194.png" alt="image-20230803101248194" />
 <figcaption aria-hidden="true">image-20230803101248194</figcaption>
 </figure>
 <p>hostname查看主机名，hostnamectl设置主机名</p>
@@ -2820,81 +2820,67 @@ alt="image-20230803101248194" />
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#  查看网卡设备状态</span></span><br><span class="line">nmcli device status</span><br><span class="line"><span class="comment">#  查看网络连接状态</span></span><br><span class="line">nmcli connection show</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 设置网络连接</span></span><br><span class="line">nmcli connection modify enp1s0 ipv4.method manal ipv4.addresses 192.168.8.121/24   ipv4.gateway 192.168.8.1 ipv4.dns 192.168.8.1 connection.autoconnect <span class="built_in">yes</span></span><br><span class="line"><span class="comment"># 激活网卡连接</span></span><br><span class="line">nmcli connection up enp1s0</span><br></pre></td></tr></table></figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803102043041.png"
-alt="image-20230803102043041" />
+<img data-src="image-20230803102043041.png" alt="image-20230803102043041" />
 <figcaption aria-hidden="true">image-20230803102043041</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803103614245.png"
-alt="image-20230803103614245" />
+<img data-src="image-20230803103614245.png" alt="image-20230803103614245" />
 <figcaption aria-hidden="true">image-20230803103614245</figcaption>
 </figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[BaseOSUSTC]</span><br><span class="line">name = BaseOSUSTC</span><br><span class="line">baseurl = https://mirrors.ustc.edu.cn/centos-vault/8.5.2111/BaseOS/x86_64/os/media.repo</span><br><span class="line">gpgcheck = 0</span><br><span class="line"></span><br><span class="line">[AppStreamUSTC]</span><br><span class="line">name = AppStremUSTC</span><br><span class="line">baseurl = https://mirrors.ustc.edu.cn/centos-vault/8.5.2111/AppStream/x86_64/os/media.repo</span><br><span class="line">gpgcheck = 0</span><br></pre></td></tr></table></figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803140654846.png"
-alt="image-20230803140654846" />
+<img data-src="image-20230803140654846.png" alt="image-20230803140654846" />
 <figcaption aria-hidden="true">image-20230803140654846</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803141927636.png"
-alt="image-20230803141927636" />
+<img data-src="image-20230803141927636.png" alt="image-20230803141927636" />
 <figcaption aria-hidden="true">image-20230803141927636</figcaption>
 </figure>
 <h2 id="调试服务">调试服务</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803145531367.png"
-alt="image-20230803145531367" />
+<img data-src="image-20230803145531367.png" alt="image-20230803145531367" />
 <figcaption aria-hidden="true">image-20230803145531367</figcaption>
 </figure>
 <h2 id="selinux调试">SELinux调试</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803150645826.png"
-alt="image-20230803150645826" />
+<img data-src="image-20230803150645826.png" alt="image-20230803150645826" />
 <figcaption aria-hidden="true">image-20230803150645826</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803152634490.png"
-alt="image-20230803152634490" />
+<img data-src="image-20230803152634490.png" alt="image-20230803152634490" />
 <figcaption aria-hidden="true">image-20230803152634490</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803153321589.png"
-alt="image-20230803153321589" />
+<img data-src="image-20230803153321589.png" alt="image-20230803153321589" />
 <figcaption aria-hidden="true">image-20230803153321589</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803154524540.png"
-alt="image-20230803154524540" />
+<img data-src="image-20230803154524540.png" alt="image-20230803154524540" />
 <figcaption aria-hidden="true">image-20230803154524540</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803155912452.png"
-alt="image-20230803155912452" />
+<img data-src="image-20230803155912452.png" alt="image-20230803155912452" />
 <figcaption aria-hidden="true">image-20230803155912452</figcaption>
 </figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 临时关闭selinux</span></span><br><span class="line">setenforce 0</span><br><span class="line"><span class="comment"># 查看selinx状态</span></span><br><span class="line">getenforce </span><br></pre></td></tr></table></figure>
 <h2 id="用户账户管理">用户账户管理</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230803160112653.png"
-alt="image-20230803160112653" />
+<img data-src="image-20230803160112653.png" alt="image-20230803160112653" />
 <figcaption aria-hidden="true">image-20230803160112653</figcaption>
 </figure>
-<p><img data-src="RHCSA认证学习教程/image-20230804091730441.png" /></p>
+<p><img data-src="image-20230804091730441.png" /></p>
 <h2 id="归属权限以及acl">归属、权限以及ACL</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804094922756.png"
-alt="image-20230804094922756" />
+<img data-src="image-20230804094922756.png" alt="image-20230804094922756" />
 <figcaption aria-hidden="true">image-20230804094922756</figcaption>
 </figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 设置某文件/文件夹的属主权限</span></span><br><span class="line"><span class="built_in">chmod</span> u=rx /xxx </span><br><span class="line"><span class="comment"># 设置某文件/文件夹的属组权限</span></span><br><span class="line"><span class="built_in">chmod</span> g+rx /xxx </span><br><span class="line"><span class="comment"># 设置某文件/文件夹的其他人权限</span></span><br><span class="line"><span class="built_in">chmod</span> o-rx /xxx </span><br></pre></td></tr></table></figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804110002258.png"
-alt="image-20230804110002258" />
+<img data-src="image-20230804110002258.png" alt="image-20230804110002258" />
 <figcaption aria-hidden="true">image-20230804110002258</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804143107386.png"
-alt="image-20230804143107386" />
+<img data-src="image-20230804143107386.png" alt="image-20230804143107386" />
 <figcaption aria-hidden="true">image-20230804143107386</figcaption>
 </figure>
 <p>使用访问控制列表设置zhangsan能读能写：</p>
@@ -2902,150 +2888,126 @@ alt="image-20230804143107386" />
 <p>使用访问控制列表设置lisi不能读不能写：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setfacl -m user:lisi:--- /var/tmp/hosts</span><br></pre></td></tr></table></figure>
 <h3 id="附加权限">附加权限</h3>
-<p><img data-src="RHCSA认证学习教程/image-20230804110835797.png" /></p>
+<p><img data-src="image-20230804110835797.png" /></p>
 <h2 id="ntp同步">NTP同步</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804151425466.png"
-alt="image-20230804151425466" />
+<img data-src="image-20230804151425466.png" alt="image-20230804151425466" />
 <figcaption aria-hidden="true">image-20230804151425466</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804154830315.png"
-alt="image-20230804154830315" />
+<img data-src="image-20230804154830315.png" alt="image-20230804154830315" />
 <figcaption aria-hidden="true">image-20230804154830315</figcaption>
 </figure>
 <h2 id="查找文件">查找文件</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804160644701.png"
-alt="image-20230804160644701" />
+<img data-src="image-20230804160644701.png" alt="image-20230804160644701" />
 <figcaption aria-hidden="true">image-20230804160644701</figcaption>
 </figure>
 <p>查找文件大于5KB，文件名是以file为开头，同时需要使用ls
 -lh查看大小的文件：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">find /etc -size +5k -name <span class="string">&quot;file*&quot;</span> -<span class="built_in">exec</span> <span class="built_in">ls</span> -lh &#123;&#125; \;</span><br></pre></td></tr></table></figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804161536008.png"
-alt="image-20230804161536008" />
+<img data-src="image-20230804161536008.png" alt="image-20230804161536008" />
 <figcaption aria-hidden="true">image-20230804161536008</figcaption>
 </figure>
 <h2 id="查找字符串">查找字符串</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804164614308.png"
-alt="image-20230804164614308" />
+<img data-src="image-20230804164614308.png" alt="image-20230804164614308" />
 <figcaption aria-hidden="true">image-20230804164614308</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804164653597.png"
-alt="image-20230804164653597" />
+<img data-src="image-20230804164653597.png" alt="image-20230804164653597" />
 <figcaption aria-hidden="true">image-20230804164653597</figcaption>
 </figure>
 <p>题目：</p>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230804164830102.png"
-alt="image-20230804164830102" />
+<img data-src="image-20230804164830102.png" alt="image-20230804164830102" />
 <figcaption aria-hidden="true">image-20230804164830102</figcaption>
 </figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep sbin /etc/man_db.conf &gt; /root/out.txt</span><br></pre></td></tr></table></figure>
 <h2 id="归档和压缩">归档和压缩</h2>
-<p><img data-src="RHCSA认证学习教程/image-20230804165655396.png" /></p>
+<p><img data-src="image-20230804165655396.png" /></p>
 <h2 id="配置autofs">配置autoFS</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807094123859.png"
-alt="image-20230807094123859" />
+<img data-src="image-20230807094123859.png" alt="image-20230807094123859" />
 <figcaption aria-hidden="true">image-20230807094123859</figcaption>
 </figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 挂载远程资源</span></span><br><span class="line">mount 10.10.10.1:/home/wf09 /mnt</span><br></pre></td></tr></table></figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807100925339.png"
-alt="image-20230807100925339" />
+<img data-src="image-20230807100925339.png" alt="image-20230807100925339" />
 <figcaption aria-hidden="true">image-20230807100925339</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807112248031.png"
-alt="image-20230807112248031" />
+<img data-src="image-20230807112248031.png" alt="image-20230807112248031" />
 <figcaption aria-hidden="true">image-20230807112248031</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807112546761.png"
-alt="image-20230807112546761" />
+<img data-src="image-20230807112546761.png" alt="image-20230807112546761" />
 <figcaption aria-hidden="true">image-20230807112546761</figcaption>
 </figure>
 <h2 id="设置root密码">设置ROOT密码</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807144542841.png"
-alt="image-20230807144542841" />
+<img data-src="image-20230807144542841.png" alt="image-20230807144542841" />
 <figcaption aria-hidden="true">image-20230807144542841</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807145422169.png"
-alt="image-20230807145422169" />
+<img data-src="image-20230807145422169.png" alt="image-20230807145422169" />
 <figcaption aria-hidden="true">image-20230807145422169</figcaption>
 </figure>
 <h2 id="配置网络">配置网络</h2>
-<p><img data-src="RHCSA认证学习教程/image-20230807150656550.png" /></p>
+<p><img data-src="image-20230807150656550.png" /></p>
 <h2 id="磁盘分区">磁盘分区</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807151801644.png"
-alt="image-20230807151801644" />
+<img data-src="image-20230807151801644.png" alt="image-20230807151801644" />
 <figcaption aria-hidden="true">image-20230807151801644</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807153835938.png"
-alt="image-20230807153835938" />
+<img data-src="image-20230807153835938.png" alt="image-20230807153835938" />
 <figcaption aria-hidden="true">image-20230807153835938</figcaption>
 </figure>
 <h2 id="逻辑卷">逻辑卷</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230807164615687.png"
-alt="image-20230807164615687" />
+<img data-src="image-20230807164615687.png" alt="image-20230807164615687" />
 <figcaption aria-hidden="true">image-20230807164615687</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808094037624.png"
-alt="image-20230808094037624" />
+<img data-src="image-20230808094037624.png" alt="image-20230808094037624" />
 <figcaption aria-hidden="true">image-20230808094037624</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808094900139.png"
-alt="image-20230808094900139" />
+<img data-src="image-20230808094900139.png" alt="image-20230808094900139" />
 <figcaption aria-hidden="true">image-20230808094900139</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808101315117.png"
-alt="image-20230808101315117" />
+<img data-src="image-20230808101315117.png" alt="image-20230808101315117" />
 <figcaption aria-hidden="true">image-20230808101315117</figcaption>
 </figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 创建卷组并指定扩展块</span></span><br><span class="line">vgcreate -s 16M myvg /dev/nvme0n1p3</span><br><span class="line"><span class="comment"># 创建逻辑卷并设置大小为50个扩展单元</span></span><br><span class="line">lvcreate -n mylv -L 800M myvg</span><br><span class="line"><span class="comment"># 格式化成vfat格式</span></span><br><span class="line">mkfs.vfat /dev/myvg/mylv</span><br><span class="line"><span class="comment"># 设置自动挂载</span></span><br><span class="line"><span class="comment"># vim /etc/fstab</span></span><br><span class="line">/dev/myvg/mylv    /mnt/mylv  vfat defaults 0 0</span><br></pre></td></tr></table></figure>
 <h2 id="vdo虚拟卷">VDO虚拟卷</h2>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808102351816.png"
-alt="image-20230808102351816" />
+<img data-src="image-20230808102351816.png" alt="image-20230808102351816" />
 <figcaption aria-hidden="true">image-20230808102351816</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808103639259.png"
-alt="image-20230808103639259" />
+<img data-src="image-20230808103639259.png" alt="image-20230808103639259" />
 <figcaption aria-hidden="true">image-20230808103639259</figcaption>
 </figure>
 <blockquote>
 <p>总结成一句话：用实际容量小的物理磁盘创建容量大的逻辑磁盘</p>
 </blockquote>
-<p><img data-src="RHCSA认证学习教程/image-20230808104325531.png"
-alt="image-20230808104325531" /> <img data-src="RHCSA认证学习教程/image-20230808105540492.png"
+<p><img data-src="image-20230808104325531.png"
+alt="image-20230808104325531" /> <img data-src="image-20230808105540492.png"
 alt="image-20230808105540492" /></p>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808111305131.png"
-alt="image-20230808111305131" />
+<img data-src="image-20230808111305131.png" alt="image-20230808111305131" />
 <figcaption aria-hidden="true">image-20230808111305131</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808111331418.png"
-alt="image-20230808111331418" />
+<img data-src="image-20230808111331418.png" alt="image-20230808111331418" />
 <figcaption aria-hidden="true">image-20230808111331418</figcaption>
 </figure>
 <figure>
-<img data-src="RHCSA认证学习教程/image-20230808111345237.png"
-alt="image-20230808111345237" />
+<img data-src="image-20230808111345237.png" alt="image-20230808111345237" />
 <figcaption aria-hidden="true">image-20230808111345237</figcaption>
 </figure>
 ]]></content>
@@ -13077,6 +13039,24 @@ XtraBackup、Oracle RMAN等。</p>
 ]]></content>
       <tags>
         <tag>SRE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>运维自动化实战（一）Linux Shell 自动交互</title>
+    <url>/p/linux-shell-automatic-interaction/</url>
+    <content><![CDATA[<p>本文主要介绍自动化输入脚本的方式。</p>
+<p>关键词：<strong>shell</strong></p>
+<span id="more"></span>
+<h2 id="bash脚本输入方式">bash脚本输入方式</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> -n <span class="string">&quot;ServiceName\nOperator\nPassword&quot;</span> | upx login</span><br></pre></td></tr></table></figure>
+<p>输入每行文字后输入一个回车，某些情况不适用。</p>
+<h2 id="expect脚本">Expect脚本</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash    </span></span><br><span class="line">/usr/bin/expect &lt;&lt;-<span class="string">EOF</span></span><br><span class="line"><span class="string">set timeout 50</span></span><br><span class="line"><span class="string">spawn upx login </span></span><br><span class="line"><span class="string">expect &quot;*ServiceName*&quot; &#123;send &quot;ServiceName\r&quot;&#125;</span></span><br><span class="line"><span class="string">expect &quot;*Operator*&quot; &#123;send &quot;Operator\r&quot;&#125;</span></span><br><span class="line"><span class="string">expect &quot;*Password*&quot; &#123;send &quot;Password\r&quot;&#125;</span></span><br><span class="line"><span class="string">expect eof</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>expect 提示的字段是捕获输出，然后在后面跟着输入。</p>
+]]></content>
+      <tags>
+        <tag>devops</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
