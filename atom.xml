@@ -6,7 +6,7 @@
   <link href="https://fly97.cn/atom.xml" rel="self"/>
   
   <link href="https://fly97.cn/"/>
-  <updated>2023-08-27T06:00:00.000Z</updated>
+  <updated>2023-09-16T07:42:00.000Z</updated>
   <id>https://fly97.cn/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>rockylinux常见操作</title>
+    <link href="https://fly97.cn/p/how-to-use-rockylinux/"/>
+    <id>https://fly97.cn/p/how-to-use-rockylinux/</id>
+    <published>2023-09-16T07:42:00.000Z</published>
+    <updated>2023-09-16T07:42:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>关键词：RockyLinux 9</strong></p><span id="more"></span><h2 id="下载地址">下载地址</h2><p><a href="https://mirrors.nju.edu.cn/rocky/9/isos/">RockyLinux9</a></p><p><a href="https://mirrors.nju.edu.cn/rocky/8/isos/">RockyLinux8</a></p><p>这里一般下载minimal镜像，免去设置镜像源的烦恼。</p><p><img data-src="image-20230916195636348.png" /></p><h2 id="换源">换源</h2><p>参考：<ahref="https://mirror.nju.edu.cn/mirrorz-help/rocky/?mirror=NJU">RockyLinux 软件仓库镜像使用帮助 - MirrorZ Help (nju.edu.cn)</a></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo sed -e <span class="string">&#x27;s|^mirrorlist=|#mirrorlist=|g&#x27;</span> \</span><br><span class="line">         -e <span class="string">&#x27;s|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirror.nju.edu.cn/rocky|g&#x27;</span> \</span><br><span class="line">         -i.bak \</span><br><span class="line">         /etc/yum.repos.d/rocky-extras.repo \</span><br><span class="line">         /etc/yum.repos.d/rocky.repo</span><br></pre></td></tr></table></figure><h2 id="网络管理">网络管理</h2><p>默认的管理工具是NetworkManager，附带有nmcli网络管理工具</p><p>配置命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmcli c add <span class="built_in">type</span> ethernet con-name enp6s18 ifname enp6s18 \</span><br><span class="line">ipv4.addr 192.168.8.211/24 ipv4.gateway 192.168.8.1 ipv4.method manual \</span><br><span class="line">ipv4.dns 192.168.8.1</span><br></pre></td></tr></table></figure><p>配置成功后会自动生成配置文件，配置文件地址</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vim /etc/NetworkManager/system-connections</span></span><br><span class="line">[connection]</span><br><span class="line"><span class="built_in">id</span>=enp6s18</span><br><span class="line">uuid=b944afc1-e640-4b36-ad04-c7342189565f</span><br><span class="line"><span class="built_in">type</span>=ethernet</span><br><span class="line">interface-name=enp6s18</span><br><span class="line"></span><br><span class="line">[ethernet]</span><br><span class="line"></span><br><span class="line">[ipv4]</span><br><span class="line">address1=192.168.8.210/24,192.168.8.1</span><br><span class="line">dns=192.168.8.1;</span><br><span class="line">method=manual</span><br><span class="line"></span><br><span class="line">[ipv6]</span><br><span class="line">addr-gen-mode=default</span><br><span class="line">method=auto</span><br><span class="line"></span><br><span class="line">[proxy]</span><br></pre></td></tr></table></figure><p>修改完成后，直接使用nmcli c up即可启动网卡。</p><p>rocklinux8一般使用ifup/ifdown进行管理，配置文件地址</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vim /etc/sysconfig/network-scripts</span></span><br><span class="line">TYPE=Ethernet</span><br><span class="line">PROXY_METHOD=none</span><br><span class="line">BROWSER_ONLY=no</span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">NAME=ens3</span><br><span class="line">UUID=badebd4f-dbf2-4d42-8e49-0e3839499e59</span><br><span class="line">DEVICE=ens3</span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure><p>修改完成后，直接使用ifup ifcfg-网卡名即可启动网卡。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;关键词：RockyLinux 9&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="linux" scheme="https://fly97.cn/tags/linux/"/>
+    
+    <category term="learning" scheme="https://fly97.cn/tags/learning/"/>
+    
+    <category term="rockylinux" scheme="https://fly97.cn/tags/rockylinux/"/>
+    
+  </entry>
   
   <entry>
     <title>运维自动化实战（一）Linux Shell 自动交互</title>
@@ -418,26 +441,6 @@ once a month.”&lt;/p&gt;
     
     
     <category term="运维" scheme="https://fly97.cn/tags/%E8%BF%90%E7%BB%B4/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>树莓派常见操作</title>
-    <link href="https://fly97.cn/p/use-usb-wifi-with-raspberry-pi/"/>
-    <id>https://fly97.cn/p/use-usb-wifi-with-raspberry-pi/</id>
-    <published>2022-12-01T12:00:00.000Z</published>
-    <updated>2022-12-01T12:00:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>摘要：本文主要介绍树莓派的一些常见设置。</strong></p><p><strong>关键词：树莓派</strong></p><span id="more"></span><h2 id="安装外置usb网卡">安装外置USB网卡</h2><p>由于树莓派自带的网卡性能不太好，因此就想着用第三方网卡。使用的网卡如图所示。 <img data-src="微信图片_20221211193757.jpg" /></p><p>网卡芯片型号是Realtek 8211CU。</p><blockquote><p>来源 https://github.com/brektrou/rtl8821CU/issues/184</p></blockquote><p>依次执行以下操作即可</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install dkms bc -y</span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel</span><br><span class="line">sudo apt-get install raspberrypi-kernel-headers</span><br><span class="line">reboot</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/brektrou/rtl8821CU.git</span><br><span class="line"><span class="built_in">cd</span> rtl8821CU</span><br><span class="line">sudo ./dkms-install.sh</span><br></pre></td></tr></table></figure><p>执行完毕以后可以修改一下系统配置，这样系统就可以自动启动WIFI网卡了。</p><p>修改一下文件：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /lib/udev/rules.d/40-usb_modeswitch.rules</span><br></pre></td></tr></table></figure><p>添加以下内容</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Realtek 8211CU Wifi AC USB</span></span><br><span class="line">ATTR&#123;idVendor&#125;==<span class="string">&quot;0bda&quot;</span>, ATTR&#123;idProduct&#125;==<span class="string">&quot;1a2b&quot;</span>, RUN+=<span class="string">&quot;/usr/sbin/usb_modeswitch -K -v 0bda -p 1a2b&quot;</span></span><br></pre></td></tr></table></figure><p>然后重启即可</p><p>重启完毕以后查看usb：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsusb</span><br></pre></td></tr></table></figure><p><img data-src="Snipaste_2022-12-11_19-52-59.png" />此时就可以发现网卡已经正常工作了。</p><h2 id="禁用板载wifi">禁用板载WIFI</h2><p>修改boot分区下的config.txt文件</p><p>在<code>[all]</code>片段下添加以下配置</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[all]</span><br><span class="line">dtoverlay=disable-wifi</span><br></pre></td></tr></table></figure><p>这样就可以禁用板载WIFI网卡</p><h2 id="开启wifi自动登录">开启WIFI自动登录</h2><p>在boot分区下添加<code>wpa_supplicant.conf</code>文件</p><p>按照以下格式：</p><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">country</span>=CN</span><br><span class="line"><span class="attr">ctrl_interface</span>=DIR=/var/run/wpa_supplicant GROUP=netdev</span><br><span class="line"><span class="attr">update_config</span>=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="attr">network</span>=&#123;</span><br><span class="line"><span class="attr">ssid</span>=<span class="string">&quot;WiFi-A&quot;</span></span><br><span class="line"><span class="attr">psk</span>=<span class="string">&quot;12345678&quot;</span></span><br><span class="line"><span class="attr">key_mgmt</span>=WPA-PSK</span><br><span class="line"><span class="attr">priority</span>=<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="开启ssh登录">开启SSH登录</h2><p>在boot分区下新建<code>ssh</code>文件即可</p><h2 id="更换为国内源">更换为国内源</h2><p>arm64架构的树莓派可以直接用debian的源</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo su</span><br><span class="line"><span class="built_in">echo</span> &gt; /etc/apt/sources.list</span><br><span class="line">sudo vim /etc/apt/sources.list</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">deb https://mirrors.ustc.edu.cn/debian/ bullseye main contrib non-free</span><br><span class="line"><span class="comment"># deb-src http://mirrors.ustc.edu.cn/debian bullseye main contrib non-free</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ bullseye-updates main contrib non-free</span><br><span class="line"><span class="comment"># deb-src http://mirrors.ustc.edu.cn/debian bullseye-updates main contrib non-free</span></span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian-security bullseye-security main contrib non-free</span><br><span class="line"><span class="comment"># deb-src http://mirrors.ustc.edu.cn/debian-security/ bullseye-security main non-free contrib</span></span><br></pre></td></tr></table></figure><p>树莓派基金会源</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s|//archive.raspberrypi.org|//mirrors.ustc.edu.cn/archive.raspberrypi.org|g&#x27;</span> /etc/apt/sources.list.d/raspi.list</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;摘要：本文主要介绍树莓派的一些常见设置。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键词：树莓派&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="pi" scheme="https://fly97.cn/tags/pi/"/>
     
   </entry>
   

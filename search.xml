@@ -2293,23 +2293,43 @@ href="https://blog.csdn.net/SweeNeil/article/details/94648313">jemalloc安装与
       </tags>
   </entry>
   <entry>
-    <title>Linux之crontab定时任务</title>
+    <title>Crontab定时任务</title>
     <url>/p/how-to-use-crontab/</url>
     <content><![CDATA[<p>Linux中的crontab - - - -一个自定义定时器</p>
 <span id="more"></span>
-<h5 id="crontab命令">1.crontab命令</h5>
+<h2 id="crontab命令">crontab命令</h2>
 <p>重新指定crobtab定时任务文件</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab $filepath</span><br></pre></td></tr></table></figure>
 <p>查看crontab定时任务</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
 <p>编辑、安装定时任务</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
-<p><strong>2.crontab时间举例</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早上6点</span> </span><br><span class="line">0 6 * * * echo &quot;Good morning.&quot; &gt;&gt; /tmp/test.txt //注意单纯echo，从屏幕上看不到任何输出，因为cron把任何输出都email到root的信箱了。</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每两个小时</span> </span><br><span class="line">0 */2 * * * echo &quot;Have a break now.&quot; &gt;&gt; /tmp/test.txt  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">晚上11点到早上8点之间每两个小时和早上八点</span> </span><br><span class="line">0 23-7/2，8 * * * echo &quot;Have a good dream&quot; &gt;&gt; /tmp/test.txt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点</span> </span><br><span class="line">0 11 4 * 1-3 command line</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1月1日早上4点</span> </span><br><span class="line">0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/ </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时（第一分钟）执行/etc/cron.hourly内的脚本</span></span><br><span class="line">01 * * * * root run-parts /etc/cron.hourly</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天（凌晨4：02）执行/etc/cron.daily内的脚本</span></span><br><span class="line">02 4 * * * root run-parts /etc/cron.daily </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每星期（周日凌晨4：22）执行/etc/cron.weekly内的脚本</span></span><br><span class="line">22 4 * * 0 root run-parts /etc/cron.weekly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每月（1号凌晨4：42）去执行/etc/cron.monthly内的脚本</span> </span><br><span class="line">42 4 1 * * root run-parts /etc/cron.monthly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">注意:  <span class="string">&quot;run-parts&quot;</span>这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名。</span> 　 </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。</span> </span><br><span class="line">5，15，25，35，45，55 16，17，18 * * * command</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每周一，三，五的下午3：00系统进入维护状态，重新启动系统。</span></span><br><span class="line">00 15 * *1，3，5 shutdown -r +5</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的10分，40分执行用户目录下的innd/bbslin这个指令：</span> </span><br><span class="line">10，40 * * * * innd/bbslink </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的1分执行用户目录下的bin/account这个指令：</span> </span><br><span class="line">1 * * * * bin/account</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每1分钟执行以下命令</span></span><br><span class="line">*/1 * * * * bin/python</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早晨三点二十分执行用户目录下如下所示的两个指令（每个指令以;分隔）：</span> </span><br><span class="line">203 * * * （/bin/rm -f expire.ls logins.bad;bin/expire$#@62;expire.1st）　</span><br></pre></td></tr></table></figure>
-<h5 id="crontab任务举例">3.crontab任务举例</h5>
+<p>指定用户abc执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -u abc</span><br></pre></td></tr></table></figure>
+<p>删除用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -r</span><br></pre></td></tr></table></figure>
+<h2 id="crontab举例">Crontab举例</h2>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早上6点</span> </span><br><span class="line">0 6 * * * echo &quot;Good morning.&quot; &gt;&gt; /tmp/test.txt //注意单纯echo，从屏幕上看不到任何输出，因为cron把任何输出都email到root的信箱了。</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每两个小时</span> </span><br><span class="line">0 */2 * * * echo &quot;Have a break now.&quot; &gt;&gt; /tmp/test.txt  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">晚上11点到早上8点之间每两个小时和早上八点</span> </span><br><span class="line">0 23-7/2，8 * * * echo &quot;Have a good dream&quot; &gt;&gt; /tmp/test.txt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点</span> </span><br><span class="line">0 11 4 * 1-3 command line</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1月1日早上4点</span> </span><br><span class="line">0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/ </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时（第一分钟）执行/etc/cron.hourly内的脚本</span></span><br><span class="line">01 * * * * root run-parts /etc/cron.hourly</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天（凌晨4：02）执行/etc/cron.daily内的脚本</span></span><br><span class="line">02 4 * * * root run-parts /etc/cron.daily </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每星期（周日凌晨4：22）执行/etc/cron.weekly内的脚本</span></span><br><span class="line">22 4 * * 0 root run-parts /etc/cron.weekly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每月（1号凌晨4：42）去执行/etc/cron.monthly内的脚本</span> </span><br><span class="line">42 4 1 * * root run-parts /etc/cron.monthly </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">注意:  <span class="string">&quot;run-parts&quot;</span>这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名。</span> 　 </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。</span> </span><br><span class="line">5，15，25，35，45，55 16，17，18 * * * command</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每周一，三，五的下午3：00系统进入维护状态，重新启动系统。</span></span><br><span class="line">00 15 * *1，3，5 shutdown -r +5</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的10分，40分执行用户目录下的innd/bbslin这个指令：</span> </span><br><span class="line">10，40 * * * * innd/bbslink </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每小时的1分执行用户目录下的bin/account这个指令：</span> </span><br><span class="line">1 * * * * bin/account</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每1分钟执行以下命令</span></span><br><span class="line">*/1 * * * * bin/python</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每天早晨三点二十分执行用户目录下如下所示的两个指令（每个指令以;分隔）：</span> </span><br><span class="line">203 * * * （/bin/rm -f expire.ls logins.bad;bin/expire$#@62;expire.1st）　</span><br></pre></td></tr></table></figure>
+<h2 id="crontab-任务举例">Crontab 任务举例</h2>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">*/5 * * * * /bin/bash /root/kaoyan/tiaoji.sh</span><br></pre></td></tr></table></figure>
-<p>sh写法举例</p>
+<h3 id="sh写法举例">sh写法举例</h3>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin</span><br><span class="line">export PATH</span><br><span class="line"></span><br><span class="line">cd /root/kaoyan</span><br><span class="line">/root/***/python3 *.py &gt;&gt; /root/****/*.log 2&gt;&amp;1</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">将所有输出写入日志文件</span></span><br></pre></td></tr></table></figure>
+<h2 id="crontab训练">Crontab训练</h2>
+<p>crontab 分 时 日 月 周</p>
+<p>每分钟执行一次命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">* * * * * <span class="built_in">echo</span> <span class="string">&quot;hello&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>每隔2分钟执行</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">*/2 * * * * <span class="built_in">echo</span> <span class="string">&quot;hello&quot;</span></span><br></pre></td></tr></table></figure>
+<p>每小时的第二分钟执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2 * * * * <span class="built_in">echo</span> <span class="string">&quot;hello&quot;</span></span><br></pre></td></tr></table></figure>
+<p>每天的1点内每分钟执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">* 1 * * * <span class="built_in">echo</span> <span class="string">&quot;hello&quot;</span></span><br></pre></td></tr></table></figure>
+<p>每小时的5-10分钟执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">5-10 * * * * <span class="built_in">echo</span> <span class="string">&quot;hello&quot;</span></span><br></pre></td></tr></table></figure>
+<p>每小时的第5分钟、第十分钟执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">5,10 * * * * <span class="built_in">echo</span> <span class="string">&quot;hello&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>每小时10到20分钟内每隔2分钟执行一次</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">10-20/2 * * * * <span class="built_in">echo</span> <span class="string">&quot;hello&quot;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>Linux</tag>
@@ -6306,6 +6326,40 @@ id="筛选添加或移除了某些字符串的提交">筛选添加或移除了�
       </tags>
   </entry>
   <entry>
+    <title>rockylinux常见操作</title>
+    <url>/p/how-to-use-rockylinux/</url>
+    <content><![CDATA[<p><strong>关键词：RockyLinux 9</strong></p>
+<span id="more"></span>
+<h2 id="下载地址">下载地址</h2>
+<p><a href="https://mirrors.nju.edu.cn/rocky/9/isos/">RockyLinux
+9</a></p>
+<p><a href="https://mirrors.nju.edu.cn/rocky/8/isos/">RockyLinux
+8</a></p>
+<p>这里一般下载minimal镜像，免去设置镜像源的烦恼。</p>
+<p><img data-src="image-20230916195636348.png" /></p>
+<h2 id="换源">换源</h2>
+<p>参考：<a
+href="https://mirror.nju.edu.cn/mirrorz-help/rocky/?mirror=NJU">Rocky
+Linux 软件仓库镜像使用帮助 - MirrorZ Help (nju.edu.cn)</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sed -e <span class="string">&#x27;s|^mirrorlist=|#mirrorlist=|g&#x27;</span> \</span><br><span class="line">         -e <span class="string">&#x27;s|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirror.nju.edu.cn/rocky|g&#x27;</span> \</span><br><span class="line">         -i.bak \</span><br><span class="line">         /etc/yum.repos.d/rocky-extras.repo \</span><br><span class="line">         /etc/yum.repos.d/rocky.repo</span><br></pre></td></tr></table></figure>
+<h2 id="网络管理">网络管理</h2>
+<p>默认的管理工具是NetworkManager，附带有nmcli网络管理工具</p>
+<p>配置命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmcli c add <span class="built_in">type</span> ethernet con-name enp6s18 ifname enp6s18 \</span><br><span class="line">ipv4.addr 192.168.8.211/24 ipv4.gateway 192.168.8.1 ipv4.method manual \</span><br><span class="line">ipv4.dns 192.168.8.1</span><br></pre></td></tr></table></figure>
+<p>配置成功后会自动生成配置文件，配置文件地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/NetworkManager/system-connections</span></span><br><span class="line">[connection]</span><br><span class="line"><span class="built_in">id</span>=enp6s18</span><br><span class="line">uuid=b944afc1-e640-4b36-ad04-c7342189565f</span><br><span class="line"><span class="built_in">type</span>=ethernet</span><br><span class="line">interface-name=enp6s18</span><br><span class="line"></span><br><span class="line">[ethernet]</span><br><span class="line"></span><br><span class="line">[ipv4]</span><br><span class="line">address1=192.168.8.210/24,192.168.8.1</span><br><span class="line">dns=192.168.8.1;</span><br><span class="line">method=manual</span><br><span class="line"></span><br><span class="line">[ipv6]</span><br><span class="line">addr-gen-mode=default</span><br><span class="line">method=auto</span><br><span class="line"></span><br><span class="line">[proxy]</span><br></pre></td></tr></table></figure>
+<p>修改完成后，直接使用nmcli c up即可启动网卡。</p>
+<p>rocklinux8一般使用ifup/ifdown进行管理，配置文件地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/sysconfig/network-scripts</span></span><br><span class="line">TYPE=Ethernet</span><br><span class="line">PROXY_METHOD=none</span><br><span class="line">BROWSER_ONLY=no</span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV4_FAILURE_FATAL=no</span><br><span class="line">IPV6INIT=<span class="built_in">yes</span></span><br><span class="line">IPV6_AUTOCONF=<span class="built_in">yes</span></span><br><span class="line">IPV6_DEFROUTE=<span class="built_in">yes</span></span><br><span class="line">IPV6_FAILURE_FATAL=no</span><br><span class="line">NAME=ens3</span><br><span class="line">UUID=badebd4f-dbf2-4d42-8e49-0e3839499e59</span><br><span class="line">DEVICE=ens3</span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<p>修改完成后，直接使用ifup ifcfg-网卡名即可启动网卡。</p>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>learning</tag>
+        <tag>rockylinux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ssh-genkey参数</title>
     <url>/p/ssh-genkey/</url>
     <content><![CDATA[<p>什么是ssh-genkey？</p>
@@ -8313,9 +8367,12 @@ Docker，可以让应用的部署、测试和分发都变得前所未有的高�
 <p>关键词：<strong>Docker</strong></p>
 <span id="more"></span>
 <h3 id="安装docker">安装Docker</h3>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">curl -fsSL get.docker.com -o get-docker.sh</span><br><span class="line"><span class="comment"># sudo sh get-docker.sh --mirror </span></span><br><span class="line">sudo sh get-docker.sh --mirror Aliyun</span><br></pre></td></tr></table></figure>
+<p>参考：https://mirror.nju.edu.cn/mirrorz-help/docker-ce/?mirror=NJU</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> DOWNLOAD_URL=<span class="string">&quot;https://mirrors.ustc.edu.cn/docker-ce&quot;</span></span><br><span class="line"><span class="comment"># 如您使用 curl</span></span><br><span class="line">curl -fsSL https://get.docker.com/ | sudo -E sh</span><br><span class="line"><span class="comment"># 如您使用 wget</span></span><br><span class="line">wget -O- https://get.docker.com/ | sudo -E sh</span><br></pre></td></tr></table></figure>
 <h3 id="启动docker-ce">启动Docker-CE</h3>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo systemctl <span class="built_in">enable</span> docker</span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+<h3 id="解决docker-info产生的warning">解决docker info产生的Warning</h3>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#WARNING: bridge-nf-call-iptables is disabled</span></span><br><span class="line"><span class="comment">#WARNING: bridge-nf-call-ip6tables is disabled</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/sysctl.d/docker.conf</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-ip6tables = 1</span></span><br><span class="line"><span class="string">net.bridge.bridge-nf-call-iptables = 1</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">sudo sysctl --system</span><br></pre></td></tr></table></figure></p>
 <h3 id="优雅的删除docker">优雅的删除docker</h3>
 <p>Debian系：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg -l | grep docker</span><br></pre></td></tr></table></figure>
@@ -8324,23 +8381,26 @@ Docker，可以让应用的部署、测试和分发都变得前所未有的高�
 <h3 id="测试-docker-是否安装正确">测试 Docker 是否安装正确</h3>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run hello-world</span><br><span class="line">以下是输出：</span><br><span class="line">Unable to find image &#x27;hello-world:latest&#x27; locally</span><br><span class="line">latest: Pulling from library/hello-world</span><br><span class="line">d1725b59e92d: Pull complete</span><br><span class="line">Digest: sha256:0add3ace90ecb4adbf7777e9aacf18357296e799f81cabc9fde470971e499788</span><br><span class="line">Status: Downloaded newer image for hello-world:latest</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the &quot;hello-world&quot; image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image which runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, which sent it</span><br><span class="line">    to your terminal.</span><br><span class="line"></span><br><span class="line">To try something more ambitious, you can run an Ubuntu container with:</span><br><span class="line"><span class="meta prompt_"> $ </span><span class="language-bash">docker run -it ubuntu bash</span></span><br><span class="line"></span><br><span class="line">Share images, automate workflows, and more with a free Docker ID:</span><br><span class="line"> https://hub.docker.com/</span><br><span class="line"></span><br><span class="line">For more examples and ideas, visit:</span><br><span class="line"> https://docs.docker.com/get-started/</span><br></pre></td></tr></table></figure>
 <h3 id="获取镜像加速器">获取镜像加速器</h3>
-<p>国内从 Docker Hub
-拉取镜像有时会遇到困难，此时可以配置镜像加速器。国内很多云服务商都提供了国内加速器服务，例如：</p>
-<ul>
-<li><p>网易云加速器 <code>https://hub-mirror.c.163.com</code></p></li>
-<li><p>百度云加速器 <code>https://mirror.baidubce.com</code></p></li>
-<li><p><a
-href="https://cr.console.aliyun.com/cn-hangzhou/mirrors">阿里云加速器(需登录账号获取)</a></p></li>
-<li><p>DaoCloud</p>
-<p>执行以下命令即可：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io</span><br></pre></td></tr></table></figure></li>
-</ul>
+<p><del>国内从 Docker Hub
+拉取镜像有时会遇到困难，此时可以配置镜像加速器。国内很多云服务商都提供了国内加速器服务，例如：</del></p>
+<p><del>- 网易云加速器
+<code>https://hub-mirror.c.163.com</code></del></p>
+<p><del>- 百度云加速器
+<code>https://mirror.baidubce.com</code></del></p>
+<p><del>- <a
+href="https://cr.console.aliyun.com/cn-hangzhou/mirrors">阿里云加速器(需登录账号获取)</a></del></p>
+<p><del>- DaoCloud</del></p>
+<p><del>执行以下命令即可：</del></p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io</span><br></pre></td></tr></table></figure></p>
 <h4 id="linux">Linux</h4>
+<p>这里使用国内南京大学提供的镜像缓存服务：</p>
+<p>参考： https://nju-mirror-help.njuer.org/dockerhub.html
+https://sci.nju.edu.cn/9e/05/c30384a564741/page.htm</p>
 <p>对于使用 <a
 href="https://www.freedesktop.org/wiki/Software/systemd/">systemd</a>
 的系统，请在 <code>/etc/docker/daemon.json</code>
 中写入如下内容（如果文件不存在请新建该文件）：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://hub-mirror.c.163.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;https://mirror.baidubce.com&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  registry-mirrors<span class="punctuation">:</span> <span class="punctuation">[</span>https<span class="punctuation">:</span><span class="comment">//docker.nju.edu.cn/]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意要保证该文件符合 <strong>json</strong> 规范，否则 Docker
 将不能启动。</p>
@@ -8354,7 +8414,7 @@ href="https://www.freedesktop.org/wiki/Software/systemd/">systemd</a>
 <code>Docker Engine</code>，在右侧像下边一样编辑 json 文件，之后点击
 <code>Apply &amp; Restart</code> 保存后 Docker
 就会重启并应用配置的镜像地址了。</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://28wgvhgl.mirror.aliyuncs.com&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;debug&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;experimental&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;https://docker.nju.edu.cn/&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;debug&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;experimental&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 <p><img data-src="image-20200718170304988.png" /></p>
 <h3 id="常见docker命令">常见docker命令</h3>
 <h4 id="取回容器">取回容器</h4>
@@ -9062,6 +9122,67 @@ cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了�
       </tags>
   </entry>
   <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<span id="more"></span>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值
+target ，写一个函数搜索 nums 中的
+target，如果目标值存在返回下标，否则返回 -1。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left,
+right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img data-src="新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>力扣二叉树之二叉搜索树</title>
     <url>/p/binary-search-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -9197,67 +9318,6 @@ high。通过修剪二叉搜索树，使得所有节点的值在[low, high]中�
 ]]></content>
       <tags>
         <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<span id="more"></span>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之二分法</title>
-    <url>/p/binary-search/</url>
-    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值
-target ，写一个函数搜索 nums 中的
-target，如果目标值存在返回下标，否则返回 -1。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left,
-right)，这里以左闭右闭为例：</p>
-<p>定义target在左闭右闭区间[left, right]内：</p>
-<ul>
-<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
-<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
-</ul>
-<p><strong>示意图</strong></p>
-<p><img data-src="新建位图图像.bmp" /></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
