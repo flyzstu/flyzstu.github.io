@@ -21,36 +21,36 @@
   <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
   <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="相信大家对wireguard已经不陌生了。作为一种搭建虚拟局域网的工具，相比于传统VPN而言，所有节点之间都可以进行P2P连接，也就是全互联模式，效率更高。而wireguard本身只是一个内核级别的模块，只是一个数据平面，至于上层更高级的功能（比如密钥交换机制，UDP打洞，ACL等），需要通过用户空间的应用来实现。 本文主要介绍Headscale和Tailscale。 本文与2023年9月10日第">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用Headscale搭建开源版Tailscale服务端">
-<meta property="og:url" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/index.html">
+<meta property="og:url" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/index.html">
 <meta property="og:site_name" content="个人随想">
 <meta property="og:description" content="相信大家对wireguard已经不陌生了。作为一种搭建虚拟局域网的工具，相比于传统VPN而言，所有节点之间都可以进行P2P连接，也就是全互联模式，效率更高。而wireguard本身只是一个内核级别的模块，只是一个数据平面，至于上层更高级的功能（比如密钥交换机制，UDP打洞，ACL等），需要通过用户空间的应用来实现。 本文主要介绍Headscale和Tailscale。 本文与2023年9月10日第">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104333360.png">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104430056.png">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104927641.png">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623110856825.png">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623111031877.png">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623121154338.png">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220625140617764.png">
-<meta property="og:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220625140757424.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104333360.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104430056.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104927641.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623110856825.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623111031877.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623121154338.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220625140617764.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220625140757424.png">
 <meta property="article:published_time" content="2022-06-23T02:18:00.000Z">
 <meta property="article:modified_time" content="2022-06-23T02:18:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="wireguard">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104333360.png">
+<meta name="twitter:image" content="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/image-20220623104333360.png">
 
 
-<link rel="canonical" href="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/">
+<link rel="canonical" href="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/build-opensource-tailscale-with-Headscale/","path":"p/build-opensource-tailscale-with-Headscale/","title":"使用Headscale搭建开源版Tailscale服务端"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/","path":"p/build-opensource-tailscale-with-Headscale/","title":"使用Headscale搭建开源版Tailscale服务端"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>使用Headscale搭建开源版Tailscale服务端 | 个人随想</title>
@@ -170,7 +170,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-count">152</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -238,7 +238,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -610,7 +610,7 @@ APP，点击登录，会自动打开如下的页面：</p>
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fly97.cn/p/build-opensource-tailscale-with-Headscale/" title="使用Headscale搭建开源版Tailscale服务端">https://fly97.cn/p/build-opensource-tailscale-with-Headscale/</a>
+      <a href="https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/" title="使用Headscale搭建开源版Tailscale服务端">https://blog.fly97.cn/p/build-opensource-tailscale-with-Headscale/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！

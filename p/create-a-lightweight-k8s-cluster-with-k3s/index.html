@@ -21,30 +21,30 @@
   <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
   <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="什么是K3s？ K3s 是一个轻量级的 Kubernetes 发行版，它针对边缘计算、物联网等场景进行了高度优化。为了最大化的利用设备，于是我选择了k3s作为在嵌入式设备上使用的kubernetes集群。 本文主要介绍如何使用k3s创建一个轻量级的k8s集群。 关键词：k3s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kubernetes集群实践（六）使用k3s创建一个轻量级k8s集群">
-<meta property="og:url" content="https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/index.html">
+<meta property="og:url" content="https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/index.html">
 <meta property="og:site_name" content="个人随想">
 <meta property="og:description" content="什么是K3s？ K3s 是一个轻量级的 Kubernetes 发行版，它针对边缘计算、物联网等场景进行了高度优化。为了最大化的利用设备，于是我选择了k3s作为在嵌入式设备上使用的kubernetes集群。 本文主要介绍如何使用k3s创建一个轻量级的k8s集群。 关键词：k3s">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/%E4%BD%BF%E7%94%A8k3s%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7k8s%E9%9B%86%E7%BE%A4/2022-08-08-18-38-54-image.png">
-<meta property="og:image" content="https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/%E4%BD%BF%E7%94%A8k3s%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7k8s%E9%9B%86%E7%BE%A4/2022-08-08-18-49-21-image.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/%E4%BD%BF%E7%94%A8k3s%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7k8s%E9%9B%86%E7%BE%A4/2022-08-08-18-38-54-image.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/%E4%BD%BF%E7%94%A8k3s%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7k8s%E9%9B%86%E7%BE%A4/2022-08-08-18-49-21-image.png">
 <meta property="article:published_time" content="2022-06-10T05:28:00.000Z">
 <meta property="article:modified_time" content="2022-06-10T05:28:00.000Z">
 <meta property="article:author" content="fly97">
 <meta property="article:tag" content="k8s">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/%E4%BD%BF%E7%94%A8k3s%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7k8s%E9%9B%86%E7%BE%A4/2022-08-08-18-38-54-image.png">
+<meta name="twitter:image" content="https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/%E4%BD%BF%E7%94%A8k3s%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7k8s%E9%9B%86%E7%BE%A4/2022-08-08-18-38-54-image.png">
 
 
-<link rel="canonical" href="https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/">
+<link rel="canonical" href="https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/","path":"p/create-a-lightweight-k8s-cluster-with-k3s/","title":"Kubernetes集群实践（六）使用k3s创建一个轻量级k8s集群"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/","path":"p/create-a-lightweight-k8s-cluster-with-k3s/","title":"Kubernetes集群实践（六）使用k3s创建一个轻量级k8s集群"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>Kubernetes集群实践（六）使用k3s创建一个轻量级k8s集群 | 个人随想</title>
@@ -166,7 +166,7 @@ input</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class=
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-count">152</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -234,7 +234,7 @@ input</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class=
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -290,7 +290,7 @@ input</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class=
 <h3 id="使用wireguard创建虚拟局域网">使用Wireguard创建虚拟局域网</h3>
 <p>使用wireguard 创建无感知的虚拟局域网，降低跨网段组网的难度。</p>
 <p>具体请参考我的另外一篇文章<a
-href="https://fly97.cn/p/create-a-virtual-local-area-network-with-wireguard">使用WireGuard组建虚拟局域网</a>.</p>
+target="_blank" rel="noopener" href="https://fly97.cn/p/create-a-virtual-local-area-network-with-wireguard">使用WireGuard组建虚拟局域网</a>.</p>
 <h3 id="安装ipvs所需要的模块">安装IPVS所需要的模块</h3>
 <p>ipvs网络模式比iptables具有更优秀的性能</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | sudo tee /etc/modules-load.d/k3s.conf</span></span><br><span class="line"><span class="string">ip_vs</span></span><br><span class="line"><span class="string">ip_vs_lc</span></span><br><span class="line"><span class="string">ip_vs_rr</span></span><br><span class="line"><span class="string">ip_vs_wrr</span></span><br><span class="line"><span class="string">ip_vs_sh</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
@@ -448,7 +448,7 @@ input</h3>
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/" title="Kubernetes集群实践（六）使用k3s创建一个轻量级k8s集群">https://fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/</a>
+      <a href="https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/" title="Kubernetes集群实践（六）使用k3s创建一个轻量级k8s集群">https://blog.fly97.cn/p/create-a-lightweight-k8s-cluster-with-k3s/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！

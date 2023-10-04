@@ -2146,6 +2146,330 @@ forbidden.</strong>，猜测是因为某个策略禁止修改了此参数；</li
       </tags>
   </entry>
   <entry>
+    <title>Kubernetes集群实践（十一）编写一个自定义资源CRD</title>
+    <url>/p/create-crd-in-kubernetes/</url>
+    <content><![CDATA[<p>本文主要介绍如何在Kubernetes编写自定义资源CRD。</p>
+<p>关键词：<strong>k8s</strong></p>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>Kubernetes的最大亮点之一必定是它的声明式API设计，所谓的声明式就是告诉Kubernetes你要什么，而不是告诉它怎么做命令。我们日常使用Kubernetes做编排工作的时候，经常会接触Deployment、Service、Pod等资源对象，我们可以很灵活地创建其定义配置，然后执行kubectl
+apply命令，Kubernetes总能为我们创建相关资源对象并完成资源的注册，进而执行资源所负责的功能。</p>
+<p>CRD，称之为自定义资源定义，本质上，它的表现形式是一段声明，用于定义用户定义的资源对象罢了。单单通过它还不能产生任何收益，因为开发者还要针对CRD定义提供关联的CRD对象CRD控制器（CRD
+Controller）。CRD控制器通常可以通过Golang进行开发，只需要遵循Kubernetes的控制器开发规范，并基于client-go进行调用，并实现Informer、ResourceEventHandler、Workqueue等组件逻辑即可。听起来感觉很复杂的样子，不过其实真正开发的时候，并不困难，因为大部分繁琐的代码逻辑都能通过Kubernetes的code
+generator代码生成出来。关于如何进行CRD控制器的开发，下面我们会通过一个例子慢慢地深入，希望通过实践来理解CRD的原理。</p>
+<h2 id="声明式api">声明式API</h2>
+<h3 id="命令式api">命令式API</h3>
+<p>首先，声明式API是相对于命令式API而言的。</p>
+<p>假设我们想创建一个deployment，可以创建一个下面的yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>然后在master执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create -f nginx.yaml</span><br></pre></td></tr></table></figure>
+<p>然后这两个Pod就跑起来了。</p>
+<p>如果想修改上的资源清单，需要先修改资源文件，然后再执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl replace -f nginx.yaml</span><br></pre></td></tr></table></figure>
+<p>以上基于yaml文件操作的方式，被称作命令式API。同样属于命令式API的还有Docker
+Swarm的创建方式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker service create --name nginx --replicas 2  nginx</span><br></pre></td></tr></table></figure>
+<h3 id="声明式api-1">声明式API</h3>
+<p><strong>kubectl apply</strong> 的操作属于声明式API。</p>
+<p>kubectl
+replace的操作，可以看作是使用新的YAML文件的API对象，<strong>替换原有的API对象</strong>；kubectl
+set image和 kubelctl edit也是对原有对象的修改，这些都属于命令式API。</p>
+<p>kube-apiserver在响应命令式请求时，只能一次处理一个写请求，否则可能会出现冲突。</p>
+<p>而对于apply的声明式请求，可以一次处理多个写操作，并且具备merge能力。</p>
+<p>所谓声明式API，<strong>就是告诉kubernetes你要什么，而不是告诉他怎么做命令</strong>。在日常做容器编排时，经常会操作Deployment、Service、Pod等资源对象，我们可以很灵活的创建其自定义配置，然后执行kubectl
+apply
+命令，kubernetes可以创建相关资源对象并完成资源的注册，进而执行资源所负责的功能。</p>
+<p>有了自定义API对象，开发者就不需要逐一进行Deployment、Service
+、ConfigMap等步骤，而是创建一些可以表述整个应用程序或者软件服务的对象。除此之外，我们还可以在创建高阶对象的基础上创建底层对象。例如：我们想要创建一个backup资源，在定义yaml的同时，可以希望通过spec的定义进行日常的备份操作声明，当提交给k8s集群时，相关的Deployment、Service资源会被自动创建，很大程度上让业务扩展性加大。</p>
+<h3 id="crd">CRD</h3>
+<p>CRD，称之为自定义资源定义，本质上，它的表现形式是一段声明，用于定义用户定义的资源对象罢了。单单通过它还不能产生任何收益，因为开发者还要针对CRD定义提供关联的CRD对象CRD控制器（CRD
+Controller）。CRD控制器通常可以通过Golang进行开发，只需要遵循Kubernetes的控制器开发规范，并基于client-go进行调用，并实现Informer、ResourceEventHandler、Workqueue等组件逻辑即可。听起来感觉很复杂的样子，不过其实真正开发的时候，并不困难，因为大部分繁琐的代码逻辑都能通过Kubernetes的code
+generator代码生成出来。关于如何进行CRD控制器的开发，下面我们会通过一个例子慢慢地深入，希望通过实践来理解CRD的原理。</p>
+<h2 id="api">API</h2>
+<p>整个kubernetes里所有API对象都可以用下面的树形结构表示出来：</p>
+<p><img data-src="NeatReader-1663224393771.png" /></p>
+<p>可以看出，API对象的组织方式，是层层递进的。</p>
+<p>如果现在想要创建一个CronJob对象，那么YAML文件的开始部分需要这样写：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiversion:</span> <span class="string">batch/v2alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br></pre></td></tr></table></figure>
+<p>对于上文，Crontab是这个API对象的资源类型，batch是他的组，v2alpha1是版本；</p>
+<p>当提交了这个yaml文件一行，kubernetes就会把这个YAML文件描述内容，转换成一个CronJob对象</p>
+<p>apiserver会遵循以下的流程：</p>
+<ol type="1">
+<li><p>匹配API对象的组。</p>
+<p>通常核心对象如Pod、Node不需要group，直接在/api这个层级下进行匹配；</p>
+<p>而对于CronJob等非核心API对象来说，Kubernetes必须在
+/apis这个层级下找到对应的Group，根据batch，找到/apis/batch。</p>
+<p>API是根据对象功能为依据的。如Job和CronJob就属于batch这个Group。</p></li>
+<li><p>匹配API对象的版本号</p>
+<p>对于CronJob这个API对象来说，Kubernetes在batch这个Group下，匹配的版本号就是v2alpha1</p>
+<p>K8s中同一种API对象可以由多个版本，这正是K8s进行API版本化管理的手段</p></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Kubernetes集群实践（十二）使用keepalived+haproxy创建高可用K8s集群</title>
+    <url>/p/create-ha-kubernetes/</url>
+    <content><![CDATA[<p>本文主要介绍如何使用keepalived+haproxy创建高可用集群，文中主要来源与作者在工作中的一些实际操作，本文仅供作者自己记录和读者参考。</p>
+<p>关键词：<strong>高可用K8s集群</strong></p>
+<span id="more"></span>
+<p>本文搭建的集群使用3个master节点和4个worker节点，为了节约资源，本文使用嵌入的etcd集群。</p>
+<h2 id="集群环境准备">集群环境准备</h2>
+<h3 id="集群拓扑">集群拓扑</h3>
+<figure>
+<img data-src="Kubernetes集群实践（十二）创建高可用K8s集群/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70.png"
+alt="堆叠ETCD" />
+<figcaption aria-hidden="true">堆叠ETCD</figcaption>
+</figure>
+<ul>
+<li>使用keepalived+haproxy的架构，worker节点通过访问vip和haproxy的后端服务器，实现了K8s集群的高可用；</li>
+<li>为了避免堆叠集群出现耦合失败的风险，应该为HA集群运行至少三个堆叠的控制节点；</li>
+<li>以上是kubeadm中的默认拓扑。当使用<code>kubeadm init</code>
+和<code>kubeadm join --control-plane --upload-certs</code>时，在控制节点平面上自动创建etcd成员。</li>
+</ul>
+<h3 id="主机规划">主机规划</h3>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 16%" />
+<col style="width: 5%" />
+<col style="width: 11%" />
+<col style="width: 44%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>主机IP地址</th>
+<th>主机名</th>
+<th>主机配置</th>
+<th>主机角色</th>
+<th>软件列表</th>
+<th>其他IP</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>192.168.100.101</td>
+<td>192.168.100.101-master</td>
+<td>2C4G</td>
+<td>master + worker</td>
+<td>kube-apiserver、kube-controller-manager、kube-scheduler、etcd、kubelet、kube-proxy、containerd</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>192.168.100.102</td>
+<td>192.168.100.102-master</td>
+<td>2C4G</td>
+<td>master + worker</td>
+<td>kube-apiserver、kube-controller-manager、kube-scheduler、etcd、kubelet、kube-proxy、containerd</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>192.168.100.103</td>
+<td>192.168.100.103-master</td>
+<td>2C4G</td>
+<td>master + worker</td>
+<td>kube-apiserver、kube-controller-manager、kube-scheduler、etcd、kubelet、kube-proxy、containerd</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>192.168.100.105</td>
+<td>192.168.100.105-worker</td>
+<td>2C4G</td>
+<td>worker+LB1</td>
+<td>kubelet、kube-proxy、containerd、keepalived、haproxy</td>
+<td>192.168.100.104</td>
+</tr>
+<tr class="odd">
+<td>192.168.100.106</td>
+<td>192.168.100.106-worker</td>
+<td>2C4G</td>
+<td>worker+LB1</td>
+<td>kubelet、kube-proxy、containerd、keepalived、haproxy</td>
+<td>192.168.100.104</td>
+</tr>
+<tr class="even">
+<td>192.168.100.107</td>
+<td>192.168.100.107-worker</td>
+<td>2C4G</td>
+<td>worker</td>
+<td>kubelet、kube-proxy、containerd</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>192.168.100.108</td>
+<td>192.168.100.108-worker</td>
+<td>2C4G</td>
+<td>worker</td>
+<td>kubelet、kube-proxy、containerd</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="软件版本">软件版本</h3>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">软件名称</th>
+<th style="text-align: left;">版本</th>
+<th style="text-align: left;">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CentOS8</td>
+<td
+style="text-align: left;">kernel版本：4.18.0-477.27.1.el8_8.x86_64</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">kubernetes</td>
+<td style="text-align: left;">v1.28.2</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">etcd</td>
+<td style="text-align: left;">v3.5.9</td>
+<td style="text-align: left;">最新版本</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">flannel</td>
+<td style="text-align: left;">v0.22.3</td>
+<td style="text-align: left;">网络插件</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">containerd</td>
+<td style="text-align: left;">v1.7.6</td>
+<td style="text-align: left;">容器运行时</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">haproxy</td>
+<td style="text-align: left;">v1.8.27</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">keepalived</td>
+<td style="text-align: left;">v2.1.5</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="网络分配">网络分配</h3>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">网络名称</th>
+<th style="text-align: left;">网段</th>
+<th style="text-align: left;">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Node网络</td>
+<td style="text-align: left;">192.168.100.101/108</td>
+<td style="text-align: left;">集群节点网络</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Service网络</td>
+<td style="text-align: left;">10.96.0.0/16</td>
+<td style="text-align: left;">实现服务发现时所使用的网络</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pod网络</td>
+<td style="text-align: left;">10.244.0.0/16</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="集群部署">集群部署</h2>
+<p>为了方便集群部署，本文使用自动化运维工具ansible配置整个集群。</p>
+<p>主要编辑两个文件，一是ansible的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/ansible/ansible.cfg</span></span><br><span class="line">[defaults]</span><br><span class="line"><span class="comment"># hosts主机文件</span></span><br><span class="line">inventory = ./hosts</span><br><span class="line"><span class="comment"># ssh免指纹</span></span><br><span class="line">host_key_checking = False</span><br></pre></td></tr></table></figure>
+<p>二是ansible的主机文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/ansible/hosts</span></span><br><span class="line">[master]</span><br><span class="line">192.168.100.101 ansible_ssh_user=root</span><br><span class="line">192.168.100.102 ansible_ssh_user=root</span><br><span class="line">192.168.100.103 ansible_ssh_user=root</span><br><span class="line">[worker]</span><br><span class="line">192.168.100.105 ansible_ssh_user=root</span><br><span class="line">192.168.100.106 ansible_ssh_user=root</span><br><span class="line">192.168.100.107 ansible_ssh_user=root</span><br><span class="line">192.168.100.108 ansible_ssh_user=root</span><br></pre></td></tr></table></figure>
+<h3 id="运行时下载">运行时下载</h3>
+<p>refer：https://github.com/containerd/nerdctl，需要下载full的文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar Cxzvvf /usr/local nerdctl-full-*-linux-amd64.tar.gz</span><br><span class="line">systemctl <span class="built_in">enable</span> buildkit.service --now</span><br><span class="line">systemctl <span class="built_in">enable</span> containerd.service --now</span><br><span class="line">systemctl <span class="built_in">enable</span> stargz-snapshotter.service --now</span><br></pre></td></tr></table></figure>
+<h3 id="主机准备">主机准备</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># init-k8s.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">hosts</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ansible.builtin.shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cat &gt; /etc/hosts &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span></span><br><span class="line"><span class="string">        ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">        <span class="number">192.168</span><span class="number">.100</span><span class="number">.101</span> <span class="number">192.168</span><span class="number">.100</span><span class="number">.101</span><span class="string">-master</span></span><br><span class="line">        <span class="number">192.168</span><span class="number">.100</span><span class="number">.102</span> <span class="number">192.168</span><span class="number">.100</span><span class="number">.102</span><span class="string">-master</span></span><br><span class="line">        <span class="number">192.168</span><span class="number">.100</span><span class="number">.103</span> <span class="number">192.168</span><span class="number">.100</span><span class="number">.103</span><span class="string">-master</span></span><br><span class="line">        <span class="number">192.168</span><span class="number">.100</span><span class="number">.105</span> <span class="number">192.168</span><span class="number">.100</span><span class="number">.105</span><span class="string">-worker</span></span><br><span class="line">        <span class="number">192.168</span><span class="number">.100</span><span class="number">.106</span> <span class="number">192.168</span><span class="number">.100</span><span class="number">.106</span><span class="string">-worker</span></span><br><span class="line">        <span class="number">192.168</span><span class="number">.100</span><span class="number">.107</span> <span class="number">192.168</span><span class="number">.100</span><span class="number">.107</span><span class="string">-worker</span></span><br><span class="line">        <span class="number">192.168</span><span class="number">.100</span><span class="number">.108</span> <span class="number">192.168</span><span class="number">.100</span><span class="number">.108</span><span class="string">-worker</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">master</span> <span class="string">hostname</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">hostname:</span> <span class="string">name=&#123;&#123;</span> <span class="string">ansible_enp6s18[&#x27;ipv4&#x27;][&#x27;address&#x27;]</span> <span class="string">&#125;&#125;-master</span> </span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">set</span> <span class="string">worker</span> <span class="string">hostname</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">worker</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">hostname:</span> <span class="string">name=&#123;&#123;</span> <span class="string">ansible_enp6s18[&#x27;ipv4&#x27;][&#x27;address&#x27;]</span> <span class="string">&#125;&#125;-worker</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">k8s</span> <span class="string">env</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">remote_user:</span> <span class="string">root</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ansible.builtin.shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        systemctl disable firewalld --now</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">        <span class="string">sed</span> <span class="string">-i</span> <span class="string">&#x27;s/enforcing/disabled/&#x27;</span> <span class="string">/etc/selinux/config</span></span><br><span class="line">        <span class="string">setenforce</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="string">sed</span> <span class="string">-ri</span> <span class="string">&#x27;/^[^#]*swap/s@^@#@&#x27;</span> <span class="string">/etc/fstab</span></span><br><span class="line">        <span class="string">swapoff</span> <span class="string">-a</span></span><br><span class="line"></span><br><span class="line">        <span class="string">yum</span> <span class="string">install</span> <span class="string">ipvsadm</span> <span class="string">ipset</span> <span class="string">sysstat</span> <span class="string">conntrack</span> <span class="string">libseccomp</span> <span class="string">iproute-tc</span> <span class="string">-y</span></span><br><span class="line"></span><br><span class="line">        <span class="string">cat</span> <span class="string">&gt;</span> <span class="string">/etc/modules-load.d/k8s.conf</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line">        <span class="string">br_netfilter</span> </span><br><span class="line">        <span class="string">ip_vs</span> </span><br><span class="line">        <span class="string">ip_vs_lc</span> </span><br><span class="line">        <span class="string">ip_vs_wlc</span> </span><br><span class="line">        <span class="string">ip_vs_rr</span> </span><br><span class="line">        <span class="string">ip_vs_wrr</span> </span><br><span class="line">        <span class="string">ip_vs_lblc</span> </span><br><span class="line">        <span class="string">ip_vs_lblcr</span> </span><br><span class="line">        <span class="string">ip_vs_dh</span> </span><br><span class="line">        <span class="string">ip_vs_sh</span> </span><br><span class="line">        <span class="string">ip_vs_fo</span> </span><br><span class="line">        <span class="string">ip_vs_nq</span> </span><br><span class="line">        <span class="string">ip_vs_sed</span> </span><br><span class="line">        <span class="string">ip_vs_ftp</span> </span><br><span class="line">        <span class="string">ip_vs_sh</span> </span><br><span class="line">        <span class="string">nf_conntrack</span> </span><br><span class="line">        <span class="string">ip_tables</span> </span><br><span class="line">        <span class="string">ip_set</span> </span><br><span class="line">        <span class="string">xt_set</span> </span><br><span class="line">        <span class="string">ipt_set</span> </span><br><span class="line">        <span class="string">ipt_rpfilter</span> </span><br><span class="line">        <span class="string">ipt_REJECT</span> </span><br><span class="line">        <span class="string">ipip</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">        <span class="string">systemctl</span> <span class="string">enable</span> <span class="string">--now</span> <span class="string">systemd-modules-load.service</span></span><br><span class="line"></span><br><span class="line">        <span class="string">lsmod</span> <span class="string">|</span> <span class="string">grep</span> <span class="string">-e</span> <span class="string">ip_vs</span> <span class="string">-e</span> <span class="string">nf-conntrack</span></span><br><span class="line"></span><br><span class="line">        <span class="string">cat</span> <span class="string">&gt;</span> <span class="string">/etc/sysctl.d/k8s.conf</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line">        <span class="string">vm.swappiness</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line">        <span class="string">net.bridge.bridge-nf-call-ip6tables</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line">        <span class="string">net.bridge.bridge-nf-call-iptables</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line">        <span class="string">net.ipv4.ip_forward</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line">        <span class="string">fs.may_detach_mounts</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line">        <span class="string">vm.overcommit_memory</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line">        <span class="string">vm.panic_on.oom</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line">        <span class="string">fs.inotify.max_user_watches</span> <span class="string">=</span> <span class="number">89100</span></span><br><span class="line">        <span class="string">fs.file-max</span> <span class="string">=</span> <span class="number">52706963</span></span><br><span class="line">        <span class="string">fs.nr_open</span> <span class="string">=</span> <span class="number">52706963</span></span><br><span class="line">        <span class="string">net.netfilter.nf_conntrack_max</span> <span class="string">=</span> <span class="number">2310720</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_keepalive_time</span> <span class="string">=</span> <span class="number">600</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_keepalive_probes</span> <span class="string">=</span> <span class="number">3</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_keepalive_intvl</span> <span class="string">=</span> <span class="number">15</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_max_tw_buckets</span> <span class="string">=</span> <span class="number">36000</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_tw_reuse</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_max_orphans</span> <span class="string">=</span> <span class="number">327680</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_orphan_retries</span> <span class="string">=</span> <span class="number">3</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_syncookies</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_max_syn_backlog</span> <span class="string">=</span> <span class="number">16384</span></span><br><span class="line">        <span class="string">net.ipv4.ip_contrack_max</span> <span class="string">=</span> <span class="number">65536</span></span><br><span class="line">        <span class="string">net.ipv4.tcp_timestamps</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line">        <span class="string">net.core.somaxconn</span> <span class="string">=</span> <span class="number">16384</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">        <span class="string">cat</span> <span class="string">&gt;&gt;</span> <span class="string">/etc/security/limits.d/k8s.conf</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line">        <span class="string">*</span> <span class="string">soft</span> <span class="string">nofile</span> <span class="number">1048576</span></span><br><span class="line">        <span class="string">*</span> <span class="string">hard</span> <span class="string">nofile</span> <span class="number">1048576</span></span><br><span class="line">        <span class="string">*</span> <span class="string">soft</span> <span class="string">noproc</span> <span class="number">1048576</span></span><br><span class="line">        <span class="string">*</span> <span class="string">hard</span> <span class="string">noproc</span> <span class="number">1048576</span></span><br><span class="line">        <span class="string">*</span> <span class="string">soft</span> <span class="string">memlock</span> <span class="string">unlimited</span></span><br><span class="line">        <span class="string">*</span> <span class="string">hard</span> <span class="string">memlock</span> <span class="string">unlimited</span></span><br><span class="line">        <span class="string">EOF</span></span><br><span class="line">        <span class="string">exit</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Copy</span> <span class="string">file</span> <span class="string">with</span> <span class="string">owner</span> <span class="string">and</span> <span class="string">permissions</span></span><br><span class="line">      <span class="attr">ansible.builtin.copy:</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">./nerdctl-full-1.6.0-linux-amd64.tar.gz</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/tmp/nerdctl-full-1.6.0-linux-amd64.tar.gz</span></span><br><span class="line">    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Unzip</span> <span class="string">nerdctl</span> <span class="string">files</span></span><br><span class="line">      <span class="attr">ansible.builtin.unarchive:</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">/tmp/nerdctl-full-1.6.0-linux-amd64.tar.gz</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/usr/local/</span></span><br><span class="line">    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Restart</span> <span class="string">Service</span></span><br><span class="line">      <span class="attr">ansible.builtin.shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        systemctl enable buildkit.service --now</span></span><br><span class="line"><span class="string">        systemctl enable containerd.service --now</span></span><br><span class="line"><span class="string">        systemctl enable stargz-snapshotter.service --now</span></span><br><span class="line"><span class="string">        mkdir -p /etc/containerd</span></span><br><span class="line"><span class="string">        containerd config default |  tee /etc/containerd/config.toml</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Init</span> <span class="string">containerd</span> <span class="string">Service</span></span><br><span class="line">      <span class="attr">ansible.builtin.shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        systemctl enable buildkit.service --now</span></span><br><span class="line"><span class="string">        systemctl enable containerd.service --now</span></span><br><span class="line"><span class="string">        systemctl enable stargz-snapshotter.service --now</span></span><br><span class="line"><span class="string">        mkdir -p /etc/containerd</span></span><br><span class="line"><span class="string">        containerd config default |  tee /etc/containerd/config.toml</span></span><br><span class="line"><span class="string">        sed -ri &quot;s|registry.k8s.io|pkgs.fly97.cn|g&quot; /etc/containerd/config.toml</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">kubeadm</span> <span class="string">repo</span></span><br><span class="line">      <span class="attr">ansible.builtin.shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt; EOF</span></span><br><span class="line"><span class="string">        [kubernetes]</span></span><br><span class="line"><span class="string">        name=Kubernetes for EPEL </span></span><br><span class="line"><span class="string">        baseurl=https://pkgs.fly97.cn/repository/kubernetes-yum/</span></span><br><span class="line"><span class="string">        enabled=1</span></span><br><span class="line"><span class="string">        gpgcheck=0</span></span><br><span class="line"><span class="string">        EOF</span></span><br><span class="line"><span class="string">        dnf makecache -y</span></span><br><span class="line"><span class="string">        dnf install kubelet kubeadm kubectl -y</span></span><br><span class="line"><span class="string">        systemctl stop kubelet</span></span><br><span class="line"><span class="string"></span>        </span><br></pre></td></tr></table></figure>
+<h3 id="负载均衡">负载均衡</h3>
+<p>在105和106机器上分别安装keepalived+HAproxy</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dnf install keepalived haproxy -y</span><br></pre></td></tr></table></figure>
+<h4 id="haproxy">haproxy</h4>
+<p>以下是haproxy的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/haproxy/haproxy.cfg &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">global</span></span><br><span class="line"><span class="string">    log         127.0.0.1 local2</span></span><br><span class="line"><span class="string">    pidfile     /var/run/haproxy.pid</span></span><br><span class="line"><span class="string">    maxconn     65535</span></span><br><span class="line"><span class="string">    daemon</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">defaults</span></span><br><span class="line"><span class="string">    timeout connect 5000</span></span><br><span class="line"><span class="string">    timeout client 50000</span></span><br><span class="line"><span class="string">    timeout server 50000</span></span><br><span class="line"><span class="string">    timeout http-request 15s</span></span><br><span class="line"><span class="string">    timeout http-keep-alive 15s</span></span><br><span class="line"><span class="string">    retries    3</span></span><br><span class="line"><span class="string">    maxconn    65535</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">frontend  kubernetes-apiserver</span></span><br><span class="line"><span class="string">    mode tcp</span></span><br><span class="line"><span class="string">    bind *:6443</span></span><br><span class="line"><span class="string">    tcp-request inspect-delay 5s</span></span><br><span class="line"><span class="string">    default_backend  kubernetes-apiserver</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">backend kubernetes-apiserver</span></span><br><span class="line"><span class="string">    mode        tcp</span></span><br><span class="line"><span class="string">    balance     roundrobin</span></span><br><span class="line"><span class="string">    server master01 192.168.100.101:6443 check inter 2000 rise 2 fall 2</span></span><br><span class="line"><span class="string">    server master02 192.168.100.102:6443 check inter 2000 rise 2 fall 2</span></span><br><span class="line"><span class="string">    server master03 192.168.100.103:6443 check inter 2000 rise 2 fall 2</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<h4 id="keepalived">keepalived</h4>
+<p>以下是106机器keepalived的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/keepalived/keepalived.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">global_defs &#123;</span></span><br><span class="line"><span class="string">   max_auto_priority</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">vrrp_script check_apiserver &#123;</span></span><br><span class="line"><span class="string">   script &quot;/etc/keepalived/check_apiserver_vip.sh&quot;</span></span><br><span class="line"><span class="string">   interval 2</span></span><br><span class="line"><span class="string">   weight 5</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">vrrp_instance VI_02 &#123;</span></span><br><span class="line"><span class="string">   # BACKUP模式</span></span><br><span class="line"><span class="string">   state BACKUP</span></span><br><span class="line"><span class="string">   nopreempt</span></span><br><span class="line"><span class="string">   interface enp6s18</span></span><br><span class="line"><span class="string">   # 每个集群的router_id要一致</span></span><br><span class="line"><span class="string">   virtual_router_id 100</span></span><br><span class="line"><span class="string">   priority 50</span></span><br><span class="line"><span class="string">   unicast_src_ip 192.168.100.106</span></span><br><span class="line"><span class="string">   unicast_peer&#123;</span></span><br><span class="line"><span class="string">      192.168.100.105</span></span><br><span class="line"><span class="string">   &#125;</span></span><br><span class="line"><span class="string">   # 虚IP地址</span></span><br><span class="line"><span class="string">   virtual_ipaddress &#123;</span></span><br><span class="line"><span class="string">     192.168.100.104/24</span></span><br><span class="line"><span class="string">   &#125;</span></span><br><span class="line"><span class="string">   track_script &#123;</span></span><br><span class="line"><span class="string">     check_apiserver</span></span><br><span class="line"><span class="string">   &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>以下是105机器keepalived的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/keepalived/keepalived.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">global_defs &#123;</span></span><br><span class="line"><span class="string">  max_auto_priority</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">vrrp_script check_apiserver &#123;</span></span><br><span class="line"><span class="string">   script &quot;/etc/keepalived/check_apiserver_vip.sh&quot;</span></span><br><span class="line"><span class="string">   interval 2</span></span><br><span class="line"><span class="string">   weight 5</span></span><br><span class="line"><span class="string">   timeout 1</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">vrrp_instance VI_01 &#123;</span></span><br><span class="line"><span class="string">   # MASTER模式</span></span><br><span class="line"><span class="string">   state MASTER</span></span><br><span class="line"><span class="string">   nopreempt</span></span><br><span class="line"><span class="string">   interface enp6s18</span></span><br><span class="line"><span class="string">   # 每个集群的router_id要一致</span></span><br><span class="line"><span class="string">   virtual_router_id 100</span></span><br><span class="line"><span class="string">   priority 100</span></span><br><span class="line"><span class="string">   unicast_src_ip 192.168.100.105</span></span><br><span class="line"><span class="string">   unicast_peer &#123;</span></span><br><span class="line"><span class="string">     192.168.100.106</span></span><br><span class="line"><span class="string">   &#125;</span></span><br><span class="line"><span class="string">   # 虚IP地址</span></span><br><span class="line"><span class="string">   virtual_ipaddress &#123;</span></span><br><span class="line"><span class="string">     192.168.100.104/24</span></span><br><span class="line"><span class="string">   &#125;</span></span><br><span class="line"><span class="string">   track_script &#123;</span></span><br><span class="line"><span class="string">     check_apiserver</span></span><br><span class="line"><span class="string">   &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p>以下是检查api_server的脚本文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/keepalived/check_apiserver_vip.sh</span></span><br><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line">killall -0 haproxy</span><br><span class="line"><span class="keyword">if</span> [ $? == 0 ];<span class="keyword">then</span></span><br><span class="line">   http_code=$(curl -k -s -o /dev/null -w <span class="string">&quot;%&#123;http_code&#125;\n&quot;</span> https://127.0.0.1:6443)</span><br><span class="line">   <span class="keyword">if</span> [ <span class="variable">$http_code</span> == 403 ];<span class="keyword">then</span></span><br><span class="line">      <span class="built_in">exit</span> 0</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">      <span class="built_in">exit</span> 1</span><br><span class="line">   <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">   <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<h3 id="部署master和node">部署master和node</h3>
+<p>在101主机上执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm init --config init-k8s.yml --upload-certs</span><br></pre></td></tr></table></figure>
+<p>没有问题的话会安装成功</p>
+<p><img data-src="image-20231005000618131.png" /></p>
+<p>在102、103master主机上执行上面第一行的命令，在剩下的worker节点执行下面的命令</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>主机</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>102、103等master节点</td>
+<td>kubeadm join 192.168.100.104:6443 --token xxx
+--discovery-token-ca-cert-hash xxx --control-plane --certificate-key
+xxx</td>
+</tr>
+<tr class="even">
+<td>其他worker节点</td>
+<td>kubeadm join 192.168.100.104:6443 --token xxx
+--discovery-token-ca-cert-hash xxx</td>
+</tr>
+</tbody>
+</table>
+<p>执行成功后，在任一master节点下执行<code>kubectl get nodes</code>，会显示下面的节点状态</p>
+<p><img data-src="image-20231005003115986.png" /></p>
+<p>此时节点状态仍然是<strong>NotReady</strong>，通过kubelet日志可以看到网络插件尚未安装。</p>
+<p><img data-src="image-20231005003336911.png" /></p>
+<h3 id="部署网络插件">部署网络插件</h3>
+<p>本文使用flannel作为K8s的网络插件：Flannel
+是一种简单易用的方法来配置专为 Kubernetes 设计的第 3 层网络结构。</p>
+<p>refer：https://github.com/flannel-io/flannel</p>
+<p>资源清单可以参考：https://github.com/flannel-io/flannel/blob/master/Documentation/kube-flannel.yml</p>
+<p>主要需要修改image镜像地址，镜像可以参考：https://sci.nju.edu.cn/9e/05/c30384a564741/page.htm</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl apply -f kube-flannel.yml</span><br></pre></td></tr></table></figure>
+<p>等待kube-flannel中pod状态变为running即可</p>
+<p><img data-src="image-20231005004551653.png" /></p>
+<p>此时集群状态正常，安装完毕</p>
+<p><img data-src="image-20231005004647172.png" /></p>
+<h2 id="高可用检查">高可用检查</h2>
+<h3 id="安装etcdctl">安装etcdctl</h3>
+<p>refer：https://github.com/etcd-io/etcd/releases/tag/v3.5.9</p>
+<p>添加环境变量实现自动别名操作</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim .bash_profile</span></span><br><span class="line"><span class="built_in">export</span> ETCDCTL_API=3</span><br><span class="line"><span class="built_in">alias</span> etcdctl=<span class="string">&#x27;etcdctl --endpoints=https://192.168.100.101:2379,https://192.168.100.102:2379,https://192.168.100.103:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key</span></span><br></pre></td></tr></table></figure>
+<p>查看etcd endpoint状态</p>
+<p><img data-src="image-20231005010150190.png" /></p>
+<p>查看etcd endpoint健康</p>
+<p><img data-src="image-20231005010229342.png" /></p>
+<h3 id="未完待续">未完待续。。。</h3>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ubuntu2004安装最新版本MySQL并设置外网访问</title>
     <url>/p/install-newest-mysql-in-ubuntu2004/</url>
     <content><![CDATA[<p><strong>本文主要介绍了如何在Ubuntu2004上安装最新版本的MySQL以及如何设置MySQL外网访问。</strong></p>
@@ -9122,67 +9446,6 @@ cli进行操作的，无法连接到GitHub仓库，也就无法触发更新了�
       </tags>
   </entry>
   <entry>
-    <title>力扣二叉树基础之深度优先遍历</title>
-    <url>/p/DFS-in-binary-tree/</url>
-    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
-<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
-<p>关键词：<strong>二叉树，递归遍历</strong></p>
-<span id="more"></span>
-<h2 id="什么是递归">什么是递归</h2>
-<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
-<h3 id="递归函数三要素">递归函数三要素</h3>
-<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
-<p>三要素指的是：</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值</li>
-<li>确定终止条件</li>
-<li>确定单层递归函数的逻辑</li>
-</ol>
-<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
-<ol type="1">
-<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
-<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
-<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>中序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>后序（迭代）遍历</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="题目">题目</h2>
-<p>未完待续</p>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>力扣数组基础之二分法</title>
-    <url>/p/binary-search/</url>
-    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值
-target ，写一个函数搜索 nums 中的
-target，如果目标值存在返回下标，否则返回 -1。</p>
-<span id="more"></span>
-<p><strong>示例</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>思路</strong></p>
-<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left,
-right)，这里以左闭右闭为例：</p>
-<p>定义target在左闭右闭区间[left, right]内：</p>
-<ul>
-<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
-<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
-</ul>
-<p><strong>示意图</strong></p>
-<p><img data-src="新建位图图像.bmp" /></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>力扣二叉树之二叉搜索树</title>
     <url>/p/binary-search-tree/</url>
     <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
@@ -9318,6 +9581,67 @@ high。通过修剪二叉搜索树，使得所有节点的值在[low, high]中�
 ]]></content>
       <tags>
         <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣二叉树基础之深度优先遍历</title>
+    <url>/p/DFS-in-binary-tree/</url>
+    <content><![CDATA[<p>本文主要介绍LeetCode上关于二叉搜索树的题目。</p>
+<p>本文主要介绍二叉树的深度优先（DFS）遍历其实就是递归遍历。</p>
+<p>关键词：<strong>二叉树，递归遍历</strong></p>
+<span id="more"></span>
+<h2 id="什么是递归">什么是递归</h2>
+<p>二叉树是什么，相信大家都知道，这里不在赘述。这里主要介绍函数的递归调用。</p>
+<h3 id="递归函数三要素">递归函数三要素</h3>
+<p>既然前人已经替我们总结了经验，那我们直接切入正题。</p>
+<p>三要素指的是：</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值</li>
+<li>确定终止条件</li>
+<li>确定单层递归函数的逻辑</li>
+</ol>
+<p>以二叉树的<strong>前序（迭代）遍历</strong>为例</p>
+<ol type="1">
+<li>确定递归函数的参数和返回值：遍历主要就是返回二叉树节点的值，因此参数就是二叉节点；</li>
+<li>确定终止条件，终止条件就是<strong>节点为空；</strong></li>
+<li>确定单层递归的逻辑：前序遍历指的是<code>Node-&gt;Left-&gt;Right</code>，即<strong>中、左、右</strong>，因此代码如下</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> <span class="comment">// 递归函数</span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span> <span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> </span><br><span class="line">        &#125;</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val) <span class="comment">// 中</span></span><br><span class="line">        worker(node.Left)           <span class="comment">// 左</span></span><br><span class="line">        worker(node.Right)          <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后序（迭代）遍历</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">postorder</span><span class="params">(root *TreeNode)</span></span> (res []<span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> worker <span class="function"><span class="keyword">func</span><span class="params">(root *TreeNode)</span></span></span><br><span class="line">    worker = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        worker(node.Left)</span><br><span class="line">        worker(node.Right)</span><br><span class="line">        res = <span class="built_in">append</span>(res, node.Val)</span><br><span class="line">    &#125;</span><br><span class="line">    worker(root)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="题目">题目</h2>
+<p>未完待续</p>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>力扣数组基础之二分法</title>
+    <url>/p/binary-search/</url>
+    <content><![CDATA[<p>题目：给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值
+target ，写一个函数搜索 nums 中的
+target，如果目标值存在返回下标，否则返回 -1。</p>
+<span id="more"></span>
+<p><strong>示例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: nums = [-1, 0, 3, 5, 9, 12], target = 3</span><br><span class="line">输出: 2</span><br><span class="line">解释: 3 出现在 nums 中并且下标为 2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong></p>
+<p>二分法区间一般有两种：左闭右闭[left, right]和左闭右开[left,
+right)，这里以左闭右闭为例：</p>
+<p>定义target在左闭右闭区间[left, right]内：</p>
+<ul>
+<li>循环要使用left&lt;=right的边界条件，因为left==right是有意义的；</li>
+<li>当nums[mid]&gt;target时，此时nums[mid]一定不是target，故把right更新成mid-1;</li>
+</ul>
+<p><strong>示意图</strong></p>
+<p><img data-src="新建位图图像.bmp" /></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="type">int</span>, target <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := left + (right-left) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &lt; target &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> mid </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
@@ -11930,25 +12254,6 @@ gpa在3.8以上(不包括3.8)的复旦大学同学</p>
       </tags>
   </entry>
   <entry>
-    <title>现代信号分析第四章作业</title>
-    <url>/p/Chapter-02-of-Modern-Signal-Analysis/</url>
-    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
-<p><strong>关键词：</strong>研一，现代信号分析</p>
-<span id="more"></span>
-<p><img data-src="image-20201012134854422.png" /></p>
-<p><img data-src="image-20201012135051489-16370605554431.png" /></p>
-<p><img data-src="image-20201012135105822.png" /></p>
-<p><img data-src="image-20201012135149144.png" /></p>
-<p><img data-src="image-20201012140126858.png" /></p>
-<p><img data-src="image-20201012140338034.png" /></p>
-<p><img data-src="image-20201012141112290.png" /></p>
-]]></content>
-      <tags>
-        <tag>研一</tag>
-        <tag>现代信号分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>理解Kubernetes Services</title>
     <url>/p/understanding-services-in-kubernetes/</url>
     <content><![CDATA[<p>本文是CNCF × Alibaba 云原生技术公开课的<strong>第八章理解Kubernetes
@@ -12372,71 +12677,6 @@ URL，这就可以了，你的业务就又可以工作了。</p>
 ]]></content>
       <tags>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Kubernetes集群实践（十一）编写一个自定义资源CRD</title>
-    <url>/p/create-crd-in-kubernetes/</url>
-    <content><![CDATA[<p>本文主要介绍如何在Kubernetes编写自定义资源CRD。</p>
-<p>关键词：<strong>k8s</strong></p>
-<span id="more"></span>
-<h2 id="前言">前言</h2>
-<p>Kubernetes的最大亮点之一必定是它的声明式API设计，所谓的声明式就是告诉Kubernetes你要什么，而不是告诉它怎么做命令。我们日常使用Kubernetes做编排工作的时候，经常会接触Deployment、Service、Pod等资源对象，我们可以很灵活地创建其定义配置，然后执行kubectl
-apply命令，Kubernetes总能为我们创建相关资源对象并完成资源的注册，进而执行资源所负责的功能。</p>
-<p>CRD，称之为自定义资源定义，本质上，它的表现形式是一段声明，用于定义用户定义的资源对象罢了。单单通过它还不能产生任何收益，因为开发者还要针对CRD定义提供关联的CRD对象CRD控制器（CRD
-Controller）。CRD控制器通常可以通过Golang进行开发，只需要遵循Kubernetes的控制器开发规范，并基于client-go进行调用，并实现Informer、ResourceEventHandler、Workqueue等组件逻辑即可。听起来感觉很复杂的样子，不过其实真正开发的时候，并不困难，因为大部分繁琐的代码逻辑都能通过Kubernetes的code
-generator代码生成出来。关于如何进行CRD控制器的开发，下面我们会通过一个例子慢慢地深入，希望通过实践来理解CRD的原理。</p>
-<h2 id="声明式api">声明式API</h2>
-<h3 id="命令式api">命令式API</h3>
-<p>首先，声明式API是相对于命令式API而言的。</p>
-<p>假设我们想创建一个deployment，可以创建一个下面的yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-<p>然后在master执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create -f nginx.yaml</span><br></pre></td></tr></table></figure>
-<p>然后这两个Pod就跑起来了。</p>
-<p>如果想修改上的资源清单，需要先修改资源文件，然后再执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl replace -f nginx.yaml</span><br></pre></td></tr></table></figure>
-<p>以上基于yaml文件操作的方式，被称作命令式API。同样属于命令式API的还有Docker
-Swarm的创建方式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker service create --name nginx --replicas 2  nginx</span><br></pre></td></tr></table></figure>
-<h3 id="声明式api-1">声明式API</h3>
-<p><strong>kubectl apply</strong> 的操作属于声明式API。</p>
-<p>kubectl
-replace的操作，可以看作是使用新的YAML文件的API对象，<strong>替换原有的API对象</strong>；kubectl
-set image和 kubelctl edit也是对原有对象的修改，这些都属于命令式API。</p>
-<p>kube-apiserver在响应命令式请求时，只能一次处理一个写请求，否则可能会出现冲突。</p>
-<p>而对于apply的声明式请求，可以一次处理多个写操作，并且具备merge能力。</p>
-<p>所谓声明式API，<strong>就是告诉kubernetes你要什么，而不是告诉他怎么做命令</strong>。在日常做容器编排时，经常会操作Deployment、Service、Pod等资源对象，我们可以很灵活的创建其自定义配置，然后执行kubectl
-apply
-命令，kubernetes可以创建相关资源对象并完成资源的注册，进而执行资源所负责的功能。</p>
-<p>有了自定义API对象，开发者就不需要逐一进行Deployment、Service
-、ConfigMap等步骤，而是创建一些可以表述整个应用程序或者软件服务的对象。除此之外，我们还可以在创建高阶对象的基础上创建底层对象。例如：我们想要创建一个backup资源，在定义yaml的同时，可以希望通过spec的定义进行日常的备份操作声明，当提交给k8s集群时，相关的Deployment、Service资源会被自动创建，很大程度上让业务扩展性加大。</p>
-<h3 id="crd">CRD</h3>
-<p>CRD，称之为自定义资源定义，本质上，它的表现形式是一段声明，用于定义用户定义的资源对象罢了。单单通过它还不能产生任何收益，因为开发者还要针对CRD定义提供关联的CRD对象CRD控制器（CRD
-Controller）。CRD控制器通常可以通过Golang进行开发，只需要遵循Kubernetes的控制器开发规范，并基于client-go进行调用，并实现Informer、ResourceEventHandler、Workqueue等组件逻辑即可。听起来感觉很复杂的样子，不过其实真正开发的时候，并不困难，因为大部分繁琐的代码逻辑都能通过Kubernetes的code
-generator代码生成出来。关于如何进行CRD控制器的开发，下面我们会通过一个例子慢慢地深入，希望通过实践来理解CRD的原理。</p>
-<h2 id="api">API</h2>
-<p>整个kubernetes里所有API对象都可以用下面的树形结构表示出来：</p>
-<p><img data-src="编写一个自定义资源对象CRD/NeatReader-1663224393771.png" /></p>
-<p>可以看出，API对象的组织方式，是层层递进的。</p>
-<p>如果现在想要创建一个CronJob对象，那么YAML文件的开始部分需要这样写：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiversion:</span> <span class="string">batch/v2alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br></pre></td></tr></table></figure>
-<p>对于上文，Crontab是这个API对象的资源类型，batch是他的组，v2alpha1是版本；</p>
-<p>当提交了这个yaml文件一行，kubernetes就会把这个YAML文件描述内容，转换成一个CronJob对象</p>
-<p>apiserver会遵循以下的流程：</p>
-<ol type="1">
-<li><p>匹配API对象的组。</p>
-<p>通常核心对象如Pod、Node不需要group，直接在/api这个层级下进行匹配；</p>
-<p>而对于CronJob等非核心API对象来说，Kubernetes必须在
-/apis这个层级下找到对应的Group，根据batch，找到/apis/batch。</p>
-<p>API是根据对象功能为依据的。如Job和CronJob就属于batch这个Group。</p></li>
-<li><p>匹配API对象的版本号</p>
-<p>对于CronJob这个API对象来说，Kubernetes在batch这个Group下，匹配的版本号就是v2alpha1</p>
-<p>K8s中同一种API对象可以由多个版本，这正是K8s进行API版本化管理的手段</p></li>
-</ol>
-]]></content>
-      <tags>
-        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>
@@ -13123,6 +13363,25 @@ XtraBackup、Oracle RMAN等。</p>
       <tags>
         <tag>linux</tag>
         <tag>learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>现代信号分析第四章作业</title>
+    <url>/p/Chapter-02-of-Modern-Signal-Analysis/</url>
+    <content><![CDATA[<p><strong>摘要：</strong>此系列文章是我从2020年9月21日开始在浙江理工大学读研一时《现代信号分析》课后作业练习题及答案。</p>
+<p><strong>关键词：</strong>研一，现代信号分析</p>
+<span id="more"></span>
+<p><img data-src="image-20201012134854422.png" /></p>
+<p><img data-src="image-20201012135051489-16370605554431.png" /></p>
+<p><img data-src="image-20201012135105822.png" /></p>
+<p><img data-src="image-20201012135149144.png" /></p>
+<p><img data-src="image-20201012140126858.png" /></p>
+<p><img data-src="image-20201012140338034.png" /></p>
+<p><img data-src="image-20201012141112290.png" /></p>
+]]></content>
+      <tags>
+        <tag>研一</tag>
+        <tag>现代信号分析</tag>
       </tags>
   </entry>
 </search>
