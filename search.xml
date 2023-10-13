@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Dedian 10 使用qbittorrent-nox web</title>
+    <url>/p/qbittorrent-nox-on-debian/</url>
+    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
+<span id="more"></span>
+<h3 id="下载安装包">下载安装包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3
+id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox
+的systemd启动脚本</p>
+<h3
+id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=qBittorrent Command Line Client</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=qbittorrent-nox</span><br><span class="line">Group=qbittorrent-nox</span><br><span class="line">UMask=007</span><br><span class="line">ExecStart=/usr/bin/qbittorrent-nox -d --webui-port=8090</span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
+<p>使用8090端口访问qbittorrent
+web页面，默认用户admin，密码adminadmin</p>
+<p>在tools-options-Web
+UI中找到Authentication，修改username及password。</p>
+]]></content>
+      <tags>
+        <tag>Debian</tag>
+        <tag>qbittorrent-nox</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Dedian10使用Rclone同步ondrive</title>
     <url>/p/rclone-on-debian/</url>
     <content><![CDATA[<p>Dedian10 使用Rclone同步onedrive</p>
@@ -26,35 +55,6 @@ href="https://rclone.org/downloads/">下载</a>，进入文件夹，资源管理
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 本地到网盘</span></span><br><span class="line">rclone [功能选项] &lt;本地路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到本地</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;本地路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到网盘</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">常用功能选项</span><br><span class="line">rclone copy - 复制</span><br><span class="line">rclone move - 移动，如果要在移动后删除空源目录，请加上 --delete-empty-src-dirs 参数</span><br><span class="line">rclone <span class="built_in">sync</span> - 同步：将源目录同步到目标目录，只更改目标目录。</span><br><span class="line">rclone size - 查看网盘文件占用大小。</span><br><span class="line">rclone delete - 删除路径下的文件内容。</span><br><span class="line">rclone purge - 删除路径及其所有文件内容。</span><br><span class="line">rclone <span class="built_in">mkdir</span> - 创建目录。</span><br><span class="line">rclone <span class="built_in">rmdir</span> - 删除目录。</span><br><span class="line">rclone rmdirs - 删除指定灵境下的空目录。如果加上 --leave-root 参数，则不会删除根目录。</span><br><span class="line">rclone check - 检查源和目的地址数据是否匹配。</span><br><span class="line">rclone <span class="built_in">ls</span> - 列出指定路径下的所有的文件以及文件大小和路径。</span><br><span class="line">rclone lsl - 比上面多一个显示上传时间。</span><br><span class="line">rclone lsd 列出指定路径下的目录</span><br><span class="line">rclone lsf - 列出指定路径下的目录和文件</span><br><span class="line">常用参数</span><br><span class="line">-n = --dry-run - 测试运行，用来查看 rclone 在实际运行中会进行哪些操作。</span><br><span class="line">-P = --progress - 显示实时传输进度，500mS 刷新一次，否则默认 1 分钟刷新一次。</span><br><span class="line">--cache-chunk-size SizeSuffi - 块的大小，默认5M，理论上是越大上传速度越快，同时占用内存也越多。如果设置得太大，可能会导致进程中断。</span><br><span class="line">--cache-chunk-total-size SizeSuffix - 块可以在本地磁盘上占用的总大小，默认10G。</span><br><span class="line">--transfers=N - 并行文件数，默认为4。在比较小的内存的VPS上建议调小这个参数，比如128M的小鸡上使用建议设置为1。</span><br><span class="line">--config string - 指定配置文件路径，string为配置文件路径。</span><br><span class="line">--ignore-errors - 跳过错误。比如 OneDrive 在传了某些特殊文件后会提示Failed to copy: failed to open <span class="built_in">source</span> object: malwareDetected: Malware detected，这会导致后续的传输任务被终止掉，此时就可以加上这个参数跳过错误。但需要注意 RCLONE 的退出状态码不会为0。</span><br></pre></td></tr></table></figure>
 <p>参考：https://p3terx.com/archives/rclone-advanced-user-manual-common-command-parameters.html</p>
-]]></content>
-      <tags>
-        <tag>Debian</tag>
-        <tag>qbittorrent-nox</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Dedian 10 使用qbittorrent-nox web</title>
-    <url>/p/qbittorrent-nox-on-debian/</url>
-    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
-<span id="more"></span>
-<h3 id="下载安装包">下载安装包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3
-id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox
-的systemd启动脚本</p>
-<h3
-id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=qBittorrent Command Line Client</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=qbittorrent-nox</span><br><span class="line">Group=qbittorrent-nox</span><br><span class="line">UMask=007</span><br><span class="line">ExecStart=/usr/bin/qbittorrent-nox -d --webui-port=8090</span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
-<p>使用8090端口访问qbittorrent
-web页面，默认用户admin，密码adminadmin</p>
-<p>在tools-options-Web
-UI中找到Authentication，修改username及password。</p>
 ]]></content>
       <tags>
         <tag>Debian</tag>
@@ -3098,10 +3098,124 @@ Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的�
       </tags>
   </entry>
   <entry>
+    <title>RHCE学习教程之Ansible运维基础</title>
+    <url>/p/learn-rhce-and-ansible/</url>
+    <content><![CDATA[<p>ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。</p>
+<p>本文主要介绍RHCE学习中的一些知识点，主要包含ansible的一些用法。</p>
+<p><strong>关键词：RHCE Ansible</strong></p>
+<span id="more"></span>
+<h2 id="配置文件优先级">配置文件优先级</h2>
+<ol type="1">
+<li><code>ANSIBLE_CONFIG</code>环境变量；</li>
+<li>当前<code>/home</code>目录下ansible.cfg；</li>
+<li><code>/home</code>目录下.ansible.cfg（隐藏文件）；</li>
+<li><code>/etc/absible/ansible.cfg</code></li>
+</ol>
+<h2 id="配置非root用户提权">配置非root用户提权</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[defaults]         </span><br><span class="line">inventory= ./hosts   //自定义被控主机清单文件，这里叫hosts</span><br><span class="line">remote_user= alice   //被控主机使用的账户，如果不用普通用户则无需本行以及后续配置</span><br><span class="line">[privilege_escalation]  //提升权限的配置</span><br><span class="line">become=True    //是否要提权  True是要提权</span><br><span class="line">become_method=sudo   //提权方式用sudo</span><br><span class="line">become_user=root   //提权时成为root</span><br><span class="line">become_ask_pass=False   //提权操作时无需密码</span><br></pre></td></tr></table></figure>
+<p>想不起来使用下面的命令，可以生成默认的配置文件，然后根据提示取消相应的注释。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-config init &gt; ansible.cfg</span><br></pre></td></tr></table></figure>
+<h2 id="配置hosts">配置Hosts</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[test01] //组名</span><br><span class="line">node1   </span><br><span class="line">[test02]</span><br><span class="line">node2</span><br><span class="line">[web]</span><br><span class="line">node[3:4] //组名精简写法</span><br><span class="line">[test05]</span><br><span class="line">node5</span><br><span class="line">[webserver:children] //children关键字，代表嵌套组，webserver包含下面的组</span><br><span class="line">web</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="常见方式">常见方式</h2>
+<h3 id="命令方式">命令方式</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m ping</span><br><span class="line">ansible all -m <span class="built_in">command</span> -a <span class="string">&#x27;ls /opt/abc.txt&#x27;</span>  // 不支持管道，默认模块</span><br><span class="line">ansible all -m shell -a <span class="string">&#x27;echo &quot;nameserver 1.1.1.1&quot; &gt;&gt; /etc/reslove.conf&#x27;</span> // 支持管道</span><br><span class="line">ansible node1 -m shell -a <span class="string">&#x27;echo 123 | passwd --stdin tom&#x27;</span> // 支持管道，设置密码</span><br><span class="line">ansible node1 -m script -a <span class="string">&#x27;test.sh&#x27;</span> // 将脚本上传到节点执行</span><br></pre></td></tr></table></figure>
+<h3 id="playbook方式">playbook方式</h3>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ping</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">ping:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ping</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo &#x27;ok&#x27; /tmp/ok</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">resolv</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo &quot;nameserver 1.1.1.1&quot; &gt;&gt; /etc/resolv.conf</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo 123 | passwd --stdin tom</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">script:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">test.sh</span></span><br></pre></td></tr></table></figure>
+<h2 id="常见模块">常见模块</h2>
+<h3 id="file模块">file模块</h3>
+<p>一般用来创建文件、目录、链接文件，以及删除文件</p>
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 92%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>path</td>
+<td>路径</td>
+</tr>
+<tr class="even">
+<td>state</td>
+<td>执行动作。touch：创建普通文件，directory是目录，link是链接文件（src是源，dest是目标），absent是删除</td>
+</tr>
+<tr class="odd">
+<td>owner</td>
+<td>属主</td>
+</tr>
+<tr class="even">
+<td>group</td>
+<td>属组</td>
+</tr>
+<tr class="odd">
+<td>mode</td>
+<td>权限</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=directory path=/opt/456 &#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=link src=/etc/hosts dest=/var/tmp/hosts&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=absent path=/opt/123&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123 owner=alice&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123 group=alice&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123 mode=4777&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>playbook</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">touch</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/123</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">directory</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/456</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">link</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">/etc/hosts</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/var/tmp/hosts</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">absent</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/123</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">touch</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/456</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">alice</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">touch</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/1234</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">alice</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/1234</span></span><br><span class="line">        <span class="attr">mode:</span> <span class="number">4777</span></span><br></pre></td></tr></table></figure>
+<h3 id="yum_repository模块">yum_repository模块</h3>
+<p>为被控主机搭建yum仓库，记不住yum后面的文字可以先使用<code>ansible-doc -l | grep yum</code>，再使用<code>ansible-doc yum_repository</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>仓库名</td>
+</tr>
+<tr class="even">
+<td>description</td>
+<td>描述</td>
+</tr>
+<tr class="odd">
+<td>file</td>
+<td>yum配置文件的名字</td>
+</tr>
+<tr class="even">
+<td>baseurl</td>
+<td>软件源地址</td>
+</tr>
+<tr class="odd">
+<td>gpgcheck</td>
+<td>gpgkey检测</td>
+</tr>
+<tr class="even">
+<td>gpgkey</td>
+<td>如果检测key，指定key路径</td>
+</tr>
+<tr class="odd">
+<td>enabled</td>
+<td>是否开启，默认值为1是开启</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m yum_repository -a <span class="string">&#x27;name=appstream description=appstrem baseurl=http://172.25.0.254/rhel9/AppStream gpgcheck=0&#x27;</span></span><br><span class="line">ansible all -m yum_repository -a <span class="string">&#x27;name=baseos description=baseos baseurl=http://172.25.0.254/rhel9/BaseOS gpgcheck=0&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/AppStrea</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/BaseOS</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>learning</tag>
+        <tag>ansible</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>红帽认证RHCSA</title>
     <url>/p/learn-Red-Hat-certification-rhcsa/</url>
     <content><![CDATA[<p>本文主要记录在上班学（mo）习（yu）时的一些学习记录，本文主要记录的是红帽认证RHCSA。</p>
-<p><strong>关键词：Red Hat RHCSA</strong></p>
+<p><strong>关键词：RHCSA</strong></p>
 <span id="more"></span>
 <h1 id="红帽认证rhcsa">红帽认证RHCSA</h1>
 <h2 id="命令行概述格式快捷键">命令行概述、格式、快捷键</h2>
@@ -6974,6 +7088,7 @@ id="filenotfounderror-errno-2-no-such-file-or-directory-hostfsharbor.key">FileNo
     <content><![CDATA[<p>相信大家对wireguard已经不陌生了。作为一种搭建虚拟局域网的工具，相比于传统VPN而言，所有节点之间都可以进行P2P连接，也就是<strong>全互联模式</strong>，效率更高。而wireguard本身只是一个内核级别的模块，只是一个数据平面，至于上层更高级的功能（比如密钥交换机制，UDP打洞，ACL等），需要通过用户空间的应用来实现。</p>
 <p>本文主要介绍Headscale和Tailscale。</p>
 <p>本文与2023年9月10日第二次更新。</p>
+<p>本文与2023年10月5日第三次更新。</p>
 <span id="more"></span>
 <h2 id="前言">前言</h2>
 <p>为了基于wireguard实现更完美的VPN工具，现在已经出现了很多项目，如<strong>Netmaker</strong>，通过可视化界面来配置全互联模式，并支持UDP打洞、多租户等高端功能，几乎适配所有平台。然而现实世界是复杂的，无法保证所有的NAT都能打洞成功，而且Netmaker目前不支持fallback机制，如打洞失败，无法fallback中继节点。而Tailscale支持fallback，可以尽最大努力实现全互联模式，部分节点即使打洞不成功，也可通过中继节点在虚拟局域网内畅通无阻。</p>
@@ -7259,7 +7374,7 @@ APP，点击登录，会自动打开如下的页面：</p>
 <p>首先在headscale生成api key，-n 用于指定命名空间</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">headscale preauthkeys create -e 24h -u fly97</span><br></pre></td></tr></table></figure>
 <p>然后在tailscale客户端接入，将authkey替换成上文生成的key</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">login_server=http://xx.xx</span><br><span class="line">authkey=xxxx</span><br><span class="line">route=xxxx</span><br><span class="line">sudo tailscale up --login-server=<span class="variable">$&#123;login_server&#125;</span> --accept-routes=<span class="literal">true</span> --accept-dns=<span class="literal">false</span> --advertise-routes=<span class="variable">$route</span> --authkey <span class="variable">$&#123;authkey&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">login_server=http://xx.xx</span><br><span class="line">authkey=xxxx</span><br><span class="line">route=xxxx</span><br><span class="line">sudo tailscale up --login-server=<span class="variable">$&#123;login_server&#125;</span> --accept-routes=<span class="literal">false</span> --accept-dns=<span class="literal">false</span> --advertise-routes=<span class="variable">$route</span> --authkey <span class="variable">$&#123;authkey&#125;</span></span><br></pre></td></tr></table></figure>
 <h4 id="打通局域网">打通局域网</h4>
 <p>假设内网有一台 Linux 主机（比如 OpenWrt）安装了 Tailscale
 客户端，希望其他 Tailscale 客户端可以直接通过家中的局域网 IP（例如
@@ -7268,7 +7383,8 @@ APP，点击登录，会自动打开如下的页面：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;net.ipv4.ip_forward = 1&#x27;</span> | <span class="built_in">tee</span> /etc/sysctl.d/ipforwarding.conf</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;net.ipv6.conf.all.forwarding = 1&#x27;</span> | <span class="built_in">tee</span> -a /etc/sysctl.d/ipforwarding.conf</span><br><span class="line">sysctl -p /etc/sysctl.d/ipforwarding.conf</span><br></pre></td></tr></table></figure>
 <p>客户端修改注册节点的命令，在原来命令的基础上加上参数
 <code>--advertise-routes=192.168.100.0/24</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">login_server=http://xx.xx</span><br><span class="line">authkey=xxxx</span><br><span class="line">route=xxxx</span><br><span class="line">sudo tailscale up --login-server=<span class="variable">$&#123;login_server&#125;</span> --accept-routes=<span class="literal">true</span> --accept-dns=<span class="literal">false</span> --advertise-routes=<span class="variable">$route</span> --authkey <span class="variable">$&#123;authkey&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">login_server=http://xx.xx</span><br><span class="line">authkey=xxxx</span><br><span class="line">route=xxxx</span><br><span class="line">sudo tailscale up --login-server=<span class="variable">$&#123;login_server&#125;</span> --accept-routes=<span class="literal">false</span> --accept-dns=<span class="literal">false</span> --advertise-routes=<span class="variable">$route</span> --authkey <span class="variable">$&#123;authkey&#125;</span></span><br></pre></td></tr></table></figure>
+<p><strong>PS：这里不能加入accept-routes=true，这样会导致当前节点访问当前路由时，强制走derp-server的流量。</strong></p>
 <p>在headscale服务端启动路由，首先需要查看要启用节点的id，假设这个id是1</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">headscale routes list</span><br></pre></td></tr></table></figure>
 <p>根据ID启动路由</p>
