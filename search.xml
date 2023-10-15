@@ -1,35 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Dedian 10 使用qbittorrent-nox web</title>
-    <url>/p/qbittorrent-nox-on-debian/</url>
-    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
-<span id="more"></span>
-<h3 id="下载安装包">下载安装包</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3
-id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox
-的systemd启动脚本</p>
-<h3
-id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=qBittorrent Command Line Client</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=qbittorrent-nox</span><br><span class="line">Group=qbittorrent-nox</span><br><span class="line">UMask=007</span><br><span class="line">ExecStart=/usr/bin/qbittorrent-nox -d --webui-port=8090</span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
-<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
-<p>使用8090端口访问qbittorrent
-web页面，默认用户admin，密码adminadmin</p>
-<p>在tools-options-Web
-UI中找到Authentication，修改username及password。</p>
-]]></content>
-      <tags>
-        <tag>Debian</tag>
-        <tag>qbittorrent-nox</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Dedian10使用Rclone同步ondrive</title>
     <url>/p/rclone-on-debian/</url>
     <content><![CDATA[<p>Dedian10 使用Rclone同步onedrive</p>
@@ -55,6 +26,35 @@ href="https://rclone.org/downloads/">下载</a>，进入文件夹，资源管理
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 本地到网盘</span></span><br><span class="line">rclone [功能选项] &lt;本地路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到本地</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;本地路径&gt; [参数] [参数] ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 网盘到网盘</span></span><br><span class="line">rclone [功能选项] &lt;网盘名称:路径&gt; &lt;网盘名称:路径&gt; [参数] [参数] ...</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">常用功能选项</span><br><span class="line">rclone copy - 复制</span><br><span class="line">rclone move - 移动，如果要在移动后删除空源目录，请加上 --delete-empty-src-dirs 参数</span><br><span class="line">rclone <span class="built_in">sync</span> - 同步：将源目录同步到目标目录，只更改目标目录。</span><br><span class="line">rclone size - 查看网盘文件占用大小。</span><br><span class="line">rclone delete - 删除路径下的文件内容。</span><br><span class="line">rclone purge - 删除路径及其所有文件内容。</span><br><span class="line">rclone <span class="built_in">mkdir</span> - 创建目录。</span><br><span class="line">rclone <span class="built_in">rmdir</span> - 删除目录。</span><br><span class="line">rclone rmdirs - 删除指定灵境下的空目录。如果加上 --leave-root 参数，则不会删除根目录。</span><br><span class="line">rclone check - 检查源和目的地址数据是否匹配。</span><br><span class="line">rclone <span class="built_in">ls</span> - 列出指定路径下的所有的文件以及文件大小和路径。</span><br><span class="line">rclone lsl - 比上面多一个显示上传时间。</span><br><span class="line">rclone lsd 列出指定路径下的目录</span><br><span class="line">rclone lsf - 列出指定路径下的目录和文件</span><br><span class="line">常用参数</span><br><span class="line">-n = --dry-run - 测试运行，用来查看 rclone 在实际运行中会进行哪些操作。</span><br><span class="line">-P = --progress - 显示实时传输进度，500mS 刷新一次，否则默认 1 分钟刷新一次。</span><br><span class="line">--cache-chunk-size SizeSuffi - 块的大小，默认5M，理论上是越大上传速度越快，同时占用内存也越多。如果设置得太大，可能会导致进程中断。</span><br><span class="line">--cache-chunk-total-size SizeSuffix - 块可以在本地磁盘上占用的总大小，默认10G。</span><br><span class="line">--transfers=N - 并行文件数，默认为4。在比较小的内存的VPS上建议调小这个参数，比如128M的小鸡上使用建议设置为1。</span><br><span class="line">--config string - 指定配置文件路径，string为配置文件路径。</span><br><span class="line">--ignore-errors - 跳过错误。比如 OneDrive 在传了某些特殊文件后会提示Failed to copy: failed to open <span class="built_in">source</span> object: malwareDetected: Malware detected，这会导致后续的传输任务被终止掉，此时就可以加上这个参数跳过错误。但需要注意 RCLONE 的退出状态码不会为0。</span><br></pre></td></tr></table></figure>
 <p>参考：https://p3terx.com/archives/rclone-advanced-user-manual-common-command-parameters.html</p>
+]]></content>
+      <tags>
+        <tag>Debian</tag>
+        <tag>qbittorrent-nox</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Dedian 10 使用qbittorrent-nox web</title>
+    <url>/p/qbittorrent-nox-on-debian/</url>
+    <content><![CDATA[<p>Dedian 10 使用qbittorrent-nox web</p>
+<span id="more"></span>
+<h3 id="下载安装包">下载安装包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qbittorrent qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3
+id="创建用于运行qbittorrent-nox的用户及组">创建用于运行qbittorrent-nox的用户及组</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo adduer --system --group qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<p>也可以将系统原有用添加到qbittorrent-nox组中，此处用户主要用于qbittorrnet-nox
+的systemd启动脚本</p>
+<h3
+id="添加qbittorrent-nox服务设置开机自启及启动">添加qbittorrent-nox服务，设置开机自启及启动</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi /lib/systemd/system/qbittorrent-nox.service</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=qBittorrent Command Line Client</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=qbittorrent-nox</span><br><span class="line">Group=qbittorrent-nox</span><br><span class="line">UMask=007</span><br><span class="line">ExecStart=/usr/bin/qbittorrent-nox -d --webui-port=8090</span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>webui-port用于浏览器访问的端口，可以自行更改（非root用户需使用1024-65535以上未被使用的端口）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> qbittorrent-nox</span><br><span class="line">sudo systemctl start qbittorrent-nox</span><br></pre></td></tr></table></figure>
+<h3 id="修改web访问用户及密码">修改web访问用户及密码</h3>
+<p>使用8090端口访问qbittorrent
+web页面，默认用户admin，密码adminadmin</p>
+<p>在tools-options-Web
+UI中找到Authentication，修改username及password。</p>
 ]]></content>
       <tags>
         <tag>Debian</tag>
@@ -3123,6 +3123,7 @@ Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的�
 <h3 id="playbook方式">playbook方式</h3>
 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ping</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">ping:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ping</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo &#x27;ok&#x27; /tmp/ok</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">resolv</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo &quot;nameserver 1.1.1.1&quot; &gt;&gt; /etc/resolv.conf</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo 123 | passwd --stdin tom</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">script:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">test.sh</span></span><br></pre></td></tr></table></figure>
 <h2 id="常见模块">常见模块</h2>
+<p>refer：https://docs.ansible.com/ansible/latest/collections/ansible/builtin/</p>
 <h3 id="file模块">file模块</h3>
 <p>一般用来创建文件、目录、链接文件，以及删除文件</p>
 <table>
@@ -3203,7 +3204,197 @@ Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的�
 </tbody>
 </table>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible all -m yum_repository -a <span class="string">&#x27;name=appstream description=appstrem baseurl=http://172.25.0.254/rhel9/AppStream gpgcheck=0&#x27;</span></span><br><span class="line">ansible all -m yum_repository -a <span class="string">&#x27;name=baseos description=baseos baseurl=http://172.25.0.254/rhel9/BaseOS gpgcheck=0&#x27;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/AppStrea</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/BaseOS</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/AppStream</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/BaseOS</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h3 id="yum模块">yum模块</h3>
+<p>使用yum安装软件</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/安装，absent/卸载，latest/升级</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>指定软件包名</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">net-tools</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">latest</span></span><br></pre></td></tr></table></figure>
+<h3 id="copy模块">Copy模块</h3>
+<p>将控制主机的文件拷贝到被控主机</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>src</td>
+<td>源文件</td>
+</tr>
+<tr class="even">
+<td>dest</td>
+<td>目标</td>
+</tr>
+<tr class="odd">
+<td>owner</td>
+<td>属主</td>
+</tr>
+<tr class="even">
+<td>group</td>
+<td>属组</td>
+</tr>
+<tr class="odd">
+<td>mode</td>
+<td>权限</td>
+</tr>
+<tr class="even">
+<td>backup</td>
+<td>backup=yes，拷贝时备份控制主机的同名文件，防止被覆盖</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible node1 -m copy dest=/etc/hostname src=/var/tmp/hostname owner=alice mode=1777 backup=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: node1</span><br><span class="line">  tasks:</span><br><span class="line">    - copy:</span><br><span class="line">        src: /etc/hostname</span><br><span class="line">        dest: /var/tmp/hostname</span><br><span class="line">        owner: alice</span><br><span class="line">        mode: 1777</span><br><span class="line">        backup: <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="user模块">User模块</h3>
+<p>管理账户的模块</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>名字</td>
+</tr>
+<tr class="odd">
+<td>uid</td>
+<td>定义uid号</td>
+</tr>
+<tr class="even">
+<td>password</td>
+<td>定义密码</td>
+</tr>
+<tr class="odd">
+<td>group</td>
+<td>基本组</td>
+</tr>
+<tr class="even">
+<td>groups</td>
+<td>附加组</td>
+</tr>
+<tr class="odd">
+<td>append</td>
+<td>append=yes，追加附加组</td>
+</tr>
+<tr class="even">
+<td>remove</td>
+<td>remove=yes，删除用户相关文件</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible node1 -m user -a <span class="string">&#x27;name=zhangsan state=absent remove=yes&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">user:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">wf09</span></span><br><span class="line">        <span class="attr">uid:</span> <span class="number">101</span></span><br><span class="line">        <span class="attr">password:</span> <span class="string">&#x27;<span class="template-variable">&#123;&#123;&quot;123456&quot;|password_hash(&quot;sha256&quot;)&#125;&#125;</span>&#x27;</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">wf09</span></span><br><span class="line">        <span class="attr">groups:</span> <span class="string">admin</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">append:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="group模块">Group模块</h3>
+<p>管理组</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>组名</td>
+</tr>
+<tr class="odd">
+<td>gid</td>
+<td>gid组号</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">group:</span> </span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">wf09</span></span><br><span class="line">        <span class="attr">gid:</span> <span class="number">101</span></span><br></pre></td></tr></table></figure>
+<h3 id="service模块">Service模块</h3>
+<p>管理服务</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>started/开启服务，stopped/关闭服务，restarted/重启服务</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>服务名</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">service:</span> </span><br><span class="line">        <span class="attr">state:</span> <span class="string">restarted</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">httpd</span></span><br></pre></td></tr></table></figure>
+<h3 id="安装collection模块">安装collection模块</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim ansible.cfg</span></span><br><span class="line">collections_paths=/home/alice/ansible/collection</span><br><span class="line"><span class="comment"># 官方网站 https://galaxy.ansible.com</span></span><br><span class="line"><span class="comment"># bash执行</span></span><br><span class="line">ansible-galaxy collection install http://server1.lab0.example.com/materials/ansible-posix-1.5.1.tar.gz  -p /home/alice/ansible/collection</span><br><span class="line"><span class="comment"># 查看firewalld</span></span><br><span class="line">ansible-doc ansible.posix.firewalld</span><br></pre></td></tr></table></figure>
+<p><strong>pip 模块</strong></p>
+<p>python的包管理模块</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">pip:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">firewalld</span></span><br></pre></td></tr></table></figure>
+<p>用firewall之前还需要用yum安装firewalld安装包。</p>
+<h3 id="firewalld模块">firewalld模块</h3>
+<p>管理防火墙</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>enabled/添加规则，disabled/删除规则</td>
+</tr>
+<tr class="even">
+<td>service</td>
+<td>指定服务（协议）</td>
+</tr>
+<tr class="odd">
+<td>permanent</td>
+<td>permanent=yes，永久生效</td>
+</tr>
+<tr class="even">
+<td>immediate</td>
+<td>immediate=yes，立刻生效</td>
+</tr>
+<tr class="odd">
+<td>port</td>
+<td>22</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">--- </span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">firewalld:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">enabled</span></span><br><span class="line">        <span class="attr">service:</span> <span class="string">http</span></span><br><span class="line">        <span class="attr">permanent:</span> <span class="literal">yes</span></span><br><span class="line">        <span class="attr">immediate:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>linux</tag>
