@@ -3395,6 +3395,170 @@ Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的�
 </tbody>
 </table>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">--- </span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">firewalld:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">enabled</span></span><br><span class="line">        <span class="attr">service:</span> <span class="string">http</span></span><br><span class="line">        <span class="attr">permanent:</span> <span class="literal">yes</span></span><br><span class="line">        <span class="attr">immediate:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="parted模块">parted模块</h3>
+<p>对硬盘分区</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>device</strong></td>
+<td>操作的设备</td>
+</tr>
+<tr class="even">
+<td><strong>label</strong></td>
+<td>分区表类型 mbr/msdos， gpt</td>
+</tr>
+<tr class="odd">
+<td><strong>number</strong></td>
+<td>分区序号</td>
+</tr>
+<tr class="even">
+<td><strong>part_start</strong></td>
+<td>分区起始位置</td>
+</tr>
+<tr class="odd">
+<td><strong>part_end</strong></td>
+<td>分区结束位置</td>
+</tr>
+<tr class="even">
+<td><strong>state</strong></td>
+<td><strong>present/创建，absent/删除，info/查看信息</strong></td>
+</tr>
+</tbody>
+</table>
+<p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">parted:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">device:</span> <span class="string">/dev/vdb</span></span><br><span class="line">        <span class="attr">number:</span> <span class="number">2</span></span><br><span class="line">        <span class="attr">part_start:</span> <span class="string">3GiB</span></span><br><span class="line">        <span class="attr">part_end:</span> <span class="string">4GiB</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="filesystem">filesystem</h3>
+<p>赋予文件系统</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dev</td>
+<td>定义分区</td>
+</tr>
+<tr class="even">
+<td>fstype</td>
+<td>分区表类型 mbr/msdos， gpt</td>
+</tr>
+<tr class="odd">
+<td><strong>number</strong></td>
+<td>分区序号</td>
+</tr>
+<tr class="even">
+<td><strong>part_start</strong></td>
+<td>分区起始位置</td>
+</tr>
+<tr class="odd">
+<td><strong>part_end</strong></td>
+<td>分区结束位置</td>
+</tr>
+<tr class="even">
+<td><strong>state</strong></td>
+<td><strong>present/创建，absent/删除，info/查看信息</strong></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">filesystem:</span></span><br><span class="line">        <span class="attr">dev:</span> <span class="string">/dev/vdb2</span></span><br><span class="line">        <span class="attr">fstype:</span> <span class="string">xfs</span></span><br><span class="line">        <span class="attr">force:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="lvg模块">lvg模块</h3>
+<p>管理卷组</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="even">
+<td>vg</td>
+<td>卷组名</td>
+</tr>
+<tr class="odd">
+<td>pvs</td>
+<td>指定物理卷</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lvg:</span></span><br><span class="line">        <span class="attr">vg:</span> <span class="string">myvg</span></span><br><span class="line">        <span class="attr">pvs:</span> <span class="string">/dev/vdb2</span></span><br></pre></td></tr></table></figure>
+<h3 id="lvol">lvol</h3>
+<p>管理卷组</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lv</td>
+<td>逻辑卷名</td>
+</tr>
+<tr class="even">
+<td>size</td>
+<td>大小</td>
+</tr>
+<tr class="odd">
+<td>vg</td>
+<td>空间来自哪个卷组</td>
+</tr>
+<tr class="even">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="odd">
+<td>force</td>
+<td>是否强制</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lvol:</span></span><br><span class="line">        <span class="attr">lv:</span> <span class="string">mylv</span></span><br><span class="line">        <span class="attr">size:</span> <span class="string">50m</span></span><br><span class="line">        <span class="attr">vg:</span> <span class="string">myvg</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lvol:</span></span><br><span class="line">        <span class="attr">lv:</span> <span class="string">mylv</span></span><br><span class="line">        <span class="attr">size:</span> <span class="string">500m</span> <span class="comment"># 再次执行扩容</span></span><br><span class="line">        <span class="attr">vg:</span> <span class="string">myvg</span></span><br></pre></td></tr></table></figure>
+<h3 id="lineinfile模块">lineinfile模块</h3>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>dest</strong></td>
+<td>目标文件</td>
+</tr>
+<tr class="even">
+<td><strong>regexp</strong></td>
+<td>查找替换内容</td>
+</tr>
+<tr class="odd">
+<td><strong>line</strong></td>
+<td>要替换/添加什么内容</td>
+</tr>
+<tr class="even">
+<td><strong>insertbefore</strong></td>
+<td>在某行上添加</td>
+</tr>
+<tr class="odd">
+<td><strong>insertafter</strong></td>
+<td>在某行下添加</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">./txt</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/tmp/txt</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">alice</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lineinfile:</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/tmp/txt</span></span><br><span class="line">        <span class="attr">regexp:</span> <span class="string">txt</span></span><br><span class="line">        <span class="attr">line:</span> <span class="string">abc</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cat /tmp/txt</span></span><br><span class="line"><span class="string"></span>      <span class="attr">register:</span> <span class="string">info</span> <span class="comment"># 注册变量</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">var:</span> <span class="string">info.stdout</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>linux</tag>
