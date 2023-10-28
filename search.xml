@@ -2211,6 +2211,69 @@ generator代码生成出来。关于如何进行CRD控制器的开发，下面�
       </tags>
   </entry>
   <entry>
+    <title>Kubernetes集群实践（十三）使用cfssl生成集群内部使用的证书</title>
+    <url>/p/use-cfssl-create-certs/</url>
+    <content><![CDATA[<p>本文主要介绍如何在Kubernetes中使用cfssl生成集群内部使用的证书。</p>
+<p>关键词：<strong>k8s，证书</strong></p>
+<span id="more"></span>
+<h3 id="准备工作">准备工作</h3>
+<p>项目地址：https://github.com/cloudflare/cfssl/</p>
+<p>下载项目：<code>cfssl、cfssljson</code></p>
+<h3 id="生成证书">生成证书</h3>
+<p>通过证书请求文件，CSR参数生成CA证书和私钥，此步骤仅需进行一次，后续可以直接使用此步骤生成的文件，签发证书。</p>
+<p><strong>生成csr默认模板</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cfssl print-defaults csr &gt; ca-csr.json</span><br></pre></td></tr></table></figure>
+<p><strong>修改配置文件模板的内容</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;CN&quot;</span><span class="punctuation">:</span> <span class="string">&quot;kubernetes&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;key&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;algo&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ecdsa&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;size&quot;</span><span class="punctuation">:</span> <span class="number">256</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;names&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;C&quot;</span><span class="punctuation">:</span> <span class="string">&quot;CN&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;L&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HangZhou&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;O&quot;</span><span class="punctuation">:</span> <span class="string">&quot;k8s&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;OU&quot;</span><span class="punctuation">:</span> <span class="string">&quot;System&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<ul>
+<li><p>CN：Common Name，kube-apiserver
+从证书中提取该字段作为请求的用户名 (User
+Name)；浏览器使用该字段验证网站是否合法</p>
+<p>​ names的O表示Organization ，kube-apiserver
+从证书中提取该字段作为请求用户所属的组 (Group)</p></li>
+<li><p>C：Country， 国家</p></li>
+<li><p>L：Locality，地区，城市</p></li>
+<li><p>O：Organization Name，组织名称，公司名称</p></li>
+<li><p>OU：Organization Unit Name，组织单位名称，公司部门</p></li>
+<li><p>ST： State，州，省</p></li>
+</ul>
+<p><strong>生成CA证书和私钥</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cfssl gencert -initca ca-csr.json | cfssljson -bare ca </span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20231018194227550.png" /></p>
+<h3
+id="通过ca-config.json配置证书生成策略">通过ca-config.json配置证书生成策略</h3>
+<p>容器的相关证书类型：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">client certificate 用于服务端认证客户端, 例如etcdctl/etcd-proxy/fleetctl/docker客户端</span><br><span class="line">server certificate 服务端使用，客户端用此验证服务端身份，如dockerd/kube-apiserver</span><br><span class="line">peer certificate 双向证书，用于集群中etcd成员间进行通信</span><br></pre></td></tr></table></figure>
+<p>生成签发证书的配置文件模板</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cfssl print-defaults config &gt; ca-config.json</span><br></pre></td></tr></table></figure>
+<p>修改配置文件，分别配置针对三种不同证书类型的配置文件，有效期为43800h为5年</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;signing&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;default&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;expiry&quot;</span>: <span class="string">&quot;43800h&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;profiles&quot;</span>: &#123;    <span class="comment"># ca-config.jso: 可以定义多个profiles, 分别指定不同的过期时间， 使用场景等参数，下面</span></span><br><span class="line">            <span class="string">&quot;server&quot;</span>: &#123;  <span class="comment"># 这个字段名称任意，把server字段改成 aaa, bbb, ccc都可以，但是网上没有一篇博客有说这个字段任意</span></span><br><span class="line">                <span class="string">&quot;expiry&quot;</span>: <span class="string">&quot;43800h&quot;</span>,</span><br><span class="line">                <span class="string">&quot;usages&quot;</span>: [</span><br><span class="line">                    <span class="string">&quot;signing&quot;</span>,  <span class="comment"># signing : 表示该证书可用于签名其它证书，生成的ca.pem证书中，CA=TRUE</span></span><br><span class="line">                    <span class="string">&quot;key encipherment&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;server auth&quot;</span> <span class="comment"># server auth : 表示client可以使用该CA对server提供的证书进行验证</span></span><br><span class="line">                ]</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;client&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;expiry&quot;</span>: <span class="string">&quot;43800h&quot;</span>,</span><br><span class="line">                <span class="string">&quot;usages&quot;</span>: [</span><br><span class="line">                    <span class="string">&quot;signing&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;key encipherment&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;client auth&quot;</span>  <span class="comment"># client auth : 表示server 可以用该CA对client提供的证书进行验证</span></span><br><span class="line">                ]</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;peer&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;expiry&quot;</span>: <span class="string">&quot;43800h&quot;</span>,</span><br><span class="line">                <span class="string">&quot;usages&quot;</span>: [</span><br><span class="line">                    <span class="string">&quot;signing&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;key encipherment&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;server auth&quot;</span>,   <span class="comment"># server auth : 表示client可以使用该CA对server提供的证书进行验证</span></span><br><span class="line">                    <span class="string">&quot;client auth&quot;</span>    <span class="comment"># client auth : 表示server 可以用该CA对client提供的证书进行验证</span></span><br><span class="line">                ]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="证书生成">证书生成</h3>
+<p>CFSSL提供了两个命令：gencert和sign。gencert将自动处理整个证书生成过程。该过程需要两个文件，一个告诉CFSSL本地客户端CA的位置以及如何验证请求，即config文件，另一个为CSR配置信息，用于填充CSR
+即csr文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cfssl print-defaults csr &gt; kubernetes-csr.json</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;CN&quot;</span><span class="punctuation">:</span> <span class="string">&quot;kubernetes&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hosts&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;10.116.137.196&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;10.116.82.28&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;10.116.36.57&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;10.254.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;kubernetes&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;kubernetes.default&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;kubernetes.default.svc&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;kubernetes.default.svc.cluster&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;kubernetes.default.svc.cluster.local&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;key&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;algo&quot;</span><span class="punctuation">:</span><span class="string">&quot;rsa&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;size&quot;</span><span class="punctuation">:</span><span class="number">2048</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;names&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;C&quot;</span><span class="punctuation">:</span> <span class="string">&quot;CN&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;L&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BeiJing&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;ST&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BeiJing&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;O&quot;</span><span class="punctuation">:</span> <span class="string">&quot;k8s&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;OU&quot;</span><span class="punctuation">:</span> <span class="string">&quot;System&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果 hosts 字段不为空则需要指定授权使用该证书的 IP
+或域名列表，由于该证书后续被 etcd 集群和 kubernetes master
+集群使用，所以上面分别指定了etcd 集群、kubernetes master 集群的主机 IP和
+kubernetes 服务的服务 IP（一般是 kube-apiserver 指定的
+service-cluster-ip-range 网段的第一个IP，如10.254.0.1。</li>
+<li>hosts
+中的内容可以为空，即使按照上面的配置，向集群中增加新节点后也不需要重新生成证书。
+执行下面命令, 生成 kubernetes.csr, kubernetes-key.pem, kubernetes.pem
+文件</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes</span><br></pre></td></tr></table></figure>
+<p>注：命令中的-profile参数要和ca-config.json中的profiles字段需要签名的证书一致</p>
+<p><img data-src="image-20231019104850283.png" /></p>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kubernetes集群实践（十二）使用keepalived+haproxy创建高可用K8s集群</title>
     <url>/p/create-ha-kubernetes/</url>
     <content><![CDATA[<p>本文主要介绍如何使用keepalived+haproxy创建高可用集群，文中主要来源与作者在工作中的一些实际操作，本文仅供作者自己记录和读者参考。</p>
@@ -2467,6 +2530,55 @@ xxx</td>
 ]]></content>
       <tags>
         <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Kubernetes集群实践（十四）tini进程管理器</title>
+    <url>/p/have-a-look-at-tini/</url>
+    <content><![CDATA[<p>本文主要介绍tini进程管理器。</p>
+<p>关键词：<strong>k8s，tini</strong></p>
+<span id="more"></span>
+<h2 id="背景">背景</h2>
+<p>Linux系统中，PID为1的进程承担了两个重要的使命：</p>
+<ol type="1">
+<li><p>传递信号给子进程</p>
+<p>如果pid为1的进程，无法向其子进程传递信号，可能导致容器发送SIGTERM信号后，父进程等待子进程退出。若此时父进程无法传递信号到子进程，整个容器无法正常退出，除非向父进程传递SIGKILL信号，使其强行退出。<strong>而这样会导致一些退出前的操作无法完成，如关闭数据库连接，关闭输入输出流等。</strong></p></li>
+<li><p>接管孤儿进程，防止出现僵尸进程</p>
+<p>如果一个进程A中运行了一个子进程B，而子进程B创建了一个子进程C，若此时子进程B异常退出（通过SIGKILL信号，并不会发送SIGKILL信号给进程C），此时进程C会被进程A接管。<strong>进程A不会传递信号到进程C，这就导致了进程B结束了，但是没有回收其子进程C，子进程C就变成了僵尸进程。</strong></p></li>
+</ol>
+<p>在docker中，<code>docker stop</code>会发送<code>SIGTERM</code>信号给容器的主进程来处理。如果主进程没有处理这个信号，docker会在等待10s后，发送<code>SIGKILL</code>信号来强制终止。</p>
+<h2 id="tini介绍">tini介绍</h2>
+<p>tini是一个轻量级init进程，被设计作为容器的1号进程。</p>
+<p>tini只会做以下事情：</p>
+<ul>
+<li>生成一个进程，并等待它退出；</li>
+<li>收割僵尸进程；</li>
+<li>执行信号转发。</li>
+</ul>
+<p>tini被设计为一个服务于容器的单进程管理器，通常只能管理一个进程。一般情况下，服务容器化要求一个容器尽量只作为一件事情，即只有一个进程或一组进程。</p>
+<p>tini编译产物只有一个可执行文件，其静态版本不依赖其他软件，可以在任意发行版中使用。</p>
+<h2 id="tini使用">tini使用</h2>
+<blockquote>
+<p><a
+href="https://github.com/krallin/tini#using-tini">README#using-tini</a></p>
+</blockquote>
+<p>直接把tini打包到镜像中，配置<code>ENTRYPOINT</code>为<code>["/tini", "--"]</code>。选项要加在<code>--</code>前面，例如：<code>["/tini", "-vvv", "--"]</code></p>
+<h2 id="tini优势">tini优势</h2>
+<p>通过tini可以避免业务进程重复编写本来由1号进程该做的事情，帮助传统的应用可以无感迁移到容器化部署。</p>
+<ol type="1">
+<li>防止僵尸进程的产生。如果业务进程作为容器的1号进程，且没有等待子进程退出的逻辑，则可能会产生僵尸进程。</li>
+<li>实现优雅退出。如果业务进程作为容器的1号进程，且没有处理信号的逻辑，当1号进程收到信号时，什么都不做。<strong>因为PID
+1它会忽略具有默认操作的任何信号</strong>，除非实现了监听 SIGTERM
+信号的逻辑。</li>
+<li>docker ce发行版默认包含tini。只需要docker
+run的是添加<code>--init</code>选项即可，不需要改变镜像，不需要添加entrypoint和command。</li>
+</ol>
+<blockquote>
+<p>shell可以处理僵尸进程，但无法做到优雅推出。shell作为PID1进程时不会将信号转发给子进程。</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>tini</tag>
       </tags>
   </entry>
   <entry>

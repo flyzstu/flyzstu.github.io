@@ -6,7 +6,7 @@
   <link href="https://blog.fly97.cn/atom.xml" rel="self"/>
   
   <link href="https://blog.fly97.cn/"/>
-  <updated>2023-10-13T15:42:00.000Z</updated>
+  <updated>2023-10-28T06:38:00.000Z</updated>
   <id>https://blog.fly97.cn/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kubernetes集群实践（十四）tini进程管理器</title>
+    <link href="https://blog.fly97.cn/p/have-a-look-at-tini/"/>
+    <id>https://blog.fly97.cn/p/have-a-look-at-tini/</id>
+    <published>2023-10-28T06:38:00.000Z</published>
+    <updated>2023-10-28T06:38:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文主要介绍tini进程管理器。</p><p>关键词：<strong>k8s，tini</strong></p><span id="more"></span><h2 id="背景">背景</h2><p>Linux系统中，PID为1的进程承担了两个重要的使命：</p><ol type="1"><li><p>传递信号给子进程</p><p>如果pid为1的进程，无法向其子进程传递信号，可能导致容器发送SIGTERM信号后，父进程等待子进程退出。若此时父进程无法传递信号到子进程，整个容器无法正常退出，除非向父进程传递SIGKILL信号，使其强行退出。<strong>而这样会导致一些退出前的操作无法完成，如关闭数据库连接，关闭输入输出流等。</strong></p></li><li><p>接管孤儿进程，防止出现僵尸进程</p><p>如果一个进程A中运行了一个子进程B，而子进程B创建了一个子进程C，若此时子进程B异常退出（通过SIGKILL信号，并不会发送SIGKILL信号给进程C），此时进程C会被进程A接管。<strong>进程A不会传递信号到进程C，这就导致了进程B结束了，但是没有回收其子进程C，子进程C就变成了僵尸进程。</strong></p></li></ol><p>在docker中，<code>docker stop</code>会发送<code>SIGTERM</code>信号给容器的主进程来处理。如果主进程没有处理这个信号，docker会在等待10s后，发送<code>SIGKILL</code>信号来强制终止。</p><h2 id="tini介绍">tini介绍</h2><p>tini是一个轻量级init进程，被设计作为容器的1号进程。</p><p>tini只会做以下事情：</p><ul><li>生成一个进程，并等待它退出；</li><li>收割僵尸进程；</li><li>执行信号转发。</li></ul><p>tini被设计为一个服务于容器的单进程管理器，通常只能管理一个进程。一般情况下，服务容器化要求一个容器尽量只作为一件事情，即只有一个进程或一组进程。</p><p>tini编译产物只有一个可执行文件，其静态版本不依赖其他软件，可以在任意发行版中使用。</p><h2 id="tini使用">tini使用</h2><blockquote><p><ahref="https://github.com/krallin/tini#using-tini">README#using-tini</a></p></blockquote><p>直接把tini打包到镜像中，配置<code>ENTRYPOINT</code>为<code>["/tini", "--"]</code>。选项要加在<code>--</code>前面，例如：<code>["/tini", "-vvv", "--"]</code></p><h2 id="tini优势">tini优势</h2><p>通过tini可以避免业务进程重复编写本来由1号进程该做的事情，帮助传统的应用可以无感迁移到容器化部署。</p><ol type="1"><li>防止僵尸进程的产生。如果业务进程作为容器的1号进程，且没有等待子进程退出的逻辑，则可能会产生僵尸进程。</li><li>实现优雅退出。如果业务进程作为容器的1号进程，且没有处理信号的逻辑，当1号进程收到信号时，什么都不做。<strong>因为PID1它会忽略具有默认操作的任何信号</strong>，除非实现了监听 SIGTERM信号的逻辑。</li><li>docker ce发行版默认包含tini。只需要dockerrun的是添加<code>--init</code>选项即可，不需要改变镜像，不需要添加entrypoint和command。</li></ol><blockquote><p>shell可以处理僵尸进程，但无法做到优雅推出。shell作为PID1进程时不会将信号转发给子进程。</p></blockquote>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;本文主要介绍tini进程管理器。&lt;/p&gt;
+&lt;p&gt;关键词：&lt;strong&gt;k8s，tini&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="tini" scheme="https://blog.fly97.cn/tags/tini/"/>
+    
+  </entry>
   
   <entry>
     <title>RHCE学习教程之Ansible运维基础</title>
@@ -421,27 +441,6 @@ once a month.”&lt;/p&gt;
     <summary type="html">&lt;p&gt;&lt;strong&gt;摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;本文主要介绍如何在Linux平台上安装ROS2。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;关键词：ROS2&lt;/strong&gt;</summary>
-    
-    
-    
-    
-    <category term="ROS" scheme="https://blog.fly97.cn/tags/ROS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ROS实战（八）ROS2初探</title>
-    <link href="https://blog.fly97.cn/p/hello-to-ros2/"/>
-    <id>https://blog.fly97.cn/p/hello-to-ros2/</id>
-    <published>2022-12-15T09:36:00.000Z</published>
-    <updated>2022-12-15T09:36:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。</strong></p><p>本文主要介绍ROS2.</p><p><strong>关键词：ROS2</strong></p><span id="more"></span><h2 id="为什么是ros2">为什么是ROS2</h2><p>ROS2是一个全新的机器人操作系统，在借鉴ROS1成功经验的基础上，对系统架构和软件代码全部进行了重新设计和实现。与ROS1相比，体现在以下几点：</p><figure><img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114359304.png"alt="image-20220523114359304" /><figcaption aria-hidden="true">image-20220523114359304</figcaption></figure><ul><li><p><strong>系统出现了颠覆性的变化</strong>，ROS1的所有节点都需要在节点管理器ROSMaster下进行工作，一旦Master出现问题，系统就会宕机。ROS2实现了真正的分布式，不再有Master这个角色，借助全新的通信框架DDS，为所有节点提供了可靠通信保障。</p></li><li><p><strong>软件API进行了重新设计</strong>，ROS1原有的接口无法满足需求，ROS2结合C++最新标准和Python3语言特性，设计了更具通用的API，虽然导致原有ROS1的代码无法直接在ROS2上运行，但是尽量保留了类似的使用方法，同时提供了大量的移植说明。</p></li><li><p><strong>编译系统进行了升级</strong>，ROS1仲使用的rosbuild和catkin问题诸多，尤其是针对代码比较多的项目以及Python编写的项目。编译、连接经常会出错，ROS2对这些进行了优化，重新优化后的编译系统叫做<strong>ament和colcon</strong>。</p><p>以上几点是框架层面的优化，而ROS1和ROS2的明显变化，请看下文：</p><h2 id="ros2-vs-ros1">ROS2 vs ROS1</h2><h3 id="系统架构">系统架构</h3><figure><img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image26-16532775781034.png"alt="image26" /><figcaption aria-hidden="true">image26</figcaption></figure><p>如图所示，可以看出最大的变化就是<strong>Master。</strong></p></li><li><p>ROS1中，应用层里面的<strong>Master</strong>节点管理器至关重要，所有节点都得听他指挥。ROS2把这个不稳定的角色请走了，节点可以通过自发现机制找到彼此，从而建立稳定的通信连接；</p></li><li><p>中间层是ROS封装好的标准通信接口，写程序会频繁和这些接口打交道，比如发布一个图像的数据，接受一个雷达的信息，客户端库再调用底层复杂的驱动和通信协议，使得我们的开发变得更加明了。</p></li><li><p>ROS1中，ROS通信依赖底层的TCP和UDP通信，ROS2中，通信协议换成了更见复杂但更见完善的DDS系统；</p></li><li><p>如果是进程内需要大量数据的通信，ROS1和ROS2都提供了基于共享内存的通信方法，只不过名字不太一样；</p></li><li><p>最下面是系统层，也就是ROS可以安装在那些操作系统上，ROS1主要安装在Linux上，ROS2的可选项很多，Linux、Windows、MacOS、RTOS都可以；</p></li></ul><h3 id="dds通信">DDS通信</h3><figure><img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image27.png"alt="image27" /><figcaption aria-hidden="true">image27</figcaption></figure><p>ROS1中基于TCP/UDP的通信系统，频繁诟病与延迟、丢数据、无法加密等问题，ROS2中的DDS在通信层面的功能就丰富多了；</p><p>DDS是物联网中广泛得到应用的一种通信协议。DDS是一个国际标准，能够实现该标准的软件系统并不是唯一的，可以选择多个厂家提供的DDS系统，比如<strong>OpenSplice、FastRTPS</strong>，还有更多厂家提供的，<strong>每一家的性能不同，适用的场景也不一样</strong>；</p><p>ROS2设计了个ROSMiddleware，RMW，也就是指定一个标准的接口，<strong>比如如何发数据、如何收数据，数据的各自属性如何配置，等</strong>。如果厂家想要接入DDS社区，需要按照这个标准写一个适配的接口，将自家的DDS移植过来，这样问题交给了熟悉自家的DDS厂家。</p><p><strong>当我们在产品开发时，可以先用开源版本的DDS满足业务需求，部署交付的产品时，再更改为商业版本更加稳定的DDS，减少开发成本。</strong></p><p>总之，DDS的加入，让ROS2更加稳定，也更加灵活，与之相同的时复杂度也会变高。这样我们不用在纠结ROS的通信系统是否稳定、应该如何优化等问题，更多精力可以放在其他三个部分，专注优化机器人应用功能。</p><h3 id="核心概念">核心概念</h3><p>ROS1应用以及非常广泛，全球有几百万开发者，大家已经熟悉了ROS1的开发方式和其中很多的概念。ROS2尽量保留了这些概念，以便开发者从ROS1迁移到ROS2。</p><figure><img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114814371.png"alt="image-20220523114814371" /><figcaption aria-hidden="true">image-20220523114814371</figcaption></figure><h3 id="编码方式">编码方式</h3><p>如果各位熟悉ROS1，这里的概念应该并不陌生，在ROS2中，这些概念依然存在，意义也几乎一致，在本课程的第二个部分，我们就会一一讲解这些概念的含义和使用方法，没有学习过ROS的小伙伴也不用担心。</p><figure><img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114851763.png"alt="image-20220523114851763" /><figcaption aria-hidden="true">image-20220523114851763</figcaption></figure><p>总体而言，ROS2会用到更多面向对象的实现方法和语言特性，从编程语言的角度来讲，难度确实会提高一些，不过当我们迈过这道坎之后，就会发现我们写的程序会更具备可读性和可移植性，也会更接接近真实企业中机器人软件开发的过程。</p><h3 id="命令行"><strong>命令行</strong></h3><p>最后我们再对比下ROS开发中最为常用的一种工具——命令行。</p><figure><img data-src="https://book.guyuehome.com/ROS2/1.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/image/1.2_ROS2%E5%AF%B9%E6%AF%94ROS1/image-20220523114915528.png"alt="image-20220523114915528" /><figcaption aria-hidden="true">image-20220523114915528</figcaption></figure><p>ROS1中的命令行相对分散，每一个功能都是一个独立的命令，比如rosrun启动某一个节点，rostopic控制话题相关的功能。</p><p>ROS2对命令行做了大幅度的集成，所有命令都集成在一个ros2的主命令中，比如ros2run，表示启动某一个节点，ros2 topic表示话题相关的功能。</p><h2 id="总结">总结</h2><p>ROS2和ROS1相比，总结如下：</p><ul><li><strong>节点干掉了Master</strong></li><li><strong>通信换成了DDS</strong></li><li><strong>核心概念没变化</strong></li><li><strong>编程难度有上升</strong></li></ul>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;本文主要介绍ROS2.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键词：ROS2&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
