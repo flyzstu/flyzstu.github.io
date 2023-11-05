@@ -23,28 +23,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="docker目前支持以下5种网络模式： 使用docker run 创建 Docker 容器时，可以用 --network 选项指定容器的网络模式。">
+    <meta name="description" content="ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。 本文主要介绍ansible的一些高级用法。 关键词：RHCE Ansible">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Docker的网络模式">
-<meta property="og:url" content="https://blog.fly97.cn/p/Docker-network-mode/index.html">
+<meta property="og:title" content="RHCE学习教程之Ansible高级用法">
+<meta property="og:url" content="https://blog.fly97.cn/p/advanced-usage-about-ansible/index.html">
 <meta property="og:site_name" content="个人随想">
-<meta property="og:description" content="docker目前支持以下5种网络模式： 使用docker run 创建 Docker 容器时，可以用 --network 选项指定容器的网络模式。">
+<meta property="og:description" content="ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。 本文主要介绍ansible的一些高级用法。 关键词：RHCE Ansible">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-08-01T11:00:00.000Z">
-<meta property="article:modified_time" content="2020-08-01T11:00:00.000Z">
+<meta property="article:published_time" content="2023-10-13T15:42:00.000Z">
+<meta property="article:modified_time" content="2023-10-13T15:42:00.000Z">
 <meta property="article:author" content="fly97">
-<meta property="article:tag" content="docker">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="learning">
+<meta property="article:tag" content="ansible">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://blog.fly97.cn/p/Docker-network-mode/">
+<link rel="canonical" href="https://blog.fly97.cn/p/advanced-usage-about-ansible/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/Docker-network-mode/","path":"p/Docker-network-mode/","title":"Docker的网络模式"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/advanced-usage-about-ansible/","path":"p/advanced-usage-about-ansible/","title":"RHCE学习教程之Ansible高级用法"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Docker的网络模式 | 个人随想</title>
+<title>RHCE学习教程之Ansible高级用法 | 个人随想</title>
   
 
 
@@ -148,7 +150,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#host%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">host模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#container%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">container模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#none%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">none模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bridge%E6%A8%A1%E5%BC%8F-%E9%BB%98%E8%AE%A4%E8%AE%BE%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">bridge模式 （默认设置）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">自定义模式</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">1.</span> <span class="nav-text">自定义变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E6%B8%85%E5%8D%95%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.</span> <span class="nav-text">主机清单变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%89%A7%E6%9C%AC%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">定义剧本变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E6%96%87%E6%A1%A3%E5%8F%98%E9%87%8F"><span class="nav-number">1.3.</span> <span class="nav-text">定义文档变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E4%BA%A4%E4%BA%92%E6%96%B9%E5%BC%8F%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">以交互方式定义变量</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -229,7 +231,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/Docker-network-mode/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/advanced-usage-about-ansible/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -242,12 +244,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Docker的网络模式 | 个人随想">
+      <meta itemprop="name" content="RHCE学习教程之Ansible高级用法 | 个人随想">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Docker的网络模式
+          RHCE学习教程之Ansible高级用法
         </h1>
 
         <div class="post-meta-container">
@@ -258,7 +260,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2020-08-01 19:00:00" itemprop="dateCreated datePublished" datetime="2020-08-01T19:00:00+08:00">2020-08-01</time>
+      <time title="创建时间：2023-10-13 23:42:00" itemprop="dateCreated datePublished" datetime="2023-10-13T23:42:00+08:00">2023-10-13</time>
     </span>
 
   
@@ -271,48 +273,22 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><code>docker</code>目前支持以下5种网络模式：</p>
-<p>使用<code>docker run</code> 创建 <code>Docker</code> 容器时，可以用
-<code>--network</code> 选项指定容器的网络模式。</p>
+        <p>ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。</p>
+<p>本文主要介绍ansible的一些高级用法。</p>
+<p><strong>关键词：RHCE Ansible</strong></p>
 <span id="more"></span>
-<h3 id="host模式">host模式</h3>
-<p>​ 使用 <code>--netrork=host</code>
-指定。与宿主机共享网络，此时容器没有使用网络的namespace，宿主机的所有设备，如Dbus会暴露到容器中，因此存在安全隐患。容器将不会虚拟出自己的网卡，配置自己的
-IP 等，而是使用宿主机的 IP 和端口。</p>
-<h3 id="container模式">container模式</h3>
-<p>使用 <code>--network=container:NAME or ID</code>
-指定。指定与某个容器实例共享网络。这个模式指定新创建的容器和已经存在的一个容器共享一个
-Network
-Namespace，而不是和宿主机共享。新创建的容器不会创建自己的网卡，配置自己的
-IP，而是和一个指定的容器共享
-IP、端口范围等。同样，两个容器除了网络方面，其他的如文件系统、进程列表等还是隔离的。两个容器的进程可以通过
-lo 网卡设备通信。</p>
-<h3 id="none模式">none模式</h3>
-<p>使用 <code>--network=none</code>
-指定。不设置网络，相当于容器内没有配置网卡，用户可以手动配置。</p>
-<h3 id="bridge模式-默认设置">bridge模式 （默认设置）</h3>
-<p>使用 <code>--network=bridge</code> 指定，默认设置。</p>
-<p>bridge 模式是 Docker 默认的网络设置，此模式会为每一个容器分配 Network
-Namespace、设置 IP 等，并将一个主机上的 Docker
-容器连接到一个虚拟网桥上。</p>
-<p>当 Docker server 启动时，会在主机上创建一个名为 docker0
-的虚拟网桥，此主机上启动的 Docker
-容器会连接到这个虚拟网桥上。虚拟网桥的工作方式和物理交换机类似，这样主机上的所有容器就通过交换机连在了一个二层网络中。</p>
-<p>接下来就要为容器分配 IP 了，Docker 会从 RFC1918 所定义的私有 IP
-网段中，选择一个和宿主机不同的IP地址和子网分配给 docker0，连接到 docker0
-的容器就从这个子网中选择一个未占用的 IP 使用。如一般 Docker 会使用
-172.17.0.0/16 这个网段，并将 172.17.42.1/16 分配给 docker0
-网桥（在主机上使用 ifconfig 命令是可以看到 docker0
-的，可以认为它是网桥的管理接口，在宿主机上作为一块虚拟网卡使用）</p>
-<p>当创建一个 Docker 容器的时候，同时会创建了一对 veth pair
-接口（当数据包发送到一个接口时，另外一个接口也可以收到相同的数据包）。这对接口一端在容器内，即
-eth0；另一端在本地并被挂载到 docker0 网桥，名称以 veth 开头（例如
-vethAQI2QT）。通过这种方式，主机可以跟容器通信，容器之间也可以相互通信。Docker
-就创建了在主机和所有容器之间一个虚拟共享网络。</p>
-<p><strong>默认是桥接模式，网络地址为172.17.0.0/16，同一主机的容器实例能够通信，但不能跨主机通信。</strong></p>
-<h3 id="自定义模式">自定义模式</h3>
-<p>使用自定义网络，可以使用docker network
-create创建，并且默认支持多种网络驱动，用户可以自由创建桥接网络或者overlay网络。</p>
+<h2 id="自定义变量">自定义变量</h2>
+<h3 id="主机清单变量">主机清单变量</h3>
+<p>针对主机或者组</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;针对主机</span></span><br><span class="line"><span class="section">[paas]</span></span><br><span class="line">1.2.4.8 <span class="attr">hostname</span>=<span class="number">1.2</span>.<span class="number">4.8</span>-master01</span><br><span class="line"></span><br><span class="line"><span class="comment">;针对组</span></span><br><span class="line"><span class="comment">;同一组可以使用相同的环境变量</span></span><br><span class="line"><span class="section">[web]</span></span><br><span class="line">1.1.1.1</span><br><span class="line">2.2.2.2</span><br><span class="line">3.3.3.3</span><br><span class="line"><span class="section">[web:vars]</span></span><br><span class="line"><span class="attr">ansible_ssh_user</span>=root</span><br><span class="line"><span class="attr">ansible_ssh_pass</span>=root1234</span><br></pre></td></tr></table></figure>
+<h3 id="定义剧本变量">定义剧本变量</h3>
+<p>使用关键字vars，针对所有执行剧本的主机生效</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1,</span> <span class="string">node2</span></span><br><span class="line">  <span class="attr">vars:</span></span><br><span class="line">    <span class="attr">test01:</span> <span class="string">aaa</span></span><br><span class="line">    <span class="attr">test02:</span> <span class="string">bbb</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span> </span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; test01 &#125;&#125;</span>--<span class="template-variable">&#123;&#123; test02 &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="定义文档变量">定义文档变量</h3>
+<p>可以在执行剧本时进行调用</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># var.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">abc:</span> <span class="string">abcabc</span></span><br><span class="line"><span class="attr">xyz:</span> <span class="string">xyzxyz</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># test01.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">var_files:</span> <span class="string">var01.yml</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;abc&#125;&#125;</span> <span class="template-variable">&#123;&#123;xyz&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="以交互方式定义变量">以交互方式定义变量</h3>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="comment"># 交互定义变量关键词</span></span><br><span class="line">  <span class="attr">vars_prompt:</span>    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">var1</span></span><br><span class="line">      <span class="attr">prompt:</span> <span class="string">&quot;输入要创建的用户名&quot;</span></span><br><span class="line">      <span class="comment"># 不隐藏变量的值</span></span><br><span class="line">      <span class="attr">private:</span> <span class="literal">no</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">var:</span> <span class="string">var1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">user:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;var1&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -330,7 +306,7 @@ create创建，并且默认支持多种网络驱动，用户可以自由创建�
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://blog.fly97.cn/p/Docker-network-mode/" title="Docker的网络模式">https://blog.fly97.cn/p/Docker-network-mode/</a>
+      <a href="https://blog.fly97.cn/p/advanced-usage-about-ansible/" title="RHCE学习教程之Ansible高级用法">https://blog.fly97.cn/p/advanced-usage-about-ansible/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -339,20 +315,22 @@ create创建，并且默认支持多种网络驱动，用户可以自由创建�
 </div>
 
           <div class="post-tags">
-              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/learning/" rel="tag"># learning</a>
+              <a href="/tags/ansible/" rel="tag"># ansible</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/p/docker-tutorial-02/" rel="prev" title="初探Docker(二) | 使用Dockerfile定制镜像">
-                  <i class="fa fa-chevron-left"></i> 初探Docker(二) | 使用Dockerfile定制镜像
+                <a href="/p/create-ha-kubernetes/" rel="prev" title="Kubernetes集群实践（十二）使用keepalived+haproxy创建高可用K8s集群">
+                  <i class="fa fa-chevron-left"></i> Kubernetes集群实践（十二）使用keepalived+haproxy创建高可用K8s集群
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/p/install-autojump-to-automatically-switch-directories/" rel="next" title="安装autojump自动切换目录">
-                  安装autojump自动切换目录 <i class="fa fa-chevron-right"></i>
+                <a href="/p/learn-rhce-and-ansible/" rel="next" title="RHCE学习教程之Ansible运维基础">
+                  RHCE学习教程之Ansible运维基础 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
