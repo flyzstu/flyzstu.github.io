@@ -169,6 +169,26 @@ UI中找到Authentication，修改username及password。</p>
       </tags>
   </entry>
   <entry>
+    <title>Docker打包镜像文件</title>
+    <url>/p/export-docker-images-to-file/</url>
+    <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker
+registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan
+B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
+<p>但是这种情况也存在问题，一旦容器内的依赖（如maven、pip）发生变化，基础镜像就需要重新打包，这种情况还没想好需要怎么操作。。不过还是那句话，做了再说，遇到了问题再想办法解决。</p>
+<p>关键字：<strong>docker，打包镜像文件</strong></p>
+<span id="more"></span>
+<h4 id="打包镜像文件">打包镜像文件</h4>
+<p>第一个参数是文件名，第二个参数是镜像名</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker save -o jenkinsci.tar.gz jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
+<h4 id="读取镜像文件">读取镜像文件</h4>
+<p>第一个参数是文件名称</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker load -i jenkinsci.tar.gz</span><br><span class="line"><span class="comment"># Loaded image: jenkinsci/blueocean:latest</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker安装MySQL5.7</title>
     <url>/p/install-mysql5.7-in-docker/</url>
     <content><![CDATA[<p>为什么要在docker中安装mysql？</p>
@@ -264,26 +284,6 @@ href="https://hub.docker.com/_/mysql">Docker Hub</a>；</li>
       </tags>
   </entry>
   <entry>
-    <title>Docker打包镜像文件</title>
-    <url>/p/export-docker-images-to-file/</url>
-    <content><![CDATA[<p>最近需要离线部署一个项目，项目是跑在docker容器里的，而部署环境无法链接外网。本来是考虑在笔记本上跑一个<strong>私有的docker
-registry</strong>，部署时从笔记本拉取镜像。但是这种情况必须是笔记本和部署机在<strong>同一个内网</strong>下，两者可以相互访问。因此必须要考虑Plan
-B，Plan B就是将本地镜像打包成tar文件，部署时传到部署机即可。</p>
-<p>但是这种情况也存在问题，一旦容器内的依赖（如maven、pip）发生变化，基础镜像就需要重新打包，这种情况还没想好需要怎么操作。。不过还是那句话，做了再说，遇到了问题再想办法解决。</p>
-<p>关键字：<strong>docker，打包镜像文件</strong></p>
-<span id="more"></span>
-<h4 id="打包镜像文件">打包镜像文件</h4>
-<p>第一个参数是文件名，第二个参数是镜像名</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker save -o jenkinsci.tar.gz jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
-<h4 id="读取镜像文件">读取镜像文件</h4>
-<p>第一个参数是文件名称</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker load -i jenkinsci.tar.gz</span><br><span class="line"><span class="comment"># Loaded image: jenkinsci/blueocean:latest</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker的网络模式</title>
     <url>/p/Docker-network-mode/</url>
     <content><![CDATA[<p><code>docker</code>目前支持以下5种网络模式：</p>
@@ -331,6 +331,18 @@ create创建，并且默认支持多种网络驱动，用户可以自由创建�
 ]]></content>
       <tags>
         <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang时间处理</title>
+    <url>/p/time-processing-in-golang/</url>
+    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
+<span id="more"></span>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>time</tag>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -636,18 +648,6 @@ status会告诉你这是一个干净的工作目录, 又是一个新的开始了
 ]]></content>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang时间处理</title>
-    <url>/p/time-processing-in-golang/</url>
-    <content><![CDATA[<p>本文主要介绍了Golang时间处理的函数。</p>
-<span id="more"></span>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析时间相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">showTime</span><span class="params">()</span></span> &#123;</span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	nowYear := nowTime.Year()</span><br><span class="line">	nowMonth := nowTime.Month()</span><br><span class="line">	nowDay := nowTime.Day()</span><br><span class="line">	nowHour := nowTime.Hour()</span><br><span class="line">	nowMinute := nowTime.Minute()</span><br><span class="line">	nowSecond := nowTime.Second()</span><br><span class="line">	fmt.Println(nowTime)</span><br><span class="line">	fmt.Println(nowYear)</span><br><span class="line">	fmt.Println(nowMonth)</span><br><span class="line">	fmt.Println(nowDay)</span><br><span class="line">	fmt.Println(nowHour)</span><br><span class="line">	fmt.Println(nowMinute)</span><br><span class="line">	fmt.Println(nowSecond)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getTimeGap</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得当地时区时间</span></span><br><span class="line">	nowTime := time.Now()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err := time.Parse(<span class="string">&quot;2006-01-02T15:04:05Z07:00&quot;</span>, <span class="string">&quot;2021-08-26T12:52:05+08:00&quot;</span>) <span class="comment">// 如果第二个参数不包含时区信息的话，返回的是UTC时间</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时间错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回时区信息</span></span><br><span class="line">	loc, err := time.LoadLocation(<span class="string">&quot;Asia/Shanghai&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时区信息：&quot;</span>, loc)</span><br><span class="line">	<span class="comment">// 返回时区</span></span><br><span class="line">	nowTimeZone := nowTime.Location()</span><br><span class="line">	<span class="comment">// 根据相应的格式解析时间</span></span><br><span class="line">	newTime, err = time.ParseInLocation(<span class="string">&quot;2006/01/02 15:04:05&quot;</span>, <span class="string">&quot;2021/08/26 13:08:00&quot;</span>, nowTimeZone)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;解析时区信息错误，错误：&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	timeGap := newTime.Sub(nowTime)</span><br><span class="line">	fmt.Println(<span class="string">&quot;时间间隔是：&quot;</span>, timeGap)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// showTime()</span></span><br><span class="line">	getTimeGap()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>time</tag>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -3821,6 +3821,128 @@ Way"在开源界饱受争议，其中一大原因就是由于基金会庞大的�
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># var.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">abc:</span> <span class="string">abcabc</span></span><br><span class="line"><span class="attr">xyz:</span> <span class="string">xyzxyz</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># test01.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">var_files:</span> <span class="string">var01.yml</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;abc&#125;&#125;</span> <span class="template-variable">&#123;&#123;xyz&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
 <h3 id="以交互方式定义变量">以交互方式定义变量</h3>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="comment"># 交互定义变量关键词</span></span><br><span class="line">  <span class="attr">vars_prompt:</span>    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">var1</span></span><br><span class="line">      <span class="attr">prompt:</span> <span class="string">&quot;输入要创建的用户名&quot;</span></span><br><span class="line">      <span class="comment"># 不隐藏变量的值</span></span><br><span class="line">      <span class="attr">private:</span> <span class="literal">no</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">var:</span> <span class="string">var1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">user:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;var1&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="魔法变量">魔法变量</h3>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">inventory_hostname</span>=清单主机名</span><br><span class="line"><span class="attr">hostvars</span>=包含被控主机的所有变量</span><br><span class="line"><span class="attr">hostvars.node1</span>=只调用node1主机的所有变量</span><br><span class="line"><span class="attr">hostvars.node1.group_names</span>=显示node1所在的组的名字</span><br><span class="line"><span class="attr">groups</span>=所有主机以及组信息</span><br><span class="line"><span class="attr">groups.all</span>=显示被控主机名</span><br><span class="line"><span class="attr">groups.test01</span>=显示test01组里的所有主机名</span><br><span class="line"><span class="attr">group_names</span>=当前运行任务的主机的所在组</span><br></pre></td></tr></table></figure>
+<p>使用copy模块拷贝常量和变量字符串到被控主机</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">       <span class="attr">content:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        abc</span></span><br><span class="line"><span class="string">        xyz</span></span><br><span class="line"><span class="string">        &#123;&#123;ansible_hostname&#125;&#125;</span></span><br><span class="line"><span class="string"></span>       <span class="attr">dest:</span> <span class="string">/opt/abc.txt</span></span><br></pre></td></tr></table></figure>
+<h2 id="模块相关">模块相关</h2>
+<h3 id="template模板">template模板</h3>
+<p>根据模板生成相应的文件</p>
+<p>src：源文件</p>
+<p>dest：目标文件</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#cat test.j2</span></span><br><span class="line">&#123;&#123; ansible_hostname &#125;&#125; <span class="comment"># 根据环境变量生成文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cat tepl.yml</span></span><br><span class="line">- hosts: node1</span><br><span class="line">  tasks:</span><br><span class="line">    - template:</span><br><span class="line">        src: test.j2</span><br><span class="line">        dest: /opt/test.html</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用ansible容器运行剧本">使用ansible容器运行剧本</h3>
+<p>安装navigator包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum install -y ansible-navigator</span><br></pre></td></tr></table></figure>
+<p>修改navigator配置文件</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim ~/.ansible-navigator.yml</span></span><br><span class="line"><span class="attr">ansible-navigator:</span></span><br><span class="line">  <span class="attr">execution-environment:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">registry.lab.example.com:5000/ee-supported-rhel8:latest</span></span><br><span class="line">    <span class="attr">pull:</span></span><br><span class="line">      <span class="attr">policy:</span> <span class="string">missing</span></span><br></pre></td></tr></table></figure>
+<p>修改container配置文件</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/containers/registries.conf</span></span><br><span class="line"><span class="section">[registries.search]</span></span><br><span class="line"><span class="attr">registries</span> = [<span class="string">&quot;registry.lab.example.com:5000&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="section">[registries.insecure]</span></span><br><span class="line"><span class="attr">registries</span> = [<span class="string">&quot;registry.lab.example.com:5000&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>下载镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-navigator images</span><br></pre></td></tr></table></figure>
+<p>执行剧本任务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-navigator run debug.yml -m stdout</span><br></pre></td></tr></table></figure>
+<h3
+id="使用ansible-vault加密敏感文件">使用ansible-vault加密敏感文件</h3>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>encrypt</td>
+<td>加密</td>
+</tr>
+<tr class="even">
+<td>decrypt</td>
+<td>解密</td>
+</tr>
+<tr class="odd">
+<td>view</td>
+<td>查看</td>
+</tr>
+<tr class="even">
+<td>rekey</td>
+<td>重置密码</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 输入密码，加密test01配置文件</span></span><br><span class="line">ansible-vault encrypt test01.yml</span><br><span class="line"><span class="comment"># 输入密码，解密test01配置文件</span></span><br><span class="line">ansible-vault decrypt test01.yml</span><br><span class="line"><span class="comment"># 输入密码，查看test01配置文件</span></span><br><span class="line">ansible-vault view test01.yml</span><br><span class="line"><span class="comment"># 输入密码，执行配置文件</span></span><br><span class="line">ansible-playbook test01.yml --ask-vault-pass</span><br><span class="line"><span class="comment"># 通过保存到pass.txt的密码，执行配置文件</span></span><br><span class="line">ansible-playbook test01.yml --vault-id pass.txt</span><br><span class="line"><span class="comment"># 通过保存到pass.txt的密码，查看配置文件</span></span><br><span class="line">ansible-vault  test01.yml --vault-id pass.txt</span><br><span class="line"><span class="comment"># 重置密码</span></span><br><span class="line">ansible-vault rekey test01.yml</span><br></pre></td></tr></table></figure>
+<h2 id="角色">角色</h2>
+<p>角色是定义好的统一目录规范</p>
+<p>修改配置，定义角色目录位置</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim ~/ansible/ansible.cfg</span></span><br><span class="line"><span class="section">[default]</span></span><br><span class="line"><span class="attr">roles_path</span> = ./roles</span><br></pre></td></tr></table></figure>
+<h3 id="手动创建角色">手动创建角色</h3>
+<p>创建http角色相关目录，http是创建的角色，tasks是存放任务的目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ansible/roles/http/tasks</span><br></pre></td></tr></table></figure>
+<p>roles/tasks/main.yml文件</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">	<span class="attr">name:</span> <span class="string">httpd</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">	<span class="attr">msg:</span> <span class="string">ok</span></span><br></pre></td></tr></table></figure>
+<p>编写剧本调用角色</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span> <span class="string">roles</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">node1,</span> <span class="string">node2</span></span><br><span class="line">  <span class="attr">roles:</span></span><br><span class="line">  	<span class="bullet">-</span> <span class="string">http</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用命令创建角色">使用命令创建角色</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-galaxy init roles/vsftpd</span><br><span class="line"><span class="built_in">ls</span> roles/vsftped</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th>目录</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tasks</td>
+<td>存放执行任务</td>
+</tr>
+<tr class="even">
+<td>vars</td>
+<td>存放变量，优先级高</td>
+</tr>
+<tr class="odd">
+<td>defaults</td>
+<td>存放变量，优先级低</td>
+</tr>
+<tr class="even">
+<td>files</td>
+<td>存放静态文件，如图片、视频、配置文件等</td>
+</tr>
+<tr class="odd">
+<td>meta</td>
+<td>存放作者、角色版本信息</td>
+</tr>
+<tr class="even">
+<td>templates</td>
+<td>存放动态数据，比如j2模板</td>
+</tr>
+<tr class="odd">
+<td>handlers</td>
+<td>存放提前定义好的任务</td>
+</tr>
+</tbody>
+</table>
+<h4 id="测试1">测试1</h4>
+<p>准备静态文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123 &gt; roles/vsftpd/files/123</span><br></pre></td></tr></table></figure>
+<p>根据角色创建任务</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/tasks/main.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">	<span class="attr">name:</span> <span class="string">vsftpd</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">	<span class="comment"># 自动寻找files下的123文件</span></span><br><span class="line">	<span class="attr">src:</span> <span class="string">&quot;123&quot;</span></span><br><span class="line">	<span class="attr">dest:</span> <span class="string">/var/ftp/pub</span></span><br></pre></td></tr></table></figure>
+<p>编写脚本调用角色</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim test2.yml</span></span><br><span class="line">- hosts: node1, node2</span><br><span class="line">  roles:</span><br><span class="line">    - vsftpd</span><br></pre></td></tr></table></figure>
+<p>执行剧本</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-playbook test2.yml</span><br></pre></td></tr></table></figure></p>
+<h4 id="测试2">测试2</h4>
+<p>定义变量</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/vars/main.yml</span></span><br><span class="line"><span class="attr">myvar001:</span> <span class="string">abc</span></span><br></pre></td></tr></table></figure>
+<p>测试变量</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/tasks/main.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">template:</span></span><br><span class="line">	<span class="attr">src:</span> <span class="string">&quot;456.j2&quot;</span></span><br><span class="line">	<span class="attr">dest:</span> <span class="string">/var/ftp/pub</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">	<span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;myvar001&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>查看模板生成的文件</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"># less /var/ftp/pub</span><br><span class="line">abc</span><br></pre></td></tr></table></figure>
+<h3 id="使用网络下载安装角色">使用网络下载安装角色</h3>
+<p>配置需要下载的角色文件</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim roles.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myphp</span></span><br><span class="line">  <span class="attr">src:</span> <span class="string">http://172.25.254.250/roles/myphp.tar</span></span><br></pre></td></tr></table></figure>
+<p>安装网上下载的角色</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-galxy install -r roles.yml</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>linux</tag>
