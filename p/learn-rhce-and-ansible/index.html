@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PingFang+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。 本文主要介绍RHCE学习中的一些知识点，主要包含ansible的一些用法。 关键词：RHCE Ansible">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RHCE学习教程之Ansible运维基础">
+<meta property="og:url" content="https://blog.fly97.cn/p/learn-rhce-and-ansible/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。 本文主要介绍RHCE学习中的一些知识点，主要包含ansible的一些用法。 关键词：RHCE Ansible">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-13T15:42:00.000Z">
+<meta property="article:modified_time" content="2023-10-13T15:42:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="learning">
+<meta property="article:tag" content="ansible">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fly97.cn/p/learn-rhce-and-ansible/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/learn-rhce-and-ansible/","path":"p/learn-rhce-and-ansible/","title":"RHCE学习教程之Ansible运维基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RHCE学习教程之Ansible运维基础 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">1.</span> <span class="nav-text">配置文件优先级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%9D%9Eroot%E7%94%A8%E6%88%B7%E6%8F%90%E6%9D%83"><span class="nav-number">2.</span> <span class="nav-text">配置非root用户提权</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEhosts"><span class="nav-number">3.</span> <span class="nav-text">配置Hosts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">常见方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%96%B9%E5%BC%8F"><span class="nav-number">4.1.</span> <span class="nav-text">命令方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#playbook%E6%96%B9%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">playbook方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%9D%97"><span class="nav-number">5.</span> <span class="nav-text">常见模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#file%E6%A8%A1%E5%9D%97"><span class="nav-number">5.1.</span> <span class="nav-text">file模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yum_repository%E6%A8%A1%E5%9D%97"><span class="nav-number">5.2.</span> <span class="nav-text">yum_repository模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yum%E6%A8%A1%E5%9D%97"><span class="nav-number">5.3.</span> <span class="nav-text">yum模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copy%E6%A8%A1%E5%9D%97"><span class="nav-number">5.4.</span> <span class="nav-text">Copy模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#user%E6%A8%A1%E5%9D%97"><span class="nav-number">5.5.</span> <span class="nav-text">User模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#group%E6%A8%A1%E5%9D%97"><span class="nav-number">5.6.</span> <span class="nav-text">Group模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#service%E6%A8%A1%E5%9D%97"><span class="nav-number">5.7.</span> <span class="nav-text">Service模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85collection"><span class="nav-number">5.8.</span> <span class="nav-text">安装collection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#firewalld%E6%A8%A1%E5%9D%97"><span class="nav-number">5.9.</span> <span class="nav-text">firewalld模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#parted%E6%A8%A1%E5%9D%97"><span class="nav-number">5.10.</span> <span class="nav-text">parted模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#filesystem%E6%A8%A1%E5%9D%97"><span class="nav-number">5.11.</span> <span class="nav-text">filesystem模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lvg%E6%A8%A1%E5%9D%97"><span class="nav-number">5.12.</span> <span class="nav-text">lvg模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lvol%E6%A8%A1%E5%9D%97"><span class="nav-number">5.13.</span> <span class="nav-text">lvol模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lineinfile%E6%A8%A1%E5%9D%97"><span class="nav-number">5.14.</span> <span class="nav-text">lineinfile模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#replace%E6%A8%A1%E5%9D%97"><span class="nav-number">5.15.</span> <span class="nav-text">replace模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#debug%E6%A8%A1%E5%9D%97"><span class="nav-number">5.16.</span> <span class="nav-text">debug模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setup%E6%A8%A1%E5%9D%97"><span class="nav-number">5.17.</span> <span class="nav-text">setup模块</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer">
+    <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+        
+        
+        <div class="post-gallery-row">
+            <a class="post-gallery-img fancybox"
+                href="https://www.aliyun.com/minisite/goods?userCode=zm6oaogg" rel="gallery_" target="_blank"
+                itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+            <img src="https://pic.imgdb.cn/item/65a29ad2871b83018a45e602.png" itemprop="contentUrl" alt="阿里云ECS一年仅需99元"/>
+            </a>
+        
+        
+
+        
+        
+    </div>
+  </div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/learn-rhce-and-ansible/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RHCE学习教程之Ansible运维基础 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RHCE学习教程之Ansible运维基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-10-13 23:42:00" itemprop="dateCreated datePublished" datetime="2023-10-13T23:42:00+08:00">2023-10-13</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。</p>
+<p>本文主要介绍RHCE学习中的一些知识点，主要包含ansible的一些用法。</p>
+<p><strong>关键词：RHCE Ansible</strong></p>
+<span id="more"></span>
+<h2 id="配置文件优先级">配置文件优先级</h2>
+<ol type="1">
+<li><code>ANSIBLE_CONFIG</code>环境变量；</li>
+<li>当前<code>/home</code>目录下ansible.cfg；</li>
+<li><code>/home</code>目录下.ansible.cfg（隐藏文件）；</li>
+<li><code>/etc/absible/ansible.cfg</code></li>
+</ol>
+<h2 id="配置非root用户提权">配置非root用户提权</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[defaults]         </span><br><span class="line">inventory= ./hosts   //自定义被控主机清单文件，这里叫hosts</span><br><span class="line">remote_user= alice   //被控主机使用的账户，如果不用普通用户则无需本行以及后续配置</span><br><span class="line">[privilege_escalation]  //提升权限的配置</span><br><span class="line">become=True    //是否要提权  True是要提权</span><br><span class="line">become_method=sudo   //提权方式用sudo</span><br><span class="line">become_user=root   //提权时成为root</span><br><span class="line">become_ask_pass=False   //提权操作时无需密码</span><br></pre></td></tr></table></figure>
+<p>想不起来使用下面的命令，可以生成默认的配置文件，然后根据提示取消相应的注释。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-config init &gt; ansible.cfg</span><br></pre></td></tr></table></figure>
+<h2 id="配置hosts">配置Hosts</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[test01] //组名</span><br><span class="line">node1   </span><br><span class="line">[test02]</span><br><span class="line">node2</span><br><span class="line">[web]</span><br><span class="line">node[3:4] //组名精简写法</span><br><span class="line">[test05]</span><br><span class="line">node5</span><br><span class="line">[webserver:children] //children关键字，代表嵌套组，webserver包含下面的组</span><br><span class="line">web</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="常见方式">常见方式</h2>
+<h3 id="命令方式">命令方式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ansible all -m ping</span><br><span class="line">ansible all -m <span class="built_in">command</span> -a <span class="string">&#x27;ls /opt/abc.txt&#x27;</span>  // 不支持管道，默认模块</span><br><span class="line">ansible all -m shell -a <span class="string">&#x27;echo &quot;nameserver 1.1.1.1&quot; &gt;&gt; /etc/reslove.conf&#x27;</span> // 支持管道</span><br><span class="line">ansible node1 -m shell -a <span class="string">&#x27;echo 123 | passwd --stdin tom&#x27;</span> // 支持管道，设置密码</span><br><span class="line">ansible node1 -m script -a <span class="string">&#x27;test.sh&#x27;</span> // 将脚本上传到节点执行</span><br></pre></td></tr></table></figure>
+<h3 id="playbook方式">playbook方式</h3>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ping</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">ping:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ping</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo &#x27;ok&#x27; /tmp/ok</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">resolv</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo &quot;nameserver 1.1.1.1&quot; &gt;&gt; /etc/resolv.conf</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        echo 123 | passwd --stdin tom</span></span><br><span class="line"><span class="string"></span>    <span class="bullet">-</span> <span class="attr">script:</span> <span class="string">|</span></span><br><span class="line">        <span class="string">test.sh</span></span><br></pre></td></tr></table></figure>
+<h2 id="常见模块">常见模块</h2>
+<p>refer：https://docs.ansible.com/ansible/latest/collections/ansible/builtin/</p>
+<h3 id="file模块">file模块</h3>
+<p>一般用来创建文件、目录、链接文件，以及删除文件</p>
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 92%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>path</td>
+<td>路径</td>
+</tr>
+<tr class="even">
+<td>state</td>
+<td>执行动作。touch：创建普通文件，directory是目录，link是链接文件（src是源，dest是目标），absent是删除</td>
+</tr>
+<tr class="odd">
+<td>owner</td>
+<td>属主</td>
+</tr>
+<tr class="even">
+<td>group</td>
+<td>属组</td>
+</tr>
+<tr class="odd">
+<td>mode</td>
+<td>权限</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=directory path=/opt/456 &#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=link src=/etc/hosts dest=/var/tmp/hosts&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=absent path=/opt/123&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123 owner=alice&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123 group=alice&#x27;</span></span><br><span class="line">ansible node1 -m file -a <span class="string">&#x27;state=touch path=/opt/123 mode=4777&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>playbook</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">touch</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/123</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">directory</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/456</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">link</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">/etc/hosts</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/var/tmp/hosts</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">absent</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/123</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">touch</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/456</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">alice</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">touch</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/1234</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">alice</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">file:</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/opt/1234</span></span><br><span class="line">        <span class="attr">mode:</span> <span class="number">4777</span></span><br></pre></td></tr></table></figure>
+<h3 id="yum_repository模块">yum_repository模块</h3>
+<p>为被控主机搭建yum仓库，记不住yum后面的文字可以先使用<code>ansible-doc -l | grep yum</code>，再使用<code>ansible-doc yum_repository</code></p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td>仓库名</td>
+</tr>
+<tr class="even">
+<td>description</td>
+<td>描述</td>
+</tr>
+<tr class="odd">
+<td>file</td>
+<td>yum配置文件的名字</td>
+</tr>
+<tr class="even">
+<td>baseurl</td>
+<td>软件源地址</td>
+</tr>
+<tr class="odd">
+<td>gpgcheck</td>
+<td>gpgkey检测</td>
+</tr>
+<tr class="even">
+<td>gpgkey</td>
+<td>如果检测key，指定key路径</td>
+</tr>
+<tr class="odd">
+<td>enabled</td>
+<td>是否开启，默认值为1是开启</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible all -m yum_repository -a <span class="string">&#x27;name=appstream description=appstrem baseurl=http://172.25.0.254/rhel9/AppStream gpgcheck=0&#x27;</span></span><br><span class="line">ansible all -m yum_repository -a <span class="string">&#x27;name=baseos description=baseos baseurl=http://172.25.0.254/rhel9/BaseOS gpgcheck=0&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">appstream</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/AppStream</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum_repository:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">description:</span> <span class="string">baseos</span></span><br><span class="line">        <span class="attr">baseurl:</span> <span class="string">http://172.25.0.254/rhel9/BaseOS</span></span><br><span class="line">        <span class="attr">gpgcheck:</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h3 id="yum模块">yum模块</h3>
+<p>使用yum安装软件</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/安装，absent/卸载，latest/升级</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>指定软件包名</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">net-tools</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">latest</span></span><br></pre></td></tr></table></figure>
+<h3 id="copy模块">Copy模块</h3>
+<p>将控制主机的文件拷贝到被控主机</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>src</td>
+<td>源文件</td>
+</tr>
+<tr class="even">
+<td>dest</td>
+<td>目标</td>
+</tr>
+<tr class="odd">
+<td>owner</td>
+<td>属主</td>
+</tr>
+<tr class="even">
+<td>group</td>
+<td>属组</td>
+</tr>
+<tr class="odd">
+<td>mode</td>
+<td>权限</td>
+</tr>
+<tr class="even">
+<td>backup</td>
+<td>backup=yes，拷贝时备份控制主机的同名文件，防止被覆盖</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m copy dest=/etc/hostname src=/var/tmp/hostname owner=alice mode=1777 backup=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">- hosts: node1</span><br><span class="line">  tasks:</span><br><span class="line">    - copy:</span><br><span class="line">        src: /etc/hostname</span><br><span class="line">        dest: /var/tmp/hostname</span><br><span class="line">        owner: alice</span><br><span class="line">        mode: 1777</span><br><span class="line">        backup: <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="user模块">User模块</h3>
+<p>管理账户的模块</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>名字</td>
+</tr>
+<tr class="odd">
+<td>uid</td>
+<td>定义uid号</td>
+</tr>
+<tr class="even">
+<td>password</td>
+<td>定义密码</td>
+</tr>
+<tr class="odd">
+<td>group</td>
+<td>基本组</td>
+</tr>
+<tr class="even">
+<td>groups</td>
+<td>附加组</td>
+</tr>
+<tr class="odd">
+<td>append</td>
+<td>append=yes，追加附加组</td>
+</tr>
+<tr class="even">
+<td>remove</td>
+<td>remove=yes，删除用户相关文件</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m user -a <span class="string">&#x27;name=zhangsan state=absent remove=yes&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">user:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">wf09</span></span><br><span class="line">        <span class="attr">uid:</span> <span class="number">101</span></span><br><span class="line">        <span class="attr">password:</span> <span class="string">&#x27;<span class="template-variable">&#123;&#123;&quot;123456&quot;|password_hash(&quot;sha256&quot;)&#125;&#125;</span>&#x27;</span></span><br><span class="line">        <span class="attr">group:</span> <span class="string">wf09</span></span><br><span class="line">        <span class="attr">groups:</span> <span class="string">admin</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">append:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="group模块">Group模块</h3>
+<p>管理组</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>组名</td>
+</tr>
+<tr class="odd">
+<td>gid</td>
+<td>gid组号</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">group:</span> </span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">wf09</span></span><br><span class="line">        <span class="attr">gid:</span> <span class="number">101</span></span><br></pre></td></tr></table></figure>
+<h3 id="service模块">Service模块</h3>
+<p>管理服务</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>started/开启服务，stopped/关闭服务，restarted/重启服务</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>服务名</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">service:</span> </span><br><span class="line">        <span class="attr">state:</span> <span class="string">restarted</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">httpd</span></span><br></pre></td></tr></table></figure>
+<h3 id="安装collection">安装collection</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vim ansible.cfg</span></span><br><span class="line">collections_paths=/home/alice/ansible/collection</span><br><span class="line"><span class="comment"># 官方网站 https://galaxy.ansible.com</span></span><br><span class="line"><span class="comment"># bash执行</span></span><br><span class="line">ansible-galaxy collection install http://server1.lab0.example.com/materials/ansible-posix-1.5.1.tar.gz  -p /home/alice/ansible/collection</span><br><span class="line"><span class="comment"># 查看firewalld</span></span><br><span class="line">ansible-doc ansible.posix.firewalld</span><br></pre></td></tr></table></figure>
+<p><strong>pip 模块</strong></p>
+<p>python的包管理模块</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">pip:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">firewalld</span></span><br></pre></td></tr></table></figure>
+<p>用firewall之前还需要用yum安装firewalld安装包。</p>
+<h3 id="firewalld模块">firewalld模块</h3>
+<p>管理防火墙</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>enabled/添加规则，disabled/删除规则</td>
+</tr>
+<tr class="even">
+<td>service</td>
+<td>指定服务（协议）</td>
+</tr>
+<tr class="odd">
+<td>permanent</td>
+<td>permanent=yes，永久生效</td>
+</tr>
+<tr class="even">
+<td>immediate</td>
+<td>immediate=yes，立刻生效</td>
+</tr>
+<tr class="odd">
+<td>port</td>
+<td>22</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">--- </span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">firewalld:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">enabled</span></span><br><span class="line">        <span class="attr">service:</span> <span class="string">http</span></span><br><span class="line">        <span class="attr">permanent:</span> <span class="literal">yes</span></span><br><span class="line">        <span class="attr">immediate:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="parted模块">parted模块</h3>
+<p>对硬盘分区</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>device</strong></td>
+<td>操作的设备</td>
+</tr>
+<tr class="even">
+<td><strong>label</strong></td>
+<td>分区表类型 mbr/msdos， gpt</td>
+</tr>
+<tr class="odd">
+<td><strong>number</strong></td>
+<td>分区序号</td>
+</tr>
+<tr class="even">
+<td><strong>part_start</strong></td>
+<td>分区起始位置</td>
+</tr>
+<tr class="odd">
+<td><strong>part_end</strong></td>
+<td>分区结束位置</td>
+</tr>
+<tr class="even">
+<td><strong>state</strong></td>
+<td><strong>present/创建，absent/删除，info/查看信息</strong></td>
+</tr>
+</tbody>
+</table>
+<p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">parted:</span></span><br><span class="line">        <span class="attr">state:</span> <span class="string">present</span></span><br><span class="line">        <span class="attr">device:</span> <span class="string">/dev/vdb</span></span><br><span class="line">        <span class="attr">number:</span> <span class="number">2</span></span><br><span class="line">        <span class="attr">part_start:</span> <span class="string">3GiB</span></span><br><span class="line">        <span class="attr">part_end:</span> <span class="string">4GiB</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="filesystem模块">filesystem模块</h3>
+<p>赋予文件系统</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dev</td>
+<td>定义分区</td>
+</tr>
+<tr class="even">
+<td>fstype</td>
+<td>分区表类型 mbr/msdos， gpt</td>
+</tr>
+<tr class="odd">
+<td><strong>number</strong></td>
+<td>分区序号</td>
+</tr>
+<tr class="even">
+<td><strong>part_start</strong></td>
+<td>分区起始位置</td>
+</tr>
+<tr class="odd">
+<td><strong>part_end</strong></td>
+<td>分区结束位置</td>
+</tr>
+<tr class="even">
+<td><strong>state</strong></td>
+<td><strong>present/创建，absent/删除，info/查看信息</strong></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">filesystem:</span></span><br><span class="line">        <span class="attr">dev:</span> <span class="string">/dev/vdb2</span></span><br><span class="line">        <span class="attr">fstype:</span> <span class="string">xfs</span></span><br><span class="line">        <span class="attr">force:</span> <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+<h3 id="lvg模块">lvg模块</h3>
+<p>管理卷组</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="even">
+<td>vg</td>
+<td>卷组名</td>
+</tr>
+<tr class="odd">
+<td>pvs</td>
+<td>指定物理卷</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lvg:</span></span><br><span class="line">        <span class="attr">vg:</span> <span class="string">myvg</span></span><br><span class="line">        <span class="attr">pvs:</span> <span class="string">/dev/vdb2</span></span><br></pre></td></tr></table></figure>
+<h3 id="lvol模块">lvol模块</h3>
+<p>管理卷组</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lv</td>
+<td>逻辑卷名</td>
+</tr>
+<tr class="even">
+<td>size</td>
+<td>大小</td>
+</tr>
+<tr class="odd">
+<td>vg</td>
+<td>空间来自哪个卷组</td>
+</tr>
+<tr class="even">
+<td>state</td>
+<td>present/创建，absent/删除</td>
+</tr>
+<tr class="odd">
+<td>force</td>
+<td>是否强制</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lvol:</span></span><br><span class="line">        <span class="attr">lv:</span> <span class="string">mylv</span></span><br><span class="line">        <span class="attr">size:</span> <span class="string">50m</span></span><br><span class="line">        <span class="attr">vg:</span> <span class="string">myvg</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node5</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lvol:</span></span><br><span class="line">        <span class="attr">lv:</span> <span class="string">mylv</span></span><br><span class="line">        <span class="attr">size:</span> <span class="string">500m</span> <span class="comment"># 再次执行扩容</span></span><br><span class="line">        <span class="attr">vg:</span> <span class="string">myvg</span></span><br></pre></td></tr></table></figure>
+<h3 id="lineinfile模块">lineinfile模块</h3>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>dest</strong></td>
+<td>目标文件</td>
+</tr>
+<tr class="even">
+<td><strong>regexp</strong></td>
+<td>查找替换内容</td>
+</tr>
+<tr class="odd">
+<td><strong>line</strong></td>
+<td>要替换/添加什么内容</td>
+</tr>
+<tr class="even">
+<td><strong>insertbefore</strong></td>
+<td>在某行上添加</td>
+</tr>
+<tr class="odd">
+<td><strong>insertafter</strong></td>
+<td>在某行下添加</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">        <span class="attr">src:</span> <span class="string">./txt</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/tmp/txt</span></span><br><span class="line">        <span class="attr">owner:</span> <span class="string">alice</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">lineinfile:</span></span><br><span class="line">        <span class="attr">dest:</span> <span class="string">/tmp/txt</span></span><br><span class="line">        <span class="attr">regexp:</span> <span class="string">txt</span></span><br><span class="line">        <span class="attr">line:</span> <span class="string">abc</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">shell:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        cat /tmp/txt</span></span><br><span class="line"><span class="string"></span>      <span class="attr">register:</span> <span class="string">info</span> <span class="comment"># 注册变量</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">var:</span> <span class="string">info.stdout</span></span><br></pre></td></tr></table></figure>
+<h3 id="replace模块">replace模块</h3>
+<p>可以替换文档中的某些字符串</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>path</strong></td>
+<td>要替换文件的路径</td>
+</tr>
+<tr class="even">
+<td><strong>regexp</strong></td>
+<td>要匹配的内容</td>
+</tr>
+<tr class="odd">
+<td><strong>replace</strong></td>
+<td>要替换/添加什么内容</td>
+</tr>
+<tr class="even">
+<td><strong>backup</strong></td>
+<td>是否要备份</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">replace:</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/home/zabbix/etc/zabbix_agentd.conf</span></span><br><span class="line">        <span class="attr">regexp:</span> <span class="string">Server=.*</span></span><br><span class="line">        <span class="attr">replace:</span> <span class="string">Server=1.1.1.1</span></span><br><span class="line">        <span class="attr">backup:</span> <span class="literal">no</span></span><br></pre></td></tr></table></figure>
+<h3 id="debug模块">debug模块</h3>
+<p>可以输出常量字符，或者变量中的信息</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>msg</strong></td>
+<td>输出常量字符串，如果是变量要加<code>&#123;&#123; &#125;&#125;</code></td>
+</tr>
+<tr class="even">
+<td><strong>var</strong></td>
+<td>输出变量，无需<code>&#123;&#123;&#125;&#125;</code></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;ansible_memfree_mb&#125;&#125;</span>&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">var:</span> <span class="string">ansible_memfree_mb</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">ok</span></span><br></pre></td></tr></table></figure>
+<h3 id="setup模块">setup模块</h3>
+<p>可以获取被控主机的各自信息并定义成变量</p>
+<p>查看某个node的变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible node1 -m setup | less</span><br></pre></td></tr></table></figure>
+<table>
+<colgroup>
+<col style="width: 61%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>变量</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>ansible_enp1s0.ipv4.address</strong></td>
+<td>enp1s0网卡的ipv4地址</td>
+</tr>
+<tr class="even">
+<td><strong>ansible_hostname</strong></td>
+<td>主机名</td>
+</tr>
+<tr class="odd">
+<td><strong>ansible_memfree_mb</strong></td>
+<td>内存剩余大小</td>
+</tr>
+<tr class="even">
+<td><strong>ansible_fqdn</strong></td>
+<td>完整主机名</td>
+</tr>
+<tr class="odd">
+<td><strong>ansible_bios_version</strong></td>
+<td>bios版本</td>
+</tr>
+<tr class="even">
+<td><strong>ansible_devices.vda.size</strong></td>
+<td><strong>第一块硬盘大小</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>ansible_devices.vda.partitions.vda1.size</strong></td>
+<td><strong>第一块硬盘第一个分区大小</strong></td>
+</tr>
+<tr class="even">
+<td><strong>ansible_lvm.lvs.root.size_g</strong></td>
+<td><strong>逻辑卷root的大小</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>ansible_kernel</strong></td>
+<td><strong>内核版本信息</strong></td>
+</tr>
+</tbody>
+</table>
+<p>关闭剧本默认执行的变量收集任务</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">gather_facts:</span> <span class="literal">no</span>		<span class="string">//关闭setup任务，可以加快剧本运行速度</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line"><span class="attr">msg:</span> <span class="string">&quot;ok&quot;</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.fly97.cn/p/learn-rhce-and-ansible/" title="RHCE学习教程之Ansible运维基础">https://blog.fly97.cn/p/learn-rhce-and-ansible/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/learning/" rel="tag"># learning</a>
+              <a href="/tags/ansible/" rel="tag"># ansible</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/advanced-usage-about-ansible/" rel="prev" title="RHCE学习教程之Ansible高级用法">
+                  <i class="fa fa-chevron-left"></i> RHCE学习教程之Ansible高级用法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/have-a-look-at-tini/" rel="next" title="Kubernetes集群实践（十四）tini进程管理器">
+                  Kubernetes集群实践（十四）tini进程管理器 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

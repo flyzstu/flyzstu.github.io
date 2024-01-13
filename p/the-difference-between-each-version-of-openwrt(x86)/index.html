@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PingFang+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文主要记录在上班学（mo）习（yu）时的一些学习记录，本文主要记录的是OpenWRT X86各个架构的区别。 关键词： OpenWRT x86各个版本的区别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT x86各个版本的区别">
+<meta property="og:url" content="https://blog.fly97.cn/p/the-difference-between-each-version-of-openwrt(x86)/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="本文主要记录在上班学（mo）习（yu）时的一些学习记录，本文主要记录的是OpenWRT X86各个架构的区别。 关键词： OpenWRT x86各个版本的区别">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-02T07:42:00.000Z">
+<meta property="article:modified_time" content="2023-08-02T07:42:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="learning">
+<meta property="article:tag" content="OpenWRT">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fly97.cn/p/the-difference-between-each-version-of-openwrt(x86)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/the-difference-between-each-version-of-openwrt(x86)/","path":"p/the-difference-between-each-version-of-openwrt(x86)/","title":"OpenWRT x86各个版本的区别"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OpenWRT x86各个版本的区别 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ext4-combined-efi.img.gz"><span class="nav-number">1.</span> <span class="nav-text">1. ext4-combined-efi.img.gz</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ext4-combined.img.gz"><span class="nav-number">2.</span> <span class="nav-text">2. ext4-combined.img.gz</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ext4-rootfs.img.gz"><span class="nav-number">3.</span> <span class="nav-text">3. ext4-rootfs.img.gz</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kernel.bin"><span class="nav-number">4.</span> <span class="nav-text">4. kernel.bin</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#squashfs-combined-efi.img.gz"><span class="nav-number">5.</span> <span class="nav-text">5.
+squashfs-combined-efi.img.gz</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#squashfs-combined.img.gz"><span class="nav-number">6.</span> <span class="nav-text">6. squashfs-combined.img.gz</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#squashfs-rootfs.img.gz"><span class="nav-number">7.</span> <span class="nav-text">7. squashfs-rootfs.img.gz</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#rootfs.tar.gz"><span class="nav-number">8.</span> <span class="nav-text">8. rootfs.tar.gz</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer">
+    <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+        
+        
+        <div class="post-gallery-row">
+            <a class="post-gallery-img fancybox"
+                href="https://www.aliyun.com/minisite/goods?userCode=zm6oaogg" rel="gallery_" target="_blank"
+                itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+            <img src="https://pic.imgdb.cn/item/65a29ad2871b83018a45e602.png" itemprop="contentUrl" alt="阿里云ECS一年仅需99元"/>
+            </a>
+        
+        
+
+        
+        
+    </div>
+  </div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/the-difference-between-each-version-of-openwrt(x86)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OpenWRT x86各个版本的区别 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenWRT x86各个版本的区别
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-02 15:42:00" itemprop="dateCreated datePublished" datetime="2023-08-02T15:42:00+08:00">2023-08-02</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文主要记录在上班学（mo）习（yu）时的一些学习记录，本文主要记录的是OpenWRT
+X86各个架构的区别。</p>
+<p><strong>关键词： OpenWRT x86各个版本的区别</strong></p>
+<span id="more"></span>
+<p>简单介绍 <a
+target="_blank" rel="noopener" href="https://itlangzi.com/jump.html?https:%2F%2Fopenwrt.org%2F">openwrt</a>
+<code>x86</code> 平台各个版本的区别</p>
+<p>x86 OpenWrt
+有多个目标，其中一些针对旧的或特定的硬件，它们的构建默认值可能不适合现代
+x86 硬件：</p>
+<ul>
+<li><strong>64</strong>适用于现代 PC 硬件（从 2007
+年左右开始的任何硬件），它是为 64 位功能的计算机构建的，并且支持现代 CPU
+功能。除非您有充分的理由不这样做，否则请选择此选项。</li>
+<li><strong>Generic</strong>适用于仅 32 位的硬件（旧硬件或某些 Atom
+处理器），应该是<strong>i686</strong> Linux 架构，可在 Pentium 4
+及更高版本上工作。仅当您的硬件无法运行 64 位版本时才使用此选项。</li>
+<li><strong>Legacy</strong>是针对非常老的PC硬件，Pentium
+MMX，在Linux架构中被称为<strong>i586的支持。</strong>它将错过您在现代硬件上想要/需要的许多功能，例如多核支持和对
+4GB 以上 RAM
+的支持，但实际上可以在古老的硬件上运行，而其他版本则不能。</li>
+<li><strong>Geode</strong>是为 Geode SoC
+定制的传统目标，它仍在许多（老化的）网络设备中使用，例如 PCEngines 的旧
+Alix 板。</li>
+</ul>
+<h1 id="ext4-combined-efi.img.gz">1. ext4-combined-efi.img.gz</h1>
+<ul>
+<li>使用可读写的<code>ext4</code>分区，没有<code>squashfs</code>的只读文件系统</li>
+<li>根分区可以使用更大的驱动器(e.g. SSD/SATA/mSATA/SATA
+DOM/NVMe/etc)进行扩展</li>
+<li>没有故障安全模式和出厂重置等功能，这些功能需要<code>squashfs</code>的支持</li>
+<li>自带引导分区和根分区以及主引导记录 (MBR) 区域以及更新的 GRUB2</li>
+<li>支持efi引导</li>
+</ul>
+<h1 id="ext4-combined.img.gz">2. ext4-combined.img.gz</h1>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://itlangzi.com/s/FCZV11.html#1-ext4-combined-efiimggz">同1</a>，但不支持efi引导</li>
+</ul>
+<h1 id="ext4-rootfs.img.gz">3. ext4-rootfs.img.gz</h1>
+<ul>
+<li>只有根分区的镜像，重新安装不会覆盖引导分区和主引导记录 (MBR)，</li>
+<li>由于不带引导分区，首次安装需要自行使用<code>grub</code>或者<code>syslinux</code>来引导</li>
+<li>使用<code>ext4</code>分区</li>
+</ul>
+<h1 id="kernel.bin">4. kernel.bin</h1>
+<ul>
+<li>独立的内核</li>
+</ul>
+<h1 id="squashfs-combined-efi.img.gz">5.
+squashfs-combined-efi.img.gz</h1>
+<ul>
+<li><code>squashfs</code>是个只读的文件系统,
+相当于<code>windows</code>的<code>ghost</code>,
+支持故障安全模式和出厂重置等功能</li>
+<li>包含一个只读的根文件系统和一个存储设置以及安装软件可读写的分区</li>
+<li>组合模式，只有不到<code>100MB</code>的空间来存储额外的包和配置，并且无法扩展根分区</li>
+<li>支持efi引导</li>
+</ul>
+<h1 id="squashfs-combined.img.gz">6. squashfs-combined.img.gz</h1>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://itlangzi.com/s/FCZV11.html#5-squashfs-combined-efiimggz">同5</a>，但不支持efi引导</li>
+</ul>
+<h1 id="squashfs-rootfs.img.gz">7. squashfs-rootfs.img.gz</h1>
+<ul>
+<li><不知道是干啥的></li>
+</ul>
+<h1 id="rootfs.tar.gz">8. rootfs.tar.gz</h1>
+<ul>
+<li>所有的文件都在根目录下</li>
+<li>不带引导，需要自行使用<code>grub</code>或者<code>syslinux</code>来引导</li>
+</ul>
+<p><strong>建议:</strong></p>
+<ul>
+<li>需要扩展分区使用:
+<code>combined-ext4.img.gz</code>和<code>ext4-combined-efi.img.gz</code></li>
+<li>不需要扩展分区使用:
+<code>squashfs-combined.img.gz</code>和<code>squashfs-combined-efi.img.gz</code></li>
+</ul>
+<p><strong>参考:</strong></p>
+<ol type="1">
+<li><a
+href="">https://openwrt.org/docs/guide-user/installation/openwrt_x86</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.fly97.cn/p/the-difference-between-each-version-of-openwrt(x86)/" title="OpenWRT x86各个版本的区别">https://blog.fly97.cn/p/the-difference-between-each-version-of-openwrt(x86)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/learning/" rel="tag"># learning</a>
+              <a href="/tags/OpenWRT/" rel="tag"># OpenWRT</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/install-zabbix/" rel="prev" title="搭建zabbix监控系统">
+                  <i class="fa fa-chevron-left"></i> 搭建zabbix监控系统
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/learn-Red-Hat-certification-rhcsa/" rel="next" title="红帽认证RHCSA">
+                  红帽认证RHCSA <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

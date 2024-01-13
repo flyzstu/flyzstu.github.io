@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PingFang+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="关键词：ROS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ROS基础（一）｜ROS架构及概念">
+<meta property="og:url" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="关键词：ROS">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/image-20200923190637341.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/image-20200923193232140.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/image-20200924144159317.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/image-20200924154802735.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/image-20200924160401768.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/image-20200924161034651.png">
+<meta property="article:published_time" content="2020-09-23T12:46:25.000Z">
+<meta property="article:modified_time" content="2020-09-23T12:46:25.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="ROS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.fly97.cn/p/ROS-system-learning-notes-01/image-20200923190637341.png">
+
+
+<link rel="canonical" href="https://blog.fly97.cn/p/ROS-system-learning-notes-01/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/ROS-system-learning-notes-01/","path":"p/ROS-system-learning-notes-01/","title":"ROS基础（一）｜ROS架构及概念"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ROS基础（一）｜ROS架构及概念 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ros%E6%9E%B6%E6%9E%84%E5%8F%8A%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">ROS架构及概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%90%86%E8%A7%A3ros%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BA%A7"><span class="nav-number">1.1.</span> <span class="nav-text">理解ROS文件系统级</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E7%A9%BA%E9%97%B4"><span class="nav-number">1.1.1.</span> <span class="nav-text">工作空间</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%8C%85"><span class="nav-number">1.1.2.</span> <span class="nav-text">功能包</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%83%E5%8A%9F%E8%83%BD%E5%8C%85"><span class="nav-number">1.1.3.</span> <span class="nav-text">元功能包</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer">
+    <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+        
+        
+        <div class="post-gallery-row">
+            <a class="post-gallery-img fancybox"
+                href="https://www.aliyun.com/minisite/goods?userCode=zm6oaogg" rel="gallery_" target="_blank"
+                itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+            <img src="https://pic.imgdb.cn/item/65a29ad2871b83018a45e602.png" itemprop="contentUrl" alt="阿里云ECS一年仅需99元"/>
+            </a>
+        
+        
+
+        
+        
+    </div>
+  </div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/ROS-system-learning-notes-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ROS基础（一）｜ROS架构及概念 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ROS基础（一）｜ROS架构及概念
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-23 20:46:25" itemprop="dateCreated datePublished" datetime="2020-09-23T20:46:25+08:00">2020-09-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>关键词：</strong>ROS</p>
+<span id="more"></span>
+<h3 id="ros架构及概念">ROS架构及概念</h3>
+<p>ROS的架构经过设计并划分为三部分，每一部分都代表一个层级的概念：</p>
+<ul>
+<li>文件系统级（Filesystem level)</li>
+<li>计算图级(Computation Graph level)</li>
+<li>社区级(Community level)</li>
+</ul>
+<p>第一级是文件系统级。在这一级，我们会使用一组概念来解释ROS的内部构成、文件夹结构，以及工作所需要的核心文件。</p>
+<p>第二级是计算图级，体现的是进程和系统之间的通信。在相关小节中，我们将学习ROS的各个概念和功能，包括建立系统、处理各类进程、与多台机器通信等。</p>
+<p>第三级是社区级，我们将解释一系列的工具和概念，包括在开发人员之间如何共享知识、算法和代码。由于强大社区的支持，不仅提高了初学者理解复杂软件的能力，还解决了最常见的问题。</p>
+<h4 id="理解ros文件系统级">理解ROS文件系统级</h4>
+<p><img data-src="image-20200923190637341.png" /></p>
+<p>与其他操作系统类似，一个ROS程序的不同组件要放在不同的文件夹下，这些文件夹是根据功能的不同来对文件进行组织的。</p>
+<ol type="1">
+<li>功能包（Package）：功能包构成ROS中的原子级。一个功能包具有创建ROS程序最小结构和最少内容。它可以包含ROS运行时进程（节点）、配置文件等。</li>
+<li>功能包清单（Package
+Manifest）：功能包清单提供关于功能包、许可证、依赖关系、编译标志等的信息。包清单又一个名为<strong>package.xml</strong>的文件管理。</li>
+<li>元功能包（Metapackage）：如果你希望将几个具有<strong>某些功能的包组织在一起</strong>，那么你将使用一个元功能包。这种包的组织形式<strong>之前被称</strong>为功能包集（Stack
+）。功能包集被废除，现在使用元功能包实现这个功能。在ROS中，存在大量不同用途的元功能包，例如<strong>导航功能包集</strong>。</li>
+<li>元功能包清单（Metapackage
+manifest）：元功能包清单（package.xml）类似普通功能包但又一个XML格式的导出标记，他在结构上也有一定的限制。</li>
+<li>消息类型（Message（msg）type）：消息是一个进程发送到其他进程的消息。ROS
+的消息类型的说明存储在<strong>my_package/msg/MyMessageType.msg</strong>中。</li>
+<li>服务类型（Service (srv)
+Type）：服务描述说明存储在<strong>my_package/srv/MyServiceType.srv</strong>中，为ROS中由每个进程提供的服务定义请求和响应数据结构。</li>
+</ol>
+<p>下面的截图说明了<strong>turtlesim</strong>功能包的内容。所看到的是一系列文件和文件夹，包含代码、图片、启动文件服务和消息。以下只是文件的一个简短列表。</p>
+<p><img data-src="image-20200923193232140.png" /></p>
+<h5 id="工作空间">工作空间</h5>
+<p>工作空间包含功能包，功能包包含源文件和环境和工作空间，是集中开发的一种好方式。</p>
+<p>下图所示是一个典型的工作空间。<img data-src="image-20200924144159317.png" /></p>
+<p>主要包含一下内容：</p>
+<ul>
+<li>源文件空间（Source
+space）：在源空间（src文件夹）中，放置了功能包、项目、复制的包等。<strong>最重要文件：CMakeLists.txt</strong>。当在工作空间配置包时，通过cmake调用CMakeLists.txt。这个文件是通过<strong>catkin_init_workspace</strong>命令创建的。</li>
+<li>编译空间（build
+space）：在build文件夹里，cmake和catkin为功能包和项目保存缓存信息、配置和其他中间文件。</li>
+<li>开发空间（Development
+（devel）space）：devel文件夹用来保存编译后的程序，这些是无需安装就能用来测试的程序。</li>
+</ul>
+<p>用catkin编译包有两个选项。第一个是使用标准CMake工作流程。通过使用此方式。可以一次编译一个包，见以下命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cmake packageToBuild/</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>如果想编译所有的包，可以用<strong>catkin_make</strong>命令行，见以下命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> workspace</span><br><span class="line">catkin_make</span><br></pre></td></tr></table></figure>
+<p>在ROS配置的编译空间目录中，这两个命令编译出可执行文件。</p>
+<p>ROS支持覆盖（overlay）。当你正在使用ROS功能包例如（<strong>Turtlesim</strong>）时，可以使用安装版本，也可以下载源文件并编译它来使用你修改后的版本。</p>
+<p>ROS允许使用自己版本的功能包去替代安装版本。下一章我们将使用这个功能来创建自己的插件。</p>
+<h5 id="功能包">功能包</h5>
+<p>包指的是一种特定结构的文件和文件夹组合。</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>目录</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>include/package_name</td>
+<td>此目录包含了需要的库的头文件</td>
+</tr>
+<tr class="even">
+<td>msg/</td>
+<td>如果开发需要<strong>非标准</strong>的消息，请把文件放在这里。</td>
+</tr>
+<tr class="odd">
+<td>script/</td>
+<td>其中包含Bash、Python或者任何其他脚本语言的可执行脚本。</td>
+</tr>
+<tr class="even">
+<td>src/</td>
+<td>存储程序源文件。可以为节点创建一个文件夹或按照希望的方式组织它。</td>
+</tr>
+<tr class="odd">
+<td>srv/</td>
+<td>（srv）服务类型</td>
+</tr>
+<tr class="even">
+<td>CMakeLists.txt</td>
+<td>CMake的生成文件</td>
+</tr>
+<tr class="odd">
+<td>package.xml</td>
+<td>功能包清单文件</td>
+</tr>
+</tbody>
+</table>
+<p>ROS提供的工具（命令）</p>
+<table>
+<thead>
+<tr class="header">
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rospack</td>
+<td>使用此命令来获取信息或在系统中查找包</td>
+</tr>
+<tr class="even">
+<td>catkin_create_pkg</td>
+<td>使用此命令创建一个新的功能包</td>
+</tr>
+<tr class="odd">
+<td>catin_make</td>
+<td>使用此命令来编译工作空间</td>
+</tr>
+<tr class="even">
+<td>rosdep</td>
+<td>使用此命令按照功能包的系统依赖项</td>
+</tr>
+<tr class="odd">
+<td>rqt_dep</td>
+<td>使用此命令来查看包的依赖关系图</td>
+</tr>
+</tbody>
+</table>
+<p>如果要在文件夹和功能包之间移动文件，ROS提供了非常有用的<strong>rosbash</strong>，功能包，其中包含的非常类似Linux命令的命令。</p>
+<table>
+<thead>
+<tr class="header">
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>roscd</td>
+<td>此命令用于更改目录，相当于Linux中的cd命令</td>
+</tr>
+<tr class="even">
+<td>rosed</td>
+<td>此命令用来编辑文件</td>
+</tr>
+<tr class="odd">
+<td>roscp</td>
+<td>此命令用于从功能包复制文件。</td>
+</tr>
+<tr class="even">
+<td>rosls</td>
+<td>此命令列出功能包下的文件，类似Linux中的ls命令。</td>
+</tr>
+</tbody>
+</table>
+<p>文件<strong>package.xml</strong>必须在每个功能包中，它用来说明此包相关的各类信息。如果你发现在某个文件夹内包含此文件，那么这个文件夹很可能是<strong>一个包或者元功能包</strong>。</p>
+<p>打开<strong>package.xml</strong>文件，可以看到包的名称、依赖关系等信息。功能包清单的作用就是为了方便安装和分发这些功能包。</p>
+<p>在<strong>package.xml</strong>文件中使用的两个典型标记是<strong><build_depend></strong>和<strong><run_depend></strong>.</p>
+<p><strong><build_depend></strong>标记会显示当前功能包安装之前必须先安装哪些功能包。这是因为新的功能包会使用其他包的一些功能。</p>
+<p><strong><run_depend></strong>标记显示运行功能包中代码所需要的包。以下是package.xml文件的示例。</p>
+<p><img data-src="image-20200924154802735.png" /></p>
+<h5 id="元功能包">元功能包</h5>
+<p>元包中只有一个文件，这个文件就是<strong>package.xml</strong>。它不包含其他文件，如代码等。</p>
+<p>元功能包用于指代其他按照类似功能特性分组的包，例如导航功能包集，ros_tutorials等。</p>
+<p>使用迁移的特定规则，可以讲ROS
+Fuerte中的功能包和功能包集转换为Kinetic等。具体参见http://wiki.ros.org/catkin/migrating_from_rosbuild。</p>
+<p>在下图中。可以看到在ros_tutorials元功能包中package.xml的内容。可以看到
+&lt;export&gt;标记和&lt;run_depend&gt;标记。这些事功能包清单中必不可缺少的，在下图中也可以看到这些标记。</p>
+<p><img data-src="image-20200924160401768.png" /></p>
+<p>如果你想定位<strong>ros_tutorials</strong>元功能包，可以使用下面的命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rosstack find ros_tutorials</span><br></pre></td></tr></table></figure>
+<p>显示路径为：</p>
+<p><img data-src="image-20200924161034651.png" /></p>
+<p>查看里面的代码</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /opt/ros/kinetic/share/ros_tutorials/package.xml</span><br></pre></td></tr></table></figure>
+<p>注意：Kinetic使用元功能包，不是功能包集，但是<strong>rosstack
+find</strong> 命令也可以用于查找元功能包。</p>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.fly97.cn/p/ROS-system-learning-notes-01/" title="ROS基础（一）｜ROS架构及概念">https://blog.fly97.cn/p/ROS-system-learning-notes-01/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/ROS/" rel="tag"># ROS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/an-introduction-to-NLTK/" rel="prev" title="自然语言处理实战（一）｜NLTK入门教程.md">
+                  <i class="fa fa-chevron-left"></i> 自然语言处理实战（一）｜NLTK入门教程.md
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/Chapter-01-of-Modern-Signal-Analysis/" rel="next" title="现代信号分析第二章作业">
+                  现代信号分析第二章作业 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

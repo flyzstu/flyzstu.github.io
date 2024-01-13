@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PingFang+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="实习公司一直开展的项目突然停滞了，因为一个老板的需求我们一直无法满足：  老板想用现有的WebRTC技术，我们使用了现有的技术，但是效果不够好； 使用别的公司的技术但是收费又太贵了，初创公司没有那么多钱； 初创公司没有技术leader，第一批员工大部分都是实习员工；  别问我为啥不跑路，说多了都是泪。 借着这个机会，好好学习一下webRTC技术，同时学会怎么阅读golang库的源码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能">
+<meta property="og:url" content="https://blog.fly97.cn/p/WebRTC-study-notes-01/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="实习公司一直开展的项目突然停滞了，因为一个老板的需求我们一直无法满足：  老板想用现有的WebRTC技术，我们使用了现有的技术，但是效果不够好； 使用别的公司的技术但是收费又太贵了，初创公司没有那么多钱； 初创公司没有技术leader，第一批员工大部分都是实习员工；  别问我为啥不跑路，说多了都是泪。 借着这个机会，好好学习一下webRTC技术，同时学会怎么阅读golang库的源码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.fly97.cn/p/WebRTC-study-notes-01/WebRTC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E4%B8%80)/webp.webp">
+<meta property="og:image" content="https://blog.fly97.cn/p/WebRTC-study-notes-01/WebRTC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E4%B8%80)/110413q4zdfkzfemkmmfhk.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/WebRTC-study-notes-01/WebRTC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E4%B8%80)/110424jt8q1v49mqki3128.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/WebRTC-study-notes-01/WebRTC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E4%B8%80)/115037opmgs8r3s5c5zycp.png">
+<meta property="article:published_time" content="2022-04-27T05:55:00.000Z">
+<meta property="article:modified_time" content="2022-04-27T05:55:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="WebRTC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.fly97.cn/p/WebRTC-study-notes-01/WebRTC%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E4%B8%80)/webp.webp">
+
+
+<link rel="canonical" href="https://blog.fly97.cn/p/WebRTC-study-notes-01/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/WebRTC-study-notes-01/","path":"p/WebRTC-study-notes-01/","title":"WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90webrtc%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%9E%E6%97%B6%E9%9F%B3%E8%A7%86%E9%A2%91%E8%81%8A%E5%A4%A9%E5%8A%9F%E8%83%BD"><span class="nav-number">1.</span> <span class="nav-text">零基础入门：基于开源WebRTC，从0到1实现实时音视频聊天功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E5%87%86%E5%A4%87"><span class="nav-number">1.1.</span> <span class="nav-text">知识准备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9F%B3%E8%A7%86%E9%A2%91%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80"><span class="nav-number">1.1.1.</span> <span class="nav-text">音视频理论基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFwebrtc"><span class="nav-number">1.1.2.</span> <span class="nav-text">什么是WebRTC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#webrtc%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90"><span class="nav-number">1.1.3.</span> <span class="nav-text">WebRTC学习资源</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text">技术组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#webrtc%E7%9A%84p2p%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">WebRTC的P2P通信原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E9%9A%BE%E7%82%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">技术难点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E7%9F%A5%E9%81%93%E5%BD%BC%E6%AD%A4%E7%9A%84%E5%AD%98%E5%9C%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">怎么知道彼此的存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%BC%E6%AD%A4%E9%9F%B3%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E8%83%BD%E5%8A%9B%E5%A6%82%E4%BD%95%E6%B2%9F%E9%80%9A"><span class="nav-number">1.3.3.</span> <span class="nav-text">彼此音视频编码能力如何沟通</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9F%B3%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E5%A6%82%E4%BD%95%E4%BC%A0%E8%BE%93%E6%80%8E%E4%B9%88%E8%83%BD%E8%AE%A9%E5%AF%B9%E6%96%B9%E7%9C%8B%E8%A7%81%E8%87%AA%E5%B7%B1"><span class="nav-number">1.3.4.</span> <span class="nav-text">音视频数据如何传输，怎么能让对方看见自己</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#webrtc%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81api"><span class="nav-number">1.4.</span> <span class="nav-text">WebRTC几个重要API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9F%B3%E8%A7%86%E9%A2%91%E9%87%87%E9%9B%86api"><span class="nav-number">1.4.1.</span> <span class="nav-text">音视频采集API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%9F%B3%E8%A7%86%E9%A2%91%E8%AE%BE%E5%A4%87%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E5%88%97%E8%A1%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text">获取音视频设备输入输出列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%82%B9%E5%AF%B9%E7%82%B9%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.3.</span> <span class="nav-text">创建点对点连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%89%8B%E7%BC%96%E7%A0%81%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.5.</span> <span class="nav-text">动手编码实践</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer">
+    <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+        
+        
+        <div class="post-gallery-row">
+            <a class="post-gallery-img fancybox"
+                href="https://www.aliyun.com/minisite/goods?userCode=zm6oaogg" rel="gallery_" target="_blank"
+                itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+            <img src="https://pic.imgdb.cn/item/65a29ad2871b83018a45e602.png" itemprop="contentUrl" alt="阿里云ECS一年仅需99元"/>
+            </a>
+        
+        
+
+        
+        
+    </div>
+  </div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/WebRTC-study-notes-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-27 13:55:00" itemprop="dateCreated datePublished" datetime="2022-04-27T13:55:00+08:00">2022-04-27</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>实习公司一直开展的项目突然停滞了，因为一个老板的需求我们一直无法满足：</p>
+<ul>
+<li>老板想用现有的WebRTC技术，我们使用了现有的技术，但是效果不够好；</li>
+<li>使用别的公司的技术但是收费又太贵了，初创公司没有那么多钱；</li>
+<li>初创公司没有技术leader，第一批员工大部分都是实习员工；</li>
+</ul>
+<p>别问我为啥不跑路，说多了都是泪。</p>
+<p>借着这个机会，好好学习一下webRTC技术，同时学会怎么阅读golang库的源码。</p>
+<span id="more"></span>
+<h2
+id="零基础入门基于开源webrtc从0到1实现实时音视频聊天功能">零基础入门：<strong>基于开源WebRTC，从0到1实现实时音视频聊天功能</strong></h2>
+<h3 id="知识准备">知识准备</h3>
+<h4 id="音视频理论基础">音视频理论基础</h4>
+<h4 id="什么是webrtc">什么是WebRTC</h4>
+<h4 id="webrtc学习资源">WebRTC学习资源</h4>
+<h3 id="技术组成">技术组成</h3>
+<p>简单来说，WebRTC 是一个可以在 Web
+应用程序中实现音频，视频和数据的实时通信的开源项目。在实时通信中，音视频的采集和处理是一个很复杂的过程。比如音视频流的编解码、降噪和回声消除等，但是在
+WebRTC
+中，这一切都交由浏览器的底层封装来完成。我们可以直接拿到优化后的媒体流，然后将其输出到本地屏幕和扬声器，或者转发给其对等端。</p>
+<figure>
+<img data-src="WebRTC学习笔记(一)/webp.webp" alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li>WebAPI层：面向开发者提供标准API（javascirpt），前端应用通过这一层接入使用WebRTC能力。</li>
+<li>C++ API层：面向浏览器开发者，使浏览器制造商能够轻松地实现Web
+API方案。</li>
+<li>音频引擎（VoiceEngine）：音频引擎是一系列音频多媒体处理的框架，包括从视频采集卡到网络传输端等整个解决方案。
+<ul>
+<li>iSAC/iLBC/Opus等编解码</li>
+<li>NetEQ语音信号处理</li>
+<li>回声消除和降噪</li>
+</ul></li>
+<li>视频引擎（VideoEngine）：
+是一系列视频处理的整体框架，从摄像头采集视频、视频信息网络传输到视频显示整个完整过程的解决方案。
+<ul>
+<li>VP8编解码</li>
+<li>jitter buffer：动态抖动缓冲</li>
+<li>Image enhancements：图像增益</li>
+</ul></li>
+<li>传输（Transport)：传输 / 会话层，会话协商 + NAT穿透组件
+<ul>
+<li>RTP 实时协议</li>
+<li>P2P传输 STUN+TRUN+ICE实现的网络穿越</li>
+</ul></li>
+</ul>
+<p>虽然浏览器给我们解决了大部分音视频处理问题，但是从浏览器请求音频和视频时，我们还是需要特别注意流的大小和质量。因为即便硬件能够捕获高清质量流，CPU
+和带宽也不一定可以跟上，这也是我们在建立多个对等连接时，不得不考虑的问题。</p>
+<h3 id="webrtc的p2p通信原理">WebRTC的P2P通信原理</h3>
+<h4 id="技术难点">技术难点</h4>
+<p>P2P即点对点通信。</p>
+<p>要实现两个不同的网络环境（具有麦克风、摄像头设备）的客户端（可能是不同的Web浏览器或者手机APP）之间的音视频通信的问题：</p>
+<ol type="1">
+<li>怎么知道彼此的存在也就是如何发现对方？</li>
+<li>彼此音视频编码能力如何沟通？</li>
+<li>音视频数据如何传输，怎么让对方看得到自己？</li>
+</ol>
+<h4 id="怎么知道彼此的存在">怎么知道彼此的存在</h4>
+<p>WebRTC虽然支持端对端通信，但是这不意味着WebRTC不再需要服务器。</p>
+<p>P2P通信过程中，双方需要交换一些元数据如媒体信息、网络数据等信息，通常把这一过程叫做信令（signaling）。</p>
+<p>对应的服务器既为信令服务器，也被称为房间服务器。因为它不仅可以交换彼此的媒体信息和网络信息，也可以管理网络信息。</p>
+<p>如：</p>
+<ol type="1">
+<li>通知彼此who加入了房间</li>
+<li>who离开了房间</li>
+<li>告诉第三方房间人数是否已满可以加入房间。</li>
+</ol>
+<p>为了避免出现冗余，并最大限度提高与已有技术的兼容性，WebTRTC并没有规定信令和协议。在本文后面的实践章节会基于Node.js实现一个信令服务器。</p>
+<h4 id="彼此音视频编码能力如何沟通">彼此音视频编码能力如何沟通</h4>
+<p>不同浏览器对于音视频的编解码能力是不同的。为了保证双方都可以正确的编解码，最简单的方法就是使用<strong>客户端支持编码方式的交集</strong>。</p>
+<p>在WebRTC中有一个专门的协议，<strong>Session Description
+Protocol（SDP）</strong>，可以用于描述上述这类信息。</p>
+<p>参与音视频通讯的双方想要了解对方支持的媒体格式，必须交换SDP信息，而交换SDP的过程，通常被称为媒体协商。</p>
+<h4
+id="音视频数据如何传输怎么能让对方看见自己">音视频数据如何传输，怎么能让对方看见自己</h4>
+<p>其问题的本质是网络协商的过程，即参与音视频实时通信的双方要了解彼此之间的网络状况，这样才能找到一条互相通讯的链路。</p>
+<p>理想的网络情况是每个浏览器都有自己的公网IP地址，这样的话就可以直接进行点对点连接。</p>
+<p>然而大部分情况是我们的设备基本上都是处于某个局域网内，需要<strong>Network
+Address
+Translation（NAT），网络地址转换</strong>才能和外部的ip地址通信。</p>
+<p>什么是ICE？</p>
+<p><strong>Interactive Connectivity
+Establishment（ICE），交互式连接建立</strong>。ICE不是一种协议，而是整合了STUN和TURN两种协议的框架。</p>
+<p>其中：<strong>STUN（Session Traversal Utilities for
+NAT，NAT会话穿越应用程序）</strong>，它允许位于NAT或多重NAT后的客户端找出自己对应的公网IP地址和端口，也就是俗称的P2P打洞。</p>
+<p>但是，如果NAT类型对称型的话，那么就无法打动成功。这是TURN就派上用场了。<strong>TURN（Traversal
+Using Replays around
+NAT）</strong>是STUN/RFC5389的一个扩展协议在其基础上添加了Replay（中继）功能。</p>
+<p>简单说，其目的就是解决对称型NAT无法穿越的问题，在STUN分配公网失败以后，可以通过TURN服务器请求公网IP地址作为中继地址。</p>
+<p>在WebRCT中有三种类型的ICE候选者，分别是：</p>
+<ul>
+<li>主机候选者：表示的是本地局域网内的IP地址和端口，他是三个候选者中优先级最高的，也就是WebRTC底层首先会尝试本地局域网建立连接。</li>
+<li>反射候选者：表示的是获取NAT内主机的外网IP地址和端口，其优先级低于主机候选者。也就是说当WebRTC尝试本地连接不通时，会尝试通过反射候选者获得的IP地址和端口进行连接；</li>
+<li>中级候选者：表示的是中继服务器的IP地址和端，即通过服务器中转媒体数据，当WebRTC客户端通信双方无法穿越P2P时，为了保证双方可以通讯，此时只能通过服务器中转来保证服务质量。</li>
+</ul>
+<p><img data-src="WebRTC学习笔记(一)/110413q4zdfkzfemkmmfhk.png" /></p>
+<p>从上图可以看出：在非本地局域网内WebRTC通过STUN
+Server获得自己的外网IP和端口，然后通过信令服务器与远端的WebRTC交换网络信息，之后双方就可以尝试建立P2P连接了。当NAT穿越不成功时，则会通过Relay
+Server（TURN）中转。</p>
+<p>值得一提的是：在WebRTC中网络信息通常用candidate来描述，而上图中的STUN
+server和Replay
+server也可以同一个server。本文使用继承了STUN（打洞）和TURN（中继）的开源项目coturn。</p>
+<p>综上对三个问题的解释，我们可以用下图来说明WebRTC实现点对点的通信的基本原理。</p>
+<p><img data-src="WebRTC学习笔记(一)/110424jt8q1v49mqki3128.png" /></p>
+<p>简而言之：就是通过WebRTC提供的API获取各段的媒体信息SDP以及网络信息candidate，并通过信令服务器交换，进而建立了两端的连接通道完成实时视频语音通话。</p>
+<h3 id="webrtc几个重要api">WebRTC几个重要API</h3>
+<h4 id="音视频采集api">音视频采集API</h4>
+<p>音视频采集 API，即 MediaDevices.<a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/getDisplayMedia">getUserMedia()</a>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> constraints = &#123;</span><br><span class="line">        <span class="attr">video</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">audio</span>: <span class="literal">true</span></span><br><span class="line">     </span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//   非安全模式（非https/localhost）下 navigator.mediaDevices 会返回 undefined</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> stream = <span class="keyword">await</span> navigator.<span class="property">mediaDevices</span>.<span class="title function_">getUserMedia</span>(constraints);</span><br><span class="line">        <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;video&#x27;</span>).<span class="property">srcObject</span> = stream;</span><br><span class="line">    &#125;   <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(error);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="获取音视频设备输入输出列表">获取音视频设备输入输出列表</h4>
+<p>获取音视频设备输入输出列表API，即 MediaDevices.<a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/enumerateDevices">enumerateDevices()</a>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> devices = <span class="keyword">await</span> navigator.<span class="property">mediaDevices</span>.<span class="title function_">enumerateDevices</span>();</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">videoinputs</span> = devices.<span class="title function_">filter</span>(<span class="function"><span class="params">device</span> =&gt;</span> device.<span class="property">kind</span> === <span class="string">&#x27;videoinput&#x27;</span>);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">audiooutputs</span> = devices.<span class="title function_">filter</span>(<span class="function"><span class="params">device</span> =&gt;</span> device.<span class="property">kind</span> === <span class="string">&#x27;audiooutput&#x27;</span>);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">audioinputs</span> = devices.<span class="title function_">filter</span>(<span class="function"><span class="params">device</span> =&gt;</span> device.<span class="property">kind</span> === <span class="string">&#x27;audioinput&#x27;</span>);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(error);</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="创建点对点连接">创建点对点连接</h4>
+<p><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection">RTCPeerConnection</a>
+作为创建点对点连接的 API,是我们实现音视频实时通信的关键。</p>
+<p>在本文的实践章节中，主要运用到了以下方法。</p>
+<p><strong>媒体协商方法：</strong></p>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/createOffer">createOffer</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createAnswer">createAnswer</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/localDescription">localDesccription</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/remoteDescription">remoteDesccription</a></li>
+</ul>
+<p><strong>重要事件：</strong></p>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/onicecandidate">onicecandidate</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/onaddstream">onaddstream</a></li>
+</ul>
+<p>P2P通信中一个最重要的环节就是交换媒体信息。</p>
+<p>原理图：</p>
+<p><img data-src="WebRTC学习笔记(一)/115037opmgs8r3s5c5zycp.png" /></p>
+<p>从上图不难发现，整个媒体协过程也可以简化为三个步骤对应上述四个媒体协商方法。</p>
+<ul>
+<li>呼叫端Amy<strong>创建Offer（createOffer）</strong>并将offer消息（内容是呼叫段Amy的SDP信息）通过信令服务器传送给接收端Bob，同时调用<strong>setLocalDescription</strong>将含有本地SDP的Offer保存起来；</li>
+<li>接收端Bob收到对端的Offer信息调用<strong>setRemoteDescription</strong>方法将含有对端SDP信息的Offer保存起来，并<strong>创建Answer（createAnswer）</strong>并将Answer消息（内容是接受端Bob的SDP消息）通过信令服务器传送给呼叫端Amy；</li>
+<li>呼叫端Amy收到对端的Answer消息后调用<strong>setRemoteDescription</strong>方法将对端SDP信息的Answer保存起来。</li>
+</ul>
+<p>经过上述三个步骤，则完成了P2P通信过程中的媒体协商部分。</p>
+<p>实际上：在呼叫端以及接收端调用<strong>setLocalDescription</strong>他同时也开始了收集各端自己的<strong>网络信息（candidate）</strong>，然后各端<strong>通过监听事件（onicecandidate）</strong>收集到了各自的<strong>candidate</strong>并通过信令服务器传输给对端，进而打通了P2P的网络通道，并通过<strong>监听onaddstream事件</strong>拿到了对方的视频流进而完成了整个视频通话过程。</p>
+<h3 id="动手编码实践">动手编码实践</h3>
+<p>代码操作的部分可以可参考下文中的原文链接</p>
+<h2 id="参考">参考</h2>
+<p>http://www.52im.net/thread-3680-1-1.html#2</p>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.fly97.cn/p/WebRTC-study-notes-01/" title="WebRTC学习笔记(一)|基于开源WebRTC，从0到1实现实时音视频聊天功能">https://blog.fly97.cn/p/WebRTC-study-notes-01/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WebRTC/" rel="tag"># WebRTC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/introduction-to-kafaka-study-notes-02/" rel="prev" title="kafaka学习笔记之快速入门">
+                  <i class="fa fa-chevron-left"></i> kafaka学习笔记之快速入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/study-notebooks-for-pro-git/" rel="next" title="progit学习笔记">
+                  progit学习笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

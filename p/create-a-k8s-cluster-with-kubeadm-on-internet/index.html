@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PingFang+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文通过一个例子的形式介绍如何在公网环境下搭建K8s集群。 关键词：k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes集群实践（五）如何在公网环境下搭建K8s集群">
+<meta property="og:url" content="https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="本文通过一个例子的形式介绍如何在公网环境下搭建K8s集群。 关键词：k8s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/image-20220528103551074.png">
+<meta property="article:published_time" content="2022-05-28T02:31:00.000Z">
+<meta property="article:modified_time" content="2022-05-28T02:31:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/image-20220528103551074.png">
+
+
+<link rel="canonical" href="https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/","path":"p/create-a-k8s-cluster-with-kubeadm-on-internet/","title":"Kubernetes集群实践（五）如何在公网环境下搭建K8s集群"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kubernetes集群实践（五）如何在公网环境下搭建K8s集群 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%BC%94%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">操作演示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96master%E8%8A%82%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">初始化Master节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#worker%E8%8A%82%E7%82%B9%E5%8A%A0%E5%85%A5"><span class="nav-number">2.2.</span> <span class="nav-text">Worker节点加入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">创建一个应用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAconfigmap"><span class="nav-number">2.3.1.</span> <span class="nav-text">创建一个configMap</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAdeployment"><span class="nav-number">2.3.2.</span> <span class="nav-text">创建一个Deployment</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAservice"><span class="nav-number">2.3.3.</span> <span class="nav-text">创建一个service</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C"><span class="nav-number">2.4.</span> <span class="nav-text">完</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer">
+    <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+        
+        
+        <div class="post-gallery-row">
+            <a class="post-gallery-img fancybox"
+                href="https://www.aliyun.com/minisite/goods?userCode=zm6oaogg" rel="gallery_" target="_blank"
+                itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+            <img src="https://pic.imgdb.cn/item/65a29ad2871b83018a45e602.png" itemprop="contentUrl" alt="阿里云ECS一年仅需99元"/>
+            </a>
+        
+        
+
+        
+        
+    </div>
+  </div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Kubernetes集群实践（五）如何在公网环境下搭建K8s集群 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes集群实践（五）如何在公网环境下搭建K8s集群
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-28 10:31:00" itemprop="dateCreated datePublished" datetime="2022-05-28T10:31:00+08:00">2022-05-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文通过一个例子的形式介绍如何在公网环境下搭建K8s集群。</p>
+<p>关键词：<strong>k8s</strong></p>
+<span id="more"></span>
+<h3 id="前期准备">前期准备</h3>
+<ul>
+<li>至少两台具备公网环境的服务器</li>
+<li>安装kubeadm、kubelet、kubectl三件套</li>
+<li>服务器的防火墙放行对应的端口，具体端口号请查看K8s官网</li>
+</ul>
+<h3 id="操作演示">操作演示</h3>
+<p>一般云服务厂商不会给你直接在网卡上给你一个公网IP，而是赋予一个内网IP，通过<strong>一对一NAT</strong>的形式将内网IP和公网IP对应，如下图所示。</p>
+<p><img data-src="image-20220528103551074.png" /></p>
+<p>如果你的网卡的IP是公网IP，说明服务商直接把公网IP赋予到你的网卡上。</p>
+<p>这两种网卡对应的<strong>暴露Service的方式</strong>略有不同。</p>
+<h4 id="初始化master节点">初始化Master节点</h4>
+<p>这里给出初始化Master节点的一个模板，主要是根据自己的<strong>公网IP</strong>修改localAPIEndpoint对应的字段（注意是<strong>公网IP</strong>而不是<strong>内网IP</strong>）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubeadm-init.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">InitConfiguration</span></span><br><span class="line"><span class="attr">localAPIEndpoint:</span></span><br><span class="line">  <span class="attr">advertiseAddress:</span> <span class="string">&quot;1.2.3.4&quot;</span></span><br><span class="line">  <span class="attr">bindPort:</span> <span class="number">6443</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterConfiguration</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="string">v1.24.0</span></span><br><span class="line"><span class="attr">imageRepository:</span> <span class="string">registry.cn-hangzhou.aliyuncs.com/google_containers</span></span><br><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">podSubnet:</span> <span class="string">&quot;10.244.0.0/16&quot;</span> <span class="comment"># --pod-network-cidr # 网络插件地址</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">KubeletConfiguration</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubelet.config.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">cgroupDriver:</span> <span class="string">systemd</span></span><br></pre></td></tr></table></figure>
+<p>修改完毕以后，执行初始化集群的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --config kubeadm-init.yml</span><br></pre></td></tr></table></figure>
+<p>如果没有问题会在稍后显示其他节点加入集群的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm <span class="built_in">join</span> 1.2.3.4:6443 --token xxx --discovery-token-ca-cert-hash sha256:xxxx</span><br></pre></td></tr></table></figure>
+<h4 id="worker节点加入">Worker节点加入</h4>
+<p>在worker节点上执行加入集群的命令，如果没有问题它会提示<strong>在master节点查看节点状态</strong>，此时返回master节点会看到master节点上看到工作节点和worker节点的健康情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+<h4 id="创建一个应用">创建一个应用</h4>
+<p>集群安装完毕以后当然要创建一个实际的应用练练手啦</p>
+<h5 id="创建一个configmap">创建一个configMap</h5>
+<p>configMap是K8s推荐使用的配置文件的方式。将<strong>配置文件写在yaml资源清单</strong>中，yaml在，应用就在。</p>
+<p>这里以Nginx配置文件为例</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-conf</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">nginx.conf:</span> <span class="string">|-</span></span><br><span class="line"><span class="string">    user root;</span></span><br><span class="line"><span class="string">    worker_processes auto;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="string">events</span> &#123;</span><br><span class="line">      <span class="string">worker_connections</span> <span class="number">1024</span><span class="string">;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="string">http</span> &#123;</span><br><span class="line">      <span class="string">proxy_headers_hash_max_size</span> <span class="number">51200</span><span class="string">;</span></span><br><span class="line">      <span class="string">proxy_headers_hash_bucket_size</span> <span class="number">6400</span><span class="string">;</span></span><br><span class="line">      <span class="string">log_format</span> <span class="string">main</span> <span class="string">&#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span></span><br><span class="line">      <span class="string">&#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span></span><br><span class="line">      <span class="string">&#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot; &#x27;</span></span><br><span class="line">      <span class="string">&#x27;$proxy_protocol_addr:$proxy_protocol_port&#x27;</span><span class="string">;</span></span><br><span class="line"></span><br><span class="line">      <span class="string">access_log</span> <span class="string">/var/log/nginx/access.log</span> <span class="string">main;</span></span><br><span class="line">      <span class="string">server</span> &#123;</span><br><span class="line">        <span class="string">charset</span> <span class="string">utf-8;</span></span><br><span class="line">        <span class="string">listen</span> <span class="string">unix:/dev/nginx/h1.sock</span> <span class="string">proxy_protocol;</span></span><br><span class="line">        <span class="string">listen</span> <span class="string">unix:/dev/nginx/h2c.sock</span> <span class="string">http2</span> <span class="string">proxy_protocol;</span></span><br><span class="line">        <span class="string">location</span> <span class="string">/</span> &#123;</span><br><span class="line">          <span class="string">return</span> <span class="number">403</span><span class="string">;</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="string">location</span> <span class="string">^~</span> <span class="string">/my/</span> &#123;</span><br><span class="line">          <span class="string">alias</span> <span class="string">/sdcard/;</span></span><br><span class="line">          <span class="string">autoindex</span> <span class="string">on;</span></span><br><span class="line">          <span class="string">proxy_force_ranges</span> <span class="string">on;</span></span><br><span class="line">          <span class="string">max_ranges</span> <span class="number">32</span><span class="string">;</span></span><br><span class="line">          <span class="string">autoindex_exact_size</span> <span class="string">off;</span></span><br><span class="line">          <span class="string">add_header</span> <span class="string">Strict-Transport-Security</span> <span class="string">&quot;max-age=31536000; includeSubDomains&quot;</span> <span class="string">always;</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="string">location</span> <span class="string">/qb/</span> &#123;</span><br><span class="line">          <span class="string">proxy_redirect</span> <span class="string">off;</span></span><br><span class="line">          <span class="string">proxy_pass</span> <span class="string">http://127.0.0.1:8080/;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">Host</span> <span class="string">$host;</span></span><br><span class="line">          <span class="string">add_header</span> <span class="string">Strict-Transport-Security</span> <span class="string">&quot;max-age=31536000; includeSubDomains&quot;</span> <span class="string">always;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">X-Real-IP</span> <span class="string">$remote_addr;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">X-Forwarded-For</span> <span class="string">$proxy_add_x_forwarded_for;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">X-Forwarded-Proto</span> <span class="string">$scheme;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">REMOTE-HOST</span> <span class="string">$remote_addr;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">Range</span> <span class="string">$http_range;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">If-Range</span> <span class="string">$http_if_range;</span></span><br><span class="line">          <span class="string">proxy_no_cache</span> <span class="string">$http_range</span> <span class="string">$http_if_range;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">X-Forwarded-Proto</span> <span class="string">$scheme;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">Upgrade</span> <span class="string">$http_upgrade;</span></span><br><span class="line">          <span class="string">proxy_set_header</span> <span class="string">Connection</span> <span class="string">&quot;upgrade&quot;</span><span class="string">;</span></span><br><span class="line">          <span class="string">http2_push_preload</span> <span class="string">on;</span></span><br><span class="line">          <span class="string">client_max_body_size</span> <span class="number">0</span><span class="string">;</span></span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="创建一个deployment">创建一个Deployment</h5>
+<p>创建一个Deployment，Deployment会根据Pod的模板创建出可以自动维护数量的ReplicaSet，无需考虑故障转移问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  replicas: 1</span><br><span class="line">  revisionHistoryLimit: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      nodeSelector:</span><br><span class="line">        type: aws</span><br><span class="line">      volumes:</span><br><span class="line">      - name: sdcard</span><br><span class="line">        hostPath:</span><br><span class="line">          path: /sdcard</span><br><span class="line">      - name: nginx-conf</span><br><span class="line">        configMap:</span><br><span class="line">          name: nginx-conf</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: nginx</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: nginx-conf</span><br><span class="line">          mountPath: /etc/nginx/nginx.conf</span><br><span class="line">          subPath: nginx.conf</span><br><span class="line">        - name: sdcard</span><br><span class="line">          mountPath: /sdcard/</span><br><span class="line">        - name: unix</span><br><span class="line">          mountPath: /dev/nginx</span><br><span class="line">      - name: qbittorrent</span><br><span class="line">        image: linuxserver/qbittorrent</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: sdcard</span><br><span class="line">          mountPath: /downloads/</span><br><span class="line">        - name: config</span><br><span class="line">          mountPath: /config</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 5678</span><br><span class="line">          name: port</span><br></pre></td></tr></table></figure>
+<p>这里注意几点：</p>
+<ul>
+<li><p>如果在一个Pod中创建多个容器，一定是在<code>.containers</code>创建多个对象，以最后一个<code>.containers</code>下面的内容为准</p></li>
+<li><p>nodeSelector是选择将应用调度到那个节点上运行，可以使用<code>kubectl label node-name key=value</code>对节点进行标签操作</p></li>
+<li><p>configMap和hostPath都是<code>.volumes</code>下的对象</p></li>
+<li><p>如果configMap使用了<code>subPath</code>挂载，那么Pod容器获取的configMap不会实时获得更新</p></li>
+<li><p>当Pod中的多个容器都挂载了同一个Volume，使用subPath可以避免最后操作的覆盖问题</p></li>
+<li><p><code>.spec.matchLabels</code>和<code>.spec.template.metadata.labels</code>下的标签要一致</p></li>
+</ul>
+<h5 id="创建一个service">创建一个service</h5>
+<p>创建一个service，可以使应用向外部提供服务</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">tls</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">443</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">UDP</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">udp</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">5678</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">port</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">tcp</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">5678</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="string">port</span></span><br><span class="line">  <span class="attr">externalIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">172.26</span><span class="number">.12</span><span class="number">.34</span></span><br></pre></td></tr></table></figure>
+<p>这里注意几点：</p>
+<ul>
+<li>UDP协议和TCP协议要分开放行</li>
+<li>targetPort对应的是Pod对外保留的端口</li>
+<li><code>.spec.selector</code>下的label要和Deployment的<code>.spec.matchLabels</code>标签一致</li>
+<li>这里对外暴露端口的方式是通过<strong>externalIPs</strong>：
+<ul>
+<li>这里的IP是根据网卡获得的IP填写的，如果是一对一NAT的方式，就写内网IP；如果是直接赋予了网卡公网IP，就写公网IP。</li>
+</ul></li>
+</ul>
+<h4 id="完">完</h4>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/" title="Kubernetes集群实践（五）如何在公网环境下搭建K8s集群">https://blog.fly97.cn/p/create-a-k8s-cluster-with-kubeadm-on-internet/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/how-to-use-mac/" rel="prev" title="Mac实用小技巧">
+                  <i class="fa fa-chevron-left"></i> Mac实用小技巧
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/create-a-virtual-local-area-network-with-wireguard/" rel="next" title="使用WireGuard组建虚拟局域网">
+                  使用WireGuard组建虚拟局域网 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

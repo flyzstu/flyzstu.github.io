@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PingFang+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="什么是DevOps？ DevOps的哲学暂且不表，使用Docker搭建nexus3私有镜像仓库。 关键词：nexus3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DevOps实战（二）使用Docker搭建nexus3私有镜像仓库">
+<meta property="og:url" content="https://blog.fly97.cn/p/install-nexus3-with-docker/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="什么是DevOps？ DevOps的哲学暂且不表，使用Docker搭建nexus3私有镜像仓库。 关键词：nexus3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20221109103319038.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20221109111325590.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20221109111712080.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20221109133813885.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20221109133917141.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20221109152407070.png">
+<meta property="og:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20230827160859581.png">
+<meta property="article:published_time" content="2022-11-09T06:00:00.000Z">
+<meta property="article:modified_time" content="2022-11-09T06:00:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="devops">
+<meta property="article:tag" content="nexus3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.fly97.cn/p/install-nexus3-with-docker/image-20221109103319038.png">
+
+
+<link rel="canonical" href="https://blog.fly97.cn/p/install-nexus3-with-docker/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/install-nexus3-with-docker/","path":"p/install-nexus3-with-docker/","title":"DevOps实战（二）使用Docker搭建nexus3私有镜像仓库"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>DevOps实战（二）使用Docker搭建nexus3私有镜像仓库 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#docker"><span class="nav-number">2.1.</span> <span class="nav-text">docker</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx%E4%BB%A3%E7%90%86"><span class="nav-number">2.1.1.</span> <span class="nav-text">Nginx代理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apt%E4%BB%93%E5%BA%93"><span class="nav-number">2.2.</span> <span class="nav-text">APT仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx%E4%BB%A3%E7%90%86-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">Nginx代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E9%94%AE%E6%9B%BF%E6%8D%A2"><span class="nav-number">2.2.2.</span> <span class="nav-text">一键替换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yum%E4%BB%93%E5%BA%93"><span class="nav-number">2.3.</span> <span class="nav-text">yum仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#kubernetes"><span class="nav-number">2.3.1.</span> <span class="nav-text">kubernetes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#centos"><span class="nav-number">2.3.2.</span> <span class="nav-text">CentOS</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer">
+    <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+        
+        
+        <div class="post-gallery-row">
+            <a class="post-gallery-img fancybox"
+                href="https://www.aliyun.com/minisite/goods?userCode=zm6oaogg" rel="gallery_" target="_blank"
+                itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+            <img src="https://pic.imgdb.cn/item/65a29ad2871b83018a45e602.png" itemprop="contentUrl" alt="阿里云ECS一年仅需99元"/>
+            </a>
+        
+        
+
+        
+        
+    </div>
+  </div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/install-nexus3-with-docker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="DevOps实战（二）使用Docker搭建nexus3私有镜像仓库 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DevOps实战（二）使用Docker搭建nexus3私有镜像仓库
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-09 14:00:00" itemprop="dateCreated datePublished" datetime="2022-11-09T14:00:00+08:00">2022-11-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>什么是DevOps？</p>
+<p>DevOps的哲学暂且不表，使用Docker搭建nexus3私有镜像仓库。</p>
+<p>关键词：<strong>nexus3</strong></p>
+<span id="more"></span>
+<h2 id="前言">前言</h2>
+<p>在搭建K8s容器平台时，有些镜像需要经常性的被拉取，有时候外网带宽会被大量占用，这在业务上线后是不可取的，为了方便镜像的拉取，私有仓库的概念应运而生。</p>
+<p>本文主要介绍使用nexus3搭建私有仓库。</p>
+<h2 id="安装">安装</h2>
+<p>为了方便起见我们这里直接使用Docker进行快速搭建。</p>
+<p>为节省时间，我们这里先拉取好了镜像：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.6&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">nexus3:</span></span><br><span class="line">    <span class="comment">#user: root</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">sonatype/nexus3</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">nexus3</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">https_proxy=http://192.168.31.75:7890</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">http_proxy=http://192.168.31.75:7890</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./nexus-data:/nexus-data</span></span><br><span class="line">    <span class="attr">ulimits:</span></span><br><span class="line">      <span class="attr">nofile:</span></span><br><span class="line">        <span class="attr">soft:</span> <span class="number">1000000</span></span><br><span class="line">        <span class="attr">hard:</span> <span class="number">1000000</span></span><br><span class="line">    <span class="attr">privileged:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">38081</span><span class="string">:8081</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">7890</span><span class="string">:7890</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">7891</span><span class="string">:7891</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8891</span><span class="string">:8891</span></span><br></pre></td></tr></table></figure>
+<p>这里的端口分别是nexus3界面的端口，和。。。。。。。 ##
+设置代理类型</p>
+<p>Nexus3可以被称为是一个全能型的选手，可以代理几乎所有类型的仓库。</p>
+<p><img data-src="image-20221109103319038.png" /></p>
+<p>这里介绍几种类型，首先介绍Docker</p>
+<h3 id="docker">docker</h3>
+<p>docker类型分为docker(group)、docker(hosted)、docker(proxy)三种类型。</p>
+<p>docker(proxy)：顾名思义就是代理外部仓库，创建设置可以参考以下</p>
+<p><img data-src="image-20221109111325590.png" /></p>
+<ul>
+<li>这里的HTTP连接器不用选，因为我们后面会通过docker(group)类型聚合这docker(hosted)、docker(proxy)这两种类型的仓库。</li>
+<li>远程仓库地址可以使用公开的镜像源，如：
+<ul>
+<li>https://hub-mirror.c.163.com</li>
+<li>https://mirror.baidubce.com</li>
+<li>http://f1361db2.m.daocloud.io</li>
+<li>https://ustc-edu-cn.mirror.aliyuncs.com</li>
+</ul></li>
+<li>如果网络条件允许，最好还是使用官方的源：<code>https://registry-1.docker.io</code>，这样会避免由于镜像不更新而导致的错误。</li>
+</ul>
+<p>docker(hosted)：允许将本地镜像推送到私有仓库的仓库类型，创建设置可以参考以下</p>
+<p><img data-src="image-20221109111712080.png" /></p>
+<ul>
+<li>这里需要选择HTTP连接器，我们通过此HTTP连接器向仓库推送本地镜像</li>
+</ul>
+<p>docker(group)：将两者类型或者更多种类型的仓库聚合在一起，一起向外部提供服务</p>
+<p><img data-src="image-20221109133813885.png" /></p>
+<p><img data-src="image-20221109133917141.png" /></p>
+<ul>
+<li>这里需要选择HTTP连接器，我们通过此HTTP连接器拉取proxy代理的镜像和经过hosted上传的镜像；</li>
+<li>这里选择的聚合仓库包含proxy和hosted类型的仓库，我们就可以通过此聚合仓库上传和下载镜像了；</li>
+</ul>
+<h4 id="nginx代理">Nginx代理</h4>
+<p>因为某些原因，我们需要使用nginx反向代理，这里给出使用SSL证书的例子：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> hub.deepsoft-tech.com;</span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$host</span><span class="variable">$request_uri</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">charset</span> utf-<span class="number">8</span>;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">server_tokens</span> <span class="literal">off</span>;</span><br><span class="line">    <span class="attribute">server_name</span> hub.deepsoft-tech.com;</span><br><span class="line">    <span class="attribute">ssl_session_cache</span> shared:SSL:<span class="number">10m</span>;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> /ssl/idocker.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /ssl/idocker.key;</span><br><span class="line">    <span class="attribute">access_log</span> /var/log/nginx/docker.io.log main;</span><br><span class="line">    <span class="attribute">client_max_body_size</span> <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">chunked_transfer_encoding</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_session_cache</span> shared:SSL:<span class="number">10m</span>;</span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">10m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> HIGH:!aNULL:!MD5;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> <span class="regexp">~ ^/(v1|v2)/[^/]+/?[^/]+/blobs/</span> &#123;</span><br><span class="line">        <span class="attribute">if</span> (<span class="variable">$request_method</span> <span class="regexp">~* (POST|PUT|DELETE|PATCH|HEAD)</span> ) &#123;</span><br><span class="line">            <span class="attribute">rewrite</span><span class="regexp"> ^/(.*)$</span> /repository/docker-local/<span class="variable">$1</span> <span class="literal">last</span>;   <span class="comment"># docker-local是hosted类型的仓库名称</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^/(.*)$</span> /repository/docker/<span class="variable">$1</span> <span class="literal">last</span>;             <span class="comment"># docker是group类型的仓库名称</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> <span class="regexp">~ ^/(v1|v2)/</span> &#123;</span><br><span class="line">        <span class="attribute">if</span> (<span class="variable">$request_method</span> <span class="regexp">~* (POST|PUT|DELETE|PATCH)</span> ) &#123;</span><br><span class="line">            <span class="attribute">rewrite</span><span class="regexp"> ^/(.*)$</span> /repository/docker-local/<span class="variable">$1</span> <span class="literal">last</span>;  <span class="comment"># docker-local是hosted类型的仓库名称</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^/(.*)$</span> /repository/docker/<span class="variable">$1</span> <span class="literal">last</span>;            <span class="comment"># docker是group类型的仓库名称</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://127.0.0.1:38081/;                   <span class="comment"># 38081是nexus对外暴露的端口</span></span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_connect_timeout</span> <span class="number">3600</span>;</span><br><span class="line">        <span class="attribute">proxy_send_timeout</span> <span class="number">3600</span>;</span><br><span class="line">        <span class="attribute">proxy_read_timeout</span> <span class="number">3600</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_buffering</span> <span class="literal">off</span>;</span><br><span class="line">        <span class="attribute">proxy_request_buffering</span> <span class="literal">off</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这么看，hosted类型和group类型的仓库就不需要设置HTTP连接器了；</li>
+<li>经过以上设置，推送请求就全部被hosted类型的仓库接管了，而拉取请求则被group类型的仓库接管了；</li>
+</ul>
+<p>经过上面的一顿操作，就可以通过一个URL拉取所有的镜像了</p>
+<h3 id="apt仓库">APT仓库</h3>
+<p>有时候需要缓存apt的包，所有就有了下面的文章，幸运的是nexus支持apt类型，稍加设置即可</p>
+<p><img data-src="image-20221109152407070.png" /></p>
+<ul>
+<li>Distribution：发行版的代号，这里以Ubuntu LTS 20.04 为例：focal</li>
+<li>Remote storage：代理仓库地址，可以使用镜像源</li>
+</ul>
+<h4 id="nginx代理-1">Nginx代理</h4>
+<p>使用上文的配置文件即可</p>
+<h4 id="一键替换">一键替换</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s|http://mirrors.aliyun.com|https://repo.deepsoft-tech.com/repository|g&#x27;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sed -i <span class="string">&#x27;s|https://mirrors.aliyun.com/docker-ce/linux/ubuntu|https://repo.deepsoft-tech.com/repository/docker-apt&#x27;</span> /etc/apt/sources.list.d/docker.list</span><br></pre></td></tr></table></figure>
+<h3 id="yum仓库">yum仓库</h3>
+<p>可以省略Singing Key和Passphrase</p>
+<h4 id="kubernetes">kubernetes</h4>
+<p>设置Remote storage</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://packages.cloud.google.com/yum/</span><br></pre></td></tr></table></figure>
+<p><img data-src="image-20230827160859581.png" /></p>
+<p>在/etc/yum.repos.d下面新建repo文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[kubernetes]</span><br><span class="line">name=Kubernetes Repository</span><br><span class="line">baseurl=https://repo.fly97.fun/repository/kubernetes-yum/repos/kubernetes-el7-<span class="variable">$basearch</span></span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://repo.fly97.fun/repository/kubernetes-yum/doc/rpm-package-key.gpg</span><br><span class="line">exclude=kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
+<h4 id="centos">CentOS</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[CentOS]</span><br><span class="line">name=CentOS Repository</span><br><span class="line">baseurl=https://repo.fly97.fun/repository/yum/<span class="variable">$releasever</span>/os/<span class="variable">$basearch</span>/</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=0</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.fly97.cn/p/install-nexus3-with-docker/" title="DevOps实战（二）使用Docker搭建nexus3私有镜像仓库">https://blog.fly97.cn/p/install-nexus3-with-docker/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/devops/" rel="tag"># devops</a>
+              <a href="/tags/nexus3/" rel="tag"># nexus3</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/input-output-interface/" rel="prev" title="Go语言基础（三）输入输出接口">
+                  <i class="fa fa-chevron-left"></i> Go语言基础（三）输入输出接口
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/use-usb-wifi-with-raspberry-pi/" rel="next" title="树莓派常见操作">
+                  树莓派常见操作 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PingFang+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/animate.min.css">
+  <link rel="stylesheet" href="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/themes/blue/pace-theme-minimal.min.css">
+  <script src="//lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/pace/1.2.4/pace.min.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fly97.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文主要介绍MySQL备份。 关键词：MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="运维开发（一）MySQL备份">
+<meta property="og:url" content="https://blog.fly97.cn/p/MySQL-backup/index.html">
+<meta property="og:site_name" content="个人随想">
+<meta property="og:description" content="本文主要介绍MySQL备份。 关键词：MySQL">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-07T06:10:00.000Z">
+<meta property="article:modified_time" content="2022-09-07T06:10:00.000Z">
+<meta property="article:author" content="fly97">
+<meta property="article:tag" content="SRE">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fly97.cn/p/MySQL-backup/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fly97.cn/p/MySQL-backup/","path":"p/MySQL-backup/","title":"运维开发（一）MySQL备份"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>运维开发（一）MySQL备份 | 个人随想</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="个人随想" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">个人随想</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">fly97's Blogs</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%A4%87%E4%BB%BD"><span class="nav-number">1.</span> <span class="nav-text">逻辑备份</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">常见参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.</span> <span class="nav-text">参考命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%A4%87%E4%BB%BD"><span class="nav-number">2.</span> <span class="nav-text">物理备份</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xtrabackup%E4%BC%98%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">Xtrabackup优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xtrabackup%E5%B8%B8%E8%A7%81%E5%8F%82%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">Xtrabackup常见参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E5%91%BD%E4%BB%A4-1"><span class="nav-number">2.3.</span> <span class="nav-text">参考命令</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">fly97</p>
+  <div class="site-description" itemprop="description">加油吧，为了你期待的生活</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/flyzstu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;flyzstu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:flyzstu@gmail.com" title="E-Mail → mailto:flyzstu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer">
+    <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+        
+        
+        <div class="post-gallery-row">
+            <a class="post-gallery-img fancybox"
+                href="https://www.aliyun.com/minisite/goods?userCode=zm6oaogg" rel="gallery_" target="_blank"
+                itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+            <img src="https://pic.imgdb.cn/item/65a29ad2871b83018a45e602.png" itemprop="contentUrl" alt="阿里云ECS一年仅需99元"/>
+            </a>
+        
+        
+
+        
+        
+    </div>
+  </div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/flyzstu" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fly97.cn/p/MySQL-backup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="fly97">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人随想">
+      <meta itemprop="description" content="加油吧，为了你期待的生活">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="运维开发（一）MySQL备份 | 个人随想">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          运维开发（一）MySQL备份
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-07 14:10:00" itemprop="dateCreated datePublished" datetime="2022-09-07T14:10:00+08:00">2022-09-07</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文主要介绍MySQL备份。</p>
+<p>关键词：<strong>MySQL</strong></p>
+<span id="more"></span>
+<h2 id="逻辑备份">逻辑备份</h2>
+<p>数据库对象级备份，备份内容是表、索引、存储过程等数据库对象，常见工具为MySQL
+mysqldump、Oracle exp/imp等。</p>
+<p>逻辑备份备份速度较慢，恢复速度较慢，体积较大，需要数据库正常运行才可以执行逻辑备份。</p>
+<p>优点是备份级别可控，即可以任意选择备份的数据库或者备份的表。</p>
+<p>逻辑备份适用于任何存储引擎，一般使用<strong>mysqldump</strong>进行数据库的逻辑备份。</p>
+<h3 id="常见参数">常见参数</h3>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 4%" />
+<col style="width: 66%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数名</th>
+<th>缩写</th>
+<th>含义</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>--user</td>
+<td>-u</td>
+<td>用户名</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--password</td>
+<td>-p</td>
+<td>密码</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--host</td>
+<td>-h</td>
+<td>数据库地址</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--port</td>
+<td>-P</td>
+<td>数据库端口号</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--databases</td>
+<td>-B</td>
+<td>指定要备份的数据库</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--all-databases</td>
+<td>-A</td>
+<td>备份mysql服务器上所有的数据库</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--add-drop-database</td>
+<td></td>
+<td>每个数据库创建之前添加drop数据库语句</td>
+<td>未开启</td>
+</tr>
+<tr class="even">
+<td>--add-drop-table</td>
+<td></td>
+<td>创建表之前添加drop语句</td>
+<td>开启</td>
+</tr>
+<tr class="odd">
+<td>--event</td>
+<td>-E</td>
+<td>导出事件</td>
+<td>未开启</td>
+</tr>
+<tr class="even">
+<td>--routines</td>
+<td>-R</td>
+<td>导出存储过程以及自定义函数</td>
+<td>未开启</td>
+</tr>
+<tr class="odd">
+<td>--triggers</td>
+<td></td>
+<td>导出触发器</td>
+<td>开启</td>
+</tr>
+<tr class="even">
+<td>--extended-insert</td>
+<td>-e</td>
+<td>使用具有多个VALUES列的INSERT语法</td>
+<td>开启</td>
+</tr>
+<tr class="odd">
+<td>--ignore-table</td>
+<td></td>
+<td>指定不导出的表。需要忽略多个表时，需要重复多次</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--no-data</td>
+<td>-d</td>
+<td>不导出任何数据，只导出数据库表</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--no-create-info</td>
+<td>-t</td>
+<td>只导出数据，不添加CREATE TABLE语句</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--force</td>
+<td>-f</td>
+<td>导出过程中忽略SQL错误</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--tz-utc</td>
+<td></td>
+<td>导出顶部设置时区TIME_ZONE='+00:00'</td>
+<td>开启</td>
+</tr>
+<tr class="even">
+<td>--where</td>
+<td>-w</td>
+<td>只转储指定WHERE条件选择的记录</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--set-gtid-purged</td>
+<td></td>
+<td>是否添加SET @<span class="citation"
+data-cites="GLOBAL.GTID_PURGED输出">@GLOBAL.GTID_PURGED输出</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--single-transaction</td>
+<td></td>
+<td>通过在一个事务中导出所有表从而创建一个一致性的快照，适用于innodb引擎</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--master-data</td>
+<td></td>
+<td>该选项将当前服务器的binlog的位置和文件名追加到输出文件中。如果为1，将会输出CHANGE
+MASTER命令；如果为2，输出的CHANGE MASTER命令前添加注释信息</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="参考命令">参考命令</h3>
+<p><strong>导出、导入所有的库</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -proot -hlocalhost -A &gt; all_mysql_data.sql</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -proot -hlocalhost &lt; all_muysql_data.sql</span><br></pre></td></tr></table></figure>
+<p><strong>导出、导入指定库</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -proot -hlocalhost newcoder &gt; newcoder.sql</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -proot -hlocalhost &lt; newcoder.sql</span><br></pre></td></tr></table></figure>
+<p><strong>导出、导入某几个库</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -proot -hlocalhost -B aaa bbb &gt; aaa_bbb.sql</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -proot -hlocalhost &lt; aaa_bbb.sql</span><br></pre></td></tr></table></figure>
+<p><strong>导出、导入某个库的某些表数据</strong></p>
+<p>比如操作aaa数据库的bbb表和ccc表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以在导出时加--add-locks参数，表示导出时锁定数据库表</span></span><br><span class="line">mysqldump -uroot -proot -hlocalhost aaa bbb ccc &gt; bbb_ccc.sql</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 要确保aaa库存在</span></span><br><span class="line">mysql -uroot -proot -hlocalhost aaa  &lt; bbb_ccc.sql</span><br></pre></td></tr></table></figure>
+<p><strong>只导出数据库结构，不导出数据</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -proot -hlocalhost aaa -d &gt; bbb_ccc.sql</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 要确保aaa库存在</span></span><br><span class="line">mysql -uroot -proot -hlocalhost aaa &lt; bbb_ccc.sql</span><br></pre></td></tr></table></figure>
+<h2 id="物理备份">物理备份</h2>
+<p>数据库文件级备份，备份内容是操作系统上数据库文件，常见工具为MySQL
+XtraBackup、Oracle RMAN等。</p>
+<p>由存储数据库的内容和文件的副本组成，适用于大型数据库。</p>
+<p>优点是备份速度快，恢复速度快，体积小。</p>
+<p>如果数据库正在运行，需要先执行锁定数据库，防止在备份期间更改数据库的内容。</p>
+<p>一般使用XtraBackup进行数据备份。</p>
+<h3 id="xtrabackup优点">Xtrabackup优点</h3>
+<ul>
+<li><p>备份速度快，物理备份可靠</p></li>
+<li><p>备份过程不会打断正在执行的事务（无需锁表）</p></li>
+<li><p>能够基于压缩等功能节约磁盘空间和流量</p></li>
+<li><p>自动备份校验</p></li>
+<li><p>还原速度快</p></li>
+<li><p>可以流传将备份传输到另外一台机器上</p></li>
+<li><p>在不增加服务器负载的情况备份数据</p></li>
+</ul>
+<h3 id="xtrabackup常见参数">Xtrabackup常见参数</h3>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 72%" />
+<col style="width: 4%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>--backup</td>
+<td>备份到指定目录</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--target-dir</td>
+<td>指定目录</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--stream</td>
+<td>流式传输指定备份，参数xbstream</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--compress</td>
+<td>是否启用压缩备份</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--compress-threads</td>
+<td>指定压缩线程</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--databases</td>
+<td>指定要备份的数据库</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--databases-exclude</td>
+<td>排除要备份的数据库</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--user</td>
+<td>用户名</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--password</td>
+<td>密码</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>--host</td>
+<td>数据库IP</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>--rsync</td>
+<td>使用rsync工具优化本地传输，当指定这个选项，innobackupex使用rsync拷贝非Innodb文件而替换cp，当有很多DB和表的时候会快很多，不能--stream一起使用。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="参考命令-1">参考命令</h3>
+<p><strong>流式备份并压缩、解压</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --backup --user=root --password=root --host=192.168.31.75 --stream=xbstream | gzip  &gt; `<span class="built_in">date</span> +%Y%m%d`.gz</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gzip -f -d &lt; `<span class="built_in">date</span> +%Y%m%d`.gz  | xbstream -x -C mysql</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>fly97
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.fly97.cn/p/MySQL-backup/" title="运维开发（一）MySQL备份">https://blog.fly97.cn/p/MySQL-backup/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/SRE/" rel="tag"># SRE</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/p/create-crd-in-kubernetes/" rel="prev" title="Kubernetes集群实践（十一）编写一个自定义资源CRD">
+                  <i class="fa fa-chevron-left"></i> Kubernetes集群实践（十一）编写一个自定义资源CRD
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/p/restoring-etcd-cluster/" rel="next" title="Kubernetes集群实践（十二）如何恢复etcd集群并重建k3s集群">
+                  Kubernetes集群实践（十二）如何恢复etcd集群并重建k3s集群 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">鲁ICP备19008796号-3 </a>
+  </div>
+<div>
+  <div style="vertical-align:middle; display:inline-block;">
+  Powered by
+  </div>
+  <div style="display: inline-block; vertical-align:middle;">
+    <a target="_blank" rel="noopener" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">
+      UPYUN</a>
+  </div>
+</div>
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fly97</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/animejs/3.2.1/anime.min.js"></script>
+  <script src="//lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/lozad.js/1.16.0/lozad.min.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/search.js"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/mathjax/3.2.0/es5/tex-mml-chtml.js"}}</script>
+<script src="/js/third-party/math/mathjax.js"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+</body>
+</html>
