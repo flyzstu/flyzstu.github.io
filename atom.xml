@@ -6,7 +6,7 @@
   <link href="https://blog.fly97.cn/atom.xml" rel="self"/>
   
   <link href="https://blog.fly97.cn/"/>
-  <updated>2023-10-28T06:38:00.000Z</updated>
+  <updated>2024-01-14T14:55:00.000Z</updated>
   <id>https://blog.fly97.cn/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>配置Unraid</title>
+    <link href="https://blog.fly97.cn/p/install-unraid/"/>
+    <id>https://blog.fly97.cn/p/install-unraid/</id>
+    <published>2024-01-14T14:55:00.000Z</published>
+    <updated>2024-01-14T14:55:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>关键词</strong>：Unraid</p><span id="more"></span><h2 id="下载地址">下载地址</h2><p>https://softoroom.org/ptopic89043.html</p><h2 id="代理设置">代理设置</h2><h3 id="手动配置代理">手动配置代理</h3><p>默认的地址在国内无法访问，因此需要先配置代理</p><p>编辑<code>/boot/config/go</code>文件，增加下面的选项：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nano /boot/config/go</span><br><span class="line"></span><br><span class="line">http_proxy=http://server:port https_proxy=http://server:port /usr/local/sbin/emhttp &amp; </span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export http_proxy=\&quot;http://server:port\&quot;&quot;</span> &gt;&gt; /root/.bash_profile </span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export https_proxy=\&quot;http://server:port\&quot;&quot;</span> &gt;&gt; /root/.bash_profile</span><br></pre></td></tr></table></figure><p>实测还是不行，考虑到插件使用wget安装，因此尝试安装wget代理。编辑/root/.wgetrc文件：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https_proxy = http://192.168.0.1:20810</span><br><span class="line">http_proxy = http://192.168.0.1:20810</span><br></pre></td></tr></table></figure><p>安装成功</p><p><img data-src="Unraid配置/image-20240114103116069.png" /></p><h3 id="通过插件进行配置代理">通过插件进行配置代理</h3><p><ahref="https://forums.unraid.net/topic/132645-proxy-editor-%E6%8F%90%E4%BE%9B%E5%8F%AF%E8%A7%86%E5%8C%96%E9%A1%B5%E9%9D%A2%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%BF%AB%E6%8D%B7%E8%AE%BE%E7%BD%AE%E3%80%81%E5%88%87%E6%8D%A2%E4%BB%A3%E7%90%86/">可视化页面，方便快捷设置、切换代理</a></p><h2 id="语言设置">语言设置</h2><p>首先安装上文提到的应用商店，然后更新，点击APPS，搜索简体中文。</p><p><img data-src="Unraid配置/image-20240114103813917.png" /></p><p>点击SETTINGS，选择语言设置</p><figure><img data-src="Unraid配置/image-20240114103904186.png"alt="image-20240114103904186" /><figcaption aria-hidden="true">image-20240114103904186</figcaption></figure><h2 id="磁盘设置">磁盘设置</h2><p>Unraid和他的名字一样，不支持raid，每个磁盘都被认为是一个独立的文件系统。存在一些三种磁盘类型：</p><ul><li>奇偶检验盘：<strong>unRAID的校验盘用于保护阵列硬盘的数据，采用奇偶校验机制来实现数据的冗余和重建。有一块校验盘的情况下可以允许阵列中的一块硬盘损毁而不丢失数据；如果有两块校验盘则允许两块硬盘损毁而不丢失数据。</strong>unraid最多支持添加2块校验盘。由于校验盘需要对阵列里面所有硬盘的数据进行计算，因此使用校验盘有一个硬性要求—— 校验盘的容量一定要大于等于阵列里面最大的那一个硬盘。</li><li>阵列盘：存储数据的盘。</li><li>缓存盘：根据文件夹的策略将文件从共享文件夹移动到阵列。</li></ul><p>这里不指定奇偶校验盘，只添加数据盘和缓存盘。</p><p><img data-src="Unraid配置/image-20240114113946061.png" /></p><p>选中之后点击下列行的启动，使得磁盘阵列打开。</p><p>打开之后需要对磁盘进行格式化，点击格式即可。</p><figure><img data-src="Unraid配置/image-20240114114146245.png"alt="image-20240114114146245" /><figcaption aria-hidden="true">image-20240114114146245</figcaption></figure><h2 id="共享设置">共享设置</h2><h3 id="挂载局域网内的其他设备">挂载局域网内的其他设备</h3><p>打开app商店，安装Unassigned Devices插件，点击主界面进行操作。</p><figure><img data-src="Unraid配置/image-20240114115216856.png"alt="image-20240114115216856" /><figcaption aria-hidden="true">image-20240114115216856</figcaption></figure><h3 id="开启自身的nfs服务">开启自身的NFS服务</h3><p>打开设置，点击网络设置。</p><p><img data-src="Unraid配置/image-20240114115600300.png" /></p><h3 id="启动磁盘共享">启动磁盘共享</h3><p>启用磁盘共享可以跳过unraid的shfs的子系统，极大的提高拷贝性能。</p><p>打开磁盘共享之前需要关闭阵列。</p><blockquote><p>https://www.jackiewu.top/article/why-unraid-cpu-overloaded-when-downloading-or-writing-files</p></blockquote><p><img data-src="Unraid配置/image-20240114131747723.png" /></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;关键词&lt;/strong&gt;：Unraid&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Linux" scheme="https://blog.fly97.cn/tags/Linux/"/>
+    
+  </entry>
   
   <entry>
     <title>Kubernetes集群实践（十四）tini进程管理器</title>
@@ -423,27 +442,6 @@ once a month.”&lt;/p&gt;
     
     
     <summary type="html">&lt;p&gt;本文主要介绍ROS2上的功能包。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键词：ROS2&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="ROS" scheme="https://blog.fly97.cn/tags/ROS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ROS实战（十）ROS2之工作空间</title>
-    <link href="https://blog.fly97.cn/p/workspace-in-ros2/"/>
-    <id>https://blog.fly97.cn/p/workspace-in-ros2/</id>
-    <published>2022-12-17T10:36:00.000Z</published>
-    <updated>2022-12-17T10:36:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。</strong></p><p>本文主要介绍ROS2上的工作空间。</p><p><strong>关键词：ROS2</strong></p><span id="more"></span><h2 id="工作空间开发过程中的大本营">工作空间：开发过程中的大本营</h2><h3 id="什么是工作空间">什么是工作空间</h3><p>在ROS机器人开发中，我们针对机器人的某些功能需要进行代码便携式，各种编写的代码、参数、脚本等文件，也需要放置在某一个文件夹里进行管理，这个文件夹在ROS系统中就叫做工作空间。</p><p>工作空间是一个存放项目于开发相关文件的文件夹，是开发过程中存放所有资料的大本营。</p><p>ROS系统中一个典型的工作空间如下，一般会有四个子目录：</p><figure><img data-src="https://book.guyuehome.com/ROS2/2.%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/image/2.1_%E5%B7%A5%E4%BD%9C%E7%A9%BA%E9%97%B4/image-20220524111415729.png"alt="image-20220524111415729" /><figcaption aria-hidden="true">image-20220524111415729</figcaption></figure><ul><li><p><strong>src，代码空间</strong>：编写的代码、脚本都需要放在这里；</p></li><li><p><strong>build，编译空间</strong>：保存编译过程中产生的中间文件；</p></li><li><p><strong>install，安装空间</strong>：放置编译过程得到的可执行文件和脚本；</p></li><li><p><strong>log，日志空间</strong>：编译和运行过程中，保存各种警告、错误、信息等日志。</p></li></ul><p>总体来说，这四个空间的文件夹，我们绝大部分的操作都是在src进行的，编译成功后，会执行install里面的结果，build和log两个文件很少用。</p><p>工作空间里的名称我们也可以自己定义，数量也不是唯一的.</p><h3 id="创建工作空间">创建工作空间</h3><p>执行以下命令创建工作空间</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/dev_ws/src</span><br><span class="line"><span class="built_in">cd</span> ~/dev_ws/src</span><br><span class="line">git <span class="built_in">clone</span> https://gitee.com/guyuehome/ros2_21_tutorials.git</span><br></pre></td></tr></table></figure><h3 id="自动安装依赖">自动安装依赖</h3><p>一般使用<code>rosdep</code>工具进行自动安装，而<code>rosdep</code>默认会使用国外的源进行安装，而一般国内的网络无法正常连接，因此有开发者开发了<code>rosdepc</code>模块，<code>c</code>的含义就是china，这个软件使用了清华源进行了替换。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install rosdepc</span><br><span class="line">sudo rosdepc init </span><br><span class="line">rosdepc update</span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line">rosdepc install -i --from-path src --rosdistro foxy -y</span><br></pre></td></tr></table></figure><p><img data-src="2022-12-17-16-30-20-image.png" /></p><h3 id="编译工作空间">编译工作空间</h3><p>依赖安装完毕，可以使用以下命令编译工作空间，如果有缺少的依赖，或者代码有错误，编译过程中会有报错，否则编译过程中不会出现任何错误：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install python3-colcon-ros</span><br><span class="line"><span class="built_in">cd</span> ~/dev_ws/</span><br><span class="line">colcon build</span><br></pre></td></tr></table></figure><p><img data-src="2022-12-17-16-37-46-image.png" /></p><p>编译成功后，就可以在工作空间后就可以看到构建后的文件夹了</p><p><img data-src="2022-12-17-16-40-47-image.png" /></p><h3 id="设置环境变量">设置环境变量</h3><p>编译成功后，为了让系统找到我们的功能包和可执行文件，还需要设置环境变量：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> install/local_setup.sh <span class="comment"># 仅在当前终端生效</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source ~/dev_ws/install/local_setup.sh&quot;</span> &gt;&gt; ~/.bashrc <span class="comment"># 全局生效</span></span><br></pre></td></tr></table></figure><p>至此，我们就完成了工作空间的创建、编译、和配置。</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;摘要：转眼间三年已经过去，而我也开始面临毕业的问题。由于导师放养式的教学，导致我的论文一直没什么长进。抱怨没有用，一切靠自己。还是得把之前丢下的捡起来。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;本文主要介绍ROS2上的工作空间。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;关键词：ROS2&lt;/strong&gt;&lt;/p&gt;</summary>
     
     

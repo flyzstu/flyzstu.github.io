@@ -154,6 +154,75 @@ interface and Socks5 proxy for VPS. 一键脚本 (github.com)</a></p>
       </tags>
   </entry>
   <entry>
+    <title>配置Unraid</title>
+    <url>/p/install-unraid/</url>
+    <content><![CDATA[<p><strong>关键词</strong>：Unraid</p>
+<span id="more"></span>
+<h2 id="下载地址">下载地址</h2>
+<p>https://softoroom.org/ptopic89043.html</p>
+<h2 id="代理设置">代理设置</h2>
+<h3 id="手动配置代理">手动配置代理</h3>
+<p>默认的地址在国内无法访问，因此需要先配置代理</p>
+<p>编辑<code>/boot/config/go</code>文件，增加下面的选项：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /boot/config/go</span><br><span class="line"></span><br><span class="line">http_proxy=http://server:port https_proxy=http://server:port /usr/local/sbin/emhttp &amp; </span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export http_proxy=\&quot;http://server:port\&quot;&quot;</span> &gt;&gt; /root/.bash_profile </span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export https_proxy=\&quot;http://server:port\&quot;&quot;</span> &gt;&gt; /root/.bash_profile</span><br></pre></td></tr></table></figure>
+<p>实测还是不行，考虑到插件使用wget安装，因此尝试安装wget代理。编辑/root/.wgetrc文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https_proxy = http://192.168.0.1:20810</span><br><span class="line">http_proxy = http://192.168.0.1:20810</span><br></pre></td></tr></table></figure>
+<p>安装成功</p>
+<p><img data-src="Unraid配置/image-20240114103116069.png" /></p>
+<h3 id="通过插件进行配置代理">通过插件进行配置代理</h3>
+<p><a
+href="https://forums.unraid.net/topic/132645-proxy-editor-%E6%8F%90%E4%BE%9B%E5%8F%AF%E8%A7%86%E5%8C%96%E9%A1%B5%E9%9D%A2%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%BF%AB%E6%8D%B7%E8%AE%BE%E7%BD%AE%E3%80%81%E5%88%87%E6%8D%A2%E4%BB%A3%E7%90%86/">可视化页面，方便快捷设置、切换代理</a></p>
+<h2 id="语言设置">语言设置</h2>
+<p>首先安装上文提到的应用商店，然后更新，点击APPS，搜索简体中文。</p>
+<p><img data-src="Unraid配置/image-20240114103813917.png" /></p>
+<p>点击SETTINGS，选择语言设置</p>
+<figure>
+<img data-src="Unraid配置/image-20240114103904186.png"
+alt="image-20240114103904186" />
+<figcaption aria-hidden="true">image-20240114103904186</figcaption>
+</figure>
+<h2 id="磁盘设置">磁盘设置</h2>
+<p>Unraid和他的名字一样，不支持raid，每个磁盘都被认为是一个独立的文件系统。存在一些三种磁盘类型：</p>
+<ul>
+<li>奇偶检验盘：<strong>unRAID
+的校验盘用于保护阵列硬盘的数据，采用奇偶校验机制来实现数据的冗余和重建。有一块校验盘的情况下可以允许阵列中的一块硬盘损毁而不丢失数据；如果有两块校验盘则允许两块硬盘损毁而不丢失数据。</strong>unraid最多支持添加2块校验盘。由于校验盘需要对阵列里面所有硬盘的数据进行计算，因此使用校验盘有一个硬性要求
+—— 校验盘的容量一定要大于等于阵列里面最大的那一个硬盘。</li>
+<li>阵列盘：存储数据的盘。</li>
+<li>缓存盘：根据文件夹的策略将文件从共享文件夹移动到阵列。</li>
+</ul>
+<p>这里不指定奇偶校验盘，只添加数据盘和缓存盘。</p>
+<p><img data-src="Unraid配置/image-20240114113946061.png" /></p>
+<p>选中之后点击下列行的启动，使得磁盘阵列打开。</p>
+<p>打开之后需要对磁盘进行格式化，点击格式即可。</p>
+<figure>
+<img data-src="Unraid配置/image-20240114114146245.png"
+alt="image-20240114114146245" />
+<figcaption aria-hidden="true">image-20240114114146245</figcaption>
+</figure>
+<h2 id="共享设置">共享设置</h2>
+<h3 id="挂载局域网内的其他设备">挂载局域网内的其他设备</h3>
+<p>打开app商店，安装Unassigned Devices插件，点击主界面进行操作。</p>
+<figure>
+<img data-src="Unraid配置/image-20240114115216856.png"
+alt="image-20240114115216856" />
+<figcaption aria-hidden="true">image-20240114115216856</figcaption>
+</figure>
+<h3 id="开启自身的nfs服务">开启自身的NFS服务</h3>
+<p>打开设置，点击网络设置。</p>
+<p><img data-src="Unraid配置/image-20240114115600300.png" /></p>
+<h3 id="启动磁盘共享">启动磁盘共享</h3>
+<p>启用磁盘共享可以跳过unraid的shfs的子系统，极大的提高拷贝性能。</p>
+<p>打开磁盘共享之前需要关闭阵列。</p>
+<blockquote>
+<p>https://www.jackiewu.top/article/why-unraid-cpu-overloaded-when-downloading-or-writing-files</p>
+</blockquote>
+<p><img data-src="Unraid配置/image-20240114131747723.png" /></p>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kubernetes集群实践（十四）tini进程管理器</title>
     <url>/p/have-a-look-at-tini/</url>
     <content><![CDATA[<p>本文主要介绍tini进程管理器。</p>
@@ -10341,15 +10410,31 @@ href="https://fly97.cn/p/How-to-manage-services-on-ubuntu/">Ubuntu服务管理</
       </tags>
   </entry>
   <entry>
-    <title>golang中的生产者消费者模型</title>
+    <title>Go语言进阶（一）并发同步实现的四种方法</title>
     <url>/p/producer-consumer-model-in-golang/</url>
-    <content><![CDATA[<p>使用goroutine和channel构建生产者消费者模型，指定启动的goroutine数量。</p>
-<p><strong>关键词</strong>：生产者消费者模型，golang</p>
+    <content><![CDATA[<p>本文主要介绍golang源代码实现了四种并发同步的方法。</p>
+<p><strong>关键词</strong>：golang，并发实现</p>
 <span id="more"></span>
-<p>Go语言使用并发很方便，但是goroutine并不是越多越好。通常使用<code>workpool</code>模式，控制<code>goroutine</code>的数量，防止goroutine泄露和暴涨。</p>
-<h2 id="简易生产者模型">简易生产者模型</h2>
+<p>大家都知道Golang天生支持并发，任何一个函数前面使用go关键字都能实现并发。go给我们提供了详细的并发原语，总体来说有四种实现并发同步的方法。</p>
+<h2 id="waitbysleep">waitBySleep</h2>
+<p>主线程显式调用sleep函数等待子线程完成</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">waitBySleep</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> fmt.Println(<span class="string">&quot;this is&quot;</span>, i)</span><br><span class="line">	&#125;</span><br><span class="line">	time.Sleep(time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	waitBySleep()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>sleep的时间根据任务的复杂程度<strong>难以估算</strong>，不是最佳实践</p>
+<h2 id="waitbychannel">waitByChannel</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">waitByChannel</span><span class="params">()</span></span> &#123;</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;, <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;this is&quot;</span>, i)</span><br><span class="line">			c &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		&lt;-c</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	waitByChannel()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过channl可以并发读写的机制，并发的子线程将执行完毕的标志位送到channel里，主线程将channel内的标志位消费完，说明子线程已经执行完毕。</p>
+<p>适合明确<strong>子线程的任务有多少个情况下</strong>，也不是最佳实践。</p>
+<h3
+id="使用channel实现的生产消费者模型">使用Channel实现的生产消费者模型</h3>
 <p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="type">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="type">int</span>, results <span class="keyword">chan</span>&lt;- <span class="type">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="waitbywaitgroup">waitByWaitGroup</h2>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">waitByWaitGroup</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	wg.Add(<span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;this is&quot;</span>, i)</span><br><span class="line">			wg.Done()</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    waitByWaitGroup()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本质上还是等待，只是等待的时刻缩短到子线程结束调用的那一时刻。</p>
+<p>依靠sync.WaitGroup不能实现生产者消费者模型，需要配合channel完成</p>
+<h2 id="waitbycond">waitByCond</h2>
+<p><code>sync.Cond</code>是go语言原生提供的生产者消费者模型。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Queue <span class="keyword">struct</span> &#123;</span><br><span class="line">	queue []<span class="type">int</span></span><br><span class="line">	cond  *sync.Cond</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span></span> Producer(in <span class="type">int</span>) &#123;</span><br><span class="line">	q.cond.L.Lock()</span><br><span class="line">	<span class="keyword">defer</span> q.cond.L.Unlock()</span><br><span class="line">	q.queue = <span class="built_in">append</span>(q.queue, in)</span><br><span class="line">	q.cond.Broadcast()</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Queue)</span></span> Consumer() (result <span class="type">int</span>) &#123;</span><br><span class="line">	q.cond.L.Lock()</span><br><span class="line">	<span class="keyword">defer</span> q.cond.L.Unlock()</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(q.queue) == <span class="number">0</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;no data available, waiting&quot;</span>)</span><br><span class="line">		q.cond.Wait()</span><br><span class="line">	&#125;</span><br><span class="line">	result, q.queue = q.queue[<span class="number">0</span>], q.queue[<span class="number">1</span>:]</span><br><span class="line">	<span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">waitByCond</span><span class="params">()</span></span> &#123;</span><br><span class="line">	q := Queue&#123;</span><br><span class="line">		queue: []<span class="type">int</span>&#123;&#125;,</span><br><span class="line">		cond:  sync.NewCond(&amp;sync.Mutex&#123;&#125;),</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">		<span class="keyword">go</span> q.Producer(j)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;this is&quot;</span>, q.Consumer())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	waitByCond()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>golang</tag>
