@@ -223,6 +223,242 @@ alt="image-20240114115216856" />
       </tags>
   </entry>
   <entry>
+    <title>Go语言实战（一）| 图书管理API服务</title>
+    <url>/p/library-management-API-service/</url>
+    <content><![CDATA[<p>本文是学习极客时间专栏《Go语言第一课》的笔记记录，本文主要介绍了一整套的服务设计模式，基于世界情况的图书管理API服务。</p>
+<p>关键词：<strong>API</strong></p>
+<span id="more"></span>
+<h2 id="明确业务逻辑">明确业务逻辑</h2>
+<p>我们模拟的是一个基于真实世界的图书管理后端服务，这个服务为平台前端以及其他客户端，提供针对图书的CURD（创建、检索、更新、删除）的基于HTTP协议的API。API采用典型的RESTful
+API设计风格。</p>
+<p>首先明确这个服务提供的API集合如下：</p>
+<p><img data-src="Go语言实战（一）图书管理API服务/99717b62f7553e1a5139edcf2ac03b51.jpg" /></p>
+<p>这个API的业务逻辑并不复杂。简单来说，我们通过唯一id来标识一本书，对于图书来说这个一般是ISBN号码。</p>
+<p>对于在客户端和服务端请求与响应的数据，我们放在HTTP请求的Body体中的JSON数据来承载。</p>
+<h2 id="项目建立与布局设计">项目建立与布局设计</h2>
+<p>按照下面步骤创建一个Go项目并创建对应的Go Module：</p>
+<p><img data-src="Go语言实战（一）图书管理API服务/image-20231228111118471.png" /></p>
+<p>通过第一部分的业务说明，我们把服务大体拆分成两大模块，一部分是HTTP服务器，用于对外提供HTTP服务；另一部分是图书数据的存储模块，所有的数据都存储在这里。</p>
+<p>由于这是以构建可执行程序为目的Go项目，我们参考专栏中的项目布局，将这个项目布局设计成如下所示：</p>
+<p><img data-src="Go语言实战（一）图书管理API服务/image-20231228112439729.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── cmd/</span><br><span class="line">│   └── bookstore/         // 放置bookstore main包源码</span><br><span class="line">│       └── main.go</span><br><span class="line">├── go.mod                 // module bookstore的go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── internal/              // 存放项目内部包的目录</span><br><span class="line">│   └── store/</span><br><span class="line">│       └── memstore.go     </span><br><span class="line">├── server/                // HTTP服务器模块</span><br><span class="line">│   ├── middleware/</span><br><span class="line">│   │   └── middleware.go</span><br><span class="line">│   └── server.go          </span><br><span class="line">└── store/                 // 图书数据存储模块</span><br><span class="line">    ├── factory/</span><br><span class="line">    │   └── factory.go</span><br><span class="line">    └── store.go</span><br></pre></td></tr></table></figure>
+<p>上图给出了这个项目的结构布局，也给出了这个项目最终实现的源码文件分布情况，下面将从main包开始，<strong>自上而下</strong>查看项目的模块设计与实现。</p>
+<h3 id="项目main包">项目main包</h3>
+<p>main包是主要包，首先要<strong>理清各个模块的关系</strong>，最好能给出<strong>main包的逻辑实现图</strong>：</p>
+<figure>
+<img data-src="Go语言实战（一）图书管理API服务/5e8ee50b67a4229210b12afb94f55a19.jpg"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>首先来分析一下main包下的main函数代码：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"> <span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"> <span class="keyword">import</span> (</span><br><span class="line">     _ <span class="string">&quot;bookstore/internal/store&quot;</span></span><br><span class="line">     <span class="string">&quot;bookstore/server&quot;</span></span><br><span class="line">     <span class="string">&quot;bookstore/store/factory&quot;</span></span><br><span class="line">     <span class="string">&quot;context&quot;</span></span><br><span class="line">     <span class="string">&quot;log&quot;</span></span><br><span class="line">     <span class="string">&quot;os&quot;</span></span><br><span class="line">     <span class="string">&quot;os/signal&quot;</span></span><br><span class="line">     <span class="string">&quot;syscall&quot;</span></span><br><span class="line">     <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s, err := factory.New(<span class="string">&quot;mem&quot;</span>) <span class="comment">// 创建图书数据存储模块实例</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    srv := server.NewBookStoreServer(<span class="string">&quot;:8080&quot;</span>, s) <span class="comment">// 创建http服务实例</span></span><br><span class="line"></span><br><span class="line">    errChan, err := srv.ListenAndServe() <span class="comment">// 运行http服务</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(<span class="string">&quot;web server start failed:&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    log.Println(<span class="string">&quot;web server start ok&quot;</span>)</span><br><span class="line"></span><br><span class="line">    c := <span class="built_in">make</span>(<span class="keyword">chan</span> os.Signal, <span class="number">1</span>)</span><br><span class="line">    signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">select</span> &#123; <span class="comment">// 监视来自errChan以及c的事件</span></span><br><span class="line">    <span class="keyword">case</span> err = &lt;-errChan:</span><br><span class="line">        log.Println(<span class="string">&quot;web server run failed:&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">case</span> &lt;-c:</span><br><span class="line">        log.Println(<span class="string">&quot;bookstore program is exiting...&quot;</span>)</span><br><span class="line">        ctx, cf := context.WithTimeout(context.Background(), time.Second)</span><br><span class="line">        <span class="keyword">defer</span> cf()</span><br><span class="line">        err = srv.Shutdown(ctx) <span class="comment">// 优雅关闭http服务实例</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(<span class="string">&quot;bookstore program exit error:&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    log.Println(<span class="string">&quot;bookstore program exit ok&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>main包不仅包含整个程序的入口，还是整个程序中主要模块初始化与组装的场所。本程序的主要模块是第16行的创建图书存储模块实例，以及21行创建HTTP服务模块实例。第21行创建HTTP服务模块实例时，我们把第16行的创建图书存储模块实例s，传递给了NewBookStoreServer函数。稍后会讲述这两个实例的创建原理。</p>
+<p>我们重点来看30行到第42行。这里实现了通<strong>过监视系统信号实现了http服务实例的优雅退出</strong>。</p>
+<blockquote>
+<p>优雅退出指的是程序有机会等待其他的事情处理完再退出，比如尚未完成的事务处理、清理资源（关闭文件标识符，关闭socket）、保存必要中间状态，内存数据持久化落盘等。优雅退出是使用Go编写http服务时<strong>必须要考虑</strong>的问题。</p>
+</blockquote>
+<p>在本程序的实现上，本文通过signal包的Notify函数捕获了<strong>SIGINT、SIGTERM</strong>这两个系统信号，当应用程序捕获到这两个信号而不得不关闭时，我们的http服务实例都有机会做出一些清理工作。</p>
+<p>再来看图书数据存储模块和HTTP服务模块的实现。</p>
+<h3 id="图书数据存储模块store">图书数据存储模块（store）</h3>
+<p>图书数据存储有很多方式，最简单的方式莫过于是在内存中创建一个map，以图书id作为key，用来保存图书信息，也就是<strong>采用不持久化的方式</strong>，本文也会采用这种方式。但是如果我们要考虑到上生产环境，数据要用来持久化，那么最实际的方式就是通过NoSQL甚至关系型数据库来实现对图书数据的存储与管理。</p>
+<p>考虑到对多种存储实现方式的支持，我们将针对图书的有限种存储操作，放置在一个接口类型的Store中，如下源码所示：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// store/store.go</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">     Id      <span class="type">string</span>   <span class="string">`json:&quot;id&quot;`</span>      <span class="comment">// 图书ISBN ID</span></span><br><span class="line">     Name    <span class="type">string</span>   <span class="string">`json:&quot;name&quot;`</span>    <span class="comment">// 图书名称</span></span><br><span class="line">     Authors []<span class="type">string</span> <span class="string">`json:&quot;authors&quot;`</span> <span class="comment">// 图书作者</span></span><br><span class="line">     Press   <span class="type">string</span>   <span class="string">`json:&quot;press&quot;`</span>   <span class="comment">// 出版社</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">type</span> Store <span class="keyword">interface</span> &#123;</span><br><span class="line">     Create(*Book) <span class="type">error</span>        <span class="comment">// 创建一个新图书条目</span></span><br><span class="line">     Update(*Book) <span class="type">error</span>        <span class="comment">// 更新某图书条目</span></span><br><span class="line">     Get(<span class="type">string</span>) (Book, <span class="type">error</span>)  <span class="comment">// 获取某图书信息</span></span><br><span class="line">     GetAll() ([]Book, <span class="type">error</span>)   <span class="comment">// 获取所有图书信息</span></span><br><span class="line">     Delete(<span class="type">string</span>) <span class="type">error</span>       <span class="comment">// 删除某图书条目</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>我们建立了一个对应图书条目的抽象数据Book，以及针对Book存取的接口类型Store。</p>
+<p>对于想要进行图书数据的存储操作的一方来说，它只需要得到一个满足Store接口的实例，就可以实现对图书数据的存储操作了，而不需要关心图书数据究竟采用了何种存储接口方式。这实现了<strong>图书存储操作和底层图书数据存储方式的解耦</strong>。</p>
+<p>这种<strong>面向接口编程</strong>也是Go组合设计哲学的一种体现。</p>
+<blockquote>
+<p>面向接口编程<strong>就是先把客户的业务逻辑线提取出来，作为接口，业务具体实现通过该接口的实现类来完成</strong>。
+当客户需求变化时，只需编写该业务逻辑的新的实现类，通过更改配置文件或者其他方式实现该接口的实现类就可以完成需求，这种方式不需要改写现有代码，可以减少对系统的影响。</p>
+</blockquote>
+<p>参考《设计模式》中提供的Go风格的工厂模式来满足Store接口实例的创建，下面实现了store/factory包的源码：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// store/factory/factory.go</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">var</span> (</span><br><span class="line">     providersMu sync.RWMutex</span><br><span class="line">     providers   = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]store.Store)</span><br><span class="line"> )</span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">Register</span><span class="params">(name <span class="type">string</span>, p store.Store)</span></span> &#123;</span><br><span class="line">     providersMu.Lock()</span><br><span class="line">    <span class="keyword">defer</span> providersMu.Unlock()</span><br><span class="line">     <span class="keyword">if</span> p == <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="built_in">panic</span>(<span class="string">&quot;store: Register provider is nil&quot;</span>)</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     <span class="keyword">if</span> _, dup := providers[name]; dup &#123;</span><br><span class="line">         <span class="built_in">panic</span>(<span class="string">&quot;store: Register called twice for provider &quot;</span> + name)</span><br><span class="line">     &#125;</span><br><span class="line">     providers[name] = p</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(providerName <span class="type">string</span>)</span></span> (store.Store, <span class="type">error</span>) &#123;</span><br><span class="line">     providersMu.RLock()</span><br><span class="line">     p, ok := providers[providerName]</span><br><span class="line">     providersMu.RUnlock()</span><br><span class="line">     <span class="keyword">if</span> !ok &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;store: unknown provider %s&quot;</span>, providerName)</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     <span class="keyword">return</span> p, <span class="literal">nil</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>源码效仿了Go标准库的database/sql包采用的方式。factory采用一个map类型变量，对工厂可以"制造"的、满足Store接口的实例类型进行管理。factory提供了Register函数，让各个实现Store的接口类型可以把自己"注册"到工厂中来。</p>
+<p>一旦注册成功，factory包可以"制造"出满足这种Store接口的类型实例，而依赖Store接口的使用方，只需要调用factory包的New函数、传入期望实现的存储名称，就可以得到对应的类型实例了。</p>
+<p>下面提供了<strong>基于内存map</strong>的Store接口的实现：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// internal/store/memstore.go</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">package</span> store</span><br><span class="line">  </span><br><span class="line"> <span class="keyword">import</span> (</span><br><span class="line">     mystore <span class="string">&quot;bookstore/store&quot;</span></span><br><span class="line">     factory <span class="string">&quot;bookstore/store/factory&quot;</span></span><br><span class="line">     <span class="string">&quot;sync&quot;</span></span><br><span class="line"> )</span><br><span class="line">  </span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">     factory.Register(<span class="string">&quot;mem&quot;</span>, &amp;MemStore&#123;</span><br><span class="line">         books: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]*mystore.Book),</span><br><span class="line">     &#125;)</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="keyword">type</span> MemStore <span class="keyword">struct</span> &#123;</span><br><span class="line">     sync.RWMutex</span><br><span class="line">     books <span class="keyword">map</span>[<span class="type">string</span>]*mystore.Book</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码在init函数调用了factory包提供的Register函数，并把自己的实例以"mem"的名称导入到factory中。依赖Store接口进行图书馆里的一方，只需要导入internal/store这个包，就可以自动完成注册动作了。</p>
+<p>再来看下main包中创建图书数据存储模块实例时采用的代码：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    ... ...</span><br><span class="line">    _ <span class="string">&quot;bookstore/internal/store&quot;</span> <span class="comment">// internal/store将自身注册到factory中</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s, err := factory.New(<span class="string">&quot;mem&quot;</span>) <span class="comment">// 创建名为&quot;mem&quot;的图书数据存储模块实例</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    ... ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="http服务模块server">HTTP服务模块（server）</h3>
+<p>HTTP服务模块的职责是对外提供HTTP
+API服务，处理来自客户端的各种请求，并通过Store接口实例执行针对图书数据的各种操作。</p>
+<p>我们抽象处理定义一个server包，其中包含一个BookStoreServer类型如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// server/server.go</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">type</span> BookStoreServer <span class="keyword">struct</span> &#123;</span><br><span class="line">     s   store.Store</span><br><span class="line">     srv *http.Server</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>BookStoreServer类型实质上就是一个标准库的 http.Server，并且组合了来自
+store.Store 接口的能力。server 包提供了 NewBookStoreServer
+函数，用来创建一个 BookStoreServer 类型实例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// server/server.go</span></span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">NewBookStoreServer</span><span class="params">(addr <span class="type">string</span>, s store.Store)</span></span> *BookStoreServer &#123;</span><br><span class="line">     srv := &amp;BookStoreServer&#123;</span><br><span class="line">         s: s,</span><br><span class="line">         srv: &amp;http.Server&#123;</span><br><span class="line">             Addr: addr,</span><br><span class="line">         &#125;,</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     router := mux.NewRouter()</span><br><span class="line">     router.HandleFunc(<span class="string">&quot;/book&quot;</span>, srv.createBookHandler).Methods(<span class="string">&quot;POST&quot;</span>)</span><br><span class="line">     router.HandleFunc(<span class="string">&quot;/book/&#123;id&#125;&quot;</span>, srv.updateBookHandler).Methods(<span class="string">&quot;POST&quot;</span>)</span><br><span class="line">     router.HandleFunc(<span class="string">&quot;/book/&#123;id&#125;&quot;</span>, srv.getBookHandler).Methods(<span class="string">&quot;GET&quot;</span>)</span><br><span class="line">     router.HandleFunc(<span class="string">&quot;/book&quot;</span>, srv.getAllBooksHandler).Methods(<span class="string">&quot;GET&quot;</span>)</span><br><span class="line">     router.HandleFunc(<span class="string">&quot;/book/&#123;id&#125;&quot;</span>, srv.delBookHandler).Methods(<span class="string">&quot;DELETE&quot;</span>)</span><br><span class="line"> </span><br><span class="line">     srv.srv.Handler = middleware.Logging(middleware.Validating(router))</span><br><span class="line">     <span class="keyword">return</span> srv</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>NewBookStoreServer接受了两个参数，一个是HTTP监听的服务地址，另外一个是实现了store.Store接口类型的实例。</p>
+<p>这种函数原型的设计是Go语言的一种<strong>常见设计方法</strong>，即<strong>接受一个接口参数，返回一个具体类型</strong>。返回的具体类型组合传入的接口类型的能力。</p>
+<p>还需要为HTTP服务器设置请求的处理函数，也就是业务接口，根据请求参数和请求方法处理对应的逻辑：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// server/server.go</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="params">(bs *BookStoreServer)</span></span> createBookHandler(w http.ResponseWriter, req *http.Request) &#123;</span><br><span class="line">      dec := json.NewDecoder(req.Body)</span><br><span class="line">      <span class="keyword">var</span> book store.Book</span><br><span class="line">      <span class="keyword">if</span> err := dec.Decode(&amp;book); err != <span class="literal">nil</span> &#123;</span><br><span class="line">          http.Error(w, err.Error(), http.StatusBadRequest)</span><br><span class="line">          <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line">  </span><br><span class="line">      <span class="keyword">if</span> err := bs.s.Create(&amp;book); err != <span class="literal">nil</span> &#123;</span><br><span class="line">          http.Error(w, err.Error(), http.StatusBadRequest)</span><br><span class="line">          <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="params">(bs *BookStoreServer)</span></span> getBookHandler(w http.ResponseWriter, req *http.Request) &#123;</span><br><span class="line">      id, ok := mux.Vars(req)[<span class="string">&quot;id&quot;</span>]</span><br><span class="line">      <span class="keyword">if</span> !ok &#123;</span><br><span class="line">          http.Error(w, <span class="string">&quot;no id found in request&quot;</span>, http.StatusBadRequest)</span><br><span class="line">          <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line">  </span><br><span class="line">     book, err := bs.s.Get(id)</span><br><span class="line">     <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">         http.Error(w, err.Error(), http.StatusBadRequest)</span><br><span class="line">         <span class="keyword">return</span></span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     response(w, book)</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">response</span><span class="params">(w http.ResponseWriter, v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">     data, err := json.Marshal(v)</span><br><span class="line">     <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">         http.Error(w, err.Error(), http.StatusInternalServerError)</span><br><span class="line">         <span class="keyword">return</span></span><br><span class="line">     &#125;</span><br><span class="line">     w.Header().Set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>)</span><br><span class="line">     w.Write(data)</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>这些逻辑都大同小异，都是根据http请求获取http
+body，然后通过go-json库解码为我们需要的store.Store结构体，再通过Store接口对图书数据进行相应的操作。如果是获取图书数据的请求，那么处理函数将通过response函数，把取出的图书数据编码为http响应，并返回客户端。</p>
+<p>在NewBookStoreServer函数的尾部，有一行适配器类型的代码：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">srv.srv.Handler = middleware.Logging(middleware.Validating(router))</span><br></pre></td></tr></table></figure>
+<p>这行代码的意思是在route的外围包含了两层middleware，middleware是<strong>通用的http处理函数</strong>。</p>
+<p>以下是通用的http处理函数的处理逻辑：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// server/middleware/middleware.go</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">Logging</span><span class="params">(next http.Handler)</span></span> http.Handler &#123;</span><br><span class="line">     <span class="keyword">return</span> http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, req *http.Request)</span></span> &#123;</span><br><span class="line">         log.Printf(<span class="string">&quot;recv a %s request from %s&quot;</span>, req.Method, req.RemoteAddr)</span><br><span class="line">         next.ServeHTTP(w, req)</span><br><span class="line">     &#125;)</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">Validating</span><span class="params">(next http.Handler)</span></span> http.Handler &#123;</span><br><span class="line">     <span class="keyword">return</span> http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, req *http.Request)</span></span> &#123;</span><br><span class="line">         contentType := req.Header.Get(<span class="string">&quot;Content-Type&quot;</span>)</span><br><span class="line">         mediatype, _, err := mime.ParseMediaType(contentType)</span><br><span class="line">         <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">             http.Error(w, err.Error(), http.StatusBadRequest)</span><br><span class="line">             <span class="keyword">return</span></span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span> mediatype != <span class="string">&quot;application/json&quot;</span> &#123;</span><br><span class="line">             http.Error(w, <span class="string">&quot;invalid Content-Type&quot;</span>, http.StatusUnsupportedMediaType)</span><br><span class="line">             <span class="keyword">return</span></span><br><span class="line">         &#125;</span><br><span class="line">         next.ServeHTTP(w, req)</span><br><span class="line">     &#125;)</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>Logging函数主要用来输出每个到达的HTTP请求的一些概要信息，Validating函数会每个http请求头进行检查，确定媒体类型是否是application/json。这些通用的处理逻辑，会被串联每个真正的处理函数之前，避免我们在每个处理函数里处理这些逻辑。</p>
+<p>创建完BookStoreServer实例后，就可以调用ListenAndServe方法运行这个http服务了，显然这个是效仿http.Server类型的同名方法：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// server/server.go</span></span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="params">(bs *BookStoreServer)</span></span> ListenAndServe() (&lt;-<span class="keyword">chan</span> <span class="type">error</span>, <span class="type">error</span>) &#123;</span><br><span class="line">     <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">     errChan := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line">     <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">         err = bs.srv.ListenAndServe()</span><br><span class="line">         errChan &lt;- err</span><br><span class="line">     &#125;()</span><br><span class="line"> </span><br><span class="line">     <span class="keyword">select</span> &#123;</span><br><span class="line">     <span class="keyword">case</span> err = &lt;-errChan:</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">     <span class="keyword">case</span> &lt;-time.After(time.Second):</span><br><span class="line">         <span class="keyword">return</span> errChan, <span class="literal">nil</span></span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数是BookStoreServer内部的http.Server的运行，放置到一个单独的goroutine里。http.Server.ListenAndServe<strong>会阻塞</strong>代码的继续运行，如果不把此行放在goroutine里，后面的代码将会无法执行。</p>
+<p>为了检测到http.Server.ListenAndServe的运行状态，我们再通过一个channel创建一个子goroutine和主goroutine的<strong>通信渠道</strong>。通过这个channel就可以及时得到http
+server的运行状态。</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RHCE学习教程之Ansible高级用法</title>
+    <url>/p/advanced-usage-about-ansible/</url>
+    <content><![CDATA[<p>ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。</p>
+<p>本文主要介绍ansible的一些高级用法。</p>
+<p><strong>关键词：RHCE Ansible</strong></p>
+<span id="more"></span>
+<h2 id="自定义变量">自定义变量</h2>
+<h3 id="主机清单变量">主机清单变量</h3>
+<p>针对主机或者组</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">;针对主机</span></span><br><span class="line"><span class="section">[paas]</span></span><br><span class="line">1.2.4.8 <span class="attr">hostname</span>=<span class="number">1.2</span>.<span class="number">4.8</span>-master01</span><br><span class="line"></span><br><span class="line"><span class="comment">;针对组</span></span><br><span class="line"><span class="comment">;同一组可以使用相同的环境变量</span></span><br><span class="line"><span class="section">[web]</span></span><br><span class="line">1.1.1.1</span><br><span class="line">2.2.2.2</span><br><span class="line">3.3.3.3</span><br><span class="line"><span class="section">[web:vars]</span></span><br><span class="line"><span class="attr">ansible_ssh_user</span>=root</span><br><span class="line"><span class="attr">ansible_ssh_pass</span>=root1234</span><br></pre></td></tr></table></figure>
+<h3 id="定义剧本变量">定义剧本变量</h3>
+<p>使用关键字vars，针对所有执行剧本的主机生效</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1,</span> <span class="string">node2</span></span><br><span class="line">  <span class="attr">vars:</span></span><br><span class="line">    <span class="attr">test01:</span> <span class="string">aaa</span></span><br><span class="line">    <span class="attr">test02:</span> <span class="string">bbb</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span> </span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; test01 &#125;&#125;</span>--<span class="template-variable">&#123;&#123; test02 &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="定义文档变量">定义文档变量</h3>
+<p>可以在执行剧本时进行调用</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># var.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">abc:</span> <span class="string">abcabc</span></span><br><span class="line"><span class="attr">xyz:</span> <span class="string">xyzxyz</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># test01.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">var_files:</span> <span class="string">var01.yml</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;abc&#125;&#125;</span> <span class="template-variable">&#123;&#123;xyz&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="以交互方式定义变量">以交互方式定义变量</h3>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="comment"># 交互定义变量关键词</span></span><br><span class="line">  <span class="attr">vars_prompt:</span>    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">var1</span></span><br><span class="line">      <span class="attr">prompt:</span> <span class="string">&quot;输入要创建的用户名&quot;</span></span><br><span class="line">      <span class="comment"># 不隐藏变量的值</span></span><br><span class="line">      <span class="attr">private:</span> <span class="literal">no</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">var:</span> <span class="string">var1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">user:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;var1&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="魔法变量">魔法变量</h3>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">inventory_hostname</span>=清单主机名</span><br><span class="line"><span class="attr">hostvars</span>=包含被控主机的所有变量</span><br><span class="line"><span class="attr">hostvars.node1</span>=只调用node1主机的所有变量</span><br><span class="line"><span class="attr">hostvars.node1.group_names</span>=显示node1所在的组的名字</span><br><span class="line"><span class="attr">groups</span>=所有主机以及组信息</span><br><span class="line"><span class="attr">groups.all</span>=显示被控主机名</span><br><span class="line"><span class="attr">groups.test01</span>=显示test01组里的所有主机名</span><br><span class="line"><span class="attr">group_names</span>=当前运行任务的主机的所在组</span><br></pre></td></tr></table></figure>
+<p>使用copy模块拷贝常量和变量字符串到被控主机</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">       <span class="attr">content:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        abc</span></span><br><span class="line"><span class="string">        xyz</span></span><br><span class="line"><span class="string">        &#123;&#123;ansible_hostname&#125;&#125;</span></span><br><span class="line"><span class="string"></span>       <span class="attr">dest:</span> <span class="string">/opt/abc.txt</span></span><br></pre></td></tr></table></figure>
+<h2 id="模块相关">模块相关</h2>
+<h3 id="template模板">template模板</h3>
+<p>根据模板生成相应的文件</p>
+<p>src：源文件</p>
+<p>dest：目标文件</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#cat test.j2</span></span><br><span class="line">&#123;&#123; ansible_hostname &#125;&#125; <span class="comment"># 根据环境变量生成文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cat tepl.yml</span></span><br><span class="line">- hosts: node1</span><br><span class="line">  tasks:</span><br><span class="line">    - template:</span><br><span class="line">        src: test.j2</span><br><span class="line">        dest: /opt/test.html</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用ansible容器运行剧本">使用ansible容器运行剧本</h3>
+<p>安装navigator包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum install -y ansible-navigator</span><br></pre></td></tr></table></figure>
+<p>修改navigator配置文件</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim ~/.ansible-navigator.yml</span></span><br><span class="line"><span class="attr">ansible-navigator:</span></span><br><span class="line">  <span class="attr">execution-environment:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">registry.lab.example.com:5000/ee-supported-rhel8:latest</span></span><br><span class="line">    <span class="attr">pull:</span></span><br><span class="line">      <span class="attr">policy:</span> <span class="string">missing</span></span><br></pre></td></tr></table></figure>
+<p>修改container配置文件</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/containers/registries.conf</span></span><br><span class="line"><span class="section">[registries.search]</span></span><br><span class="line"><span class="attr">registries</span> = [<span class="string">&quot;registry.lab.example.com:5000&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="section">[registries.insecure]</span></span><br><span class="line"><span class="attr">registries</span> = [<span class="string">&quot;registry.lab.example.com:5000&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>下载镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-navigator images</span><br></pre></td></tr></table></figure>
+<p>执行剧本任务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-navigator run debug.yml -m stdout</span><br></pre></td></tr></table></figure>
+<h3
+id="使用ansible-vault加密敏感文件">使用ansible-vault加密敏感文件</h3>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>encrypt</td>
+<td>加密</td>
+</tr>
+<tr class="even">
+<td>decrypt</td>
+<td>解密</td>
+</tr>
+<tr class="odd">
+<td>view</td>
+<td>查看</td>
+</tr>
+<tr class="even">
+<td>rekey</td>
+<td>重置密码</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 输入密码，加密test01配置文件</span></span><br><span class="line">ansible-vault encrypt test01.yml</span><br><span class="line"><span class="comment"># 输入密码，解密test01配置文件</span></span><br><span class="line">ansible-vault decrypt test01.yml</span><br><span class="line"><span class="comment"># 输入密码，查看test01配置文件</span></span><br><span class="line">ansible-vault view test01.yml</span><br><span class="line"><span class="comment"># 输入密码，执行配置文件</span></span><br><span class="line">ansible-playbook test01.yml --ask-vault-pass</span><br><span class="line"><span class="comment"># 通过保存到pass.txt的密码，执行配置文件</span></span><br><span class="line">ansible-playbook test01.yml --vault-id pass.txt</span><br><span class="line"><span class="comment"># 通过保存到pass.txt的密码，查看配置文件</span></span><br><span class="line">ansible-vault  test01.yml --vault-id pass.txt</span><br><span class="line"><span class="comment"># 重置密码</span></span><br><span class="line">ansible-vault rekey test01.yml</span><br></pre></td></tr></table></figure>
+<h2 id="角色">角色</h2>
+<p>角色是定义好的统一目录规范</p>
+<p>修改配置，定义角色目录位置</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim ~/ansible/ansible.cfg</span></span><br><span class="line"><span class="section">[default]</span></span><br><span class="line"><span class="attr">roles_path</span> = ./roles</span><br></pre></td></tr></table></figure>
+<h3 id="手动创建角色">手动创建角色</h3>
+<p>创建http角色相关目录，http是创建的角色，tasks是存放任务的目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ansible/roles/http/tasks</span><br></pre></td></tr></table></figure>
+<p>roles/tasks/main.yml文件</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">	<span class="attr">name:</span> <span class="string">httpd</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">	<span class="attr">msg:</span> <span class="string">ok</span></span><br></pre></td></tr></table></figure>
+<p>编写剧本调用角色</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span> <span class="string">roles</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">node1,</span> <span class="string">node2</span></span><br><span class="line">  <span class="attr">roles:</span></span><br><span class="line">  	<span class="bullet">-</span> <span class="string">http</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用命令创建角色">使用命令创建角色</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-galaxy init roles/vsftpd</span><br><span class="line"><span class="built_in">ls</span> roles/vsftped</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr class="header">
+<th>目录</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tasks</td>
+<td>存放执行任务</td>
+</tr>
+<tr class="even">
+<td>vars</td>
+<td>存放变量，优先级高</td>
+</tr>
+<tr class="odd">
+<td>defaults</td>
+<td>存放变量，优先级低</td>
+</tr>
+<tr class="even">
+<td>files</td>
+<td>存放静态文件，如图片、视频、配置文件等</td>
+</tr>
+<tr class="odd">
+<td>meta</td>
+<td>存放作者、角色版本信息</td>
+</tr>
+<tr class="even">
+<td>templates</td>
+<td>存放动态数据，比如j2模板</td>
+</tr>
+<tr class="odd">
+<td>handlers</td>
+<td>存放提前定义好的任务</td>
+</tr>
+</tbody>
+</table>
+<h4 id="测试1">测试1</h4>
+<p>准备静态文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123 &gt; roles/vsftpd/files/123</span><br></pre></td></tr></table></figure>
+<p>根据角色创建任务</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/tasks/main.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">	<span class="attr">name:</span> <span class="string">vsftpd</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">	<span class="comment"># 自动寻找files下的123文件</span></span><br><span class="line">	<span class="attr">src:</span> <span class="string">&quot;123&quot;</span></span><br><span class="line">	<span class="attr">dest:</span> <span class="string">/var/ftp/pub</span></span><br></pre></td></tr></table></figure>
+<p>编写脚本调用角色</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim test2.yml</span></span><br><span class="line">- hosts: node1, node2</span><br><span class="line">  roles:</span><br><span class="line">    - vsftpd</span><br></pre></td></tr></table></figure>
+<p>执行剧本</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-playbook test2.yml</span><br></pre></td></tr></table></figure></p>
+<h4 id="测试2">测试2</h4>
+<p>定义变量</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/vars/main.yml</span></span><br><span class="line"><span class="attr">myvar001:</span> <span class="string">abc</span></span><br></pre></td></tr></table></figure>
+<p>测试变量</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/tasks/main.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">template:</span></span><br><span class="line">	<span class="attr">src:</span> <span class="string">&quot;456.j2&quot;</span></span><br><span class="line">	<span class="attr">dest:</span> <span class="string">/var/ftp/pub</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">	<span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;myvar001&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>查看模板生成的文件</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"># less /var/ftp/pub</span><br><span class="line">abc</span><br></pre></td></tr></table></figure>
+<h3 id="使用网络下载安装角色">使用网络下载安装角色</h3>
+<p>配置需要下载的角色文件</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim roles.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myphp</span></span><br><span class="line">  <span class="attr">src:</span> <span class="string">http://172.25.254.250/roles/myphp.tar</span></span><br></pre></td></tr></table></figure>
+<p>安装网上下载的角色</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-galxy install -r roles.yml</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>learning</tag>
+        <tag>ansible</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kubernetes集群实践（十四）tini进程管理器</title>
     <url>/p/have-a-look-at-tini/</url>
     <content><![CDATA[<p>本文主要介绍tini进程管理器。</p>
@@ -857,154 +1093,6 @@ run的是添加<code>--init</code>选项即可，不需要改变镜像，不需�
 </table>
 <p>关闭剧本默认执行的变量收集任务</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">gather_facts:</span> <span class="literal">no</span>		<span class="string">//关闭setup任务，可以加快剧本运行速度</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line"><span class="attr">msg:</span> <span class="string">&quot;ok&quot;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>learning</tag>
-        <tag>ansible</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RHCE学习教程之Ansible高级用法</title>
-    <url>/p/advanced-usage-about-ansible/</url>
-    <content><![CDATA[<p>ansible是自动化运维利器，可以通过一台Linux服务器批量控制其他服务器。</p>
-<p>本文主要介绍ansible的一些高级用法。</p>
-<p><strong>关键词：RHCE Ansible</strong></p>
-<span id="more"></span>
-<h2 id="自定义变量">自定义变量</h2>
-<h3 id="主机清单变量">主机清单变量</h3>
-<p>针对主机或者组</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">;针对主机</span></span><br><span class="line"><span class="section">[paas]</span></span><br><span class="line">1.2.4.8 <span class="attr">hostname</span>=<span class="number">1.2</span>.<span class="number">4.8</span>-master01</span><br><span class="line"></span><br><span class="line"><span class="comment">;针对组</span></span><br><span class="line"><span class="comment">;同一组可以使用相同的环境变量</span></span><br><span class="line"><span class="section">[web]</span></span><br><span class="line">1.1.1.1</span><br><span class="line">2.2.2.2</span><br><span class="line">3.3.3.3</span><br><span class="line"><span class="section">[web:vars]</span></span><br><span class="line"><span class="attr">ansible_ssh_user</span>=root</span><br><span class="line"><span class="attr">ansible_ssh_pass</span>=root1234</span><br></pre></td></tr></table></figure>
-<h3 id="定义剧本变量">定义剧本变量</h3>
-<p>使用关键字vars，针对所有执行剧本的主机生效</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1,</span> <span class="string">node2</span></span><br><span class="line">  <span class="attr">vars:</span></span><br><span class="line">    <span class="attr">test01:</span> <span class="string">aaa</span></span><br><span class="line">    <span class="attr">test02:</span> <span class="string">bbb</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span> </span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; test01 &#125;&#125;</span>--<span class="template-variable">&#123;&#123; test02 &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="定义文档变量">定义文档变量</h3>
-<p>可以在执行剧本时进行调用</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># var.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">abc:</span> <span class="string">abcabc</span></span><br><span class="line"><span class="attr">xyz:</span> <span class="string">xyzxyz</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># test01.yml</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">var_files:</span> <span class="string">var01.yml</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;abc&#125;&#125;</span> <span class="template-variable">&#123;&#123;xyz&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="以交互方式定义变量">以交互方式定义变量</h3>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="comment"># 交互定义变量关键词</span></span><br><span class="line">  <span class="attr">vars_prompt:</span>    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">var1</span></span><br><span class="line">      <span class="attr">prompt:</span> <span class="string">&quot;输入要创建的用户名&quot;</span></span><br><span class="line">      <span class="comment"># 不隐藏变量的值</span></span><br><span class="line">      <span class="attr">private:</span> <span class="literal">no</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">        <span class="attr">var:</span> <span class="string">var1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">user:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;var1&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="魔法变量">魔法变量</h3>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">inventory_hostname</span>=清单主机名</span><br><span class="line"><span class="attr">hostvars</span>=包含被控主机的所有变量</span><br><span class="line"><span class="attr">hostvars.node1</span>=只调用node1主机的所有变量</span><br><span class="line"><span class="attr">hostvars.node1.group_names</span>=显示node1所在的组的名字</span><br><span class="line"><span class="attr">groups</span>=所有主机以及组信息</span><br><span class="line"><span class="attr">groups.all</span>=显示被控主机名</span><br><span class="line"><span class="attr">groups.test01</span>=显示test01组里的所有主机名</span><br><span class="line"><span class="attr">group_names</span>=当前运行任务的主机的所在组</span><br></pre></td></tr></table></figure>
-<p>使用copy模块拷贝常量和变量字符串到被控主机</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">       <span class="attr">content:</span> <span class="string">|</span></span><br><span class="line"><span class="string">        abc</span></span><br><span class="line"><span class="string">        xyz</span></span><br><span class="line"><span class="string">        &#123;&#123;ansible_hostname&#125;&#125;</span></span><br><span class="line"><span class="string"></span>       <span class="attr">dest:</span> <span class="string">/opt/abc.txt</span></span><br></pre></td></tr></table></figure>
-<h2 id="模块相关">模块相关</h2>
-<h3 id="template模板">template模板</h3>
-<p>根据模板生成相应的文件</p>
-<p>src：源文件</p>
-<p>dest：目标文件</p>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#cat test.j2</span></span><br><span class="line">&#123;&#123; ansible_hostname &#125;&#125; <span class="comment"># 根据环境变量生成文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cat tepl.yml</span></span><br><span class="line">- hosts: node1</span><br><span class="line">  tasks:</span><br><span class="line">    - template:</span><br><span class="line">        src: test.j2</span><br><span class="line">        dest: /opt/test.html</span><br></pre></td></tr></table></figure></p>
-<h3 id="使用ansible容器运行剧本">使用ansible容器运行剧本</h3>
-<p>安装navigator包</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum install -y ansible-navigator</span><br></pre></td></tr></table></figure>
-<p>修改navigator配置文件</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim ~/.ansible-navigator.yml</span></span><br><span class="line"><span class="attr">ansible-navigator:</span></span><br><span class="line">  <span class="attr">execution-environment:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">registry.lab.example.com:5000/ee-supported-rhel8:latest</span></span><br><span class="line">    <span class="attr">pull:</span></span><br><span class="line">      <span class="attr">policy:</span> <span class="string">missing</span></span><br></pre></td></tr></table></figure>
-<p>修改container配置文件</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim /etc/containers/registries.conf</span></span><br><span class="line"><span class="section">[registries.search]</span></span><br><span class="line"><span class="attr">registries</span> = [<span class="string">&quot;registry.lab.example.com:5000&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="section">[registries.insecure]</span></span><br><span class="line"><span class="attr">registries</span> = [<span class="string">&quot;registry.lab.example.com:5000&quot;</span>]</span><br></pre></td></tr></table></figure>
-<p>下载镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-navigator images</span><br></pre></td></tr></table></figure>
-<p>执行剧本任务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-navigator run debug.yml -m stdout</span><br></pre></td></tr></table></figure>
-<h3
-id="使用ansible-vault加密敏感文件">使用ansible-vault加密敏感文件</h3>
-<table>
-<thead>
-<tr class="header">
-<th>参数</th>
-<th>用法</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>encrypt</td>
-<td>加密</td>
-</tr>
-<tr class="even">
-<td>decrypt</td>
-<td>解密</td>
-</tr>
-<tr class="odd">
-<td>view</td>
-<td>查看</td>
-</tr>
-<tr class="even">
-<td>rekey</td>
-<td>重置密码</td>
-</tr>
-</tbody>
-</table>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 输入密码，加密test01配置文件</span></span><br><span class="line">ansible-vault encrypt test01.yml</span><br><span class="line"><span class="comment"># 输入密码，解密test01配置文件</span></span><br><span class="line">ansible-vault decrypt test01.yml</span><br><span class="line"><span class="comment"># 输入密码，查看test01配置文件</span></span><br><span class="line">ansible-vault view test01.yml</span><br><span class="line"><span class="comment"># 输入密码，执行配置文件</span></span><br><span class="line">ansible-playbook test01.yml --ask-vault-pass</span><br><span class="line"><span class="comment"># 通过保存到pass.txt的密码，执行配置文件</span></span><br><span class="line">ansible-playbook test01.yml --vault-id pass.txt</span><br><span class="line"><span class="comment"># 通过保存到pass.txt的密码，查看配置文件</span></span><br><span class="line">ansible-vault  test01.yml --vault-id pass.txt</span><br><span class="line"><span class="comment"># 重置密码</span></span><br><span class="line">ansible-vault rekey test01.yml</span><br></pre></td></tr></table></figure>
-<h2 id="角色">角色</h2>
-<p>角色是定义好的统一目录规范</p>
-<p>修改配置，定义角色目录位置</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim ~/ansible/ansible.cfg</span></span><br><span class="line"><span class="section">[default]</span></span><br><span class="line"><span class="attr">roles_path</span> = ./roles</span><br></pre></td></tr></table></figure>
-<h3 id="手动创建角色">手动创建角色</h3>
-<p>创建http角色相关目录，http是创建的角色，tasks是存放任务的目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ansible/roles/http/tasks</span><br></pre></td></tr></table></figure>
-<p>roles/tasks/main.yml文件</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">	<span class="attr">name:</span> <span class="string">httpd</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">	<span class="attr">msg:</span> <span class="string">ok</span></span><br></pre></td></tr></table></figure>
-<p>编写剧本调用角色</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span> <span class="string">roles</span></span><br><span class="line">  <span class="attr">hosts:</span> <span class="string">node1,</span> <span class="string">node2</span></span><br><span class="line">  <span class="attr">roles:</span></span><br><span class="line">  	<span class="bullet">-</span> <span class="string">http</span></span><br></pre></td></tr></table></figure>
-<h3 id="使用命令创建角色">使用命令创建角色</h3>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-galaxy init roles/vsftpd</span><br><span class="line"><span class="built_in">ls</span> roles/vsftped</span><br></pre></td></tr></table></figure>
-<table>
-<thead>
-<tr class="header">
-<th>目录</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>tasks</td>
-<td>存放执行任务</td>
-</tr>
-<tr class="even">
-<td>vars</td>
-<td>存放变量，优先级高</td>
-</tr>
-<tr class="odd">
-<td>defaults</td>
-<td>存放变量，优先级低</td>
-</tr>
-<tr class="even">
-<td>files</td>
-<td>存放静态文件，如图片、视频、配置文件等</td>
-</tr>
-<tr class="odd">
-<td>meta</td>
-<td>存放作者、角色版本信息</td>
-</tr>
-<tr class="even">
-<td>templates</td>
-<td>存放动态数据，比如j2模板</td>
-</tr>
-<tr class="odd">
-<td>handlers</td>
-<td>存放提前定义好的任务</td>
-</tr>
-</tbody>
-</table>
-<h4 id="测试1">测试1</h4>
-<p>准备静态文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 123 &gt; roles/vsftpd/files/123</span><br></pre></td></tr></table></figure>
-<p>根据角色创建任务</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/tasks/main.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">yum:</span></span><br><span class="line">	<span class="attr">name:</span> <span class="string">vsftpd</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">copy:</span></span><br><span class="line">	<span class="comment"># 自动寻找files下的123文件</span></span><br><span class="line">	<span class="attr">src:</span> <span class="string">&quot;123&quot;</span></span><br><span class="line">	<span class="attr">dest:</span> <span class="string">/var/ftp/pub</span></span><br></pre></td></tr></table></figure>
-<p>编写脚本调用角色</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim test2.yml</span></span><br><span class="line">- hosts: node1, node2</span><br><span class="line">  roles:</span><br><span class="line">    - vsftpd</span><br></pre></td></tr></table></figure>
-<p>执行剧本</p>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-playbook test2.yml</span><br></pre></td></tr></table></figure></p>
-<h4 id="测试2">测试2</h4>
-<p>定义变量</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/vars/main.yml</span></span><br><span class="line"><span class="attr">myvar001:</span> <span class="string">abc</span></span><br></pre></td></tr></table></figure>
-<p>测试变量</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># vim roles/vsftpd/tasks/main.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">template:</span></span><br><span class="line">	<span class="attr">src:</span> <span class="string">&quot;456.j2&quot;</span></span><br><span class="line">	<span class="attr">dest:</span> <span class="string">/var/ftp/pub</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">debug:</span></span><br><span class="line">	<span class="attr">msg:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123;myvar001&#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
-<p>查看模板生成的文件</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"># less /var/ftp/pub</span><br><span class="line">abc</span><br></pre></td></tr></table></figure>
-<h3 id="使用网络下载安装角色">使用网络下载安装角色</h3>
-<p>配置需要下载的角色文件</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#vim roles.yml</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myphp</span></span><br><span class="line">  <span class="attr">src:</span> <span class="string">http://172.25.254.250/roles/myphp.tar</span></span><br></pre></td></tr></table></figure>
-<p>安装网上下载的角色</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-galxy install -r roles.yml</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
         <tag>linux</tag>
@@ -10429,7 +10517,7 @@ id="使用channel实现的生产消费者模型">使用Channel实现的生产消
 <p>一个简易的<strong>生产者消费者模型</strong>代码如下：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(id <span class="type">int</span>, jobs &lt;-<span class="keyword">chan</span> <span class="type">int</span>, results <span class="keyword">chan</span>&lt;- <span class="type">int</span>)</span></span> &#123; <span class="comment">// jobs:只读通道，result:只写通道</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d start jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        time.Sleep(time.Second)</span><br><span class="line">        fmt.Printf(<span class="string">&quot;worker:%d end jobs:%d\n&quot;</span>, id, j)</span><br><span class="line">        results &lt;- j * <span class="number">2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    jobs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">100</span>)</span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">100</span>)</span><br><span class="line">    <span class="comment">// 开启3个goroutine</span></span><br><span class="line">    <span class="keyword">for</span> w := <span class="number">1</span>; w &lt; <span class="number">3</span>; w++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(w, jobs, results)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 分配5个任务</span></span><br><span class="line">    <span class="keyword">for</span> j := <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++ &#123;</span><br><span class="line">        jobs &lt;- j</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(jobs) <span class="comment">// 关闭通道</span></span><br><span class="line">    <span class="comment">// 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">5</span>; a++ &#123;</span><br><span class="line">        &lt;-results <span class="comment">// 取出的过程是阻塞的，要等待每一个worker执行完</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="waitbywaitgroup">waitByWaitGroup</h2>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">waitByWaitGroup</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	wg.Add(<span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;this is&quot;</span>, i)</span><br><span class="line">			wg.Done()</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    waitByWaitGroup()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">waitByWaitGroup</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	wg.Add(<span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123; <span class="comment">// 创建几个线程干活</span></span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">			fmt.Println(<span class="string">&quot;this is&quot;</span>, i) </span><br><span class="line">			wg.Done()</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    waitByWaitGroup()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>本质上还是等待，只是等待的时刻缩短到子线程结束调用的那一时刻。</p>
 <p>依靠sync.WaitGroup不能实现生产者消费者模型，需要配合channel完成</p>
 <h2 id="waitbycond">waitByCond</h2>
