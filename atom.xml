@@ -6,7 +6,7 @@
   <link href="https://blog.fly97.cn/atom.xml" rel="self"/>
   
   <link href="https://blog.fly97.cn/"/>
-  <updated>2024-01-14T14:55:00.000Z</updated>
+  <updated>2024-01-26T06:38:00.000Z</updated>
   <id>https://blog.fly97.cn/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kubernetes集群实践（十五）如何升级K8s的worker节点</title>
+    <link href="https://blog.fly97.cn/p/how-to-update-k8s-worker-node/"/>
+    <id>https://blog.fly97.cn/p/how-to-update-k8s-worker-node/</id>
+    <published>2024-01-26T06:38:00.000Z</published>
+    <updated>2024-01-26T06:38:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文主要介绍使用kubeadm管理的集群如何升级worker节点。</p><p>关键词：<strong>k8s，worker</strong></p><span id="more"></span><h2 id="背景">背景</h2><p>当前本地测试集群kubernetes版本不一致，为了避免出现差错，因此需要将版本对齐。</p><p><img data-src="image-20240126101103603.png" /></p><p>主要工作流程如下：</p><ol type="1"><li>升级主控制平面节点</li><li>升级其他控制平面节点</li><li>升级工作节点</li></ol><p><strong>注意：</strong></p><p>在Kubernetes中，升级集群时，通常建议按照指定的版本升级路径进行，而跳过次版本号的升级是不被支持的。这意味着，如果你的集群当前是1.28.x版本，想要升级到1.29.x版本，你需要先升级到1.29.x的前一个次版本，然后再升级到1.29.x。</p><p>举个例子，假设你的集群当前是1.28.4版本，你想要升级到1.29.2版本。根据<strong>版本偏差策略</strong>，你需要按照以下步骤进行升级：</p><ol type="1"><li>升级到1.29.0版本：首先，你需要使用适当的工具（例如kubeadm）将集群升级到1.29.0版本。这可能涉及到更新Kubernetes二进制文件、配置文件和相关组件。具体的升级步骤可以参考Kubernetes官方文档或相关升级指南。</li><li>升级到1.29.2版本：一旦你的集群已经成功升级到1.29.0版本，你可以继续将其升级到1.29.2版本。这个升级过程可能与前一个次版本的升级类似，通常涉及更新二进制文件、配置文件和组件。</li></ol><h2 id="操作步骤">操作步骤</h2><h2 id="升级第一个控制平面节点">升级第一个控制平面节点</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debian/Ubuntu</span></span><br><span class="line"><span class="comment"># 用最新的补丁版本号替换 1.29.x-* 中的 x</span></span><br><span class="line">apt-mark unhold kubeadm &amp;&amp; \</span><br><span class="line">apt-get update &amp;&amp; apt-get install -y kubeadm=<span class="string">&#x27;1.29.x-*&#x27;</span> &amp;&amp; \</span><br><span class="line">apt-mark hold kubeadm</span><br><span class="line"><span class="comment"># Redhat/Centos</span></span><br><span class="line">yum install -y kubeadm-<span class="string">&#x27;1.29.x-*&#x27;</span> --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure><p>验证版本</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm version</span><br></pre></td></tr></table></figure><p>验证升级计划</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm upgrade plan</span><br></pre></td></tr></table></figure><blockquote><p>kubeadm upgrade会自动的将TLS证书续约，如果需要略过证书续约操作，可以使用标志<code>--certificate-renewal=false</code></p></blockquote><p>选择要升级到的目标版本，运行合适的命令。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm upgrade apply v1.29.x</span><br></pre></td></tr></table></figure><p><img data-src="image-20240126103015157.png" /></p><p>更新CNI驱动插件</p><p>升级其他控制平面节点</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm upgrade node</span><br></pre></td></tr></table></figure><p>升级kubectl和kubelet</p><p>腾空节点</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 &lt;node-to-drain&gt; 替换为你要腾空的控制面节点名称</span></span><br><span class="line">kubectl drain &lt;node-to-drain&gt; --ignore-daemonsets</span><br></pre></td></tr></table></figure><p>升级操作</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debian/Ubuntu</span></span><br><span class="line"><span class="comment"># 用最新的补丁版本号替换 1.29.x-* 中的 x</span></span><br><span class="line">apt-mark unhold kubeadm &amp;&amp; \</span><br><span class="line">apt-get update &amp;&amp; apt-get install -y kubelet=<span class="string">&#x27;1.29.x-*&#x27;</span> kubectl=<span class="string">&#x27;1.29.x-*&#x27;</span>  &amp;&amp; \</span><br><span class="line">apt-mark hold kubeadm</span><br><span class="line"><span class="comment"># Redhat/Centos</span></span><br><span class="line">yum install -y kubelet-<span class="string">&#x27;1.29.x-*&#x27;</span> kubectl=<span class="string">&#x27;1.29.x-*&#x27;</span> --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure><p>重启 kubelet</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart kubelet</span><br></pre></td></tr></table></figure><p>恢复调度</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 &lt;node-to-uncordon&gt; 替换为你的节点名称</span></span><br><span class="line">kubectl uncordon &lt;node-to-uncordon&gt;</span><br></pre></td></tr></table></figure><h2 id="升级工作节点">升级工作节点</h2><p>升级kubeadm</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debian/Ubuntu</span></span><br><span class="line"><span class="comment"># 用最新的补丁版本号替换 1.29.x-* 中的 x</span></span><br><span class="line">apt-mark unhold kubeadm &amp;&amp; \</span><br><span class="line">apt-get update &amp;&amp; apt-get install -y kubeadm=<span class="string">&#x27;1.29.x-*&#x27;</span> &amp;&amp; \</span><br><span class="line">apt-mark hold kubeadm</span><br><span class="line"><span class="comment"># Redhat/Centos</span></span><br><span class="line">yum install -y kubeadm-<span class="string">&#x27;1.29.x-*&#x27;</span> --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure><p>执行kubeadm upgrade</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm upgrade node</span><br></pre></td></tr></table></figure><p>腾空节点</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 &lt;node-to-drain&gt; 替换为你要腾空的控制面节点名称</span></span><br><span class="line">kubectl drain &lt;node-to-drain&gt; --ignore-daemonsets</span><br></pre></td></tr></table></figure><p>升级kubectl/kubelet</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># debian/Ubuntu</span></span><br><span class="line"><span class="comment"># 用最新的补丁版本号替换 1.29.x-* 中的 x</span></span><br><span class="line">apt-mark unhold kubeadm &amp;&amp; \</span><br><span class="line">apt-get update &amp;&amp; apt-get install -y kubelet=<span class="string">&#x27;1.29.x-*&#x27;</span> kubectl=<span class="string">&#x27;1.29.x-*&#x27;</span>  &amp;&amp; \</span><br><span class="line">apt-mark hold kubeadm</span><br><span class="line"><span class="comment"># Redhat/Centos</span></span><br><span class="line">yum install -y kubelet-<span class="string">&#x27;1.29.x-*&#x27;</span> kubectl=<span class="string">&#x27;1.29.x-*&#x27;</span> --disableexcludes=kubernetes</span><br></pre></td></tr></table></figure><p>重启 kubelet</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart kubelet</span><br></pre></td></tr></table></figure><p>恢复调度</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 &lt;node-to-uncordon&gt; 替换为你的节点名称</span></span><br><span class="line">kubectl uncordon &lt;node-to-uncordon&gt;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;本文主要介绍使用kubeadm管理的集群如何升级worker节点。&lt;/p&gt;
+&lt;p&gt;关键词：&lt;strong&gt;k8s，worker&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="k8s" scheme="https://blog.fly97.cn/tags/k8s/"/>
+    
+  </entry>
   
   <entry>
     <title>配置Unraid</title>
@@ -428,26 +448,6 @@ once a month.”&lt;/p&gt;
     
     
     <category term="http" scheme="https://blog.fly97.cn/tags/http/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ROS实战（十一）ROS2之节点</title>
-    <link href="https://blog.fly97.cn/p/agent-in-ros2/"/>
-    <id>https://blog.fly97.cn/p/agent-in-ros2/</id>
-    <published>2022-12-20T10:36:00.000Z</published>
-    <updated>2022-12-20T10:36:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文主要介绍ROS2上的节点。</p><p><strong>关键词：ROS2</strong></p><span id="more"></span><h2 id="节点">节点</h2><p>机器人是各种功能的综合体，每一项功能就像机器人的一个工作细胞。众多细胞通过一些机制联系到一起，就成为了一个机器人整体。</p><p>在ROS中，这些细胞被称为节点。</p><h3 id="通信模型">通信模型</h3><p>完成的机器人系统可能并不是一个物理上的整体，比如这样的一个机器人：</p><p><img data-src="image-20220526231417594.png" /></p><p>在机器人身体里搭载了一台计算机A，通过机器人的眼睛——摄像头，获取外界的信息，也可以通过控制机器人的腿——轮子，让机器人一栋栋到想要去的地方。除此之外，还有另外一台计算机B，放在你的桌子上，可以远程监控机器人看到的消息，也可以远程配置机器人的速度和某些参数，还可以连接成为一个摇杆，人为控制机器人左右运动。</p><p>这些功能虽然位于不同的计算机中，但是都是机器人的工作细胞，也就是节点，他们共同组成了一个完整的机器人系统。</p><ul><li>节点在机器人系统中的职责就是<strong>执行某些具体的任务</strong>，从操作系统来看，也叫做进程；</li><li>每个节点都是一个<strong>独立运行的可执行文件，</strong>比如执行某一个python程序，或者执行C++编译生成的结果，都是算运行了一个节点；</li><li>既然每一个节点都是独立的执行文件，那自然就可以想到，得到这个执行文件的编程语言可以是不同的，比如C++、Python等；</li><li>这些节点是功能各不相同的细胞，根据系统设计的不同，可能位于计算机A，也可能位于计算机B</li></ul>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;本文主要介绍ROS2上的节点。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键词：ROS2&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="ROS" scheme="https://blog.fly97.cn/tags/ROS/"/>
     
   </entry>
   
