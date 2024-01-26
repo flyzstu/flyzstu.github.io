@@ -154,6 +154,52 @@ interface and Socks5 proxy for VPS. 一键脚本 (github.com)</a></p>
       </tags>
   </entry>
   <entry>
+    <title>Kubernetes集群实践（十七）K8s中的包管理器Helm</title>
+    <url>/p/The-package-manager-for-Kubernetes/</url>
+    <content><![CDATA[<p>本文主要介绍k8s里的包管理器Helm的一些基础用法。</p>
+<p>关键词：<strong>Helm</strong></p>
+<span id="more"></span>
+<h3 id="安装helm">安装Helm</h3>
+<p>我们将 Helm 客户端安装在 k8s-master 节点上</p>
+<h4 id="用二进制版本安装">用二进制版本安装</h4>
+<ol type="1">
+<li>下载 <a
+href="https://github.com/helm/helm/releases">需要的版本</a></li>
+<li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li>
+<li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li>
+</ol>
+<p>然后就可以执行客户端程序并 <a
+href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>:
+<code>helm help</code>.</p>
+<p><img data-src="image-20220507135650409.png" /></p>
+<h4 id="查看版本号">查看版本号</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure>
+<h4 id="安装命令补全">安装命令补全</h4>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;source &lt;(helm completion bash)&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="安装helm仓库">安装helm仓库</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add prometheus-community https://prometheus-community.github.io/helm-charts</span><br><span class="line">helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx</span><br></pre></td></tr></table></figure>
+<p>查看信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm show chart traefik/traefik</span><br></pre></td></tr></table></figure>
+<p>默认参数安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx  --namespace ingress-nginx --create-namespace </span><br></pre></td></tr></table></figure>
+<p>离线安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm pull ingress-nginx/ingress-nginx</span><br></pre></td></tr></table></figure>
+<p>然后在本地会发现下载好的tgz包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf ingress-nginx.tar.gz</span><br></pre></td></tr></table></figure>
+<p>然后修改一些配置就可以用了</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim ./values.yml</span><br></pre></td></tr></table></figure>
+<p>第一次安装的话可以用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm install -n ingress-nginx ingress-nginx ./ --values ./values.yaml</span><br></pre></td></tr></table></figure>
+<p>升级可以用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm upgrade -n ingress-nginx ingress-nginx ./ --values ./values.yaml</span><br></pre></td></tr></table></figure>
+<p>安装的时候指定值</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm install my-release nginx-stable/nginx-ingress --<span class="built_in">set</span> enableSnippets=<span class="literal">true</span> --<span class="built_in">set</span> controller.service.type=NodePort  -n ingress-nginx  </span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kubernetes集群实践（十五）如何升级K8s的worker节点</title>
     <url>/p/how-to-update-k8s-worker-node/</url>
     <content><![CDATA[<p>本文主要介绍使用kubeadm管理的集群如何升级worker节点。</p>
@@ -1168,7 +1214,7 @@ run的是添加<code>--init</code>选项即可，不需要改变镜像，不需�
       </tags>
   </entry>
   <entry>
-    <title>Kubernetes集群实践（十二）使用keepalived+haproxy创建高可用K8s集群</title>
+    <title>Kubernetes集群实践（十六）使用keepalived+haproxy创建高可用K8s集群</title>
     <url>/p/create-ha-kubernetes/</url>
     <content><![CDATA[<p>本文主要介绍如何使用keepalived+haproxy创建高可用集群，文中主要来源与作者在工作中的一些实际操作，本文仅供作者自己记录和读者参考。</p>
 <p>关键词：<strong>高可用K8s集群</strong></p>
@@ -5718,93 +5764,6 @@ id="再次查看生成域名证书的详细信息">再次查看生成域名证�
       <tags>
         <tag>openssl</tag>
         <tag>https</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用Helm中部署Harbor</title>
-    <url>/p/deploy-harbor-on-K8s-with-helm/</url>
-    <content><![CDATA[<p>Harbor 是一个开源的企业级私有 Docker 镜像仓库，我们可以利用 Harbor
-在本地安全地存储和管理 Docker 镜像，而不需要将镜像上传到 Docker Hub
-或其他第三方镜像仓库。</p>
-<p>关键词：<strong>Harbor</strong></p>
-<span id="more"></span>
-<h3 id="安装helm">安装Helm</h3>
-<p>我们将 Helm 客户端安装在 k8s-master 节点上</p>
-<h4 id="用二进制版本安装">用二进制版本安装</h4>
-<ol type="1">
-<li>下载 <a
-href="https://github.com/helm/helm/releases">需要的版本</a></li>
-<li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li>
-<li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li>
-</ol>
-<p>然后就可以执行客户端程序并 <a
-href="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>:
-<code>helm help</code>.</p>
-<p><img data-src="image-20220507135650409.png" /></p>
-<h4 id="查看版本号">查看版本号</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure>
-<h4 id="安装命令补全">安装命令补全</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;source &lt;(helm completion bash)&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h4 id="修改helm仓库镜像">修改Helm仓库镜像</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add aliyun  https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220507135947826.png" /></p>
-<p>查看仓库列表</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
-<h3 id="安装harbor">安装Harbor</h3>
-<h4 id="添加harbor仓库">添加Harbor仓库</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add harbor https://helm.goharbor.io</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
-<h4 id="搜索harbor">搜索Harbor</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm search repo harbor/harbor</span><br></pre></td></tr></table></figure>
-<p><img data-src="image-20220507140154997.png" /></p>
-<h4 id="将harbor下载到本地">将Harbor下载到本地</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm fetch harbor/harbor</span><br></pre></td></tr></table></figure>
-<h4 id="解压缩">解压缩</h4>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar xvf harbor-1.9.0.tgz</span><br><span class="line"><span class="built_in">cd</span> harbor</span><br></pre></td></tr></table></figure>
-<h4 id="修改配置">修改配置</h4>
-<p>修改配置文件<code>values.yaml</code>，具体查看<a
-href="https://github.com/goharbor/harbor-helm/blob/master/README.md#configuration">GIthub配置列表</a>。</p>
-<p>这里修改了以下几个配置：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">nodePort</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">nodePort:</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30004</span></span><br><span class="line">      <span class="attr">https:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30005</span></span><br><span class="line">      <span class="attr">notary:</span></span><br><span class="line">        <span class="attr">nodePort:</span> <span class="number">30006</span></span><br><span class="line"><span class="attr">externalURL:</span> <span class="string">http://192.168.232.167:30004</span></span><br><span class="line"><span class="attr">persistence:</span></span><br><span class="line">  <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">    <span class="attr">registry:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;registry&quot;</span></span><br><span class="line">    <span class="attr">chartmuseum:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;chartmuseum&quot;</span></span><br><span class="line">    <span class="attr">jobservice:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;jobservice&quot;</span></span><br><span class="line">    <span class="attr">database:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;database&quot;</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">existingClaim:</span> <span class="string">&quot;pvc-harbor&quot;</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;-&quot;</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">&quot;redis&quot;</span></span><br></pre></td></tr></table></figure>
-<p>其中 <code>pvc-harbor</code> 是预先创建好的 PVC，创建过程略。</p>
-<p>部署 Harbor：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm install -g harbor/harbor -f values.yaml .</span><br><span class="line"></span><br><span class="line">NAME: harbor-1589352564</span><br><span class="line">LAST DEPLOYED: Wed May 13 14:49:25 2020</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">Please <span class="built_in">wait</span> <span class="keyword">for</span> several minutes <span class="keyword">for</span> Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at http://192.168.232.167:30004.</span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br></pre></td></tr></table></figure>
-<p>部署成功，等待 Harbor
-启动完成，然后就可以通过<code>http://192.168.232.167:30004</code>
-访问Harbor，默认用户名是admin，密码是Harbor12345。</p>
-<p>由于 Docker 自从 1.3.x 之后，docker registry
-交互默认使用的是HTTPS，而我们搭建的 Harbor 使用的是HTTP，所以为了避免
-pull/push
-镜像时得到错误：<code>http: server gave HTTP response to HTTPS client</code>，需要修改
-docker 的配置文件
-<code>/etc/docker/daemon.json</code>，加入以下配置：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;192.168.232.167:30004&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>保存后重启 docker 服务：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<h3 id="上传第一个镜像">上传第一个镜像</h3>
-<p>下载一个 busybox 镜像：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull busybox:latest</span><br></pre></td></tr></table></figure>
-<p>修改 tag：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker tag busybox:latest 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
-<p>library 是 Harbor 的默认项目地址，也可以登录 Harbor
-自行新建一个项目。</p>
-<p>使用 docker login 登录到 Harbor，并输入用户名和密码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker login 192.168.232.167:30004</span><br></pre></td></tr></table></figure>
-<p>登录成功后，上传镜像到 Harbor：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker push 192.168.232.167:30004/library/busybox:latest</span><br></pre></td></tr></table></figure>
-<h3 id="后记">后记</h3>
-<p>上面的软件没有部署完，<strong>例如PVC和helm的架构还不懂，</strong>因此先告一段落。</p>
-<p>决定先使用<code>docker-compose</code>先部署<strong>Harbor</strong>
-。</p>
-<h3 id="参考文档">参考文档</h3>
-<p>https://helm.sh/docs/using_helm/#installing-helm</p>
-<p>https://github.com/goharbor/harbor-helm</p>
-<p>https://www.cnblogs.com/dukuan/p/9963744.html</p>
-<p>https://blog.51cto.com/wangpengtai/2418636?source=dra</p>
-<p>http://kpali.me/2020/05/13/deploy-harbor-in-kubernetes.html</p>
-]]></content>
-      <tags>
-        <tag>k8s</tag>
-        <tag>harbor</tag>
       </tags>
   </entry>
   <entry>

@@ -6,7 +6,7 @@
   <link href="https://blog.fly97.cn/atom.xml" rel="self"/>
   
   <link href="https://blog.fly97.cn/"/>
-  <updated>2024-01-26T06:38:00.000Z</updated>
+  <updated>2024-01-26T07:26:00.000Z</updated>
   <id>https://blog.fly97.cn/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kubernetes集群实践（十七）K8s中的包管理器Helm</title>
+    <link href="https://blog.fly97.cn/p/The-package-manager-for-Kubernetes/"/>
+    <id>https://blog.fly97.cn/p/The-package-manager-for-Kubernetes/</id>
+    <published>2024-01-26T07:26:00.000Z</published>
+    <updated>2024-01-26T07:26:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文主要介绍k8s里的包管理器Helm的一些基础用法。</p><p>关键词：<strong>Helm</strong></p><span id="more"></span><h3 id="安装helm">安装Helm</h3><p>我们将 Helm 客户端安装在 k8s-master 节点上</p><h4 id="用二进制版本安装">用二进制版本安装</h4><ol type="1"><li>下载 <ahref="https://github.com/helm/helm/releases">需要的版本</a></li><li>解压(<code>tar -zxvf helm-v3.0.0-linux-amd64.tar.gz</code>)</li><li>在解压目中找到<code>helm</code>程序，移动到需要的目录中(<code>mv linux-amd64/helm /usr/local/bin/helm</code>)</li></ol><p>然后就可以执行客户端程序并 <ahref="https://helm.sh/zh/docs/intro/quickstart/#初始化">添加稳定仓库</a>:<code>helm help</code>.</p><p><img data-src="image-20220507135650409.png" /></p><h4 id="查看版本号">查看版本号</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm version</span><br></pre></td></tr></table></figure><h4 id="安装命令补全">安装命令补全</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;source &lt;(helm completion bash)&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure><h3 id="安装helm仓库">安装helm仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm repo add prometheus-community https://prometheus-community.github.io/helm-charts</span><br><span class="line">helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx</span><br></pre></td></tr></table></figure><p>查看信息</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm show chart traefik/traefik</span><br></pre></td></tr></table></figure><p>默认参数安装</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx  --namespace ingress-nginx --create-namespace </span><br></pre></td></tr></table></figure><p>离线安装</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm pull ingress-nginx/ingress-nginx</span><br></pre></td></tr></table></figure><p>然后在本地会发现下载好的tgz包</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xvf ingress-nginx.tar.gz</span><br></pre></td></tr></table></figure><p>然后修改一些配置就可以用了</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ./values.yml</span><br></pre></td></tr></table></figure><p>第一次安装的话可以用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install -n ingress-nginx ingress-nginx ./ --values ./values.yaml</span><br></pre></td></tr></table></figure><p>升级可以用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm upgrade -n ingress-nginx ingress-nginx ./ --values ./values.yaml</span><br></pre></td></tr></table></figure><p>安装的时候指定值</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install my-release nginx-stable/nginx-ingress --<span class="built_in">set</span> enableSnippets=<span class="literal">true</span> --<span class="built_in">set</span> controller.service.type=NodePort  -n ingress-nginx  </span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;本文主要介绍k8s里的包管理器Helm的一些基础用法。&lt;/p&gt;
+&lt;p&gt;关键词：&lt;strong&gt;Helm&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="k8s" scheme="https://blog.fly97.cn/tags/k8s/"/>
+    
+  </entry>
   
   <entry>
     <title>Kubernetes集群实践（十五）如何升级K8s的worker节点</title>
@@ -146,7 +166,7 @@
   </entry>
   
   <entry>
-    <title>Kubernetes集群实践（十二）使用keepalived+haproxy创建高可用K8s集群</title>
+    <title>Kubernetes集群实践（十六）使用keepalived+haproxy创建高可用K8s集群</title>
     <link href="https://blog.fly97.cn/p/create-ha-kubernetes/"/>
     <id>https://blog.fly97.cn/p/create-ha-kubernetes/</id>
     <published>2023-10-04T11:46:00.000Z</published>
@@ -428,26 +448,6 @@ once a month.”&lt;/p&gt;
     
     
     <category term="golang" scheme="https://blog.fly97.cn/tags/golang/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>http请求参数之Query String Parameters、Form Data、Request Payload区别</title>
-    <link href="https://blog.fly97.cn/p/the-difference-between-query-string-parameters-and-form-data-and-request-payload/"/>
-    <id>https://blog.fly97.cn/p/the-difference-between-query-string-parameters-and-form-data-and-request-payload/</id>
-    <published>2023-01-05T02:20:00.000Z</published>
-    <updated>2023-01-05T02:20:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>在与server端进行数据传递时，通常会用到GET、POST方法进行参数提交，而参数提交的方式，通常取决于server端对数据的接收方式。</strong></p><p>关键词：<strong>http</strong></p><span id="more"></span><h2 id="query-string-parameters">Query String Parameters</h2><p>Query String Parameters 当发起一次HTTP请求时，参数会以urlstring的形式进行传递。</p><p>即<code>?</code>后面的字符串则为请求的参数，并以<code>&amp;</code>为分隔符。</p><h4 id="header">header</h4><p><img data-src="1620.png" /></p><h4 id="传入参数">传入参数</h4><p><img data-src="1620-1672985410153-3.png" /></p><h2 id="request-payload">Request Payload</h2><p>当发起一次POST请求后，若<code>content-type</code>为<code>application/json</code>，则参数会以RequestPayload的形式进行传递，数据形式为JSON。</p><p>上述请求不会显式的出现在URL中。</p><h4 id="header-1">header</h4><p><img data-src="1620-1672985432471-6.png" /></p><h4 id="传入参数-1">传入参数</h4><figure><img data-src="1620-1672985616176-9.png" alt="img" /><figcaption aria-hidden="true">img</figcaption></figure><h2 id="form-data">Form Data</h2><p>当发起一次HTTP请求时，若未指定content-type，则默认<code>content-type</code>为<code>application/x-www-form-urlencoded</code>。</p><p>参数会以<code>From Data</code>的形式进行传递，不会显式出现在请求url中。</p><h4 id="传入参数-2">传入参数</h4><p><img data-src="1620-1672985628992-12.png" /></p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;在与server端进行数据传递时，通常会用到GET、POST方法进行参数提交，而参数提交的方式，通常取决于server端对数据的接收方式。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;关键词：&lt;strong&gt;http&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="http" scheme="https://blog.fly97.cn/tags/http/"/>
     
   </entry>
   
